@@ -1,0 +1,29 @@
+# Dépendances
+node_modules/
+docs/node_modules/
+
+# Lock files
+package-lock.json
+yarn.lock
+bun.lockb
+
+# Build & cache
+.expo/
+dist/
+web-build/
+.vitepress/cache/
+.vitepress/dist/
+
+# Assets binaires
+assets/fonts/
+assets/images/*.png
+assets/images/*.jpg
+
+# Généré
+expo-env.d.ts
+*.tsbuildinfo
+
+# Natif
+android/
+ios/
+.kotlin/
