@@ -15,6 +15,15 @@
 - Historique et vue progression par exercice (1RM, RPE, PRs)
 
 ### Prochaine étape
-- Configuration CLAUDE.md, permissions et hooks
-- Architecture de la base de données SQLite
-- Implémentation du MVP
+- Implémentation des services (CRUD exercises, programs, sessions, progression)
+- Navigation et premiers écrans
+
+## 2026-05-22 — Architecture SQLite
+
+### Fait
+- Installation expo-sqlite
+- Schéma complet : 10 tables (exercises, programs, workouts, workout_exercises, blocks, sets, session_logs, set_logs, personal_records, settings)
+- Système de migrations versionnées via PRAGMA user_version
+- 17 exercices prédéfinis en seed (musculation classique)
+- Initialisation de la DB branchée sur le splash screen (`_layout.tsx`)
+- TypeScript strict — zéro erreur
