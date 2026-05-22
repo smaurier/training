@@ -1,0 +1,30 @@
+{
+  "enabledPlugins": {
+    "expo@claude-plugins-official": true
+  },
+  "permissions": {
+    "allow": [
+      "Bash(npm *)",
+      "Bash(npx *)",
+      "Bash(git *)",
+      "Bash(ls *)",
+      "Bash(node *)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path // empty' | { read -r f; case \"$f\" in *.ts|*.tsx) cd \"C:/Users/sylva/projects/training-app/app\" && npx tsc --noEmit 2>&1 | tail -10;; esac; } 2>/dev/null || true",
+            "shell": "bash",
+            "statusMessage": "Vérification TypeScript...",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}
