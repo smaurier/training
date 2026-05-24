@@ -105,6 +105,40 @@ Optimiser l'environnement de travail avec Claude Code : token management, outils
 
 ---
 
+## Session 4 — 2026-05-24 · TDD + Repository pattern
+
+### Ce qui a été demandé
+- Explication des différents types de tests (TU, TI, composants, E2E)
+- Implémentation du pattern Repository avec TDD
+- Approche pédagogique renforcée : explication avant/pendant/après chaque étape
+
+### Décisions prises
+- **Repository pattern** avant tout service CRUD — découple la logique métier de SQLite, permet les tests sans DB
+- **Contract tests** (`exerciseRepository.contract.ts`) — les tests sont écrits contre l'interface `IExerciseRepository`, pas une implémentation. Même suite de tests utilisable pour InMemory ET SQLite.
+- **Injection de dépendance** — `SQLiteExerciseRepository` reçoit `SQLiteDatabase` en constructeur (pas de `getDb()` hardcodé)
+- **CreateExerciseDto = Omit<Exercise, 'id' | 'created_at'>** — DRY, dérivé du type existant
+
+### Ce qui a été fait
+- `repositories/IExerciseRepository.ts` — interface contrat
+- `repositories/InMemoryExerciseRepository.ts` — implémentation mémoire (tests rapides, zéro DB)
+- `repositories/SQLiteExerciseRepository.ts` — implémentation réelle pour l'app
+- `repositories/exerciseRepository.contract.ts` — suite de tests partagée (11 cas)
+- `repositories/InMemoryExerciseRepository.test.ts` — branche InMemory, 11 tests GREEN
+- `services/ExerciseService.test.ts` — tests RED écrits (service pas encore implémenté)
+- `tsconfig.json` — ajout `"types": ["jest"]` pour résoudre les erreurs tsc sur les globals Jest
+
+### Où on en est
+- Cycle RED → GREEN → REFACTOR du Repository terminé (11 tests GREEN)
+- `ExerciseService.test.ts` écrit et en RED — prochain GREEN à faire
+- L'approche pédagogique renforcée a été demandée : expliquer le POURQUOI avant/pendant/après, adapter au niveau frontend (React/JS fort, backend/BDD/Craft à apprendre)
+
+### Leçons Code Craft de la session
+- **SRP** : chaque couche a une responsabilité (Repository = données, Service = métier, Composant = UI)
+- **DRY sur les tests** : contract tests évitent la duplication quand plusieurs implémentations existent
+- **YAGNI** : on n'anticipe pas les règles métier qui n'existent pas encore
+
 ## Prochaine session
-- Couche services CRUD (exercises, programs, sessions, progression)
-- Premiers écrans de l'app
+1. Écrire `ExerciseService.ts` (GREEN sur les 9 tests RED existants)
+2. Expliquer : validation, SRP, pourquoi le service ne fait pas du SQL
+3. Réfléchir à la couche "useExercise" hook React pour connecter service → composant
+4. Premiers écrans (liste d'exercices)
