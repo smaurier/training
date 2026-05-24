@@ -13,6 +13,17 @@
     ]
   },
   "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '{\"systemMessage\": \"📓 Session terminée — mettre à jour docs/journal/project-log.md avant de fermer.\"}'",
+            "shell": "bash"
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
       {
         "matcher": "Write|Edit",
