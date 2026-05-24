@@ -13,6 +13,17 @@
     ]
   },
   "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '{\"systemMessage\": \"📓 Nouvelle session — lire docs/journal/project-log.md pour connaître l'état du projet et la dernière session.\"}'",
+            "shell": "bash"
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "hooks": [
