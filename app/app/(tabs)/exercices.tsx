@@ -2,12 +2,15 @@
 import { FlatList, View, Text, TouchableOpacity, ActivityIndicator, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useFocusEffect } from 'expo-router';
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { useExercises } from '@/hooks/useExercises';
 import { ExerciseCard } from '@/components/exercises/ExerciseCard';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
+
+const SHADOW_COLOR = '#000' as const;
+const FAB_ICON_COLOR = '#fff' as const;
 
 export default function ExercicesScreen() {
   const { exercises, loading, error, refresh } = useExercises();
@@ -15,8 +18,13 @@ export default function ExercicesScreen() {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
 
+  const isFirstFocus = useRef(true);
   useFocusEffect(
     useCallback(() => {
+      if (isFirstFocus.current) {
+        isFirstFocus.current = false;
+        return;
+      }
       refresh();
     }, [refresh])
   );
@@ -56,7 +64,7 @@ export default function ExercicesScreen() {
         accessibilityLabel="Ajouter un exercice"
         accessibilityRole="button"
       >
-        <Ionicons name="add" size={28} color="#fff" />
+        <Ionicons name="add" size={28} color={FAB_ICON_COLOR} />
       </TouchableOpacity>
     </View>
   );
@@ -78,7 +86,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 4,
-    shadowColor: '#000',
+    shadowColor: SHADOW_COLOR,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
