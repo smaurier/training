@@ -45,9 +45,8 @@ export default function AddExerciseModal() {
       await create({ name: name.trim(), type, muscle_groups, progression_step: step, progression_threshold: 1 });
       router.back();
     } catch (e) {
-      Alert.alert('Erreur', e instanceof Error ? e.message : 'Impossible de créer l\'exercice.');
-    } finally {
       setSubmitting(false);
+      Alert.alert('Erreur', e instanceof Error ? e.message : 'Impossible de créer l\'exercice.');
     }
   }
 
