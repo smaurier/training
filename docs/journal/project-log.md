@@ -137,8 +137,49 @@ Optimiser l'environnement de travail avec Claude Code : token management, outils
 - **DRY sur les tests** : contract tests évitent la duplication quand plusieurs implémentations existent
 - **YAGNI** : on n'anticipe pas les règles métier qui n'existent pas encore
 
-## Prochaine session
+## Prochaine session (après session 4)
 1. Écrire `ExerciseService.ts` (GREEN sur les 9 tests RED existants)
 2. Expliquer : validation, SRP, pourquoi le service ne fait pas du SQL
 3. Réfléchir à la couche "useExercise" hook React pour connecter service → composant
 4. Premiers écrans (liste d'exercices)
+
+---
+
+## Session 5 — 2026-05-26 · ExerciseService + useExercises hook + écran liste
+
+### Ce qui a été demandé
+- Reprendre où on en était (session 4 : ExerciseService en RED)
+- Migrer les fichiers mémoire vers le bon chemin projet
+- Implémenter ExerciseService.ts (GREEN)
+- Brainstormer et implémenter le hook useExercises + écran liste exercices
+
+### Décisions prises
+- **ExerciseService** : `CreateExerciseInput` distinct de `CreateExerciseDto` — le service parle domaine (`muscle_groups: string[]`), le repo parle stockage (JSON string). Frontière de couche explicite.
+- **Hook `useExercises`** : Option B (pas de test unitaire, logique déjà testée dans le service). `getDb()` singleton plutôt que `useSQLiteContext`.
+- **Unmount guard** dans `refresh` via `mountedRef` — évite setState sur composant démonté.
+- **create** catch + re-throw — erreurs surfacées dans `error` state ET propagées au caller.
+- **`isFirstFocus` ref** dans `exercices.tsx` — évite double-fetch au premier mount (hook + useFocusEffect).
+- **Modal `add-exercise`** : `setSubmitting(false)` uniquement dans `catch` (pas `finally`) — évite setState après unmount via `router.back()`.
+- **Suppression exercices** : repoussée en V2 (dépendances à vérifier).
+
+### Ce qui a été fait
+- `app/services/ExerciseService.ts` — 9 tests GREEN (+ 22 existants = 31 total)
+- `app/hooks/useExercises.ts` — hook complet avec mountedRef + create error surfacing
+- `app/components/exercises/ExerciseCard.tsx` — carte exercice thémée
+- `app/app/(tabs)/exercices.tsx` — écran liste avec FlatList + FAB + useFocusEffect
+- `app/app/add-exercise.tsx` — modal formulaire (name, type, muscle_groups, progression_step)
+- `app/app/(tabs)/_layout.tsx` — onglet Exercices (fitness-outline)
+- `app/app/_layout.tsx` — Stack.Screen add-exercise (modal)
+- Spec + plan sauvegardés dans `docs/superpowers/`
+- Poussé sur GitHub
+
+### Leçons Code Craft de la session
+- **Frontière de couche** : UI parle `string[]`, service convertit en JSON, repo stocke. Chaque couche a son vocabulaire.
+- **YAGNI** : pas de test unitaire pour le hook (logique métier déjà couverte), pas de suppression avant V2
+- **Unmount guard** : pattern `mountedRef` pour tout hook avec async + state
+- **`finally` vs `catch`** : si le happy path démonte le composant, ne pas mettre setState en `finally`
+
+## Prochaine session
+1. Tester l'app manuellement (npm start) — vérifier onglet Exercices, liste seeds, ajout via modal
+2. V2 exercices : suppression avec vérification dépendances
+3. Écran Programmes — même pattern Repository + Service + hook + écran
