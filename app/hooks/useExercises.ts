@@ -28,16 +28,23 @@ export function useExercises(): UseExercisesResult {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const mountedRef = useRef(true);
+  useEffect(() => {
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
+
   const refresh = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
       const data = await service.listAll();
-      setExercises(data);
+      if (mountedRef.current) setExercises(data);
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Erreur inconnue');
+      if (mountedRef.current) setError(e instanceof Error ? e.message : 'Erreur inconnue');
     } finally {
-      setLoading(false);
+      if (mountedRef.current) setLoading(false);
     }
   }, [service]);
 
@@ -46,8 +53,14 @@ export function useExercises(): UseExercisesResult {
   }, [refresh]);
 
   const create = useCallback(async (input: CreateExerciseInput): Promise<void> => {
-    await service.create(input);
-    await refresh();
+    try {
+      await service.create(input);
+      await refresh();
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'Erreur inconnue';
+      if (mountedRef.current) setError(msg);
+      throw e;
+    }
   }, [service, refresh]);
 
   return { exercises, loading, error, create, refresh };
