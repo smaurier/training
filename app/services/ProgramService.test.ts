@@ -45,6 +45,11 @@ describe('ProgramService', () => {
       const created = await svc.create({ name: 'Push', description: null });
       await expect(svc.update(created.id, { name: '', description: null })).rejects.toThrow('Le nom est requis');
     });
+
+    it('lève une erreur si le programme est introuvable', async () => {
+      const svc = makeService();
+      await expect(svc.update(999, { name: 'X', description: null })).rejects.toThrow('Programme 999 introuvable');
+    });
   });
 
   describe('setActive', () => {
@@ -64,6 +69,11 @@ describe('ProgramService', () => {
       await svc.setActive(b.id);
       const updatedA = await svc.getById(a.id);
       expect(updatedA?.is_active).toBe(0);
+    });
+
+    it('lève une erreur si le programme est introuvable', async () => {
+      const svc = makeService();
+      await expect(svc.setActive(999)).rejects.toThrow('Programme 999 introuvable');
     });
   });
 

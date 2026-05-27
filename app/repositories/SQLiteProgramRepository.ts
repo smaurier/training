@@ -27,12 +27,13 @@ export class SQLiteProgramRepository implements IProgramRepository {
   }
 
   async update(id: number, dto: UpdateProgramDto): Promise<Program> {
-    await this.db.runAsync(
+    const result = await this.db.runAsync(
       `UPDATE programs SET name = ?, description = ?, is_active = ? WHERE id = ?`,
       [dto.name, dto.description ?? null, dto.is_active, id]
     );
+    if (result.changes === 0) throw new Error(`Programme ${id} introuvable`);
     const updated = await this.findById(id);
-    if (!updated) throw new Error(`Programme ${id} introuvable`);
+    if (!updated) throw new Error(`Programme ${id} introuvable après mise à jour`);
     return updated;
   }
 

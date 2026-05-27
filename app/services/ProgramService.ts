@@ -36,6 +36,8 @@ export class ProgramService {
   }
 
   async setActive(id: number): Promise<void> {
+    const target = await this.repo.findById(id);
+    if (!target) throw new Error(`Programme ${id} introuvable`);
     const all = await this.repo.findAll();
     for (const p of all) {
       await this.repo.update(p.id, {
