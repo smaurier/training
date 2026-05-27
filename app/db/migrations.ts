@@ -3,7 +3,6 @@ import { MIGRATIONS } from './schema';
 
 export async function runMigrations(db: SQLiteDatabase): Promise<void> {
   await db.runAsync('PRAGMA journal_mode = WAL');
-  await db.runAsync('PRAGMA foreign_keys = ON');
 
   const result = await db.getFirstAsync<{ user_version: number }>(
     'PRAGMA user_version'
