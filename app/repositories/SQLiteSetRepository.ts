@@ -1,6 +1,6 @@
 import { SQLiteDatabase } from 'expo-sqlite';
 import type { Set as TrainingSet } from '../db/types';
-import { ISetRepository, CreateSetDto } from './ISetRepository';
+import { ISetRepository, CreateSetDto, UpdateSetDto } from './ISetRepository';
 
 export class SQLiteSetRepository implements ISetRepository {
   constructor(private db: SQLiteDatabase) {}
@@ -24,6 +24,16 @@ export class SQLiteSetRepository implements ISetRepository {
     const saved = await this.findById(result.lastInsertRowId);
     if (!saved) throw new Error(`Set ${result.lastInsertRowId} introuvable après insertion`);
     return saved;
+  }
+
+  async update(id: number, dto: UpdateSetDto): Promise<TrainingSet> {
+    await this.db.runAsync(
+      'UPDATE sets SET reps_min=?, reps_max=?, weight=?, weight_type=?, rest_duration=? WHERE id=?',
+      [dto.reps_min, dto.reps_max, dto.weight, dto.weight_type, dto.rest_duration, id]
+    );
+    const updated = await this.findById(id);
+    if (!updated) throw new Error(`Set ${id} introuvable`);
+    return updated;
   }
 
   async delete(id: number): Promise<void> {

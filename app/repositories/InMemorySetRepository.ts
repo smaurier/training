@@ -1,5 +1,5 @@
 import type { Set as TrainingSet } from '../db/types';
-import { ISetRepository, CreateSetDto } from './ISetRepository';
+import { ISetRepository, CreateSetDto, UpdateSetDto } from './ISetRepository';
 
 export class InMemorySetRepository implements ISetRepository {
   private items: TrainingSet[] = [];
@@ -17,6 +17,13 @@ export class InMemorySetRepository implements ISetRepository {
     const item: TrainingSet = { ...dto, id: this.nextId++ };
     this.items.push(item);
     return item;
+  }
+
+  async update(id: number, dto: UpdateSetDto): Promise<TrainingSet> {
+    const idx = this.items.findIndex(i => i.id === id);
+    if (idx === -1) throw new Error(`Set ${id} introuvable`);
+    this.items[idx] = { ...this.items[idx], ...dto };
+    return this.items[idx];
   }
 
   async delete(id: number): Promise<void> {

@@ -1,4 +1,4 @@
-import { ISetRepository, CreateSetDto } from './ISetRepository';
+import { ISetRepository, CreateSetDto, UpdateSetDto } from './ISetRepository';
 
 const serie1: CreateSetDto = {
   block_id: 1,
@@ -67,6 +67,50 @@ export function runSetRepositoryContractTests(createRepo: () => ISetRepository) 
       const remaining = await repo.findByBlockId(1);
       expect(remaining).toHaveLength(1);
       expect(remaining[0].id).toBe(b.id);
+    });
+  });
+
+  describe('update', () => {
+    it('modifie les champs fournis et retourne la série mise à jour', async () => {
+      const saved = await repo.save(serie1);
+      const dto: UpdateSetDto = {
+        reps_min: 4,
+        reps_max: 6,
+        weight: 80,
+        weight_type: 'fixed',
+        rest_duration: 90,
+      };
+      const updated = await repo.update(saved.id, dto);
+      expect(updated.reps_min).toBe(4);
+      expect(updated.reps_max).toBe(6);
+      expect(updated.weight).toBe(80);
+      expect(updated.rest_duration).toBe(90);
+      expect(updated.id).toBe(saved.id);
+    });
+
+    it('ne modifie pas les autres champs (block_id, order_index)', async () => {
+      const saved = await repo.save(serie1);
+      const dto: UpdateSetDto = {
+        reps_min: 4,
+        reps_max: 6,
+        weight: null,
+        weight_type: 'bodyweight',
+        rest_duration: 60,
+      };
+      const updated = await repo.update(saved.id, dto);
+      expect(updated.block_id).toBe(serie1.block_id);
+      expect(updated.order_index).toBe(serie1.order_index);
+    });
+
+    it('throw si id inconnu', async () => {
+      const dto: UpdateSetDto = {
+        reps_min: 4,
+        reps_max: 6,
+        weight: null,
+        weight_type: 'fixed',
+        rest_duration: 60,
+      };
+      await expect(repo.update(999, dto)).rejects.toThrow('999');
     });
   });
 }
