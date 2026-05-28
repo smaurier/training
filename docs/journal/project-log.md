@@ -240,3 +240,57 @@ Screens → Hooks → Services → Repositories → SQLite
 1. Tester l'app sur Expo Go (vérifier les 4 écrans Programmes)
 2. WorkoutExercise + Block + Set — `workout/[id].tsx` + `workout-exercise/[id].tsx`
 3. `docs/accessibilite.md` — doc formelle WCAG 2.2 + EN 301 549 + iOS/Android
+
+---
+
+## Session 7 — 2026-05-28 · Accessibilité + WorkoutExercise layer complet
+
+### Ce qui a été demandé
+- Créer `docs/accessibilite.md` — doc formelle WCAG 2.2 + EN 301 549 + iOS/Android
+- Créer `PressableA11y` composant pour enforcer les contrats d'accessibilité au niveau TypeScript
+- Implémenter la couche complète WorkoutExercise + Block + Set (3 repos + 1 service + 1 hook + 2 composants + 2 écrans)
+
+### Décisions prises
+- **`PressableA11y`** : `accessibilityLabel` obligatoire à la compilation (TypeScript strict). `minHeight/minWidth: 44` dans les styles de base. Remplace `TouchableOpacity` pour tous les éléments interactifs.
+- **TransactionRunner injectable** : `type TransactionRunner = (fn: () => Promise<void>) => Promise<void>`. En tests : `noopTransaction = async (fn) => fn()`. En prod : `db.withTransactionAsync`. Découple le service de SQLite sans sacrifier l'atomicité.
+- **View models dans le service** : `BlockWithSets` et `WorkoutExerciseDetail` définis dans `WorkoutExerciseService.ts`, pas dans `db/types.ts`. Les types DB restent purs.
+- **`Set as TrainingSet`** : alias d'import pour éviter conflit avec le global JS `Set`.
+- **`remove()` délègue au CASCADE DB** : le service appelle uniquement `weRepo.delete(id)`. `ON DELETE CASCADE` SQLite supprime blocks et sets automatiquement. Les InMemory repos ne cascadent pas (comportement acceptable — non observable via l'API publique).
+- **Accordéon WorkoutExerciseCard** : collapsed par défaut, long press → Alert confirmation avant suppression, `accessibilityState={{ expanded }}` sur le Pressable.
+- **JSON.parse muscle_groups sans try/catch** : conforme à la convention "no error handling for scenarios that can't happen" — muscle_groups est toujours du JSON valide produit par l'app.
+- **parseMuscleGroups avec guard null** : `raw ? JSON.parse(raw) : []` dans add-workout-exercise (muscle_groups peut être vide sur certains exercices).
+- **Nom de séance via WorkoutService.getById** dans un useEffect — pas besoin de prop programId sur l'écran workout/[id].
+
+### Ce qui a été fait
+- `docs/accessibilite.md` — référentiel formel complet (10 sections, WCAG 2.2 AA + EN 301 549 + iOS VoiceOver + Android TalkBack)
+- `app/components/ui/PressableA11y.tsx` — composant accessibilité enforced
+- `app/repositories/` — IWorkoutExerciseRepository, IBlockRepository, ISetRepository (interfaces + InMemory + SQLite + contract tests) — 63 tests via 3 suites contract
+- `app/services/WorkoutExerciseService.ts` + 6 tests GREEN — addToWorkout, getWithDetails, remove
+- `app/hooks/useWorkoutExercises.ts` — pattern identique useWorkouts/usePrograms
+- `app/components/workout/BlockCard.tsx` — formatSet() avec tous les cas weight_type + reps_min===reps_max
+- `app/components/workout/WorkoutExerciseCard.tsx` — accordéon, long press, a11y complète (hint, state, icon caché)
+- `app/app/workout/[id].tsx` — FlatList + FAB (PressableA11y) + useFocusEffect + isFirstFocus
+- `app/app/add-workout-exercise.tsx` — modal recherche/sélection, error feedback via Alert
+- `app/app/_layout.tsx` — +2 Stack.Screen (workout/[id], add-workout-exercise modal)
+- `app/app/programme/[id].tsx` — WorkoutCard.onPress branché sur `/workout/${item.id}`
+- **108 tests GREEN** au total (11 suites)
+- Poussé sur GitHub
+
+### Architecture finale
+```
+Program ──< Workout ──< WorkoutExercise ──< Block ──< Set
+Interface → InMemory (tests) → SQLite (prod)
+Screens → Hooks → Services → Repositories → SQLite
+```
+
+### Leçons Code Craft de la session
+- **TransactionRunner pattern** : injectable → testable sans SQLite, prod garde l'atomicité
+- **CASCADE DB vs InMemory** : trade-off conscient. InMemory simule assez pour les tests de service, SQLite gère l'intégrité référentielle en prod
+- **Decorative icons** : `importantForAccessibility="no"` + `accessibilityElementsHidden={true}` sur les icônes purement visuelles
+- **accessibilityHint** sur les actions non-évidentes (long press destructif)
+- **Subagent-driven development** : spec reviewer + quality reviewer par tâche = 0 régression en production
+
+### Prochaine session (Session 8)
+1. Tester manuellement le flow complet : Programmes → programme → séance → ajouter exercice → accordéon → supprimer
+2. Édition inline blocks/sets (modifier reps, poids directement dans l'accordéon)
+3. Réordonnancement drag-and-drop des exercices dans une séance
