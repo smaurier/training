@@ -5,12 +5,13 @@ import { Ionicons } from '@expo/vector-icons';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import { useWorkoutExercises } from '@/hooks/useWorkoutExercises';
 import { WorkoutExerciseCard } from '@/components/workout/WorkoutExerciseCard';
+import { EditBlockModal } from '@/components/workout/EditBlockModal';
 import { WorkoutService } from '@/services/WorkoutService';
 import { SQLiteWorkoutRepository } from '@/repositories/SQLiteWorkoutRepository';
 import { getDb } from '@/db';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
-import type { WorkoutExerciseDetail } from '@/services/WorkoutExerciseService';
+import type { WorkoutExerciseDetail, BlockWithSets } from '@/services/WorkoutExerciseService';
 
 const FAB_ICON_COLOR = '#fff' as const;
 const SHADOW_COLOR = '#000' as const;
@@ -23,7 +24,8 @@ export default function WorkoutDetailScreen() {
   const colors = Colors[colorScheme ?? 'light'];
 
   const [workoutName, setWorkoutName] = useState('Séance');
-  const { exercises, loading, error, remove, refresh } = useWorkoutExercises(workoutId);
+  const [renamingBlock, setRenamingBlock] = useState<{ block: BlockWithSets; workoutExerciseId: number } | null>(null);
+  const { exercises, loading, error, remove, refresh, updateSet, addSet, removeSet, updateBlock, removeBlock } = useWorkoutExercises(workoutId);
 
   useEffect(() => {
     const service = new WorkoutService(new SQLiteWorkoutRepository(getDb()));
@@ -78,6 +80,11 @@ export default function WorkoutDetailScreen() {
             <WorkoutExerciseCard
               detail={item}
               onRemove={() => confirmRemove(item)}
+              onUpdateSet={updateSet}
+              onAddSet={addSet}
+              onRemoveSet={removeSet}
+              onRenameBlock={(block) => setRenamingBlock({ block, workoutExerciseId: item.id })}
+              onRemoveBlock={removeBlock}
             />
           )}
           contentContainerStyle={styles.list}
@@ -96,6 +103,21 @@ export default function WorkoutDetailScreen() {
           <Ionicons name="add" size={28} color={FAB_ICON_COLOR} />
         </PressableA11y>
       </View>
+      <EditBlockModal
+        visible={renamingBlock !== null}
+        block={renamingBlock ? {
+          id: renamingBlock.block.id,
+          workout_exercise_id: renamingBlock.workoutExerciseId,
+          name: renamingBlock.block.name,
+          order_index: renamingBlock.block.order_index,
+          is_work_block: renamingBlock.block.is_work_block,
+        } : null}
+        workoutExerciseId={renamingBlock?.workoutExerciseId ?? 0}
+        onSave={async (name, isWorkBlock) => {
+          if (renamingBlock) await updateBlock(renamingBlock.block.id, { name, is_work_block: isWorkBlock });
+        }}
+        onClose={() => setRenamingBlock(null)}
+      />
     </>
   );
 }

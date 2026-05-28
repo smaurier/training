@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { View, Text, StyleSheet, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import type { WorkoutExerciseDetail } from '@/services/WorkoutExerciseService';
+import type { WorkoutExerciseDetail, BlockWithSets } from '@/services/WorkoutExerciseService';
+import type { UpdateSetDto } from '@/repositories/ISetRepository';
 import { BlockCard } from './BlockCard';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import Colors from '@/constants/Colors';
@@ -10,9 +11,14 @@ import { useColorScheme } from '@/components/useColorScheme';
 interface WorkoutExerciseCardProps {
   detail: WorkoutExerciseDetail;
   onRemove: () => void;
+  onUpdateSet: (setId: number, dto: UpdateSetDto) => Promise<void>;
+  onAddSet: (blockId: number) => Promise<void>;
+  onRemoveSet: (setId: number) => Promise<void>;
+  onRenameBlock: (block: BlockWithSets) => void;
+  onRemoveBlock: (blockId: number) => Promise<void>;
 }
 
-export function WorkoutExerciseCard({ detail, onRemove }: WorkoutExerciseCardProps) {
+export function WorkoutExerciseCard({ detail, onRemove, onUpdateSet, onAddSet, onRemoveSet, onRenameBlock, onRemoveBlock }: WorkoutExerciseCardProps) {
   const [expanded, setExpanded] = useState(false);
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
@@ -63,7 +69,15 @@ export function WorkoutExerciseCard({ detail, onRemove }: WorkoutExerciseCardPro
             <Text style={[styles.empty, { color: colors.textSecondary }]}>Aucun bloc configuré.</Text>
           ) : (
             detail.blocks.map(block => (
-              <BlockCard key={block.id} block={block} />
+              <BlockCard
+                key={block.id}
+                block={block}
+                onUpdateSet={onUpdateSet}
+                onAddSet={onAddSet}
+                onRemoveSet={onRemoveSet}
+                onRenameBlock={onRenameBlock}
+                onRemoveBlock={onRemoveBlock}
+              />
             ))
           )}
         </View>

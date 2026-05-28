@@ -1,11 +1,20 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { useState } from 'react';
+import { View, Text, StyleSheet, Alert } from 'react-native';
 import type { BlockWithSets } from '@/services/WorkoutExerciseService';
 import type { Set as TrainingSet } from '@/db/types';
+import type { UpdateSetDto } from '@/repositories/ISetRepository';
+import { EditSetModal } from './EditSetModal';
+import { PressableA11y } from '@/components/ui/PressableA11y';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 
 interface BlockCardProps {
   block: BlockWithSets;
+  onUpdateSet: (setId: number, dto: UpdateSetDto) => Promise<void>;
+  onAddSet: (blockId: number) => Promise<void>;
+  onRemoveSet: (setId: number) => Promise<void>;
+  onRenameBlock: (block: BlockWithSets) => void;
+  onRemoveBlock: (blockId: number) => Promise<void>;
 }
 
 function formatSet(set: TrainingSet): string {
@@ -25,21 +34,87 @@ function formatSet(set: TrainingSet): string {
   return `${reps} @ ${weight} — ${rest}`;
 }
 
-export function BlockCard({ block }: BlockCardProps) {
+export function BlockCard({ block, onUpdateSet, onAddSet, onRemoveSet, onRenameBlock, onRemoveBlock }: BlockCardProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
+  const [editingSet, setEditingSet] = useState<TrainingSet | null>(null);
+
+  function handleBlockLongPress() {
+    Alert.alert(block.name, 'Que veux-tu faire ?', [
+      {
+        text: 'Renommer',
+        onPress: () => onRenameBlock(block),
+      },
+      {
+        text: 'Supprimer',
+        style: 'destructive',
+        onPress: () => Alert.alert(
+          'Supprimer le bloc',
+          `Supprimer "${block.name}" et toutes ses séries ?`,
+          [
+            { text: 'Annuler', style: 'cancel' },
+            { text: 'Supprimer', style: 'destructive', onPress: () => onRemoveBlock(block.id) },
+          ]
+        ),
+      },
+      { text: 'Annuler', style: 'cancel' },
+    ]);
+  }
+
+  function handleSetLongPress(set: TrainingSet) {
+    Alert.alert(
+      'Supprimer cette série ?',
+      formatSet(set),
+      [
+        { text: 'Annuler', style: 'cancel' },
+        { text: 'Supprimer', style: 'destructive', onPress: () => onRemoveSet(set.id) },
+      ]
+    );
+  }
 
   return (
     <View style={styles.container}>
-      <Text style={[styles.blockName, { color: colors.textSecondary }]}>{block.name}</Text>
+      <PressableA11y
+        accessibilityLabel={`${block.name}, appuyer longuement pour modifier`}
+        accessibilityHint="Appuyer longuement pour renommer ou supprimer"
+        onPress={() => {}}
+        onLongPress={handleBlockLongPress}
+      >
+        <Text style={[styles.blockName, { color: colors.textSecondary }]}>{block.name}</Text>
+      </PressableA11y>
+
       {block.sets.length === 0 ? (
         <Text style={[styles.set, { color: colors.textSecondary }]}>Aucune série.</Text>
       ) : (
         block.sets.map((set) => (
-          <Text key={set.id} style={[styles.set, { color: colors.text }]}>
-            {formatSet(set)}
-          </Text>
+          <PressableA11y
+            key={set.id}
+            accessibilityLabel={`${formatSet(set)}, appuyer pour modifier`}
+            accessibilityHint="Appuyer longuement pour supprimer"
+            onPress={() => setEditingSet(set)}
+            onLongPress={() => handleSetLongPress(set)}
+          >
+            <Text style={[styles.set, { color: colors.text }]}>
+              {formatSet(set)}
+            </Text>
+          </PressableA11y>
         ))
+      )}
+
+      <PressableA11y
+        accessibilityLabel="Ajouter une série"
+        onPress={() => onAddSet(block.id)}
+        style={styles.addBtn}
+      >
+        <Text style={[styles.addBtnText, { color: colors.primary }]}>+ Ajouter une série</Text>
+      </PressableA11y>
+
+      {editingSet && (
+        <EditSetModal
+          set={editingSet}
+          onSave={async (dto) => { await onUpdateSet(editingSet.id, dto); }}
+          onClose={() => setEditingSet(null)}
+        />
       )}
     </View>
   );
@@ -54,5 +129,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
     marginBottom: 2,
   },
-  set: { fontSize: 14, lineHeight: 20 },
+  set: { fontSize: 14, lineHeight: 20, paddingVertical: 2 },
+  addBtn: { marginTop: 4 },
+  addBtnText: { fontSize: 13, fontWeight: '500' },
 });
