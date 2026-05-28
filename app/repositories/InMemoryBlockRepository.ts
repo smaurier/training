@@ -1,5 +1,5 @@
 import type { Block } from '../db/types';
-import { IBlockRepository, CreateBlockDto } from './IBlockRepository';
+import { IBlockRepository, CreateBlockDto, UpdateBlockDto } from './IBlockRepository';
 
 export class InMemoryBlockRepository implements IBlockRepository {
   private items: Block[] = [];
@@ -17,6 +17,13 @@ export class InMemoryBlockRepository implements IBlockRepository {
     const item: Block = { ...dto, id: this.nextId++ };
     this.items.push(item);
     return item;
+  }
+
+  async update(id: number, dto: UpdateBlockDto): Promise<Block> {
+    const idx = this.items.findIndex(i => i.id === id);
+    if (idx === -1) throw new Error(`Block ${id} introuvable`);
+    this.items[idx] = { ...this.items[idx], ...dto };
+    return this.items[idx];
   }
 
   async delete(id: number): Promise<void> {

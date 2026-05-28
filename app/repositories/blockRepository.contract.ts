@@ -1,4 +1,4 @@
-import { IBlockRepository, CreateBlockDto } from './IBlockRepository';
+import { IBlockRepository, CreateBlockDto, UpdateBlockDto } from './IBlockRepository';
 
 const bloc1: CreateBlockDto = { workout_exercise_id: 1, name: 'Travail', order_index: 0, is_work_block: 1 };
 
@@ -58,6 +58,30 @@ export function runBlockRepositoryContractTests(createRepo: () => IBlockReposito
       const remaining = await repo.findByWorkoutExerciseId(1);
       expect(remaining).toHaveLength(1);
       expect(remaining[0].id).toBe(b.id);
+    });
+  });
+
+  describe('update', () => {
+    it('renomme le bloc et retourne le bloc mis à jour', async () => {
+      const saved = await repo.save(bloc1);
+      const dto: UpdateBlockDto = { name: 'Échauffement' };
+      const updated = await repo.update(saved.id, dto);
+      expect(updated.name).toBe('Échauffement');
+      expect(updated.id).toBe(saved.id);
+      expect(updated.workout_exercise_id).toBe(bloc1.workout_exercise_id);
+      expect(updated.is_work_block).toBe(bloc1.is_work_block);
+    });
+
+    it('toggle is_work_block sans toucher au nom', async () => {
+      const saved = await repo.save(bloc1);
+      const dto: UpdateBlockDto = { is_work_block: 0 };
+      const updated = await repo.update(saved.id, dto);
+      expect(updated.is_work_block).toBe(0);
+      expect(updated.name).toBe('Travail');
+    });
+
+    it('throw si id inconnu', async () => {
+      await expect(repo.update(999, { name: 'X' })).rejects.toThrow('999');
     });
   });
 }
