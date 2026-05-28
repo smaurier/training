@@ -1,8 +1,8 @@
 import type { WorkoutExercise, Exercise, Block } from '../db/types';
 import type { Set as TrainingSet } from '../db/types';
 import { IWorkoutExerciseRepository } from '../repositories/IWorkoutExerciseRepository';
-import { IBlockRepository } from '../repositories/IBlockRepository';
-import { ISetRepository } from '../repositories/ISetRepository';
+import { IBlockRepository, UpdateBlockDto } from '../repositories/IBlockRepository';
+import { ISetRepository, UpdateSetDto } from '../repositories/ISetRepository';
 import { IExerciseRepository } from '../repositories/IExerciseRepository';
 
 export type TransactionRunner = (fn: () => Promise<void>) => Promise<void>;
@@ -74,6 +74,56 @@ export class WorkoutExerciseService {
 
   async remove(id: number): Promise<void> {
     await this.weRepo.delete(id);
+  }
+
+  async updateSet(setId: number, dto: UpdateSetDto): Promise<void> {
+    await this.setRepo.update(setId, dto);
+  }
+
+  async addSet(blockId: number): Promise<void> {
+    const existing = await this.setRepo.findByBlockId(blockId);
+    await this.setRepo.save({
+      block_id: blockId,
+      reps_min: 3,
+      reps_max: 8,
+      weight: null,
+      weight_type: 'fixed',
+      rest_duration: 120,
+      order_index: existing.length,
+    });
+  }
+
+  async removeSet(setId: number): Promise<void> {
+    await this.setRepo.delete(setId);
+  }
+
+  async addBlock(workoutExerciseId: number, name: string, isWorkBlock: 0 | 1): Promise<void> {
+    const existing = await this.blockRepo.findByWorkoutExerciseId(workoutExerciseId);
+    await this.runInTransaction(async () => {
+      const block = await this.blockRepo.save({
+        workout_exercise_id: workoutExerciseId,
+        name,
+        order_index: existing.length,
+        is_work_block: isWorkBlock,
+      });
+      await this.setRepo.save({
+        block_id: block.id,
+        reps_min: 3,
+        reps_max: 8,
+        weight: null,
+        weight_type: 'fixed',
+        rest_duration: 120,
+        order_index: 0,
+      });
+    });
+  }
+
+  async updateBlock(blockId: number, dto: UpdateBlockDto): Promise<void> {
+    await this.blockRepo.update(blockId, dto);
+  }
+
+  async removeBlock(blockId: number): Promise<void> {
+    await this.blockRepo.delete(blockId);
   }
 
   private async loadDetail(we: WorkoutExercise, exercise: Exercise): Promise<WorkoutExerciseDetail> {

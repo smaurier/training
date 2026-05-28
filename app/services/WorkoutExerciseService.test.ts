@@ -3,6 +3,8 @@ import { InMemoryWorkoutExerciseRepository } from '../repositories/InMemoryWorko
 import { InMemoryBlockRepository } from '../repositories/InMemoryBlockRepository';
 import { InMemorySetRepository } from '../repositories/InMemorySetRepository';
 import { InMemoryExerciseRepository } from '../repositories/InMemoryExerciseRepository';
+import { UpdateSetDto } from '../repositories/ISetRepository';
+import { UpdateBlockDto } from '../repositories/IBlockRepository';
 
 const noopTransaction = async (fn: () => Promise<void>) => fn();
 
@@ -83,6 +85,88 @@ describe('WorkoutExerciseService', () => {
       const detail = await service.addToWorkout(1, exercise.id);
       await service.remove(detail.id);
       expect(await service.getWithDetails(1)).toHaveLength(0);
+    });
+  });
+
+  describe('updateSet', () => {
+    it('modifie les champs de la série, visible via getWithDetails', async () => {
+      const { service, exerciseRepo } = makeService();
+      const exercise = await seedExercise(exerciseRepo);
+      const detail = await service.addToWorkout(1, exercise.id);
+      const setId = detail.blocks[0].sets[0].id;
+      const dto: UpdateSetDto = { reps_min: 5, reps_max: 5, weight: 100, weight_type: 'fixed', rest_duration: 180 };
+      await service.updateSet(setId, dto);
+      const updated = await service.getWithDetails(1);
+      expect(updated[0].blocks[0].sets[0].reps_min).toBe(5);
+      expect(updated[0].blocks[0].sets[0].weight).toBe(100);
+    });
+  });
+
+  describe('addSet', () => {
+    it('ajoute une série avec les defaults, order_index = longueur existante', async () => {
+      const { service, exerciseRepo } = makeService();
+      const exercise = await seedExercise(exerciseRepo);
+      const detail = await service.addToWorkout(1, exercise.id);
+      const blockId = detail.blocks[0].id;
+      await service.addSet(blockId);
+      const updated = await service.getWithDetails(1);
+      expect(updated[0].blocks[0].sets).toHaveLength(2);
+      expect(updated[0].blocks[0].sets[1].order_index).toBe(1);
+      expect(updated[0].blocks[0].sets[1].reps_min).toBe(3);
+      expect(updated[0].blocks[0].sets[1].weight).toBeNull();
+    });
+  });
+
+  describe('removeSet', () => {
+    it('supprime la série, absente de getWithDetails après suppression', async () => {
+      const { service, exerciseRepo } = makeService();
+      const exercise = await seedExercise(exerciseRepo);
+      const detail = await service.addToWorkout(1, exercise.id);
+      const setId = detail.blocks[0].sets[0].id;
+      await service.removeSet(setId);
+      const updated = await service.getWithDetails(1);
+      expect(updated[0].blocks[0].sets).toHaveLength(0);
+    });
+  });
+
+  describe('addBlock', () => {
+    it('crée un bloc + 1 série par défaut, order_index correct', async () => {
+      const { service, exerciseRepo } = makeService();
+      const exercise = await seedExercise(exerciseRepo);
+      const detail = await service.addToWorkout(1, exercise.id);
+      await service.addBlock(detail.id, 'Back-off', 0);
+      const updated = await service.getWithDetails(1);
+      expect(updated[0].blocks).toHaveLength(2);
+      expect(updated[0].blocks[1].name).toBe('Back-off');
+      expect(updated[0].blocks[1].is_work_block).toBe(0);
+      expect(updated[0].blocks[1].order_index).toBe(1);
+      expect(updated[0].blocks[1].sets).toHaveLength(1);
+      expect(updated[0].blocks[1].sets[0].reps_min).toBe(3);
+    });
+  });
+
+  describe('updateBlock', () => {
+    it('renomme le bloc, visible via getWithDetails', async () => {
+      const { service, exerciseRepo } = makeService();
+      const exercise = await seedExercise(exerciseRepo);
+      const detail = await service.addToWorkout(1, exercise.id);
+      const blockId = detail.blocks[0].id;
+      const dto: UpdateBlockDto = { name: 'Échauffement' };
+      await service.updateBlock(blockId, dto);
+      const updated = await service.getWithDetails(1);
+      expect(updated[0].blocks[0].name).toBe('Échauffement');
+    });
+  });
+
+  describe('removeBlock', () => {
+    it('supprime le bloc, absent de getWithDetails après suppression', async () => {
+      const { service, exerciseRepo } = makeService();
+      const exercise = await seedExercise(exerciseRepo);
+      const detail = await service.addToWorkout(1, exercise.id);
+      const blockId = detail.blocks[0].id;
+      await service.removeBlock(blockId);
+      const updated = await service.getWithDetails(1);
+      expect(updated[0].blocks).toHaveLength(0);
     });
   });
 });
