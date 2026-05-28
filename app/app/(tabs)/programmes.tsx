@@ -1,39 +1,135 @@
-import { StyleSheet, View, Text } from 'react-native';
+import { FlatList, View, Text, TouchableOpacity, ActivityIndicator, StyleSheet, Alert } from 'react-native';
+import { useRouter } from 'expo-router';
+import { useFocusEffect } from 'expo-router';
+import { useCallback, useRef } from 'react';
 import { Ionicons } from '@expo/vector-icons';
-import { useColorScheme } from '@/components/useColorScheme';
+import { usePrograms } from '@/hooks/usePrograms';
+import { ProgramCard } from '@/components/programmes/ProgramCard';
 import Colors from '@/constants/Colors';
+import { useColorScheme } from '@/components/useColorScheme';
+import { Program } from '@/db/types';
+
+const FAB_ICON_COLOR = '#fff' as const;
+const SHADOW_COLOR = '#000' as const;
 
 export default function ProgrammesScreen() {
+  const { programs, loading, error, remove, refresh } = usePrograms();
+  const router = useRouter();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
 
+  const isFirstFocus = useRef(true);
+  useFocusEffect(
+    useCallback(() => {
+      if (isFirstFocus.current) {
+        isFirstFocus.current = false;
+        return;
+      }
+      refresh();
+    }, [refresh])
+  );
+
+  function handleLongPress(program: Program) {
+    Alert.alert(
+      program.name,
+      'Que veux-tu faire ?',
+      [
+        {
+          text: 'Modifier',
+          onPress: () => router.push({ pathname: '/add-programme', params: { id: String(program.id) } }),
+        },
+        {
+          text: 'Supprimer',
+          style: 'destructive',
+          onPress: () => confirmDelete(program),
+        },
+        { text: 'Annuler', style: 'cancel' },
+      ]
+    );
+  }
+
+  function confirmDelete(program: Program) {
+    Alert.alert(
+      'Supprimer le programme',
+      `Supprimer "${program.name}" et toutes ses séances ? Cette action est irréversible.`,
+      [
+        { text: 'Annuler', style: 'cancel' },
+        {
+          text: 'Supprimer',
+          style: 'destructive',
+          onPress: () => remove(program.id),
+        },
+      ]
+    );
+  }
+
+  if (loading) {
+    return (
+      <View style={[styles.center, { backgroundColor: colors.background }]}>
+        <ActivityIndicator color={colors.primary} />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={[styles.center, { backgroundColor: colors.background }]}>
+        <Text style={[styles.errorText, { color: colors.text }]}>{error}</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <Ionicons name="list-outline" size={64} color={colors.primary} />
-      <Text style={[styles.title, { color: colors.text }]}>Programmes</Text>
-      <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
-        Crée et gère tes programmes d'entraînement. Définis tes exercices, blocs et séries.
-      </Text>
+      <FlatList
+        data={programs}
+        keyExtractor={(item) => String(item.id)}
+        renderItem={({ item }) => (
+          <ProgramCard
+            program={item}
+            workoutCount={0}
+            onPress={() => router.push({ pathname: '/programme/[id]', params: { id: String(item.id) } })}
+            onLongPress={() => handleLongPress(item)}
+          />
+        )}
+        contentContainerStyle={styles.list}
+        ListEmptyComponent={
+          <Text style={[styles.empty, { color: colors.textSecondary }]}>
+            Aucun programme. Appuie sur + pour en créer un.
+          </Text>
+        }
+      />
+      <TouchableOpacity
+        style={[styles.fab, { backgroundColor: colors.primary }]}
+        onPress={() => router.push('/add-programme')}
+        accessibilityLabel="Créer un programme"
+        accessibilityRole="button"
+      >
+        <Ionicons name="add" size={28} color={FAB_ICON_COLOR} />
+      </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  container: { flex: 1 },
+  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  list: { padding: 16, paddingBottom: 100 },
+  empty: { textAlign: 'center', marginTop: 48, fontSize: 15 },
+  errorText: { fontSize: 15, textAlign: 'center', paddingHorizontal: 24 },
+  fab: {
+    position: 'absolute',
+    bottom: 24,
+    right: 24,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 32,
-    gap: 16,
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: '700',
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: 15,
-    textAlign: 'center',
-    lineHeight: 22,
+    elevation: 4,
+    shadowColor: SHADOW_COLOR,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
   },
 });
