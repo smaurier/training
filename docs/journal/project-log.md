@@ -294,3 +294,56 @@ Screens → Hooks → Services → Repositories → SQLite
 1. Tester manuellement le flow complet : Programmes → programme → séance → ajouter exercice → accordéon → supprimer
 2. Édition inline blocks/sets (modifier reps, poids directement dans l'accordéon)
 3. Réordonnancement drag-and-drop des exercices dans une séance
+
+---
+
+## Session 8A — 2026-05-28 · Édition inline sets + blocs
+
+### Ce qui a été demandé
+Ajouter l'édition complète sets et blocs depuis l'accordéon `workout/[id].tsx` : modifier/ajouter/supprimer des séries et des blocs directement (tap série → modale édition, long press → suppression, bouton + → ajout direct, long press bloc → renommer/supprimer, bouton "Ajouter un bloc").
+
+### Décisions prises
+- **UpdateSetDto non-Partial** : la modal fournit toujours les 5 champs (reps_min, reps_max, weight, weight_type, rest_duration). Pas de merge côté SQLite pour les sets — UPDATE direct.
+- **UpdateBlockDto Partial** : rename seul ou toggle seul possibles. SQLite fait read-modify-write (findById → merge → UPDATE).
+- **EditSetModal** : rendu conditionnel `{editingSet && <EditSetModal .../>}` — pas de prop `visible`. Le parent monte/démonte.
+- **EditBlockModal** : prop `visible` — toujours monté dans WorkoutExerciseCard, visible selon état.
+- **addBlock dans transaction** : `findByWorkoutExerciseId` déplacé DANS `runInTransaction` pour éviter TOCTOU sur `order_index` (bug détecté en quality review).
+- **Rename flow dans WorkoutExerciseCard** : `onRenameBlock(block)` reçu de BlockCard → `setEditingBlock(block)` local → `EditBlockModal` en mode renommage. BlockWithSets manque `workout_exercise_id` → construit un `Block` en injectant `detail.id`.
+- **Bouton "+" ajoute directement** : pas de modal pour créer une série, crée avec defaults (reps 3–8, pas de poids, 120s repos).
+- **Assertions de test complètes** : quality review a détecté assertions manquantes (weight_type, null weight, defaults complets) → ajoutées.
+
+### Ce qui a été fait
+- `ISetRepository.ts` + `UpdateSetDto` + `update()` — contract + InMemory + SQLite
+- `IBlockRepository.ts` + `UpdateBlockDto` + `update()` — contract + InMemory + SQLite (read-modify-write)
+- `WorkoutExerciseService.ts` — 6 méthodes : updateSet, addSet, removeSet, addBlock, updateBlock, removeBlock
+- `WorkoutExerciseService.test.ts` — 6 nouveaux describe, 12 tests supplémentaires
+- `hooks/useWorkoutExercises.ts` — interface + 6 useCallback (pattern service + refresh + error + rethrow)
+- `components/workout/EditSetModal.tsx` — nouveau, modale bottom-sheet (segmented weight_type, champ désactivé si PC/Barre)
+- `components/workout/EditBlockModal.tsx` — nouveau, modale dual-mode (création/renommage), Switch is_work_block, canSave guard
+- `components/workout/BlockCard.tsx` — refactoré avec PressableA11y partout, EditSetModal inline, bouton +
+- `components/workout/WorkoutExerciseCard.tsx` — 6 nouvelles props, showAddBlock/editingBlock state, EditBlockModal, bouton "Ajouter un bloc"
+- `app/workout/[id].tsx` — 6 méthodes passées à WorkoutExerciseCard
+- **120 tests GREEN** au total (11 suites)
+- Poussé sur GitHub
+
+### Architecture finale
+```
+ISetRepository.update() / IBlockRepository.update()
+WorkoutExerciseService : 9 méthodes (add, get, remove + 6 CRUD)
+useWorkoutExercises : 9 callbacks
+BlockCard → EditSetModal
+WorkoutExerciseCard → EditBlockModal
+workout/[id].tsx → WorkoutExerciseCard (câblage complet)
+```
+
+### Leçons Code Craft de la session
+- **TOCTOU sur order_index** : `findByWorkoutExerciseId` hors de `runInTransaction` = race condition. Toujours calculer order_index à l'intérieur de la transaction.
+- **Assertions complètes** : un test qui vérifie seulement `reps_min` peut masquer un bug sur `weight_type`. Couvrir tous les champs du DTO dans au moins un test.
+- **Partial vs non-Partial DTOs** : UpdateSetDto non-Partial → UPDATE direct ; UpdateBlockDto Partial → read-modify-write. Le choix est dicté par les cas d'usage réels (modal vs actions indépendantes).
+- **Capture ID avant await** : `const setId = editingSet.id; await onUpdateSet(setId, dto)` — défensif contre les stale references dans les closures async.
+- **BlockWithSets ≠ Block** : BlockWithSets n'a pas `workout_exercise_id`. Construire un `Block` explicitement quand le type complet est nécessaire.
+
+### Prochaine session (Session 8B)
+1. Tester manuellement le flow complet d'édition (séries + blocs)
+2. Réordonnancement drag-and-drop des exercices dans une séance (Session 8B)
+3. Réordonnancement des blocs dans un exercice et des séries dans un bloc
