@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, FlatList, TextInput, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, FlatList, TextInput, ActivityIndicator, StyleSheet, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { useWorkoutExercises } from '@/hooks/useWorkoutExercises';
 import { useExercises } from '@/hooks/useExercises';
@@ -25,8 +25,12 @@ export default function AddWorkoutExerciseScreen() {
   });
 
   async function handleSelect(exercise: Exercise) {
-    await add(exercise.id);
-    router.back();
+    try {
+      await add(exercise.id);
+      router.back();
+    } catch {
+      Alert.alert("Erreur", "Impossible d'ajouter l'exercice. Réessaie.");
+    }
   }
 
   function parseMuscleGroups(raw: string): string {

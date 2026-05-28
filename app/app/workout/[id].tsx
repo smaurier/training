@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, StyleSheet, Alert } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, StyleSheet, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { PressableA11y } from '@/components/ui/PressableA11y';
 import { useWorkoutExercises } from '@/hooks/useWorkoutExercises';
 import { WorkoutExerciseCard } from '@/components/workout/WorkoutExerciseCard';
 import { WorkoutService } from '@/services/WorkoutService';
@@ -86,15 +87,14 @@ export default function WorkoutDetailScreen() {
             </Text>
           }
         />
-        <TouchableOpacity
+        <PressableA11y
+          accessibilityLabel="Ajouter un exercice"
           style={[styles.fab, { backgroundColor: colors.primary }]}
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           onPress={() => router.push({ pathname: '/add-workout-exercise' as any, params: { workoutId: String(workoutId) } })}
-          accessibilityLabel="Ajouter un exercice"
-          accessibilityRole="button"
         >
           <Ionicons name="add" size={28} color={FAB_ICON_COLOR} />
-        </TouchableOpacity>
+        </PressableA11y>
       </View>
     </>
   );
