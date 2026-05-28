@@ -1,15 +1,11 @@
 import { View, Text, StyleSheet } from 'react-native';
 import type { BlockWithSets } from '@/services/WorkoutExerciseService';
 import type { Set as TrainingSet } from '@/db/types';
-
-interface ColorsSubset {
-  text: string;
-  textSecondary: string;
-}
+import Colors from '@/constants/Colors';
+import { useColorScheme } from '@/components/useColorScheme';
 
 interface BlockCardProps {
   block: BlockWithSets;
-  colors: ColorsSubset;
 }
 
 function formatSet(set: TrainingSet): string {
@@ -29,7 +25,10 @@ function formatSet(set: TrainingSet): string {
   return `${reps} @ ${weight} — ${rest}`;
 }
 
-export function BlockCard({ block, colors }: BlockCardProps) {
+export function BlockCard({ block }: BlockCardProps) {
+  const colorScheme = useColorScheme();
+  const colors = Colors[colorScheme ?? 'light'];
+
   return (
     <View style={styles.container}>
       <Text style={[styles.blockName, { color: colors.textSecondary }]}>{block.name}</Text>

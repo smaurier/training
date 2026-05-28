@@ -1,7 +1,7 @@
 # Session 7 — WorkoutExercise + Block + Set
 
 **Date** : 2026-05-28  
-**Scope** : B+ — 3 repos + 3 services + écran workout/[id] + modal add-workout-exercise
+**Scope** : B+ — 3 repos + 1 service orchestrateur + écran workout/[id] + modal add-workout-exercise
 
 ---
 
@@ -220,10 +220,11 @@ Pattern identique à `useWorkouts` / `usePrograms`.
 
 - Props : `block: BlockWithSets`
 - Header : nom du block (ex: "Travail")
-- Sets : liste de lignes format `"N × min–max @ Xkg — Xs"`
+- Sets : 1 ligne par set, format `"min–max reps @ Xkg — Xs"`
   - Si `weight_type === 'bodyweight'` → "PC" à la place du poids
-  - Si `weight_type === 'bar'` → "barre"
-  - Si `reps_min === reps_max` → "N × X" (pas de fourchette)
+  - Si `weight_type === 'bar'` → "barre" à la place du poids
+  - Si `weight === null` → "— kg" (non configuré)
+  - Si `reps_min === reps_max` → "X reps" (pas de fourchette)
 
 ---
 
@@ -232,18 +233,14 @@ Pattern identique à `useWorkouts` / `usePrograms`.
 ### `workout/[id].tsx`
 
 - Params : `id` (workout id)
-- Charge workout name via `useWorkouts(programId)` — ou un `getById` direct
+- Charge workout name via `WorkoutService.getById(workoutId)` directement (pas de hook, pas de param supplémentaire)
 - Charge exercises via `useWorkoutExercises(workoutId)`
 - FlatList de `WorkoutExerciseCard`
 - FAB → `router.push('/add-workout-exercise?workoutId=' + workoutId)`
 - `useFocusEffect` + `isFirstFocus` pattern (identique à `programme/[id].tsx`)
 - Empty state : "Aucun exercice. Appuie sur + pour en ajouter un."
 
-**Problème** : pour charger le workout name, il faut le `programId`. Solutions :
-- Passer `programId` en param de route (recommandé — simple)
-- Faire un `findById` global dans un repo Workout sans programId
-
-→ Route : `/workout/[id]?programId=X`
+Route : `/workout/[id]` — pas de query param nécessaire.
 
 ### `add-workout-exercise.tsx`
 

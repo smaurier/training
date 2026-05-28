@@ -63,7 +63,7 @@ export function WorkoutExerciseCard({ detail, onRemove }: WorkoutExerciseCardPro
             <Text style={[styles.empty, { color: colors.textSecondary }]}>Aucun bloc configuré.</Text>
           ) : (
             detail.blocks.map(block => (
-              <BlockCard key={block.id} block={block} colors={colors} />
+              <BlockCard key={block.id} block={block} />
             ))
           )}
         </View>
