@@ -24,18 +24,16 @@ export function WorkoutExerciseCard({ detail, onRemove }: WorkoutExerciseCardPro
     ]);
   }
 
-  let muscleGroups = '';
-  try {
-    const parsed = JSON.parse(detail.exercise.muscle_groups);
-    muscleGroups = Array.isArray(parsed) ? parsed.join(', ') : '';
-  } catch {
-    muscleGroups = '';
-  }
+  const parsedMuscles = detail.exercise.muscle_groups
+    ? JSON.parse(detail.exercise.muscle_groups)
+    : [];
+  const muscleGroups = Array.isArray(parsedMuscles) ? parsedMuscles.join(', ') : '';
 
   return (
     <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
       <PressableA11y
         accessibilityLabel={`${detail.exercise.name}, ${expanded ? 'réduire' : 'développer'}`}
+        accessibilityHint="Appuyer longuement pour supprimer"
         accessibilityState={{ expanded }}
         onPress={() => setExpanded(e => !e)}
         onLongPress={handleLongPress}
@@ -55,6 +53,8 @@ export function WorkoutExerciseCard({ detail, onRemove }: WorkoutExerciseCardPro
           name={expanded ? 'chevron-up' : 'chevron-down'}
           size={18}
           color={colors.textSecondary}
+          importantForAccessibility="no"
+          accessibilityElementsHidden={true}
         />
       </PressableA11y>
       {expanded && (
