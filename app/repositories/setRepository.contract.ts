@@ -85,6 +85,7 @@ export function runSetRepositoryContractTests(createRepo: () => ISetRepository) 
       expect(updated.reps_max).toBe(6);
       expect(updated.weight).toBe(80);
       expect(updated.rest_duration).toBe(90);
+      expect(updated.weight_type).toBe('fixed');
       expect(updated.id).toBe(saved.id);
     });
 
@@ -100,6 +101,8 @@ export function runSetRepositoryContractTests(createRepo: () => ISetRepository) 
       const updated = await repo.update(saved.id, dto);
       expect(updated.block_id).toBe(serie1.block_id);
       expect(updated.order_index).toBe(serie1.order_index);
+      expect(updated.weight).toBeNull();
+      expect(updated.weight_type).toBe('bodyweight');
     });
 
     it('throw si id inconnu', async () => {
