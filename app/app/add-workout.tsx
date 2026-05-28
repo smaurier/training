@@ -8,6 +8,8 @@ import { useWorkouts } from '@/hooks/useWorkouts';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 
+const SUBMIT_TEXT_COLOR = '#fff' as const;
+
 export default function AddWorkoutModal() {
   const router = useRouter();
   const params = useLocalSearchParams<{ programId: string; id?: string }>();
@@ -73,7 +75,7 @@ export default function AddWorkoutModal() {
         accessibilityRole="button"
       >
         {submitting
-          ? <ActivityIndicator color="#fff" />
+          ? <ActivityIndicator color={SUBMIT_TEXT_COLOR} />
           : <Text style={styles.submitText}>{isEditing ? 'Enregistrer' : 'Créer la séance'}</Text>
         }
       </TouchableOpacity>
@@ -99,5 +101,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 24,
   },
-  submitText: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  submitText: { color: SUBMIT_TEXT_COLOR, fontSize: 16, fontWeight: '600' },
 });

@@ -8,6 +8,8 @@ import { usePrograms } from '@/hooks/usePrograms';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 
+const SUBMIT_TEXT_COLOR = '#fff' as const;
+
 export default function AddProgrammeModal() {
   const router = useRouter();
   const params = useLocalSearchParams<{ id?: string }>();
@@ -88,7 +90,7 @@ export default function AddProgrammeModal() {
         accessibilityRole="button"
       >
         {submitting
-          ? <ActivityIndicator color="#fff" />
+          ? <ActivityIndicator color={SUBMIT_TEXT_COLOR} />
           : <Text style={styles.submitText}>{isEditing ? 'Enregistrer' : 'Créer le programme'}</Text>
         }
       </TouchableOpacity>
@@ -119,5 +121,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 24,
   },
-  submitText: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  submitText: { color: SUBMIT_TEXT_COLOR, fontSize: 16, fontWeight: '600' },
 });

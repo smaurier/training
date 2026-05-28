@@ -3,6 +3,8 @@ import { Program } from '@/db/types';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 
+const ACTIVE_BADGE_TEXT_COLOR = '#fff' as const;
+
 interface ProgramCardProps {
   program: Program;
   workoutCount: number;
@@ -82,7 +84,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   activeBadgeText: {
-    color: '#fff',
+    color: ACTIVE_BADGE_TEXT_COLOR,
     fontSize: 11,
     fontWeight: '600',
   },
