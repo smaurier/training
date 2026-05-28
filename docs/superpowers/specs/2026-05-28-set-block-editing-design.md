@@ -47,10 +47,10 @@ app/components/workout/EditBlockModal.tsx
 ### UpdateSetDto / UpdateBlockDto
 
 ```typescript
-// ISetRepository.ts
-export type UpdateSetDto = Partial<Pick<Set, 'reps_min' | 'reps_max' | 'weight' | 'weight_type' | 'rest_duration'>>;
+// ISetRepository.ts — non-Partial : la modal fournit toujours les 5 champs
+export type UpdateSetDto = Pick<Set, 'reps_min' | 'reps_max' | 'weight' | 'weight_type' | 'rest_duration'>;
 
-// IBlockRepository.ts
+// IBlockRepository.ts — Partial : rename seul ou toggle seul possible
 export type UpdateBlockDto = Partial<Pick<Block, 'name' | 'is_work_block'>>;
 ```
 
@@ -69,7 +69,7 @@ update(id: number, dto: UpdateBlockDto): Promise<Block>; // throw si id inconnu
 ```sql
 UPDATE sets SET reps_min=?, reps_max=?, weight=?, weight_type=?, rest_duration=? WHERE id=?
 ```
-Seules les colonnes fournies dans `dto` sont modifiées. Re-fetch après UPDATE via `findById`.
+Les 5 colonnes sont toujours fournies (UpdateSetDto non-Partial). Re-fetch après UPDATE via `findById`.
 
 ### SQLite — update blocks
 
@@ -200,8 +200,7 @@ Chaque méthode : appel service → `refresh()` → erreur surfacée dans `error
 
 ```typescript
 interface EditSetModalProps {
-  visible: boolean;
-  set: TrainingSet;          // toujours non-null : édition uniquement
+  set: TrainingSet;          // rendu conditionnel : {editingSet && <EditSetModal set={editingSet} .../>}
   onSave: (dto: UpdateSetDto) => Promise<void>;
   onClose: () => void;
 }
@@ -250,7 +249,7 @@ interface BlockCardProps {
   onUpdateSet: (setId: number, dto: UpdateSetDto) => Promise<void>;
   onAddSet: (blockId: number) => Promise<void>;
   onRemoveSet: (setId: number) => Promise<void>;
-  onRenameBlock: (block: Block) => void;   // signal vers WorkoutExerciseCard pour ouvrir EditBlockModal
+  onRenameBlock: (block: BlockWithSets) => void;   // signal vers WorkoutExerciseCard pour ouvrir EditBlockModal
   onRemoveBlock: (blockId: number) => Promise<void>;
 }
 ```
