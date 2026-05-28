@@ -2,8 +2,11 @@ import { useState } from 'react';
 import { View, Text, StyleSheet, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import type { WorkoutExerciseDetail, BlockWithSets } from '@/services/WorkoutExerciseService';
+import type { Block } from '@/db/types';
 import type { UpdateSetDto } from '@/repositories/ISetRepository';
+import type { UpdateBlockDto } from '@/repositories/IBlockRepository';
 import { BlockCard } from './BlockCard';
+import { EditBlockModal } from './EditBlockModal';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
@@ -14,12 +17,24 @@ interface WorkoutExerciseCardProps {
   onUpdateSet: (setId: number, dto: UpdateSetDto) => Promise<void>;
   onAddSet: (blockId: number) => Promise<void>;
   onRemoveSet: (setId: number) => Promise<void>;
-  onRenameBlock: (block: BlockWithSets) => void;
+  onAddBlock: (workoutExerciseId: number, name: string, isWorkBlock: 0 | 1) => Promise<void>;
+  onUpdateBlock: (blockId: number, dto: UpdateBlockDto) => Promise<void>;
   onRemoveBlock: (blockId: number) => Promise<void>;
 }
 
-export function WorkoutExerciseCard({ detail, onRemove, onUpdateSet, onAddSet, onRemoveSet, onRenameBlock, onRemoveBlock }: WorkoutExerciseCardProps) {
+export function WorkoutExerciseCard({
+  detail,
+  onRemove,
+  onUpdateSet,
+  onAddSet,
+  onRemoveSet,
+  onAddBlock,
+  onUpdateBlock,
+  onRemoveBlock,
+}: WorkoutExerciseCardProps) {
   const [expanded, setExpanded] = useState(false);
+  const [showAddBlock, setShowAddBlock] = useState(false);
+  const [editingBlock, setEditingBlock] = useState<Block | null>(null);
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
 
@@ -28,6 +43,31 @@ export function WorkoutExerciseCard({ detail, onRemove, onUpdateSet, onAddSet, o
       { text: 'Supprimer', style: 'destructive', onPress: onRemove },
       { text: 'Annuler', style: 'cancel' },
     ]);
+  }
+
+  function handleRenameBlock(block: BlockWithSets) {
+    setEditingBlock({
+      id: block.id,
+      workout_exercise_id: detail.id,
+      name: block.name,
+      order_index: block.order_index,
+      is_work_block: block.is_work_block,
+    });
+  }
+
+  function handleBlockModalClose() {
+    setShowAddBlock(false);
+    setEditingBlock(null);
+  }
+
+  async function handleBlockSave(name: string, isWorkBlock: 0 | 1) {
+    if (editingBlock) {
+      await onUpdateBlock(editingBlock.id, { name, is_work_block: isWorkBlock });
+    } else {
+      await onAddBlock(detail.id, name, isWorkBlock);
+    }
+    setShowAddBlock(false);
+    setEditingBlock(null);
   }
 
   const parsedMuscles = detail.exercise.muscle_groups
@@ -63,6 +103,7 @@ export function WorkoutExerciseCard({ detail, onRemove, onUpdateSet, onAddSet, o
           accessibilityElementsHidden={true}
         />
       </PressableA11y>
+
       {expanded && (
         <View style={styles.blocks}>
           {detail.blocks.length === 0 ? (
@@ -75,13 +116,29 @@ export function WorkoutExerciseCard({ detail, onRemove, onUpdateSet, onAddSet, o
                 onUpdateSet={onUpdateSet}
                 onAddSet={onAddSet}
                 onRemoveSet={onRemoveSet}
-                onRenameBlock={onRenameBlock}
+                onRenameBlock={handleRenameBlock}
                 onRemoveBlock={onRemoveBlock}
               />
             ))
           )}
+
+          <PressableA11y
+            accessibilityLabel="Ajouter un bloc"
+            onPress={() => setShowAddBlock(true)}
+            style={styles.addBlockBtn}
+          >
+            <Text style={[styles.addBlockText, { color: colors.primary }]}>+ Ajouter un bloc</Text>
+          </PressableA11y>
         </View>
       )}
+
+      <EditBlockModal
+        visible={showAddBlock || editingBlock !== null}
+        block={editingBlock}
+        workoutExerciseId={detail.id}
+        onSave={handleBlockSave}
+        onClose={handleBlockModalClose}
+      />
     </View>
   );
 }
@@ -94,4 +151,6 @@ const styles = StyleSheet.create({
   muscles: { fontSize: 12 },
   blocks: { padding: 12, paddingTop: 0, gap: 8 },
   empty: { fontSize: 13, fontStyle: 'italic', paddingVertical: 4 },
+  addBlockBtn: { marginTop: 4, paddingVertical: 8 },
+  addBlockText: { fontSize: 13, fontWeight: '500' },
 });
