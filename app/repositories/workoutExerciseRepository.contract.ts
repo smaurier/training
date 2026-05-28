@@ -63,4 +63,33 @@ export function runWorkoutExerciseRepositoryContractTests(
       expect(remaining[0].id).toBe(b.id);
     });
   });
+
+  describe('swap', () => {
+    it('permute les order_index de deux workout_exercises', async () => {
+      const a = await repo.save({ workout_id: 1, exercise_id: 1, order_index: 0 });
+      const b = await repo.save({ workout_id: 1, exercise_id: 2, order_index: 1 });
+      await repo.swap(a.id, b.id);
+      expect((await repo.findById(a.id))!.order_index).toBe(1);
+      expect((await repo.findById(b.id))!.order_index).toBe(0);
+    });
+
+    it('permute les order_index de deux items non-adjacents', async () => {
+      const a = await repo.save({ workout_id: 1, exercise_id: 1, order_index: 0 });
+      await repo.save({ workout_id: 1, exercise_id: 2, order_index: 1 });
+      const c = await repo.save({ workout_id: 1, exercise_id: 3, order_index: 2 });
+      await repo.swap(a.id, c.id);
+      expect((await repo.findById(a.id))!.order_index).toBe(2);
+      expect((await repo.findById(c.id))!.order_index).toBe(0);
+    });
+
+    it('throw si idB inconnu', async () => {
+      const a = await repo.save({ workout_id: 1, exercise_id: 1, order_index: 0 });
+      await expect(repo.swap(a.id, 999)).rejects.toThrow('999');
+    });
+
+    it('throw si idA inconnu', async () => {
+      const a = await repo.save({ workout_id: 1, exercise_id: 1, order_index: 0 });
+      await expect(repo.swap(999, a.id)).rejects.toThrow('999');
+    });
+  });
 }
