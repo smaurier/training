@@ -15,7 +15,7 @@ const SHADOW_COLOR = '#000' as const;
 
 export default function ProgrammeDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const programId = Number(id);
+  const programId = Number(id) || 0;
 
   const router = useRouter();
   const colorScheme = useColorScheme();
@@ -114,7 +114,7 @@ export default function ProgrammeDetailScreen() {
           renderItem={({ item }) => (
             <WorkoutCard
               workout={item}
-              onPress={() => {}}
+              onPress={() => Alert.alert('Bientôt disponible', 'La configuration des exercices arrive dans la prochaine session.')}
               onLongPress={() => handleLongPress(item)}
             />
           )}

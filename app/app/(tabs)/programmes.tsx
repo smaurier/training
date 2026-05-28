@@ -1,13 +1,15 @@
 import { FlatList, View, Text, TouchableOpacity, ActivityIndicator, StyleSheet, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useFocusEffect } from 'expo-router';
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef, useState, useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { usePrograms } from '@/hooks/usePrograms';
 import { ProgramCard } from '@/components/programmes/ProgramCard';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { Program } from '@/db/types';
+import { SQLiteWorkoutRepository } from '@/repositories/SQLiteWorkoutRepository';
+import { getDb } from '@/db';
 
 const FAB_ICON_COLOR = '#fff' as const;
 const SHADOW_COLOR = '#000' as const;
@@ -17,6 +19,16 @@ export default function ProgrammesScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
+
+  const [workoutCounts, setWorkoutCounts] = useState<Record<number, number>>({});
+
+  useEffect(() => {
+    if (programs.length === 0) return;
+    const repo = new SQLiteWorkoutRepository(getDb());
+    Promise.all(programs.map(p => repo.findByProgramId(p.id).then(ws => [p.id, ws.length] as [number, number])))
+      .then(entries => setWorkoutCounts(Object.fromEntries(entries)))
+      .catch(() => {});
+  }, [programs]);
 
   const isFirstFocus = useRef(true);
   useFocusEffect(
@@ -87,7 +99,7 @@ export default function ProgrammesScreen() {
         renderItem={({ item }) => (
           <ProgramCard
             program={item}
-            workoutCount={0}
+            workoutCount={workoutCounts[item.id] ?? 0}
             onPress={() => router.push({ pathname: '/programme/[id]', params: { id: String(item.id) } })}
             onLongPress={() => handleLongPress(item)}
           />

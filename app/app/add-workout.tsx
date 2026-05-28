@@ -13,7 +13,7 @@ const SUBMIT_TEXT_COLOR = '#fff' as const;
 export default function AddWorkoutModal() {
   const router = useRouter();
   const params = useLocalSearchParams<{ programId: string; id?: string }>();
-  const programId = Number(params.programId);
+  const programId = Number(params.programId) || 0;
   const editId = params.id ? Number(params.id) : null;
   const isEditing = editId !== null;
 
@@ -34,6 +34,10 @@ export default function AddWorkoutModal() {
   async function handleSubmit() {
     if (!name.trim()) {
       Alert.alert('Champ requis', 'Le nom de la séance est obligatoire.');
+      return;
+    }
+    if (!programId) {
+      Alert.alert('Erreur', 'Programme invalide.');
       return;
     }
     try {
