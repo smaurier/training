@@ -1,0 +1,100 @@
+import type { WorkoutExercise, Exercise, Block } from '../db/types';
+import type { Set as TrainingSet } from '../db/types';
+import { IWorkoutExerciseRepository } from '../repositories/IWorkoutExerciseRepository';
+import { IBlockRepository } from '../repositories/IBlockRepository';
+import { ISetRepository } from '../repositories/ISetRepository';
+import { IExerciseRepository } from '../repositories/IExerciseRepository';
+
+export type TransactionRunner = (fn: () => Promise<void>) => Promise<void>;
+
+export interface BlockWithSets {
+  id: number;
+  name: string;
+  order_index: number;
+  is_work_block: 0 | 1;
+  sets: TrainingSet[];
+}
+
+export interface WorkoutExerciseDetail {
+  id: number;
+  workout_id: number;
+  order_index: number;
+  exercise: Pick<Exercise, 'id' | 'name' | 'technical_notes' | 'muscle_groups'>;
+  blocks: BlockWithSets[];
+}
+
+export class WorkoutExerciseService {
+  constructor(
+    private weRepo: IWorkoutExerciseRepository,
+    private blockRepo: IBlockRepository,
+    private setRepo: ISetRepository,
+    private exerciseRepo: IExerciseRepository,
+    private runInTransaction: TransactionRunner
+  ) {}
+
+  async addToWorkout(workoutId: number, exerciseId: number): Promise<WorkoutExerciseDetail> {
+    const exercise = await this.exerciseRepo.findById(exerciseId);
+    if (!exercise) throw new Error(`Exercice ${exerciseId} introuvable`);
+
+    const existing = await this.weRepo.findByWorkoutId(workoutId);
+    const orderIndex = existing.length;
+
+    let savedWe!: WorkoutExercise;
+
+    await this.runInTransaction(async () => {
+      savedWe = await this.weRepo.save({ workout_id: workoutId, exercise_id: exerciseId, order_index: orderIndex });
+      const block = await this.blockRepo.save({
+        workout_exercise_id: savedWe.id,
+        name: 'Travail',
+        order_index: 0,
+        is_work_block: 1,
+      });
+      await this.setRepo.save({
+        block_id: block.id,
+        reps_min: 3,
+        reps_max: 8,
+        weight: null,
+        weight_type: 'fixed',
+        rest_duration: 120,
+        order_index: 0,
+      });
+    });
+
+    return this.loadDetail(savedWe, exercise);
+  }
+
+  async getWithDetails(workoutId: number): Promise<WorkoutExerciseDetail[]> {
+    const wes = await this.weRepo.findByWorkoutId(workoutId);
+    return Promise.all(wes.map(async (we) => {
+      const exercise = await this.exerciseRepo.findById(we.exercise_id);
+      if (!exercise) throw new Error(`Exercice ${we.exercise_id} introuvable`);
+      return this.loadDetail(we, exercise);
+    }));
+  }
+
+  async remove(id: number): Promise<void> {
+    await this.weRepo.delete(id);
+  }
+
+  private async loadDetail(we: WorkoutExercise, exercise: Exercise): Promise<WorkoutExerciseDetail> {
+    const blocks = await this.blockRepo.findByWorkoutExerciseId(we.id);
+    const blocksWithSets: BlockWithSets[] = await Promise.all(
+      blocks.map(async (block: Block) => ({
+        ...block,
+        sets: await this.setRepo.findByBlockId(block.id),
+      }))
+    );
+    return {
+      id: we.id,
+      workout_id: we.workout_id,
+      order_index: we.order_index,
+      exercise: {
+        id: exercise.id,
+        name: exercise.name,
+        technical_notes: exercise.technical_notes,
+        muscle_groups: exercise.muscle_groups,
+      },
+      blocks: blocksWithSets,
+    };
+  }
+}
