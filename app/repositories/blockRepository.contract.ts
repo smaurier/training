@@ -78,6 +78,8 @@ export function runBlockRepositoryContractTests(createRepo: () => IBlockReposito
       const updated = await repo.update(saved.id, dto);
       expect(updated.is_work_block).toBe(0);
       expect(updated.name).toBe('Travail');
+      expect(updated.order_index).toBe(bloc1.order_index);
+      expect(updated.workout_exercise_id).toBe(bloc1.workout_exercise_id);
     });
 
     it('throw si id inconnu', async () => {
