@@ -114,7 +114,7 @@ export default function ProgrammeDetailScreen() {
           renderItem={({ item }) => (
             <WorkoutCard
               workout={item}
-              onPress={() => Alert.alert('Bientôt disponible', 'La configuration des exercices arrive dans la prochaine session.')}
+              onPress={() => router.push({ pathname: '/workout/[id]', params: { id: String(item.id) } })}
               onLongPress={() => handleLongPress(item)}
             />
           )}
