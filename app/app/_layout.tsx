@@ -59,6 +59,18 @@ function RootLayoutNav() {
           name="add-exercise"
           options={{ presentation: 'modal', title: 'Nouvel exercice' }}
         />
+        <Stack.Screen
+          name="add-programme"
+          options={{ presentation: 'modal', title: 'Programme' }}
+        />
+        <Stack.Screen
+          name="programme/[id]"
+          options={{ title: 'Programme' }}
+        />
+        <Stack.Screen
+          name="add-workout"
+          options={{ presentation: 'modal', title: 'Séance' }}
+        />
       </Stack>
     </ThemeProvider>
   );
