@@ -6,7 +6,7 @@ Application React Native personnelle de suivi d'entraînement musculaire. L'app 
 
 ## Stack
 
-- **React Native** + **Expo** (SDK 53)
+- **React Native** + **Expo** (SDK 54)
 - **Navigation** : Expo Router (file-based, dossier `app/`)
 - **Stockage** : SQLite via `expo-sqlite`
 - **Langage** : TypeScript strict

@@ -183,3 +183,60 @@ Optimiser l'environnement de travail avec Claude Code : token management, outils
 1. Tester l'app manuellement (npm start) — vérifier onglet Exercices, liste seeds, ajout via modal
 2. V2 exercices : suppression avec vérification dépendances
 3. Écran Programmes — même pattern Repository + Service + hook + écran
+
+---
+
+## Session 6 — 2026-05-27/28 · SDK upgrade + Programmes CRUD
+
+### Ce qui a été demandé
+- Reprendre le downgrade SDK (session précédente partielle) + tester sur Expo Go
+- Implémenter l'écran Programmes complet (CRUD Programme + Workout, 4 écrans)
+- Approche : brainstorming → spec → plan → subagent-driven development
+
+### Décisions prises
+- **SDK 54** : downgrade 56→53 depuis une session précédente, mais Expo Go nécessitait SDK 54 → upgrade 53→54. Stack finale : Expo 54, RN 0.81.5, expo-router 6, reanimated 4.x + worklets.
+- **PRAGMA foreign_keys = ON** dans `getDb()` (singleton, pas dans les migrations) — SQLite ignore ON DELETE CASCADE par défaut.
+- **Repository pattern identique Exercices** : Interface → InMemory (tests) → SQLite (prod). Contract tests partagés.
+- **update() vérifie `result.changes === 0`** avant re-fetch — distingue "row manquante" vs "bug DB".
+- **setActive() valide l'id** avant la boucle — évite de tout désactiver sur un id inexistant.
+- **WorkoutCard `onPress`** → Alert "Bientôt disponible" (workout detail = Session 7, pas encore implémenté).
+- **workoutCount dynamique** dans ProgrammesScreen — `Promise.all` sur `findByProgramId` par programme au lieu de `0` hardcodé.
+- **NaN guard** sur `programId` dans `add-workout.tsx` et `programme/[id].tsx` : `Number(x) || 0`.
+- **Accessibilité** : `accessibilityRole`, `accessibilityLabel`, `accessibilityHint` sur tous les éléments interactifs. Touch targets `minHeight: 44`. Constantes pour couleurs littérales (`'#fff'`, `'#000'`).
+- **`--dangerously-skip-permissions`** : documenté comme option pour sessions non surveillées (évite les prompts d'approbation).
+
+### Ce qui a été fait
+- Upgrade SDK 53 → 54 (expo, react-native, expo-router, reanimated 4.x, worklets)
+- `app/db/index.ts` — `PRAGMA foreign_keys = ON` dans `getDb()`
+- `app/repositories/` — IProgramRepository, InMemory+SQLite impls, contract tests (11 cas)
+- `app/repositories/` — IWorkoutRepository, InMemory+SQLite impls, contract tests (11 cas)
+- `app/services/ProgramService.ts` + 13 tests GREEN
+- `app/services/WorkoutService.ts` + 10 tests GREEN
+- `app/hooks/usePrograms.ts` + `useWorkouts.ts`
+- `app/components/programmes/ProgramCard.tsx` + `WorkoutCard.tsx`
+- `app/app/_layout.tsx` — nouvelles routes (add-programme, programme/[id], add-workout)
+- `app/app/(tabs)/programmes.tsx` — FlatList + FAB + long-press + isFirstFocus
+- `app/app/add-programme.tsx` — modal create/edit (pré-remplissage si id présent)
+- `app/app/programme/[id].tsx` — détail programme + liste séances + Stack.Screen dynamique
+- `app/app/add-workout.tsx` — modal create/edit séance
+- **75 tests GREEN** au total (7 suites)
+- Poussé sur GitHub
+
+### Architecture finale en place
+```
+Program ──< Workout ──< WorkoutExercise (Session 7)
+Interface → InMemory (tests) → SQLite (prod)
+Screens → Hooks → Services → Repositories → SQLite
+```
+
+### Leçons Code Craft de la session
+- **`result.changes === 0`** après UPDATE SQL — détecter les rows manquantes proprement
+- **Validate before mutate** — `setActive` valide l'id avant de toucher les autres rows
+- **Contract tests** — même suite InMemory + SQLite, les deux doivent passer
+- **Constantes pour couleurs littérales** — `'#fff'` inline dans StyleSheet = code smell détecté en review
+- **Subagent-driven development** : fresh subagent par tâche + spec review + quality review = qualité élevée sans context pollution
+
+### Prochaine session (Session 7)
+1. Tester l'app sur Expo Go (vérifier les 4 écrans Programmes)
+2. WorkoutExercise + Block + Set — `workout/[id].tsx` + `workout-exercise/[id].tsx`
+3. `docs/accessibilite.md` — doc formelle WCAG 2.2 + EN 301 549 + iOS/Android
