@@ -112,7 +112,10 @@ export function BlockCard({ block, onUpdateSet, onAddSet, onRemoveSet, onRenameB
       {editingSet && (
         <EditSetModal
           set={editingSet}
-          onSave={async (dto) => { await onUpdateSet(editingSet.id, dto); }}
+          onSave={async (dto) => {
+            const setId = editingSet.id;
+            await onUpdateSet(setId, dto);
+          }}
           onClose={() => setEditingSet(null)}
         />
       )}
