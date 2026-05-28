@@ -142,6 +142,11 @@ describe('WorkoutExerciseService', () => {
       expect(updated[0].blocks[1].order_index).toBe(1);
       expect(updated[0].blocks[1].sets).toHaveLength(1);
       expect(updated[0].blocks[1].sets[0].reps_min).toBe(3);
+      expect(updated[0].blocks[1].sets[0].reps_max).toBe(8);
+      expect(updated[0].blocks[1].sets[0].weight).toBeNull();
+      expect(updated[0].blocks[1].sets[0].weight_type).toBe('fixed');
+      expect(updated[0].blocks[1].sets[0].rest_duration).toBe(120);
+      expect(updated[0].blocks[1].sets[0].order_index).toBe(0);
     });
   });
 

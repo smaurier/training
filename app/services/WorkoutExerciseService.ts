@@ -98,8 +98,8 @@ export class WorkoutExerciseService {
   }
 
   async addBlock(workoutExerciseId: number, name: string, isWorkBlock: 0 | 1): Promise<void> {
-    const existing = await this.blockRepo.findByWorkoutExerciseId(workoutExerciseId);
     await this.runInTransaction(async () => {
+      const existing = await this.blockRepo.findByWorkoutExerciseId(workoutExerciseId);
       const block = await this.blockRepo.save({
         workout_exercise_id: workoutExerciseId,
         name,
