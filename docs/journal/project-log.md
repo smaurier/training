@@ -430,3 +430,60 @@ session/[workoutId].tsx → useSession + useTimer + CheckIn/Running/SummaryPhase
 2. Historique des séances
 3. Page Progression / graphiques (1RM estimé, PRs, volume)
 4. (Futur) Session dédiée polish visuel après MVP complet
+
+---
+
+## Session 10 — 2026-05-29 · Historique des séances
+
+### Ce qui a été demandé
+Implémenter l'historique des séances passées dans l'onglet Progression : liste groupée par mois + écran détail avec sets, durée, check-in.
+
+### Décisions prises
+- **Onglet Progression réécrit** (placeholder) → `SectionList` groupée par mois. Aucun nouvel onglet.
+- **Écran détail** `history/[sessionLogId].tsx` — Stack screen poussé depuis la liste.
+- **Lazy loading** : `session_logs` + noms workouts + comptes sets au chargement liste ; `set_logs` uniquement à l'ouverture du détail.
+- **`countBySessionLogIds`** : batch `SELECT session_log_id, COUNT(*) GROUP BY` pour totalSets — évite N+1.
+- **Groupement par mois** : `startedAt.slice(0, 7)` → clé `"2026-05"` → `toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })` → capitalisé + `" · N séances"`. `new Date(key + '-01T12:00:00')` pour éviter bug timezone UTC−X.
+- **`computeDuration` helper privé** dans `HistoryService` — élimine duplication entre `getSessionList` et `getSessionDetail`.
+- **`isFirstFocus` guard** + `useFocusEffect` → `refresh()` quand on revient sur Progression après une séance. Pattern identique à `exercices.tsx`.
+- **RPE moyen** calculé dans l'écran détail (pas dans le service) — masqué si aucun RPE saisi.
+- **Check-in masqué** si les trois valeurs sont null.
+- **Singular/plural** : "1 séance" vs "N séances" — extra par rapport à la spec, meilleure UX.
+
+### Ce qui a été fait
+- `repositories/ISessionLogRepository.ts` — ajout `findAll(): Promise<SessionLog[]>`
+- `repositories/sessionLogRepository.contract.ts` — 2 nouveaux tests `findAll`
+- `repositories/InMemorySessionLogRepository.ts` + `SQLiteSessionLogRepository.ts` — implémentation `findAll`
+- `repositories/ISetLogRepository.ts` — ajout `countBySessionLogIds(ids: number[]): Promise<Record<number, number>>`
+- `repositories/setLogRepository.contract.ts` — 3 nouveaux tests `countBySessionLogIds`
+- `repositories/InMemorySetLogRepository.ts` + `SQLiteSetLogRepository.ts` — implémentation `countBySessionLogIds`
+- `services/HistoryService.ts` — nouveau service, view models `SessionSummary/SetLogSummary/ExerciseHistory/SessionDetail`, `getSessionList` + `getSessionDetail` + `computeDuration` helper
+- `services/HistoryService.test.ts` — 8 tests GREEN
+- `hooks/useHistory.ts` — `groupByMonth` + `mountedRef` + `refresh()` exposé
+- `hooks/useHistory.test.ts` — 8 tests GREEN
+- `components/history/SessionCard.tsx` — carte liste avec `PressableA11y`, `formatDate`, `formatDuration`
+- `components/history/ExerciseHistorySection.tsx` — en-tête exercice + chips sets `flexWrap`
+- `app/(tabs)/progression.tsx` — réécriture complète `SectionList`
+- `app/history/[sessionLogId].tsx` — écran détail (stats + check-in + exercices)
+- `app/_layout.tsx` — Stack.Screen `history/[sessionLogId]`
+- `docs/tests-manuels-mvp.md` — section 10 ajoutée (10A liste + 10B détail)
+- **203 tests GREEN** (17 suites), TypeScript clean
+
+### Architecture finale
+```
+HistoryService ← 4 repos injectés
+useHistory → HistoryService, groupByMonth
+(tabs)/progression.tsx → useHistory + SectionList + SessionCard
+history/[sessionLogId].tsx → HistoryService direct (load at mount)
+```
+
+### Leçons Code Craft de la session
+- **`computeDuration` private helper** : duplication détectée en code review → extraction immédiate avant que d'autres callers ne s'ajoutent
+- **`key + '-01T12:00:00'` vs `key + '-01'`** : date ISO sans heure = UTC midnight = bug timezone dans les fusceaux UTC−. Toujours injecter un midi pour les labels de date
+- **Timezone reviewer finding** : la revue de code est là pour attraper les bugs subtils — timezone off-by-one est exactement le genre de bug qui ne se manifeste pas dans les tests
+- **Clé stable dans les listes** : `key={i}` refusé par le reviewer → `key={exerciseId + '-' + i}` — la spec n'a pas de `id` dans `SetLogSummary`, la composition d'identifiants est la bonne approche
+
+### Prochaine session (Session 11)
+1. Tester manuellement l'historique sur device/émulateur (tests-manuels-mvp.md section 10)
+2. Page Progression — graphiques 1RM estimé (Epley), PRs par exercice, volume par semaine
+3. (Optionnel) Filtres historique par exercice ou période
