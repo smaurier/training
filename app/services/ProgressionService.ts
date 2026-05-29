@@ -54,6 +54,10 @@ function toWeekKey(date: Date): string {
   return getWeekMonday(date).toISOString().slice(0, 10);
 }
 
+const WEEK_LABELS = ['S-3', 'S-2', 'S-1', 'Cette sem.'] as const;
+// 200 covers > 10 years of daily PRs; IPersonalRecordRepository has no findFromDate
+const PR_FETCH_LIMIT = 200;
+
 export class ProgressionService {
   constructor(
     private sessionLogRepo: ISessionLogRepository,
@@ -72,7 +76,7 @@ export class ProgressionService {
     const monthSetLogs = await this.setLogRepo.findFromDate(startOfMonth);
     const exerciseCount = new Set(monthSetLogs.map(l => l.exercise_id)).size;
 
-    const recentPRs = await this.personalRecordRepo.findRecent(200);
+    const recentPRs = await this.personalRecordRepo.findRecent(PR_FETCH_LIMIT);
     const prCount = recentPRs.filter(pr => pr.achieved_at.startsWith(monthPrefix)).length;
 
     return { sessionCount, prCount, exerciseCount };
@@ -91,7 +95,7 @@ export class ProgressionService {
     earliestMonday.setUTCDate(earliestMonday.getUTCDate() - 21);
     const setLogs = await this.setLogRepo.findFromDate(earliestMonday.toISOString());
 
-    const labels = ['S-3', 'S-2', 'S-1', 'Cette sem.'];
+    const labels = WEEK_LABELS;
 
     return weeks.map((monday, i) => {
       const key = toWeekKey(monday);
@@ -172,7 +176,7 @@ export class ProgressionService {
     return [...byDate.entries()]
       .sort((a, b) => a[0].localeCompare(b[0]))
       .map(([dateKey, rm]) => ({
-        date: new Date(dateKey + 'T12:00:00').toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }),
+        date: new Date(dateKey + 'T12:00:00Z').toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }),
         estimated1RM: Math.round(rm * 10) / 10,
       }));
   }

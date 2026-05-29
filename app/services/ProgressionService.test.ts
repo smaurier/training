@@ -143,8 +143,20 @@ describe('ProgressionService', () => {
       // Log récent : 2026-05-10
       await setLogRepo.save({ session_log_id: 2, set_id: 2, exercise_id: ex.id, reps_done: 5, weight_done: 110, rpe: null, completed_at: '2026-05-10T10:00:00.000Z' });
       const list = await service.getExercise1RMList(NOW);
-      expect(list[0].delta).toBeGreaterThan(0);
-      expect(list[0].deltaLabel).toMatch(/^\+/);
+      // epley(110, 5) = 128.3 (current1RM rounded); base = epley(100,5) = 116.666… (unrounded); delta = round((128.3 - 116.666…) × 10)/10 = 11.6
+      expect(list[0].delta).toBe(11.6);
+      expect(list[0].deltaLabel).toBe('+11.6 kg vs 30j');
+    });
+
+    it('delta = 0 et deltaLabel = "stable" si aucune progression', async () => {
+      const { service, setLogRepo, exerciseRepo } = makeService();
+      const ex = await exerciseRepo.save(baseExerciseDto);
+      // Même charge avant et après 30j
+      await setLogRepo.save({ session_log_id: 1, set_id: 1, exercise_id: ex.id, reps_done: 5, weight_done: 100, rpe: null, completed_at: '2026-04-01T10:00:00.000Z' });
+      await setLogRepo.save({ session_log_id: 2, set_id: 2, exercise_id: ex.id, reps_done: 5, weight_done: 100, rpe: null, completed_at: '2026-05-10T10:00:00.000Z' });
+      const list = await service.getExercise1RMList(NOW);
+      expect(list[0].delta).toBe(0);
+      expect(list[0].deltaLabel).toBe('stable');
     });
   });
 
