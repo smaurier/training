@@ -17,4 +17,16 @@ export class InMemoryPersonalRecordRepository implements IPersonalRecordReposito
       .sort((a, b) => b.estimated_1rm - a.estimated_1rm);
     return matching[0] ?? null;
   }
+
+  async findAllByExerciseId(exerciseId: number): Promise<PersonalRecord[]> {
+    return this.items
+      .filter(i => i.exercise_id === exerciseId)
+      .sort((a, b) => b.achieved_at.localeCompare(a.achieved_at));
+  }
+
+  async findRecent(limit: number): Promise<PersonalRecord[]> {
+    return [...this.items]
+      .sort((a, b) => b.achieved_at.localeCompare(a.achieved_at))
+      .slice(0, limit);
+  }
 }

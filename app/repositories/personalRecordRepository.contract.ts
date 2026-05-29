@@ -36,4 +36,39 @@ export function runPersonalRecordRepositoryContractTests(createRepo: () => IPers
       expect(await repo.findBestByExerciseId(1)).toBeNull();
     });
   });
+
+  describe('findAllByExerciseId', () => {
+    it('retourne [] si aucun PR', async () => {
+      expect(await repo.findAllByExerciseId(1)).toHaveLength(0);
+    });
+    it('retourne seulement les PRs de cet exercice', async () => {
+      await repo.save(dto1);
+      await repo.save({ ...dto1, exercise_id: 2, achieved_at: '2026-01-02T10:00:00.000Z' });
+      expect(await repo.findAllByExerciseId(1)).toHaveLength(1);
+    });
+    it('retourne les PRs triés par achieved_at DESC', async () => {
+      await repo.save({ ...dto1, achieved_at: '2026-01-01T10:00:00.000Z' });
+      await repo.save({ ...dto1, achieved_at: '2026-02-01T10:00:00.000Z' });
+      const prs = await repo.findAllByExerciseId(1);
+      expect(prs[0].achieved_at).toBe('2026-02-01T10:00:00.000Z');
+    });
+  });
+
+  describe('findRecent', () => {
+    it('retourne [] si aucun PR', async () => {
+      expect(await repo.findRecent(5)).toHaveLength(0);
+    });
+    it('respecte la limite', async () => {
+      await repo.save({ ...dto1, achieved_at: '2026-01-01T10:00:00.000Z' });
+      await repo.save({ ...dto1, exercise_id: 2, achieved_at: '2026-02-01T10:00:00.000Z' });
+      await repo.save({ ...dto1, exercise_id: 3, achieved_at: '2026-03-01T10:00:00.000Z' });
+      expect(await repo.findRecent(2)).toHaveLength(2);
+    });
+    it('retourne les PRs triés par achieved_at DESC', async () => {
+      await repo.save({ ...dto1, achieved_at: '2026-01-01T10:00:00.000Z' });
+      await repo.save({ ...dto1, exercise_id: 2, achieved_at: '2026-03-01T10:00:00.000Z' });
+      const prs = await repo.findRecent(5);
+      expect(prs[0].achieved_at).toBe('2026-03-01T10:00:00.000Z');
+    });
+  });
 }
