@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 import { usePrograms } from '@/hooks/usePrograms';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
+import { Radius } from '@/constants/Radius';
 
 const SUBMIT_TEXT_COLOR = '#fff' as const;
 
@@ -104,7 +105,7 @@ const styles = StyleSheet.create({
   input: {
     height: 48,
     borderWidth: 1,
-    borderRadius: 10,
+    borderRadius: Radius.sm,
     paddingHorizontal: 14,
     fontSize: 15,
     marginTop: 4,
@@ -116,7 +117,7 @@ const styles = StyleSheet.create({
   },
   submitBtn: {
     height: 52,
-    borderRadius: 14,
+    borderRadius: Radius.sm,
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 24,

@@ -10,6 +10,7 @@ import { SQLiteWorkoutRepository } from '@/repositories/SQLiteWorkoutRepository'
 import { getDb } from '@/db';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
+import { Radius } from '@/constants/Radius';
 import type { WorkoutExerciseDetail } from '@/services/WorkoutExerciseService';
 
 const FAB_ICON_COLOR = '#fff' as const;
@@ -148,7 +149,7 @@ const styles = StyleSheet.create({
     right: 24,
     width: 56,
     height: 56,
-    borderRadius: 28,
+    borderRadius: Radius.full,
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 4,
@@ -167,7 +168,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 8,
     paddingVertical: 14,
-    borderRadius: 12,
+    borderRadius: Radius.sm,
     elevation: 4,
     shadowColor: SHADOW_COLOR,
     shadowOffset: { width: 0, height: 2 },

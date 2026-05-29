@@ -16,6 +16,7 @@ import { SQLiteProgramRepository } from '@/repositories/SQLiteProgramRepository'
 import { getDb } from '@/db';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
+import { Radius } from '@/constants/Radius';
 import type { Workout } from '@/db/types';
 
 function makeSessionService(): SessionService {
@@ -111,10 +112,10 @@ const styles = StyleSheet.create({
   container: { flex: 1, padding: 24, gap: 24 },
   hero: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12 },
   title: { fontSize: 24, fontWeight: '700', textAlign: 'center' },
-  card: { borderWidth: 1, borderRadius: 16, padding: 20, gap: 10 },
+  card: { borderWidth: 1, borderRadius: Radius.sm, padding: 20, gap: 10 },
   cardLabel: { fontSize: 11, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.5 },
   workoutName: { fontSize: 20, fontWeight: '700' },
-  startBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 14, borderRadius: 12 },
+  startBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 14, borderRadius: Radius.sm },
   startBtnText: { color: '#fff', fontSize: 16, fontWeight: '600' },
   linkBtn: { paddingVertical: 4 },
   linkText: { fontSize: 15, fontWeight: '500' },

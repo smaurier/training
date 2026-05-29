@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { useExercises } from '@/hooks/useExercises';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
+import { Radius } from '@/constants/Radius';
 import { ExerciseType } from '@/db/types';
 
 const TYPES: ExerciseType[] = ['musculation', 'cardio', 'etirement'];
@@ -129,7 +130,7 @@ const styles = StyleSheet.create({
   input: {
     height: 48,
     borderWidth: 1,
-    borderRadius: 10,
+    borderRadius: Radius.sm,
     paddingHorizontal: 14,
     fontSize: 15,
     marginTop: 4,
@@ -138,14 +139,14 @@ const styles = StyleSheet.create({
   typeBtn: {
     flex: 1,
     height: 40,
-    borderRadius: 8,
+    borderRadius: Radius.sm,
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
   submitBtn: {
     height: 52,
-    borderRadius: 14,
+    borderRadius: Radius.sm,
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 24,

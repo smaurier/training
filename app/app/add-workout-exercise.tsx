@@ -6,6 +6,7 @@ import { useExercises } from '@/hooks/useExercises';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
+import { Radius } from '@/constants/Radius';
 import type { Exercise } from '@/db/types';
 
 export default function AddWorkoutExerciseScreen() {
@@ -71,9 +72,21 @@ export default function AddWorkoutExerciseScreen() {
               </PressableA11y>
             )}
             ListEmptyComponent={
-              <Text style={[styles.empty, { color: colors.textSecondary }]}>
-                Aucun exercice trouvé.
-              </Text>
+              <View style={styles.emptyContainer}>
+                <Text style={[styles.empty, { color: colors.textSecondary }]}>
+                  Aucun exercice trouvé.
+                </Text>
+                <PressableA11y
+                  accessibilityLabel="Créer un exercice"
+                  accessibilityHint="Ouvre le formulaire de création d'exercice"
+                  onPress={() => router.push('/add-exercise')}
+                  style={[styles.createBtn, { borderColor: colors.primary }]}
+                >
+                  <Text style={[styles.createBtnText, { color: colors.primary }]}>
+                    + Créer un exercice
+                  </Text>
+                </PressableA11y>
+              </View>
             }
           />
         )}
@@ -84,10 +97,13 @@ export default function AddWorkoutExerciseScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  search: { margin: 16, padding: 12, borderRadius: 8, borderWidth: 1, fontSize: 15 },
+  search: { margin: 16, padding: 12, borderRadius: Radius.sm, borderWidth: 1, fontSize: 15 },
   loader: { marginTop: 48 },
   item: { padding: 16, borderBottomWidth: 1, gap: 2 },
   itemName: { fontSize: 15, fontWeight: '500' },
   itemMuscles: { fontSize: 13 },
-  empty: { textAlign: 'center', marginTop: 48, fontSize: 15 },
+  emptyContainer: { alignItems: 'center', marginTop: 48, gap: 16 },
+  empty: { fontSize: 15 },
+  createBtn: { borderWidth: 1, borderRadius: Radius.sm, paddingHorizontal: 20, paddingVertical: 10 },
+  createBtnText: { fontSize: 15, fontWeight: '500' },
 });

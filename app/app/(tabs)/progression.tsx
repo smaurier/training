@@ -9,6 +9,7 @@ import { VolumeBarChart } from '@/components/progression/VolumeBarChart';
 import { Exercise1RMCard } from '@/components/progression/Exercise1RMCard';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
+import { Radius } from '@/constants/Radius';
 import type { SessionSummary } from '@/services/HistoryService';
 import type { Exercise1RM } from '@/services/ProgressionService';
 
@@ -202,18 +203,18 @@ const styles = StyleSheet.create({
   emptyContainer: { flex: 1 },
   message: { fontSize: 15, textAlign: 'center' },
   segmentContainer: { paddingHorizontal: 16, paddingVertical: 8 },
-  segmentTrack: { flexDirection: 'row', borderRadius: 8, padding: 3 },
-  segmentButton: { flex: 1, borderRadius: 6, paddingVertical: 6, alignItems: 'center' },
+  segmentTrack: { flexDirection: 'row', borderRadius: Radius.sm, padding: 3 },
+  segmentButton: { flex: 1, borderRadius: Radius.sm, paddingVertical: 6, alignItems: 'center' },
   segmentText: { fontSize: 13, fontWeight: '600' },
   sectionHeader: { paddingHorizontal: 16, paddingVertical: 8 },
   sectionTitle: { fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1 },
   statsContent: { paddingVertical: 12, paddingHorizontal: 16, gap: 12 },
   chipsRow: { flexDirection: 'row', gap: 8 },
-  chip: { flex: 1, borderRadius: 8, padding: 10, alignItems: 'center', gap: 2 },
+  chip: { flex: 1, borderRadius: Radius.sm, padding: 10, alignItems: 'center', gap: 2 },
   chipLabel: { fontSize: 9, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5 },
   chipValue: { fontSize: 22, fontWeight: '700' },
   chipSub: { fontSize: 9 },
-  card: { borderRadius: 10, padding: 14 },
+  card: { borderRadius: Radius.sm, padding: 14 },
   cardLabel: { fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10 },
   prRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 8 },
   prInfo: { flex: 1, gap: 2 },
@@ -221,5 +222,5 @@ const styles = StyleSheet.create({
   prMeta: { fontSize: 12 },
   prDate: { fontSize: 12 },
   listTitle: { fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 6 },
-  list: { borderRadius: 10, overflow: 'hidden' },
+  list: { borderRadius: Radius.sm, overflow: 'hidden' },
 });

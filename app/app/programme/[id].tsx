@@ -8,6 +8,7 @@ import { useWorkouts } from '@/hooks/useWorkouts';
 import { WorkoutCard } from '@/components/programmes/WorkoutCard';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
+import { Radius } from '@/constants/Radius';
 import { Workout } from '@/db/types';
 
 const FAB_ICON_COLOR = '#fff' as const;
@@ -153,7 +154,7 @@ const styles = StyleSheet.create({
     right: 24,
     width: 56,
     height: 56,
-    borderRadius: 28,
+    borderRadius: Radius.full,
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 4,

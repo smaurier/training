@@ -10,6 +10,7 @@ import { SQLitePersonalRecordRepository } from '@/repositories/SQLitePersonalRec
 import { SQLiteExerciseRepository } from '@/repositories/SQLiteExerciseRepository';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
+import { Radius } from '@/constants/Radius';
 import { getDb } from '@/db';
 
 function formatDate(iso: string): string {
@@ -151,7 +152,7 @@ const styles = StyleSheet.create({
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32 },
   content: { padding: 16, gap: 12, paddingBottom: 32 },
   title: { fontSize: 20, fontWeight: '700', marginBottom: 4 },
-  section: { borderRadius: 10, padding: 14, gap: 8 },
+  section: { borderRadius: Radius.sm, padding: 14, gap: 8 },
   sectionLabel: { fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5 },
   prValue: { fontSize: 18, fontWeight: '700' },
   prMeta: { fontSize: 13 },

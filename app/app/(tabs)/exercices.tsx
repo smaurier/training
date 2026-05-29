@@ -8,6 +8,7 @@ import { useExercises } from '@/hooks/useExercises';
 import { ExerciseCard } from '@/components/exercises/ExerciseCard';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
+import { Radius } from '@/constants/Radius';
 
 const SHADOW_COLOR = '#000' as const;
 const FAB_ICON_COLOR = '#fff' as const;
@@ -82,7 +83,7 @@ const styles = StyleSheet.create({
     right: 24,
     width: 56,
     height: 56,
-    borderRadius: 28,
+    borderRadius: Radius.full,
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 4,

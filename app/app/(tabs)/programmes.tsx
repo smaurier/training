@@ -7,6 +7,7 @@ import { usePrograms } from '@/hooks/usePrograms';
 import { ProgramCard } from '@/components/programmes/ProgramCard';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
+import { Radius } from '@/constants/Radius';
 import { Program } from '@/db/types';
 import { SQLiteWorkoutRepository } from '@/repositories/SQLiteWorkoutRepository';
 import { getDb } from '@/db';
@@ -135,7 +136,7 @@ const styles = StyleSheet.create({
     right: 24,
     width: 56,
     height: 56,
-    borderRadius: 28,
+    borderRadius: Radius.full,
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 4,
