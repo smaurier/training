@@ -79,6 +79,10 @@ function RootLayoutNav() {
           name="add-workout-exercise"
           options={{ presentation: 'modal', title: 'Ajouter un exercice' }}
         />
+        <Stack.Screen
+          name="session/[workoutId]"
+          options={{ headerShown: false }}
+        />
       </Stack>
     </ThemeProvider>
   );
