@@ -7,4 +7,7 @@ export interface ISetLogRepository {
   findBySessionLogId(sessionLogId: number): Promise<SetLog[]>;
   findBySetId(setId: number): Promise<SetLog[]>;
   countBySessionLogIds(ids: number[]): Promise<Record<number, number>>;
+  findByExerciseId(exerciseId: number): Promise<SetLog[]>;
+  findFromDate(from: string): Promise<SetLog[]>;
+  findDistinctExerciseIds(): Promise<number[]>;
 }

@@ -31,4 +31,20 @@ export class InMemorySetLogRepository implements ISetLogRepository {
     }
     return result;
   }
+
+  async findByExerciseId(exerciseId: number): Promise<SetLog[]> {
+    return this.items
+      .filter(i => i.exercise_id === exerciseId)
+      .sort((a, b) => a.completed_at.localeCompare(b.completed_at));
+  }
+
+  async findFromDate(from: string): Promise<SetLog[]> {
+    return this.items
+      .filter(i => i.completed_at >= from)
+      .sort((a, b) => a.completed_at.localeCompare(b.completed_at));
+  }
+
+  async findDistinctExerciseIds(): Promise<number[]> {
+    return [...new Set(this.items.map(i => i.exercise_id))];
+  }
 }

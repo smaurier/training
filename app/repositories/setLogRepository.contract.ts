@@ -73,4 +73,53 @@ export function runSetLogRepositoryContractTests(createRepo: () => ISetLogReposi
       expect(counts[99]).toBeUndefined();
     });
   });
+
+  describe('findByExerciseId', () => {
+    it('retourne [] si aucun log', async () => {
+      expect(await repo.findByExerciseId(5)).toHaveLength(0);
+    });
+    it('retourne seulement les logs de cet exercice', async () => {
+      await repo.save(dto1);
+      await repo.save({ ...dto1, exercise_id: 7, set_id: 11, completed_at: '2026-01-01T10:06:00.000Z' });
+      expect(await repo.findByExerciseId(5)).toHaveLength(1);
+    });
+    it('retourne les logs triés par completed_at ASC', async () => {
+      await repo.save({ ...dto1, completed_at: '2026-01-02T10:05:00.000Z' });
+      await repo.save({ ...dto1, set_id: 11, completed_at: '2026-01-01T10:05:00.000Z' });
+      const logs = await repo.findByExerciseId(5);
+      expect(logs[0].completed_at).toBe('2026-01-01T10:05:00.000Z');
+    });
+  });
+
+  describe('findFromDate', () => {
+    it('retourne [] si aucun log', async () => {
+      expect(await repo.findFromDate('2026-01-01T00:00:00.000Z')).toHaveLength(0);
+    });
+    it('exclut les logs antérieurs à from', async () => {
+      await repo.save({ ...dto1, completed_at: '2025-12-31T10:05:00.000Z' });
+      await repo.save({ ...dto1, set_id: 11, completed_at: '2026-01-01T10:05:00.000Z' });
+      const logs = await repo.findFromDate('2026-01-01T00:00:00.000Z');
+      expect(logs).toHaveLength(1);
+      expect(logs[0].completed_at).toBe('2026-01-01T10:05:00.000Z');
+    });
+    it('inclut les logs exactement à from', async () => {
+      await repo.save({ ...dto1, completed_at: '2026-01-01T00:00:00.000Z' });
+      expect(await repo.findFromDate('2026-01-01T00:00:00.000Z')).toHaveLength(1);
+    });
+  });
+
+  describe('findDistinctExerciseIds', () => {
+    it('retourne [] si aucun log', async () => {
+      expect(await repo.findDistinctExerciseIds()).toHaveLength(0);
+    });
+    it('pas de doublons', async () => {
+      await repo.save({ ...dto1, exercise_id: 5 });
+      await repo.save({ ...dto1, set_id: 11, exercise_id: 5, completed_at: '2026-01-01T10:06:00.000Z' });
+      await repo.save({ ...dto1, set_id: 12, exercise_id: 7, completed_at: '2026-01-01T10:07:00.000Z' });
+      const ids = await repo.findDistinctExerciseIds();
+      expect(ids).toHaveLength(2);
+      expect(ids).toContain(5);
+      expect(ids).toContain(7);
+    });
+  });
 }
