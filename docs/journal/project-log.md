@@ -4,6 +4,20 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 
 ---
 
+## Session 13 — 2026-05-29 — Config séance UX
+
+### Réalisé
+- Badge TRAVAIL/REPOS sur les blocs (BlockCard.tsx)
+- Hint "Ajoute des blocs..." si 1 seul bloc (WorkoutExerciseCard.tsx)
+- Chips suggestions Échauffement/Travail/Back-off dans EditBlockModal (création uniquement)
+- Bouton "Créer un exercice" sur liste vide dans add-workout-exercise.tsx
+
+### Prochaine étape
+- Tests manuels complets sur device (tests-manuels-mvp.md)
+- Déload automatique (V2 ou prioritaire selon retour tests)
+
+---
+
 ## Session 12 — 2026-05-29 — Refonte visuelle Trace
 
 ### Réalisé
