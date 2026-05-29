@@ -5,6 +5,7 @@ import type { UpdateSetDto } from '@/repositories/ISetRepository';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
+import { Radius } from '@/constants/Radius';
 
 const MODAL_OVERLAY_COLOR = 'rgba(0,0,0,0.4)' as const;
 const BTN_PRIMARY_TEXT = '#fff' as const;
@@ -138,12 +139,12 @@ const styles = StyleSheet.create({
   sheet: { borderTopLeftRadius: 16, borderTopRightRadius: 16, padding: 20, gap: 14 },
   title: { fontSize: 17, fontWeight: '600' },
   repsRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  input: { flex: 1, borderWidth: 1, borderRadius: 8, padding: 10, fontSize: 16, textAlign: 'center' },
+  input: { flex: 1, borderWidth: 1, borderRadius: Radius.sm, padding: 10, fontSize: 16, textAlign: 'center' },
   separator: { fontSize: 18 },
   segmented: { flexDirection: 'row', gap: 8 },
-  segment: { flex: 1, alignItems: 'center', paddingVertical: 10, borderRadius: 8, borderWidth: 1 },
-  inputFull: { borderWidth: 1, borderRadius: 8, padding: 10, fontSize: 16 },
+  segment: { flex: 1, alignItems: 'center', paddingVertical: 10, borderRadius: Radius.sm, borderWidth: 1 },
+  inputFull: { borderWidth: 1, borderRadius: Radius.sm, padding: 10, fontSize: 16 },
   disabled: { opacity: 0.4 },
   buttons: { flexDirection: 'row', gap: 12, marginTop: 4 },
-  btn: { flex: 1, alignItems: 'center', paddingVertical: 12, borderRadius: 8 },
+  btn: { flex: 1, alignItems: 'center', paddingVertical: 12, borderRadius: Radius.sm },
 });

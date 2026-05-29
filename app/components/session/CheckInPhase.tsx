@@ -5,6 +5,7 @@ import { PressableA11y } from '@/components/ui/PressableA11y';
 import { CheckIn } from '@/services/SessionService';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
+import { Radius } from '@/constants/Radius';
 
 interface CheckInOption {
   value: 1 | 2 | 3;
@@ -112,9 +113,9 @@ const styles = StyleSheet.create({
   row: { gap: 10 },
   rowLabel: { fontSize: 16, fontWeight: '600' },
   options: { flexDirection: 'row', gap: 10 },
-  option: { flex: 1, alignItems: 'center', paddingVertical: 12, borderRadius: 10, borderWidth: 1.5, gap: 4 },
+  option: { flex: 1, alignItems: 'center', paddingVertical: 12, borderRadius: Radius.sm, borderWidth: 1.5, gap: 4 },
   optionEmoji: { fontSize: 22 },
   optionText: { fontSize: 11, fontWeight: '500' },
-  startBtn: { marginTop: 8, paddingVertical: 16, borderRadius: 14, alignItems: 'center' },
+  startBtn: { marginTop: 8, paddingVertical: 16, borderRadius: Radius.sm, alignItems: 'center' },
   startBtnText: { color: '#fff', fontSize: 17, fontWeight: '600' },
 });

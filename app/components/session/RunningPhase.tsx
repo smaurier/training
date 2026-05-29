@@ -9,6 +9,7 @@ import type { SetActual } from '@/services/SessionService';
 import type { UseTimerResult } from '@/hooks/useTimer';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
+import { Radius } from '@/constants/Radius';
 
 interface RunningPhaseProps {
   exercise: WorkoutExerciseDetail;
@@ -193,18 +194,18 @@ const styles = StyleSheet.create({
   progressLabel: { fontSize: 13 },
   blockBadge: { alignSelf: 'flex-start', marginTop: 4 },
   blockBadgeText: { fontSize: 11, fontWeight: '700', letterSpacing: 0.5 },
-  targetCard: { padding: 16, borderRadius: 12, borderWidth: 1, alignItems: 'center' },
+  targetCard: { padding: 16, borderRadius: Radius.sm, borderWidth: 1, alignItems: 'center' },
   targetText: { fontSize: 20, fontWeight: '600' },
-  timerContainer: { borderRadius: 16, borderWidth: 1.5, padding: 20, alignItems: 'center', gap: 4 },
+  timerContainer: { borderRadius: Radius.sm, borderWidth: 1.5, padding: 20, alignItems: 'center', gap: 4 },
   timerText: { fontSize: 52, fontWeight: '700', letterSpacing: -1 },
   timerLabel: { fontSize: 11, fontWeight: '500', letterSpacing: 0.3 },
   inputRow: { flexDirection: 'row', gap: 10 },
   inputGroup: { flex: 1, gap: 4 },
   inputLabel: { fontSize: 11, fontWeight: '500', textAlign: 'center' },
-  input: { borderWidth: 1, borderRadius: 8, padding: 10, fontSize: 18, fontWeight: '600', textAlign: 'center' },
-  validateBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 14, borderRadius: 12 },
+  input: { borderWidth: 1, borderRadius: Radius.sm, padding: 10, fontSize: 18, fontWeight: '600', textAlign: 'center' },
+  validateBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 14, borderRadius: Radius.sm },
   validateBtnText: { color: '#fff', fontSize: 17, fontWeight: '600' },
-  toutReussiBtn: { borderWidth: 1.5, borderRadius: 12, paddingVertical: 12, alignItems: 'center' },
+  toutReussiBtn: { borderWidth: 1.5, borderRadius: Radius.sm, paddingVertical: 12, alignItems: 'center' },
   toutReussiBtnText: { fontSize: 15, fontWeight: '600' },
   restSection: { gap: 4 },
   restLabel: { fontSize: 10, fontWeight: '600', letterSpacing: 0.5 },

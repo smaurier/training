@@ -2,6 +2,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Workout } from '@/db/types';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
+import { Radius } from '@/constants/Radius';
 
 interface WorkoutCardProps {
   workout: Workout;
@@ -35,7 +36,7 @@ export function WorkoutCard({ workout, onPress, onLongPress }: WorkoutCardProps)
 const styles = StyleSheet.create({
   card: {
     padding: 16,
-    borderRadius: 12,
+    borderRadius: Radius.sm,
     borderWidth: 1,
     marginBottom: 10,
     gap: 4,

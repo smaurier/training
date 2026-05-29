@@ -2,6 +2,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import type { ExerciseHistory } from '@/services/HistoryService';
+import { Radius } from '@/constants/Radius';
 
 interface ExerciseHistorySectionProps {
   exercise: ExerciseHistory;
@@ -57,7 +58,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   chip: {
-    borderRadius: 6,
+    borderRadius: Radius.sm,
     borderWidth: 1,
     paddingHorizontal: 10,
     paddingVertical: 5,

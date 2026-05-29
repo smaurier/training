@@ -2,6 +2,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { Exercise } from '@/db/types';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
+import { Radius } from '@/constants/Radius';
 
 interface ExerciseCardProps {
   exercise: Exercise;
@@ -39,7 +40,7 @@ export function ExerciseCard({ exercise }: ExerciseCardProps) {
 const styles = StyleSheet.create({
   card: {
     padding: 14,
-    borderRadius: 12,
+    borderRadius: Radius.sm,
     borderWidth: 1,
     marginBottom: 10,
     gap: 4,

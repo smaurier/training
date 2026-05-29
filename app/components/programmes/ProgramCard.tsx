@@ -2,6 +2,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Program } from '@/db/types';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
+import { Radius } from '@/constants/Radius';
 
 const ACTIVE_BADGE_TEXT_COLOR = '#fff' as const;
 
@@ -53,7 +54,7 @@ export function ProgramCard({ program, workoutCount, onPress, onLongPress }: Pro
 const styles = StyleSheet.create({
   card: {
     padding: 16,
-    borderRadius: 12,
+    borderRadius: Radius.sm,
     borderWidth: 1,
     marginBottom: 10,
     gap: 4,
@@ -81,7 +82,7 @@ const styles = StyleSheet.create({
   activeBadge: {
     paddingHorizontal: 8,
     paddingVertical: 3,
-    borderRadius: 10,
+    borderRadius: Radius.sm,
   },
   activeBadgeText: {
     color: ACTIVE_BADGE_TEXT_COLOR,

@@ -10,6 +10,7 @@ import { EditBlockModal } from './EditBlockModal';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
+import { Radius } from '@/constants/Radius';
 
 interface WorkoutExerciseCardProps {
   detail: WorkoutExerciseDetail;
@@ -138,6 +139,11 @@ export function WorkoutExerciseCard({
 
       {expanded && (
         <View style={styles.blocks}>
+          {detail.blocks.length === 1 && (
+            <Text style={[styles.hint, { color: colors.textSecondary }]}>
+              Ajoute des blocs pour structurer ta séance : Échauffement, Travail, Back-off…
+            </Text>
+          )}
           {detail.blocks.length === 0 ? (
             <Text style={[styles.empty, { color: colors.textSecondary }]}>Aucun bloc configuré.</Text>
           ) : (
@@ -181,7 +187,7 @@ export function WorkoutExerciseCard({
 }
 
 const styles = StyleSheet.create({
-  card: { borderRadius: 12, borderWidth: 1, marginBottom: 10, overflow: 'hidden' },
+  card: { borderRadius: Radius.sm, borderWidth: 1, marginBottom: 10, overflow: 'hidden' },
   header: { flexDirection: 'row', alignItems: 'center', paddingRight: 4, minHeight: 56 },
   headerMain: { flex: 1, flexDirection: 'row', alignItems: 'center', paddingLeft: 16, paddingVertical: 16, paddingRight: 8, gap: 8 },
   headerContent: { flex: 1, gap: 2 },
@@ -190,6 +196,7 @@ const styles = StyleSheet.create({
   muscles: { fontSize: 12 },
   blocks: { padding: 12, paddingTop: 0, gap: 8 },
   empty: { fontSize: 13, fontStyle: 'italic', paddingVertical: 4 },
+  hint: { fontSize: 12, fontStyle: 'italic', paddingVertical: 4, lineHeight: 18 },
   addBlockBtn: { marginTop: 4, paddingVertical: 8 },
   addBlockText: { fontSize: 13, fontWeight: '500' },
 });

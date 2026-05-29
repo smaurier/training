@@ -4,6 +4,7 @@ import { PressableA11y } from '@/components/ui/PressableA11y';
 import type { ProgressionResult } from '@/services/SessionService';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
+import { Radius } from '@/constants/Radius';
 
 interface SummaryPhaseProps {
   progressions: ProgressionResult[];
@@ -85,10 +86,10 @@ const styles = StyleSheet.create({
   heroTitle: { fontSize: 26, fontWeight: '700' },
   heroDuration: { fontSize: 16 },
   statsRow: { flexDirection: 'row', gap: 12 },
-  statCard: { flex: 1, borderWidth: 1, borderRadius: 12, padding: 16, alignItems: 'center', gap: 4 },
+  statCard: { flex: 1, borderWidth: 1, borderRadius: Radius.sm, padding: 16, alignItems: 'center', gap: 4 },
   statValue: { fontSize: 24, fontWeight: '700' },
   statLabel: { fontSize: 10, fontWeight: '600', letterSpacing: 0.5 },
-  progressionSection: { borderWidth: 1, borderRadius: 12, padding: 16, gap: 12 },
+  progressionSection: { borderWidth: 1, borderRadius: Radius.sm, padding: 16, gap: 12 },
   sectionTitle: { fontSize: 15, fontWeight: '600' },
   progressionRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 8, borderBottomWidth: 1 },
   progressionName: { flex: 1, fontSize: 14 },
@@ -96,6 +97,6 @@ const styles = StyleSheet.create({
   progressionOld: { fontSize: 13 },
   progressionNew: { fontSize: 13, fontWeight: '700', color: '#16a34a' },
   progressionPending: { fontSize: 12 },
-  closeBtn: { paddingVertical: 16, borderRadius: 14, alignItems: 'center', marginTop: 8 },
+  closeBtn: { paddingVertical: 16, borderRadius: Radius.sm, alignItems: 'center', marginTop: 8 },
   closeBtnText: { color: '#fff', fontSize: 17, fontWeight: '600' },
 });
