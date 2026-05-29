@@ -48,6 +48,8 @@ export default function SessionDetailScreen() {
       if (!mountedRef.current) return;
       setDetail(d);
       setIsLoading(false);
+    }).catch(() => {
+      if (mountedRef.current) setIsLoading(false);
     });
   }, [sessionLogId]);
 

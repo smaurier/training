@@ -26,7 +26,7 @@ export function ExerciseHistorySection({ exercise }: ExerciseHistorySectionProps
             : `${set.weightDone} kg × ${set.repsDone}`;
           return (
             <View
-              key={i}
+              key={`${exercise.exerciseId}-${i}`}
               style={[styles.chip, { backgroundColor: colors.surface, borderColor: colors.border }]}
               accessibilityLabel={label}
             >
