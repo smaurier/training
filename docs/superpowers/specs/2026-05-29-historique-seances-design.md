@@ -177,7 +177,7 @@ Affiche :
 - `PressableA11y` avec `accessibilityLabel={session.workoutName + ', ' + dateFormatée}`
 
 **`formatDate(iso: string)`** : `new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })`
-**`formatDuration(seconds: number)`** : même logique que `SummaryPhase` — définie localement.
+**`formatDuration(seconds: number)`** : même logique que `SummaryPhase` — définie localement. Si `seconds === 0` → affiche `"--"` (session sans `ended_at`).
 
 ### `components/history/ExerciseHistorySection.tsx`
 Props : `exercise: ExerciseHistory`
@@ -201,7 +201,7 @@ SectionList
   keyExtractor → session.id.toString()
 ```
 
-`useFocusEffect` → `refresh()` au focus (séance terminée depuis autre onglet doit apparaître).
+`useFocusEffect` + `isFirstFocus` guard → `refresh()` au focus (séance terminée depuis autre onglet doit apparaître). Pattern identique à `exercices.tsx`.
 
 ### `history/[sessionLogId].tsx` — nouveau
 
@@ -211,7 +211,7 @@ Charge `HistoryService.getSessionDetail(id)` au mount. Affiche :
 ```
 | 47 min  |  18 séries  |  RPE 7.4 moy. |
 ```
-RPE moy. = moyenne des rpe non-null de tous les sets. Si aucun RPE → masqué.
+RPE moy. calculé dans l'écran : `detail.exercises.flatMap(e => e.sets).map(s => s.rpe).filter(r => r !== null)` → moyenne arrondie à 1 décimale. Si tableau vide → colonne RPE masquée (pas de bloc vide).
 
 **Check-in :**
 ```
