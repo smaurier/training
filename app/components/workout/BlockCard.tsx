@@ -89,22 +89,7 @@ export function BlockCard({ block, onUpdateSet, onAddSet, onRemoveSet, onRenameB
           onLongPress={handleBlockLongPress}
           style={styles.blockNamePressable}
         >
-          <View style={styles.blockNameRow}>
-            <Text style={[styles.blockName, { color: colors.textSecondary }]}>{block.name}</Text>
-            <View style={[
-              styles.badge,
-              block.is_work_block === 1
-                ? { backgroundColor: colors.primary + '20' }
-                : { backgroundColor: colors.border },
-            ]}>
-              <Text style={[
-                styles.badgeText,
-                { color: block.is_work_block === 1 ? colors.primary : colors.textSecondary },
-              ]}>
-                {block.is_work_block === 1 ? 'TRAVAIL' : 'REPOS'}
-              </Text>
-            </View>
-          </View>
+          <Text style={[styles.blockName, { color: colors.textSecondary }]}>{block.name}</Text>
         </PressableA11y>
         {!isFirst && (
           <PressableA11y
@@ -190,15 +175,14 @@ const styles = StyleSheet.create({
   container: { gap: 4, paddingVertical: 8 },
   blockHeader: { flexDirection: 'row', alignItems: 'center' },
   blockNamePressable: { flex: 1 },
-  blockNameRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 2 },
   blockName: {
     fontSize: 11,
     fontWeight: '600',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
+    marginBottom: 2,
   },
   badge: { borderRadius: Radius.sm, paddingHorizontal: 5, paddingVertical: 1 },
-  badgeText: { fontSize: 9, fontWeight: '700', letterSpacing: 0.4 },
   setRow: { flexDirection: 'row', alignItems: 'center' },
   setMain: { flex: 1 },
   set: { fontSize: 14, lineHeight: 20, paddingVertical: 2 },

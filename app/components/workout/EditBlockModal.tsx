@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Modal, View, Text, TextInput, Switch, StyleSheet, ScrollView } from 'react-native';
+import { Modal, View, Text, TextInput, Switch, StyleSheet } from 'react-native';
 import type { Block } from '@/db/types';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import Colors from '@/constants/Colors';
@@ -31,12 +31,6 @@ export function EditBlockModal({ visible, block, workoutExerciseId: _workoutExer
 
   const canSave = name.trim().length > 0;
 
-  const CHIPS: { label: string; isWork: boolean }[] = [
-    { label: 'Échauffement', isWork: false },
-    { label: 'Travail', isWork: true },
-    { label: 'Back-off', isWork: true },
-  ];
-
   async function handleSave() {
     if (!canSave) return;
     await onSave(name.trim(), isWorkBlock ? 1 : 0);
@@ -50,21 +44,6 @@ export function EditBlockModal({ visible, block, workoutExerciseId: _workoutExer
           <Text style={[styles.title, { color: colors.text }]}>
             {block ? 'Renommer le bloc' : 'Nouveau bloc'}
           </Text>
-
-          {!block && (
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipsScroll} contentContainerStyle={styles.chipsRow}>
-              {CHIPS.map(chip => (
-                <PressableA11y
-                  key={chip.label}
-                  accessibilityLabel={`Suggérer ${chip.label}`}
-                  onPress={() => { setName(chip.label); setIsWorkBlock(chip.isWork); }}
-                  style={[styles.chip, { borderColor: colors.primary, backgroundColor: name === chip.label ? colors.primary + '15' : 'transparent' }]}
-                >
-                  <Text style={[styles.chipText, { color: colors.primary }]}>{chip.label}</Text>
-                </PressableA11y>
-              ))}
-            </ScrollView>
-          )}
 
           <TextInput
             style={[styles.input, { color: colors.text, borderColor: colors.border, backgroundColor: colors.background }]}
@@ -117,8 +96,5 @@ const styles = StyleSheet.create({
   switchLabel: { fontSize: 15 },
   buttons: { flexDirection: 'row', gap: 12, marginTop: 4 },
   btn: { flex: 1, alignItems: 'center', paddingVertical: 12, borderRadius: Radius.sm },
-  chipsScroll: { marginBottom: -4 },
-  chipsRow: { flexDirection: 'row', gap: 8, paddingBottom: 4 },
   chip: { borderWidth: 1, borderRadius: Radius.full, paddingHorizontal: 14, paddingVertical: 6 },
-  chipText: { fontSize: 13, fontWeight: '500' },
 });
