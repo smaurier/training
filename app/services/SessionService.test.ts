@@ -108,3 +108,55 @@ describe('SessionService.completeSession', () => {
     expect(updated?.ended_at).not.toBeNull();
   });
 });
+
+describe('SessionService.getNextWorkout', () => {
+  async function seedWorkouts(ctx: ReturnType<typeof makeService>) {
+    const w1 = await ctx.workoutRepo.save({ program_id: 1, name: 'Push', order_index: 0 });
+    const w2 = await ctx.workoutRepo.save({ program_id: 1, name: 'Pull', order_index: 1 });
+    const w3 = await ctx.workoutRepo.save({ program_id: 1, name: 'Legs', order_index: 2 });
+    return [w1, w2, w3];
+  }
+
+  it('retourne le premier workout si aucune session passée', async () => {
+    const ctx = makeService();
+    const service = ctx.build();
+    await seedWorkouts(ctx);
+    const next = await service.getNextWorkout(1);
+    expect(next?.name).toBe('Push');
+  });
+
+  it('retourne le workout suivant dans la séquence', async () => {
+    const ctx = makeService();
+    const service = ctx.build();
+    const [w1] = await seedWorkouts(ctx);
+    await ctx.sessionLogRepo.save({ workout_id: w1.id, started_at: '2026-01-01T10:00:00.000Z', checkin_energy: null, checkin_fatigue: null, checkin_sleep: null, notes: null });
+    const next = await service.getNextWorkout(1);
+    expect(next?.name).toBe('Pull');
+  });
+
+  it('boucle sur le premier workout après le dernier', async () => {
+    const ctx = makeService();
+    const service = ctx.build();
+    const [, , w3] = await seedWorkouts(ctx);
+    await ctx.sessionLogRepo.save({ workout_id: w3.id, started_at: '2026-01-01T10:00:00.000Z', checkin_energy: null, checkin_fatigue: null, checkin_sleep: null, notes: null });
+    const next = await service.getNextWorkout(1);
+    expect(next?.name).toBe('Push');
+  });
+
+  it('retourne null si le programme n\'a pas de workouts', async () => {
+    const ctx = makeService();
+    const service = ctx.build();
+    const next = await service.getNextWorkout(1);
+    expect(next).toBeNull();
+  });
+
+  it('ignore les sessions d\'un autre programme', async () => {
+    const ctx = makeService();
+    const service = ctx.build();
+    await seedWorkouts(ctx);
+    const otherWorkout = await ctx.workoutRepo.save({ program_id: 2, name: 'Autre', order_index: 0 });
+    await ctx.sessionLogRepo.save({ workout_id: otherWorkout.id, started_at: '2026-01-05T10:00:00.000Z', checkin_energy: null, checkin_fatigue: null, checkin_sleep: null, notes: null });
+    const next = await service.getNextWorkout(1);
+    expect(next?.name).toBe('Push');
+  });
+});

@@ -1,4 +1,4 @@
-import type { SessionLog, SetLog } from '../db/types';
+import type { SessionLog, SetLog, Workout } from '../db/types';
 import { ISessionLogRepository } from '../repositories/ISessionLogRepository';
 import { ISetLogRepository } from '../repositories/ISetLogRepository';
 import { IPersonalRecordRepository } from '../repositories/IPersonalRecordRepository';
@@ -82,5 +82,17 @@ export class SessionService {
     await this.sessionLogRepo.complete(sessionLogId, new Date().toISOString());
   }
 
-  // getNextWorkout and calculateProgressions added in Tasks 5 & 6
+  async getNextWorkout(programId: number): Promise<Workout | null> {
+    const workouts = (await this.workoutRepo.findByProgramId(programId))
+      .sort((a, b) => a.order_index - b.order_index);
+    if (workouts.length === 0) return null;
+
+    const latest = await this.sessionLogRepo.findLatestByWorkoutIds(workouts.map(w => w.id));
+    if (!latest) return workouts[0];
+
+    const lastIdx = workouts.findIndex(w => w.id === latest.workout_id);
+    return workouts[(lastIdx + 1) % workouts.length];
+  }
+
+  // calculateProgressions added in Task 6
 }
