@@ -78,15 +78,15 @@
 
 - [ ] Bouton + ouvre la recherche d'exercices
 - [ ] Recherche filtre les résultats en temps réel
-- [ ] Résultats vides → bouton "Créer un exercice" visible
+- [x] Résultats vides → bouton "Créer un exercice" visible
 - [ ] Ajouter un exercice → apparaît dans la liste avec un bloc "Travail" par défaut
 
 ### 4B — Blocs
 
-- [ ] Badge TRAVAIL (bleu) / REPOS (gris) visible sur chaque bloc
-- [ ] Bloc unique → hint "Ajoute des blocs..." visible
-- [ ] Créer un bloc → chips suggestions (Échauffement, Travail, Back-off) affichées
-- [ ] Sélectionner une chip → pré-remplit nom et type is_work_block
+- [x] Badge TRAVAIL (bleu) / REPOS (gris) visible sur chaque bloc
+- [x] Bloc unique → hint "Ajoute des blocs..." visible
+- [x] Créer un bloc → chips suggestions (Échauffement, Travail, Back-off) affichées
+- [x] Sélectionner une chip → pré-remplit nom et type is_work_block
 - [ ] Réordonner blocs ↑/↓ → persisté
 
 ### 4C — Séries
