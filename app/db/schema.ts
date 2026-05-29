@@ -91,4 +91,50 @@ export const MIGRATIONS: string[] = [
     session_log_id  INTEGER REFERENCES session_logs(id)
   );
   `,
+
+  // v2 — fix missing ON DELETE CASCADE sur session_logs, set_logs, personal_records
+  `
+  CREATE TABLE session_logs_new (
+    id               INTEGER PRIMARY KEY AUTOINCREMENT,
+    workout_id       INTEGER NOT NULL REFERENCES workouts(id) ON DELETE CASCADE,
+    started_at       TEXT    NOT NULL,
+    ended_at         TEXT,
+    checkin_energy   INTEGER CHECK(checkin_energy   BETWEEN 1 AND 3),
+    checkin_fatigue  INTEGER CHECK(checkin_fatigue  BETWEEN 1 AND 3),
+    checkin_sleep    INTEGER CHECK(checkin_sleep    BETWEEN 1 AND 3),
+    notes            TEXT
+  );
+  INSERT INTO session_logs_new SELECT * FROM session_logs;
+
+  CREATE TABLE set_logs_new (
+    id               INTEGER PRIMARY KEY AUTOINCREMENT,
+    session_log_id   INTEGER NOT NULL REFERENCES session_logs(id) ON DELETE CASCADE,
+    set_id           INTEGER NOT NULL REFERENCES sets(id) ON DELETE CASCADE,
+    exercise_id      INTEGER NOT NULL REFERENCES exercises(id),
+    reps_done        INTEGER NOT NULL,
+    weight_done      REAL    NOT NULL,
+    rpe              INTEGER CHECK(rpe BETWEEN 1 AND 10),
+    completed_at     TEXT    NOT NULL DEFAULT (datetime('now'))
+  );
+  INSERT INTO set_logs_new SELECT * FROM set_logs;
+
+  CREATE TABLE personal_records_new (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    exercise_id     INTEGER NOT NULL REFERENCES exercises(id),
+    weight          REAL    NOT NULL,
+    reps            INTEGER NOT NULL,
+    estimated_1rm   REAL    NOT NULL,
+    achieved_at     TEXT    NOT NULL,
+    session_log_id  INTEGER REFERENCES session_logs(id) ON DELETE SET NULL
+  );
+  INSERT INTO personal_records_new SELECT * FROM personal_records;
+
+  DROP TABLE personal_records;
+  DROP TABLE set_logs;
+  DROP TABLE session_logs;
+
+  ALTER TABLE session_logs_new RENAME TO session_logs;
+  ALTER TABLE set_logs_new RENAME TO set_logs;
+  ALTER TABLE personal_records_new RENAME TO personal_records;
+  `,
 ];
