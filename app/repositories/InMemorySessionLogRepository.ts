@@ -31,4 +31,8 @@ export class InMemorySessionLogRepository implements ISessionLogRepository {
     const item = this.items.find(i => i.id === id);
     if (item) item.ended_at = endedAt;
   }
+
+  async findAll(): Promise<SessionLog[]> {
+    return [...this.items].sort((a, b) => b.started_at.localeCompare(a.started_at));
+  }
 }

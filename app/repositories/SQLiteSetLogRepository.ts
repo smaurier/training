@@ -28,4 +28,18 @@ export class SQLiteSetLogRepository implements ISetLogRepository {
       [setId]
     );
   }
+
+  async countBySessionLogIds(ids: number[]): Promise<Record<number, number>> {
+    if (ids.length === 0) return {};
+    const placeholders = ids.map(() => '?').join(',');
+    const rows = await this.db.getAllAsync<{ session_log_id: number; cnt: number }>(
+      `SELECT session_log_id, COUNT(*) as cnt FROM set_logs WHERE session_log_id IN (${placeholders}) GROUP BY session_log_id`,
+      ids
+    );
+    const result: Record<number, number> = {};
+    for (const row of rows) {
+      result[row.session_log_id] = row.cnt;
+    }
+    return result;
+  }
 }

@@ -8,4 +8,5 @@ export interface ISessionLogRepository {
   findByWorkoutId(workoutId: number): Promise<SessionLog[]>;
   findLatestByWorkoutIds(workoutIds: number[]): Promise<SessionLog | null>;
   complete(id: number, endedAt: string): Promise<void>;
+  findAll(): Promise<SessionLog[]>;
 }

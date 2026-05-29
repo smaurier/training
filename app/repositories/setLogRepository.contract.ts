@@ -54,4 +54,23 @@ export function runSetLogRepositoryContractTests(createRepo: () => ISetLogReposi
       expect(await repo.findBySetId(10)).toHaveLength(2);
     });
   });
+
+  describe('countBySessionLogIds', () => {
+    it('retourne {} si ids vide', async () => {
+      await repo.save(dto1);
+      expect(await repo.countBySessionLogIds([])).toEqual({});
+    });
+    it('retourne les comptes par session', async () => {
+      await repo.save(dto1);
+      await repo.save({ ...dto1, set_id: 11, completed_at: '2026-01-01T10:06:00.000Z' });
+      await repo.save({ ...dto1, session_log_id: 2, set_id: 12, completed_at: '2026-01-01T10:07:00.000Z' });
+      const counts = await repo.countBySessionLogIds([1, 2]);
+      expect(counts[1]).toBe(2);
+      expect(counts[2]).toBe(1);
+    });
+    it("n'inclut pas les ids sans sets", async () => {
+      const counts = await repo.countBySessionLogIds([99]);
+      expect(counts[99]).toBeUndefined();
+    });
+  });
 }

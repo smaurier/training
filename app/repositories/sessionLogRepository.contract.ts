@@ -79,4 +79,19 @@ export function runSessionLogRepositoryContractTests(createRepo: () => ISessionL
       expect(updated?.ended_at).toBe('2026-01-01T11:00:00.000Z');
     });
   });
+
+  describe('findAll', () => {
+    it('retourne [] si aucune session', async () => {
+      expect(await repo.findAll()).toHaveLength(0);
+    });
+    it('retourne toutes les sessions ordonnées par started_at DESC', async () => {
+      await repo.save({ ...dto1, started_at: '2026-01-01T10:00:00.000Z' });
+      await repo.save({ ...dto1, started_at: '2026-01-03T10:00:00.000Z' });
+      await repo.save({ ...dto1, started_at: '2026-01-02T10:00:00.000Z' });
+      const all = await repo.findAll();
+      expect(all).toHaveLength(3);
+      expect(all[0].started_at).toBe('2026-01-03T10:00:00.000Z');
+      expect(all[2].started_at).toBe('2026-01-01T10:00:00.000Z');
+    });
+  });
 }

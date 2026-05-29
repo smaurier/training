@@ -38,4 +38,10 @@ export class SQLiteSessionLogRepository implements ISessionLogRepository {
   async complete(id: number, endedAt: string): Promise<void> {
     await this.db.runAsync('UPDATE session_logs SET ended_at = ? WHERE id = ?', [endedAt, id]);
   }
+
+  async findAll(): Promise<SessionLog[]> {
+    return this.db.getAllAsync<SessionLog>(
+      'SELECT * FROM session_logs ORDER BY started_at DESC'
+    );
+  }
 }
