@@ -126,6 +126,36 @@ export class WorkoutExerciseService {
     await this.blockRepo.delete(blockId);
   }
 
+  async reorderExercise(workoutId: number, exerciseId: number, direction: 'up' | 'down'): Promise<void> {
+    const siblings = (await this.weRepo.findByWorkoutId(workoutId))
+      .sort((a, b) => a.order_index - b.order_index);
+    const idx = siblings.findIndex(e => e.id === exerciseId);
+    if (idx === -1) return;
+    const neighborIdx = direction === 'up' ? idx - 1 : idx + 1;
+    if (neighborIdx < 0 || neighborIdx >= siblings.length) return;
+    await this.weRepo.swap(siblings[idx].id, siblings[neighborIdx].id);
+  }
+
+  async reorderBlock(workoutExerciseId: number, blockId: number, direction: 'up' | 'down'): Promise<void> {
+    const siblings = (await this.blockRepo.findByWorkoutExerciseId(workoutExerciseId))
+      .sort((a, b) => a.order_index - b.order_index);
+    const idx = siblings.findIndex(b => b.id === blockId);
+    if (idx === -1) return;
+    const neighborIdx = direction === 'up' ? idx - 1 : idx + 1;
+    if (neighborIdx < 0 || neighborIdx >= siblings.length) return;
+    await this.blockRepo.swap(siblings[idx].id, siblings[neighborIdx].id);
+  }
+
+  async reorderSet(blockId: number, setId: number, direction: 'up' | 'down'): Promise<void> {
+    const siblings = (await this.setRepo.findByBlockId(blockId))
+      .sort((a, b) => a.order_index - b.order_index);
+    const idx = siblings.findIndex(s => s.id === setId);
+    if (idx === -1) return;
+    const neighborIdx = direction === 'up' ? idx - 1 : idx + 1;
+    if (neighborIdx < 0 || neighborIdx >= siblings.length) return;
+    await this.setRepo.swap(siblings[idx].id, siblings[neighborIdx].id);
+  }
+
   private async loadDetail(we: WorkoutExercise, exercise: Exercise): Promise<WorkoutExerciseDetail> {
     const blocks = await this.blockRepo.findByWorkoutExerciseId(we.id);
     const blocksWithSets: BlockWithSets[] = await Promise.all(

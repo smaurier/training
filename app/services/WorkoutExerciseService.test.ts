@@ -174,4 +174,117 @@ describe('WorkoutExerciseService', () => {
       expect(updated[0].blocks).toHaveLength(0);
     });
   });
+
+  describe('reorderExercise', () => {
+    it('monte un exercice : permute son order_index avec celui du précédent', async () => {
+      const { service, exerciseRepo } = makeService();
+      const ex1 = await seedExercise(exerciseRepo);
+      const ex2 = await exerciseRepo.save({ ...ex1, name: 'Squat' });
+      const d1 = await service.addToWorkout(1, ex1.id);
+      const d2 = await service.addToWorkout(1, ex2.id);
+      await service.reorderExercise(1, d2.id, 'up');
+      const details = await service.getWithDetails(1);
+      const sorted = details.sort((a, b) => a.order_index - b.order_index);
+      expect(sorted[0].id).toBe(d2.id);
+      expect(sorted[1].id).toBe(d1.id);
+    });
+
+    it('no-op si exercice déjà en première position et direction "up"', async () => {
+      const { service, exerciseRepo } = makeService();
+      const ex1 = await seedExercise(exerciseRepo);
+      const d1 = await service.addToWorkout(1, ex1.id);
+      await service.reorderExercise(1, d1.id, 'up');
+      const details = await service.getWithDetails(1);
+      expect(details[0].order_index).toBe(0);
+    });
+
+    it('no-op si exercice déjà en dernière position et direction "down"', async () => {
+      const { service, exerciseRepo } = makeService();
+      const ex1 = await seedExercise(exerciseRepo);
+      const ex2 = await exerciseRepo.save({ ...ex1, name: 'Squat' });
+      await service.addToWorkout(1, ex1.id);
+      const d2 = await service.addToWorkout(1, ex2.id);
+      await service.reorderExercise(1, d2.id, 'down');
+      const details = await service.getWithDetails(1);
+      expect(details.find(d => d.id === d2.id)!.order_index).toBe(1);
+    });
+
+    it('no-op si id inconnu dans la séance (pas de throw)', async () => {
+      const { service, exerciseRepo } = makeService();
+      const ex1 = await seedExercise(exerciseRepo);
+      await service.addToWorkout(1, ex1.id);
+      await expect(service.reorderExercise(1, 999, 'up')).resolves.toBeUndefined();
+    });
+  });
+
+  describe('reorderBlock', () => {
+    it('monte un bloc : permute son order_index avec celui du précédent', async () => {
+      const { service, exerciseRepo } = makeService();
+      const exercise = await seedExercise(exerciseRepo);
+      const detail = await service.addToWorkout(1, exercise.id);
+      await service.addBlock(detail.id, 'Back-off', 0);
+      const before = await service.getWithDetails(1);
+      const b0 = before[0].blocks[0];
+      const b1 = before[0].blocks[1];
+      await service.reorderBlock(detail.id, b1.id, 'up');
+      const after = await service.getWithDetails(1);
+      const sorted = after[0].blocks.sort((a, b) => a.order_index - b.order_index);
+      expect(sorted[0].id).toBe(b1.id);
+      expect(sorted[1].id).toBe(b0.id);
+    });
+
+    it('no-op si bloc en première position et direction "up"', async () => {
+      const { service, exerciseRepo } = makeService();
+      const exercise = await seedExercise(exerciseRepo);
+      const detail = await service.addToWorkout(1, exercise.id);
+      const blockId = detail.blocks[0].id;
+      await service.reorderBlock(detail.id, blockId, 'up');
+      const after = await service.getWithDetails(1);
+      expect(after[0].blocks[0].order_index).toBe(0);
+    });
+
+    it('no-op si id inconnu (pas de throw)', async () => {
+      const { service, exerciseRepo } = makeService();
+      const exercise = await seedExercise(exerciseRepo);
+      const detail = await service.addToWorkout(1, exercise.id);
+      await expect(service.reorderBlock(detail.id, 999, 'up')).resolves.toBeUndefined();
+    });
+  });
+
+  describe('reorderSet', () => {
+    it('monte une série : permute son order_index avec celui de la précédente', async () => {
+      const { service, exerciseRepo } = makeService();
+      const exercise = await seedExercise(exerciseRepo);
+      const detail = await service.addToWorkout(1, exercise.id);
+      const blockId = detail.blocks[0].id;
+      await service.addSet(blockId);
+      const before = await service.getWithDetails(1);
+      const s0 = before[0].blocks[0].sets[0];
+      const s1 = before[0].blocks[0].sets[1];
+      await service.reorderSet(blockId, s1.id, 'up');
+      const after = await service.getWithDetails(1);
+      const sorted = after[0].blocks[0].sets.sort((a, b) => a.order_index - b.order_index);
+      expect(sorted[0].id).toBe(s1.id);
+      expect(sorted[1].id).toBe(s0.id);
+    });
+
+    it('no-op si série en première position et direction "up"', async () => {
+      const { service, exerciseRepo } = makeService();
+      const exercise = await seedExercise(exerciseRepo);
+      const detail = await service.addToWorkout(1, exercise.id);
+      const blockId = detail.blocks[0].id;
+      const setId = detail.blocks[0].sets[0].id;
+      await service.reorderSet(blockId, setId, 'up');
+      const after = await service.getWithDetails(1);
+      expect(after[0].blocks[0].sets[0].order_index).toBe(0);
+    });
+
+    it('no-op si id inconnu (pas de throw)', async () => {
+      const { service, exerciseRepo } = makeService();
+      const exercise = await seedExercise(exerciseRepo);
+      const detail = await service.addToWorkout(1, exercise.id);
+      const blockId = detail.blocks[0].id;
+      await expect(service.reorderSet(blockId, 999, 'up')).resolves.toBeUndefined();
+    });
+  });
 });
