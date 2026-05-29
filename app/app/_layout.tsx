@@ -87,6 +87,10 @@ function RootLayoutNav() {
           name="history/[sessionLogId]"
           options={{ title: 'Détail séance' }}
         />
+        <Stack.Screen
+          name="progression/[exerciseId]"
+          options={{ title: 'Progression' }}
+        />
       </Stack>
     </ThemeProvider>
   );

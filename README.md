@@ -69,6 +69,10 @@ app/
 - Construction de séances : exercices → blocs → séries
 - Édition inline : modifier / ajouter / supprimer blocs et séries
 - Réordonnancement ↑↓ : exercices, blocs et séries
+- Conduite de séance : chrono de pause, saisie reps/poids, check-in énergie/fatigue/sommeil
+- Progression automatique des poids (Epley)
+- Historique des séances avec détail par exercice
+- Dashboard stats : volume hebdomadaire ISO, PRs récents, 1RM estimé par exercice
 
 ## Documentation
 

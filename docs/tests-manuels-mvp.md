@@ -240,6 +240,20 @@
 
 ---
 
+## 11. Progression Stats
+
+- Onglet Progression → segment Stats → dashboard visible
+- Stats globales : séances, PRs, exercices ce mois corrects
+- Volume 4 semaines ISO : barres affichées, semaine courante en bleu
+- PRs récents : 5 derniers PRs avec nom exercice et 1RM estimé
+- Liste 1RM : exercices loggés avec valeur et delta
+- Delta "Depuis le début" si moins de 30j de données
+- Tap exercice → écran détail avec graphique barres par session
+- Meilleur PR + historique PRs dans le détail
+- Segment Historique → liste des séances toujours intacte
+
+---
+
 ## Notes de passe
 
 | Date | Version | Résultat | Remarques |
