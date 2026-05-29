@@ -16,7 +16,7 @@ const FAB_ICON_COLOR = '#fff' as const;
 const SHADOW_COLOR = '#000' as const;
 
 export default function ProgrammesScreen() {
-  const { programs, loading, error, remove, refresh } = usePrograms();
+  const { programs, loading, error, remove, setActive, refresh } = usePrograms();
   const router = useRouter();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
@@ -43,22 +43,20 @@ export default function ProgrammesScreen() {
   );
 
   function handleLongPress(program: Program) {
-    Alert.alert(
-      program.name,
-      'Que veux-tu faire ?',
-      [
-        {
-          text: 'Modifier',
-          onPress: () => router.push({ pathname: '/add-programme', params: { id: String(program.id) } }),
-        },
-        {
-          text: 'Supprimer',
-          style: 'destructive',
-          onPress: () => confirmDelete(program),
-        },
-        { text: 'Annuler', style: 'cancel' },
-      ]
+    const buttons: Parameters<typeof Alert.alert>[2] = [
+      {
+        text: 'Modifier',
+        onPress: () => router.push({ pathname: '/add-programme', params: { id: String(program.id) } }),
+      },
+    ];
+    if (program.is_active !== 1) {
+      buttons.push({ text: 'Activer', onPress: () => setActive(program.id) });
+    }
+    buttons.push(
+      { text: 'Supprimer', style: 'destructive', onPress: () => confirmDelete(program) },
+      { text: 'Annuler', style: 'cancel' },
     );
+    Alert.alert(program.name, 'Que veux-tu faire ?', buttons);
   }
 
   function confirmDelete(program: Program) {
