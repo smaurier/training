@@ -347,3 +347,86 @@ workout/[id].tsx → WorkoutExerciseCard (câblage complet)
 1. Tester manuellement le flow complet d'édition (séries + blocs)
 2. Réordonnancement drag-and-drop des exercices dans une séance (Session 8B)
 3. Réordonnancement des blocs dans un exercice et des séries dans un bloc
+
+---
+
+## Session 8B — 2026-05-28 · Réordonnancement ↑/↓
+
+### Ce qui a été demandé
+Implémenter les boutons ↑/↓ pour réordonner : exercices dans une séance, blocs dans un exercice, séries dans un bloc, séances dans un programme.
+
+### Décisions prises
+- **Boutons ↑/↓ plutôt que drag-and-drop** : plus accessible, plus simple, conforme WCAG. Drag-and-drop envisageable en V2.
+- **swap() dans les 4 repositories** (workout, workoutExercise, block, set) : échange les `order_index` entre deux entités adjacentes en une seule opération transactionnelle.
+- **Contract tests swap** : cas swap premier/dernier/adjacent ajoutés aux 4 suites contract.
+
+### Ce qui a été fait
+- `swap()` dans `IWorkoutRepository`, `IWorkoutExerciseRepository`, `IBlockRepository`, `ISetRepository` — interfaces + InMemory + SQLite
+- Contract tests swap (~3 cas chacun) — 4 suites mises à jour
+- Boutons ↑/↓ sur `WorkoutCard` (programme/[id].tsx), `WorkoutExerciseCard`, `BlockCard`, `SetRow`
+- Callbacks `onMoveUp/onMoveDown` câblés via hooks + services
+- Poussé sur GitHub
+
+### Prochaine session (Session 9)
+Conduite de séance guidée : check-in, timer, saisie reps/poids réels, "Tout réussi ⚡", progression automatique post-séance, résumé.
+
+---
+
+## Session 9 — 2026-05-29 · Conduite de séance guidée (MVP core)
+
+### Ce qui a été demandé
+Implémenter la conduite de séance complète : state machine (check-in → running → summary), timer pause/reprend, saisie des reps/poids/RPE, "Tout réussi ⚡", progression automatique, accueil dynamique (next workout).
+
+### Décisions prises
+- **State machine dans un seul écran** `session/[workoutId].tsx` — `SessionPhase = 'checkin' | 'running' | 'summary'`. Pas de routes séparées → bouton Back système ne casse pas la session.
+- **3 nouveaux repos** : `ISessionLogRepository` (5 méthodes, dont `findLatestByWorkoutIds`), `ISetLogRepository` (3 méthodes), `IPersonalRecordRepository` (2 méthodes).
+- **`CreateSessionLogDto = Omit<SessionLog, 'id' | 'ended_at'>`** — omit les deux champs auto-générés (contrairement aux autres repos qui omettent seulement `id`).
+- **SessionService** : 5 méthodes publiques. Injecte 8 repositories (toutes les dépendances explicites).
+- **Détection PR via Epley** : `weight × (1 + reps/30)`. PR sauvegardé seulement si `weight > 0 && reps > 0 && estimated1RM > currentBest`.
+- **Progression** : filtre sur `is_work_block === 1`, comptage sessions consécutives, `+progression_step` sur tous les sets de travail si `consecutiveSuccesses >= progression_threshold`.
+- **`getNextWorkout`** : trie par `order_index`, trouve le dernier log parmi tous les workouts du programme, retourne `workouts[(lastIdx + 1) % workouts.length]`.
+- **`advancePosition` fonction pure exportée** : priorité setIdx+1 → blockIdx+1 → exerciseIdx+1 → null. Testable indépendamment du hook.
+- **`useRef` guard** pour instancier le service une seule fois (évite la re-création à chaque re-render).
+- **`key={setKey}` sur ScrollView** de RunningPhase : reset l'état des champs reps/poids/RPE à chaque changement de série.
+- **Stubs RunningPhase/SummaryPhase** créés en Task 9, remplacés en Tasks 10/11 — débloque la compilation TypeScript pendant l'implémentation.
+- **Accueil dynamique** `(tabs)/index.tsx` : `useFocusEffect` + `getNextWorkout` sur le programme actif. 3 états : aucun programme / prochaine séance / aucune séance configurée.
+
+### Ce qui a été fait
+- `repositories/ISessionLogRepository.ts` + InMemory + SQLite + contract tests (11 cas)
+- `repositories/ISetLogRepository.ts` + InMemory + SQLite + contract tests (7 cas)
+- `repositories/IPersonalRecordRepository.ts` + InMemory + SQLite + contract tests (4 cas)
+- `services/SessionService.ts` — 5 méthodes, 18 tests GREEN
+- `hooks/useTimer.ts` — `setInterval` + `useRef`, auto-stop à 0, callbacks `useCallback`
+- `hooks/useSession.ts` — `advancePosition` pure + `useSession` hook complet
+- `app/session/[workoutId].tsx` — écran state machine (3 phases)
+- `components/session/CheckInPhase.tsx` — 3 lignes (énergie/fatigue/sommeil), bouton disabled tant que non rempli
+- `components/session/RunningPhase.tsx` — timer tap pause/reprend, Valider + "Tout réussi ⚡", séries restantes
+- `components/session/SummaryPhase.tsx` — durée, stats, progressions (achieved + pending)
+- `app/_layout.tsx` — Stack.Screen session/[workoutId] sans header
+- `app/workout/[id].tsx` — bouton "▶ Démarrer la séance" (vert, bas de l'écran)
+- `app/(tabs)/index.tsx` — réécriture complète, accueil dynamique
+- `docs/tests-manuels-mvp.md` — suite de tests manuels MVP complète (9 sections, à exécuter uniquement quand le MVP est finalisé)
+- **182 tests GREEN** au total (14 suites), TypeScript clean
+- 13 commits poussés sur main (`f166a48..2161f93`)
+
+### Architecture finale
+```
+SessionService ← 8 repos injectés
+useSession → SessionService, advancePosition (pure)
+useTimer → setInterval + useRef
+session/[workoutId].tsx → useSession + useTimer + CheckIn/Running/SummaryPhase
+(tabs)/index.tsx → useFocusEffect + getNextWorkout
+```
+
+### Leçons Code Craft de la session
+- **Fonction pure `advancePosition`** : navigation = transformation de données → exportée, testée isolément, pas d'effets de bord
+- **`useRef` guard** : services créés une fois, pas à chaque re-render. Critère : dépendances stables (repos + workoutDetails) → `if (!serviceRef.current) { serviceRef.current = new ... }`
+- **Stubs typage-compatible** : créer des stubs qui compilent permet de débloquer la CI pendant l'implémentation incrémentale
+- **`key` prop pour reset local state** : `key={setKey}` sur le composant racine reset ses champs sans `useEffect`
+- **Injection massive** : 8 dépendances dans un constructeur = signal à surveiller. Pour ce MVP, acceptable — la couche service est le seul endroit qui connaît l'ensemble des tables.
+
+### Prochaine session (Session 10)
+1. Tester manuellement le flow complet sur device/émulateur (tests-manuels-mvp.md)
+2. Historique des séances
+3. Page Progression / graphiques (1RM estimé, PRs, volume)
+4. (Futur) Session dédiée polish visuel après MVP complet
