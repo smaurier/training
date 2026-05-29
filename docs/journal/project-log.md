@@ -487,3 +487,56 @@ history/[sessionLogId].tsx → HistoryService direct (load at mount)
 1. Tester manuellement l'historique sur device/émulateur (tests-manuels-mvp.md section 10)
 2. Page Progression — graphiques 1RM estimé (Epley), PRs par exercice, volume par semaine
 3. (Optionnel) Filtres historique par exercice ou période
+
+---
+
+## Session 11 — 2026-05-29 · Progression Stats (dashboard + détail exercice)
+
+### Ce qui a été demandé
+Ajouter un dashboard "Stats" dans l'onglet Progression : segmented control `Historique | Stats`, 3 chips globales (séances/PRs/exercices ce mois), volume par semaine ISO, 5 derniers PRs, liste 1RM par exercice avec delta 30j, écran détail exercice avec graphique d'évolution 1RM.
+
+### Décisions prises
+- **Segmented control sans swipe** : conflit gestuel scroll horizontal vs SectionList/ScrollView verticaux sur Android. État local `activeSegment`.
+- **Fusion deux séances même jour dans le graphique 1RM** : `completed_at.slice(0, 10)` comme clé → max Epley du jour. Silencieux (pas d'avertissement).
+- **Chips toutes "ce mois"** : cohérence — les 3 chips filtrées par mois courant. Filtre période (mois/année/all-time) repoussé hors scope.
+- **PR_FETCH_LIMIT = 200** : `findRecent` trie DESC donc le mois courant est toujours dans le top 200 ; pas de `findFromDate` sur `PersonalRecord`.
+- **UTC noon** dans `getExercise1RMHistory` : `T12:00:00Z` pour cohérence avec les autres calculs UTC du service.
+- **`Math.max` guard** : `logs.length === 0` → `return null` dans `getExercise1RMList`, filtré avant tri. Protège contre race condition `findDistinctExerciseIds` / `findByExerciseId`.
+- **BarChart accessible** : wrappé dans `<View accessible accessibilityLabel="...">` — WCAG 2.2 SC 1.1.1.
+- **Semantic color overrides** : `#22C55E` / `#EF4444` autorisés (status positif/négatif) — exception explicite à la convention "Colors.ts seulement".
+
+### Ce qui a été fait
+- `react-native-gifted-charts` + `expo-linear-gradient` + `react-native-svg` installés
+- `ISetLogRepository` — +3 méthodes (`findByExerciseId`, `findFromDate`, `findDistinctExerciseIds`) + InMemory + SQLite + contract tests
+- `IPersonalRecordRepository` — +2 méthodes (`findAllByExerciseId`, `findRecent`) + InMemory + SQLite + contract tests
+- `services/ProgressionService.ts` — 5 interfaces + 5 méthodes, 15 tests GREEN
+- `hooks/useProgression.ts` — `Promise.all` 4 sources, `mountedRef`, `refresh()`
+- `components/progression/VolumeBarChart.tsx` — BarChart 4 semaines, semaine courante `colors.primary`, delta `+X%`
+- `components/progression/Exercise1RMCard.tsx` — ligne liste 1RM, `PressableA11y`, delta coloré
+- `app/(tabs)/progression.tsx` — segmented control `Historique|Stats` + dashboard Stats complet
+- `app/progression/[exerciseId].tsx` — graphique 1RM par session, meilleur PR, historique PRs
+- `app/_layout.tsx` — Stack.Screen `progression/[exerciseId]`
+- `docs/tests-manuels-mvp.md` — section 11 (8 items)
+- `README.md` — section Fonctionnalités mise à jour
+- **232 tests GREEN** (18 suites), TypeScript clean
+- Poussé sur GitHub (`d1f96d0..8e84a0e`)
+
+### Architecture finale
+```
+ProgressionService ← 4 repos injectés
+useProgression → ProgressionService, Promise.all
+(tabs)/progression.tsx → useHistory + useProgression + segmented control
+progression/[exerciseId].tsx → ProgressionService direct (mount)
+```
+
+### Leçons Code Craft de la session
+- **`Math.max(...[]) = -Infinity`** : `findDistinctExerciseIds` puis `findByExerciseId` = deux requêtes séparées = race condition possible. Guard `logs.length === 0` indispensable avant `Math.max`.
+- **UTC noon pattern** : `T12:00:00Z` (UTC) vs `T12:00:00` (local) — les deux semblent équivalents mais divergent dans les fuseaux UTC−. Utiliser systématiquement le suffixe `Z`.
+- **Error state vs empty state** : une `.catch()` qui ne set pas d'error state masque les erreurs DB derrière un "Aucune donnée" — toujours distinguer erreur vs vide.
+- **Comment factuel** : un commentaire qui justifie une constante doit être exact. "200 covers > 10 years" était faux → corrigé en décrivant le mécanisme réel (tri DESC).
+- **Segmented control a11y** : `accessibilityRole="tablist"` sur le container + `role="tab"` + `accessibilityState={{ selected }}` sur chaque bouton — structure complète pour screen readers.
+
+### Prochaine session (Session 12)
+1. Tests manuels sur device/émulateur (tests-manuels-mvp.md — toutes les sections)
+2. Polish final (animations, transitions, edge cases visuels)
+3. Si tout est bon : MVP terminé
