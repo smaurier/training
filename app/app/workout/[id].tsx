@@ -35,6 +35,9 @@ export default function WorkoutDetailScreen() {
     addBlock,
     updateBlock,
     removeBlock,
+    reorderExercise,
+    reorderBlock,
+    reorderSet,
   } = useWorkoutExercises(workoutId);
 
   useEffect(() => {
@@ -86,9 +89,15 @@ export default function WorkoutDetailScreen() {
         <FlatList
           data={exercises}
           keyExtractor={(item) => String(item.id)}
-          renderItem={({ item }) => (
+          renderItem={({ item, index }) => (
             <WorkoutExerciseCard
               detail={item}
+              isFirst={index === 0}
+              isLast={index === exercises.length - 1}
+              onMoveUp={() => reorderExercise(item.id, 'up')}
+              onMoveDown={() => reorderExercise(item.id, 'down')}
+              onReorderBlock={reorderBlock}
+              onReorderSet={reorderSet}
               onRemove={() => confirmRemove(item)}
               onUpdateSet={updateSet}
               onAddSet={addSet}

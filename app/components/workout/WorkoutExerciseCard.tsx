@@ -20,6 +20,12 @@ interface WorkoutExerciseCardProps {
   onAddBlock: (workoutExerciseId: number, name: string, isWorkBlock: 0 | 1) => Promise<void>;
   onUpdateBlock: (blockId: number, dto: UpdateBlockDto) => Promise<void>;
   onRemoveBlock: (blockId: number) => Promise<void>;
+  isFirst: boolean;
+  isLast: boolean;
+  onMoveUp: () => Promise<void>;
+  onMoveDown: () => Promise<void>;
+  onReorderBlock: (workoutExerciseId: number, blockId: number, direction: 'up' | 'down') => Promise<void>;
+  onReorderSet: (blockId: number, setId: number, direction: 'up' | 'down') => Promise<void>;
 }
 
 export function WorkoutExerciseCard({
@@ -31,6 +37,12 @@ export function WorkoutExerciseCard({
   onAddBlock,
   onUpdateBlock,
   onRemoveBlock,
+  isFirst,
+  isLast,
+  onMoveUp,
+  onMoveDown,
+  onReorderBlock,
+  onReorderSet,
 }: WorkoutExerciseCardProps) {
   const [expanded, setExpanded] = useState(false);
   const [showAddBlock, setShowAddBlock] = useState(false);
@@ -77,42 +89,67 @@ export function WorkoutExerciseCard({
 
   return (
     <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-      <PressableA11y
-        accessibilityLabel={`${detail.exercise.name}, ${expanded ? 'réduire' : 'développer'}`}
-        accessibilityHint="Appuyer longuement pour supprimer"
-        accessibilityState={{ expanded }}
-        onPress={() => setExpanded(e => !e)}
-        onLongPress={handleLongPress}
-        style={styles.header}
-      >
-        <View style={styles.headerContent}>
-          <Text style={[styles.name, { color: colors.text }]} numberOfLines={1}>
-            {detail.exercise.name}
-          </Text>
-          {muscleGroups ? (
-            <Text style={[styles.muscles, { color: colors.textSecondary }]} numberOfLines={1}>
-              {muscleGroups}
+      <View style={styles.header}>
+        <PressableA11y
+          accessibilityLabel={`${detail.exercise.name}, ${expanded ? 'réduire' : 'développer'}`}
+          accessibilityHint="Appuyer longuement pour supprimer"
+          accessibilityState={{ expanded }}
+          onPress={() => setExpanded(e => !e)}
+          onLongPress={handleLongPress}
+          style={styles.headerMain}
+        >
+          <View style={styles.headerContent}>
+            <Text style={[styles.name, { color: colors.text }]} numberOfLines={1}>
+              {detail.exercise.name}
             </Text>
-          ) : null}
-        </View>
-        <Ionicons
-          name={expanded ? 'chevron-up' : 'chevron-down'}
-          size={18}
-          color={colors.textSecondary}
-          importantForAccessibility="no"
-          accessibilityElementsHidden={true}
-        />
-      </PressableA11y>
+            {muscleGroups ? (
+              <Text style={[styles.muscles, { color: colors.textSecondary }]} numberOfLines={1}>
+                {muscleGroups}
+              </Text>
+            ) : null}
+          </View>
+          <Ionicons
+            name={expanded ? 'chevron-up' : 'chevron-down'}
+            size={18}
+            color={colors.textSecondary}
+            importantForAccessibility="no"
+            accessibilityElementsHidden={true}
+          />
+        </PressableA11y>
+        {!isFirst && (
+          <PressableA11y
+            accessibilityLabel={`Monter ${detail.exercise.name}`}
+            onPress={onMoveUp}
+            style={styles.reorderBtn}
+          >
+            <Ionicons name="chevron-up-outline" size={16} color={colors.textSecondary} />
+          </PressableA11y>
+        )}
+        {!isLast && (
+          <PressableA11y
+            accessibilityLabel={`Descendre ${detail.exercise.name}`}
+            onPress={onMoveDown}
+            style={styles.reorderBtn}
+          >
+            <Ionicons name="chevron-down-outline" size={16} color={colors.textSecondary} />
+          </PressableA11y>
+        )}
+      </View>
 
       {expanded && (
         <View style={styles.blocks}>
           {detail.blocks.length === 0 ? (
             <Text style={[styles.empty, { color: colors.textSecondary }]}>Aucun bloc configuré.</Text>
           ) : (
-            detail.blocks.map(block => (
+            detail.blocks.map((block, index) => (
               <BlockCard
                 key={block.id}
                 block={block}
+                isFirst={index === 0}
+                isLast={index === detail.blocks.length - 1}
+                onMoveUp={() => onReorderBlock(detail.id, block.id, 'up')}
+                onMoveDown={() => onReorderBlock(detail.id, block.id, 'down')}
+                onReorderSet={(setId, dir) => onReorderSet(block.id, setId, dir)}
                 onUpdateSet={onUpdateSet}
                 onAddSet={onAddSet}
                 onRemoveSet={onRemoveSet}
@@ -145,8 +182,10 @@ export function WorkoutExerciseCard({
 
 const styles = StyleSheet.create({
   card: { borderRadius: 12, borderWidth: 1, marginBottom: 10, overflow: 'hidden' },
-  header: { flexDirection: 'row', alignItems: 'center', padding: 16, gap: 8, minHeight: 56 },
+  header: { flexDirection: 'row', alignItems: 'center', paddingRight: 4, minHeight: 56 },
+  headerMain: { flex: 1, flexDirection: 'row', alignItems: 'center', paddingLeft: 16, paddingVertical: 16, paddingRight: 8, gap: 8 },
   headerContent: { flex: 1, gap: 2 },
+  reorderBtn: { alignItems: 'center', justifyContent: 'center' },
   name: { fontSize: 16, fontWeight: '600' },
   muscles: { fontSize: 12 },
   blocks: { padding: 12, paddingTop: 0, gap: 8 },

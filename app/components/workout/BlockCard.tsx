@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { View, Text, StyleSheet, Alert } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import type { BlockWithSets } from '@/services/WorkoutExerciseService';
 import type { Set as TrainingSet } from '@/db/types';
 import type { UpdateSetDto } from '@/repositories/ISetRepository';
@@ -15,6 +16,11 @@ interface BlockCardProps {
   onRemoveSet: (setId: number) => Promise<void>;
   onRenameBlock: (block: BlockWithSets) => void;
   onRemoveBlock: (blockId: number) => Promise<void>;
+  isFirst: boolean;
+  isLast: boolean;
+  onMoveUp: () => Promise<void>;
+  onMoveDown: () => Promise<void>;
+  onReorderSet: (setId: number, direction: 'up' | 'down') => Promise<void>;
 }
 
 function formatSet(set: TrainingSet): string {
@@ -34,7 +40,7 @@ function formatSet(set: TrainingSet): string {
   return `${reps} @ ${weight} — ${rest}`;
 }
 
-export function BlockCard({ block, onUpdateSet, onAddSet, onRemoveSet, onRenameBlock, onRemoveBlock }: BlockCardProps) {
+export function BlockCard({ block, onUpdateSet, onAddSet, onRemoveSet, onRenameBlock, onRemoveBlock, isFirst, isLast, onMoveUp, onMoveDown, onReorderSet }: BlockCardProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const [editingSet, setEditingSet] = useState<TrainingSet | null>(null);
@@ -74,30 +80,71 @@ export function BlockCard({ block, onUpdateSet, onAddSet, onRemoveSet, onRenameB
 
   return (
     <View style={styles.container}>
-      <PressableA11y
-        accessibilityLabel={`${block.name}, appuyer longuement pour modifier`}
-        accessibilityHint="Appuyer longuement pour renommer ou supprimer"
-        onPress={() => {}}
-        onLongPress={handleBlockLongPress}
-      >
-        <Text style={[styles.blockName, { color: colors.textSecondary }]}>{block.name}</Text>
-      </PressableA11y>
+      <View style={styles.blockHeader}>
+        <PressableA11y
+          accessibilityLabel={`${block.name}, appuyer longuement pour modifier`}
+          accessibilityHint="Appuyer longuement pour renommer ou supprimer"
+          onPress={() => {}}
+          onLongPress={handleBlockLongPress}
+          style={styles.blockNamePressable}
+        >
+          <Text style={[styles.blockName, { color: colors.textSecondary }]}>{block.name}</Text>
+        </PressableA11y>
+        {!isFirst && (
+          <PressableA11y
+            accessibilityLabel={`Monter le bloc ${block.name}`}
+            onPress={onMoveUp}
+            style={styles.reorderBtn}
+          >
+            <Ionicons name="chevron-up-outline" size={14} color={colors.textSecondary} />
+          </PressableA11y>
+        )}
+        {!isLast && (
+          <PressableA11y
+            accessibilityLabel={`Descendre le bloc ${block.name}`}
+            onPress={onMoveDown}
+            style={styles.reorderBtn}
+          >
+            <Ionicons name="chevron-down-outline" size={14} color={colors.textSecondary} />
+          </PressableA11y>
+        )}
+      </View>
 
       {block.sets.length === 0 ? (
         <Text style={[styles.set, { color: colors.textSecondary }]}>Aucune série.</Text>
       ) : (
-        block.sets.map((set) => (
-          <PressableA11y
-            key={set.id}
-            accessibilityLabel={`${formatSet(set)}, appuyer pour modifier`}
-            accessibilityHint="Appuyer longuement pour supprimer"
-            onPress={() => setEditingSet(set)}
-            onLongPress={() => handleSetLongPress(set)}
-          >
-            <Text style={[styles.set, { color: colors.text }]}>
-              {formatSet(set)}
-            </Text>
-          </PressableA11y>
+        block.sets.map((set, index) => (
+          <View key={set.id} style={styles.setRow}>
+            <PressableA11y
+              accessibilityLabel={`${formatSet(set)}, appuyer pour modifier`}
+              accessibilityHint="Appuyer longuement pour supprimer"
+              onPress={() => setEditingSet(set)}
+              onLongPress={() => handleSetLongPress(set)}
+              style={styles.setMain}
+            >
+              <Text style={[styles.set, { color: colors.text }]}>
+                {formatSet(set)}
+              </Text>
+            </PressableA11y>
+            {index > 0 && (
+              <PressableA11y
+                accessibilityLabel={`Monter série ${index + 1}`}
+                onPress={() => onReorderSet(set.id, 'up')}
+                style={styles.reorderBtn}
+              >
+                <Ionicons name="chevron-up-outline" size={14} color={colors.textSecondary} />
+              </PressableA11y>
+            )}
+            {index < block.sets.length - 1 && (
+              <PressableA11y
+                accessibilityLabel={`Descendre série ${index + 1}`}
+                onPress={() => onReorderSet(set.id, 'down')}
+                style={styles.reorderBtn}
+              >
+                <Ionicons name="chevron-down-outline" size={14} color={colors.textSecondary} />
+              </PressableA11y>
+            )}
+          </View>
         ))
       )}
 
@@ -125,6 +172,8 @@ export function BlockCard({ block, onUpdateSet, onAddSet, onRemoveSet, onRenameB
 
 const styles = StyleSheet.create({
   container: { gap: 4, paddingVertical: 8 },
+  blockHeader: { flexDirection: 'row', alignItems: 'center' },
+  blockNamePressable: { flex: 1 },
   blockName: {
     fontSize: 11,
     fontWeight: '600',
@@ -132,7 +181,10 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
     marginBottom: 2,
   },
+  setRow: { flexDirection: 'row', alignItems: 'center' },
+  setMain: { flex: 1 },
   set: { fontSize: 14, lineHeight: 20, paddingVertical: 2 },
+  reorderBtn: { alignItems: 'center', justifyContent: 'center' },
   addBtn: { marginTop: 4 },
   addBtnText: { fontSize: 13, fontWeight: '500' },
 });
