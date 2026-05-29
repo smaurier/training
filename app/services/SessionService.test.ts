@@ -160,3 +160,117 @@ describe('SessionService.getNextWorkout', () => {
     expect(next?.name).toBe('Push');
   });
 });
+
+describe('SessionService.calculateProgressions', () => {
+  async function seedWorkoutWithExercise(ctx: ReturnType<typeof makeService>, progressionThreshold = 1) {
+    const exercise = await ctx.exerciseRepo.save({
+      name: 'Squat',
+      type: 'musculation',
+      muscle_groups: '[]',
+      technical_notes: null,
+      is_custom: 0,
+      progression_step: 2.5,
+      progression_threshold: progressionThreshold,
+    });
+    const workout = await ctx.workoutRepo.save({ program_id: 1, name: 'Legs', order_index: 0 });
+    const we = await ctx.weRepo.save({ workout_id: workout.id, exercise_id: exercise.id, order_index: 0 });
+    const block = await ctx.blockRepo.save({ workout_exercise_id: we.id, name: 'Travail', order_index: 0, is_work_block: 1 });
+    const set = await ctx.setRepo.save({ block_id: block.id, reps_min: 6, reps_max: 8, weight: 80, weight_type: 'fixed', rest_duration: 120, order_index: 0 });
+    return { exercise, workout, we, block, set };
+  }
+
+  it('applique la progression si tous les sets de travail sont atteints (seuil 1)', async () => {
+    const ctx = makeService();
+    const service = ctx.build();
+    const { exercise, workout, set } = await seedWorkoutWithExercise(ctx, 1);
+    const session = await service.startSession(workout.id, { checkin_energy: 3, checkin_fatigue: 1, checkin_sleep: 3 });
+    await service.logSet(session.id, set.id, exercise.id, { repsDone: 8, weightDone: 80, rpe: 7 });
+    await service.completeSession(session.id);
+
+    const progressions = await service.calculateProgressions(session.id);
+    expect(progressions).toHaveLength(1);
+    expect(progressions[0].achieved).toBe(true);
+    expect(progressions[0].oldWeight).toBe(80);
+    expect(progressions[0].newWeight).toBe(82.5);
+
+    const updatedSet = await ctx.setRepo.findById(set.id);
+    expect(updatedSet?.weight).toBe(82.5);
+  });
+
+  it("ne progresse pas si reps_done < reps_max", async () => {
+    const ctx = makeService();
+    const service = ctx.build();
+    const { exercise, workout, set } = await seedWorkoutWithExercise(ctx, 1);
+    const session = await service.startSession(workout.id, { checkin_energy: 3, checkin_fatigue: 1, checkin_sleep: 3 });
+    await service.logSet(session.id, set.id, exercise.id, { repsDone: 6, weightDone: 80, rpe: 9 });
+    await service.completeSession(session.id);
+
+    const progressions = await service.calculateProgressions(session.id);
+    expect(progressions[0].achieved).toBe(false);
+    const updatedSet = await ctx.setRepo.findById(set.id);
+    expect(updatedSet?.weight).toBe(80);
+  });
+
+  it('ne progresse pas si seuil 2 non atteint (1 seule session réussie)', async () => {
+    const ctx = makeService();
+    const service = ctx.build();
+    const { exercise, workout, set } = await seedWorkoutWithExercise(ctx, 2);
+    const session = await service.startSession(workout.id, { checkin_energy: 3, checkin_fatigue: 1, checkin_sleep: 3 });
+    await service.logSet(session.id, set.id, exercise.id, { repsDone: 8, weightDone: 80, rpe: 7 });
+    await service.completeSession(session.id);
+
+    const progressions = await service.calculateProgressions(session.id);
+    expect(progressions[0].achieved).toBe(false);
+    expect(progressions[0].consecutiveSuccesses).toBe(1);
+    expect(progressions[0].threshold).toBe(2);
+    const updatedSet = await ctx.setRepo.findById(set.id);
+    expect(updatedSet?.weight).toBe(80);
+  });
+
+  it('progresse si seuil 2 atteint (2 sessions réussies consécutives)', async () => {
+    const ctx = makeService();
+    const service = ctx.build();
+    const { exercise, workout, set } = await seedWorkoutWithExercise(ctx, 2);
+
+    // Session 1 réussie (passée)
+    const session1 = await service.startSession(workout.id, { checkin_energy: 3, checkin_fatigue: 1, checkin_sleep: 3 });
+    await service.logSet(session1.id, set.id, exercise.id, { repsDone: 8, weightDone: 80, rpe: 7 });
+    await service.completeSession(session1.id);
+
+    // Session 2 réussie (courante)
+    const session2 = await service.startSession(workout.id, { checkin_energy: 3, checkin_fatigue: 1, checkin_sleep: 3 });
+    await service.logSet(session2.id, set.id, exercise.id, { repsDone: 8, weightDone: 80, rpe: 7 });
+    await service.completeSession(session2.id);
+
+    const progressions = await service.calculateProgressions(session2.id);
+    expect(progressions[0].achieved).toBe(true);
+    expect(progressions[0].consecutiveSuccesses).toBe(2);
+    const updatedSet = await ctx.setRepo.findById(set.id);
+    expect(updatedSet?.weight).toBe(82.5);
+  });
+
+  it('ignore les blocs non-travail pour le calcul', async () => {
+    const ctx = makeService();
+    const service = ctx.build();
+    const exercise = await ctx.exerciseRepo.save({ name: 'Bench', type: 'musculation', muscle_groups: '[]', technical_notes: null, is_custom: 0, progression_step: 2, progression_threshold: 1 });
+    const workout = await ctx.workoutRepo.save({ program_id: 1, name: 'Push', order_index: 0 });
+    const we = await ctx.weRepo.save({ workout_id: workout.id, exercise_id: exercise.id, order_index: 0 });
+    // Bloc d'échauffement (is_work_block=0)
+    const warmupBlock = await ctx.blockRepo.save({ workout_exercise_id: we.id, name: 'Échauffement', order_index: 0, is_work_block: 0 });
+    const warmupSet = await ctx.setRepo.save({ block_id: warmupBlock.id, reps_min: 10, reps_max: 10, weight: 40, weight_type: 'fixed', rest_duration: 60, order_index: 0 });
+    // Bloc de travail (is_work_block=1)
+    const workBlock = await ctx.blockRepo.save({ workout_exercise_id: we.id, name: 'Travail', order_index: 1, is_work_block: 1 });
+    const workSet = await ctx.setRepo.save({ block_id: workBlock.id, reps_min: 6, reps_max: 8, weight: 80, weight_type: 'fixed', rest_duration: 120, order_index: 0 });
+
+    const session = await service.startSession(workout.id, { checkin_energy: 3, checkin_fatigue: 1, checkin_sleep: 3 });
+    // Log seulement l'échauffement (pas le bloc travail)
+    await service.logSet(session.id, warmupSet.id, exercise.id, { repsDone: 10, weightDone: 40, rpe: null });
+    await service.completeSession(session.id);
+
+    const progressions = await service.calculateProgressions(session.id);
+    // Aucun log pour le bloc de travail → pas de progression
+    expect(progressions[0].achieved).toBe(false);
+    const updatedWorkSet = await ctx.setRepo.findById(workSet.id);
+    expect(updatedWorkSet?.weight).toBe(80);
+  });
+});

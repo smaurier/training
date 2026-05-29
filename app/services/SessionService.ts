@@ -94,5 +94,87 @@ export class SessionService {
     return workouts[(lastIdx + 1) % workouts.length];
   }
 
-  // calculateProgressions added in Task 6
+  async calculateProgressions(sessionLogId: number): Promise<ProgressionResult[]> {
+    const sessionLog = await this.sessionLogRepo.findById(sessionLogId);
+    if (!sessionLog) throw new Error(`SessionLog ${sessionLogId} introuvable`);
+
+    const setLogs = await this.setLogRepo.findBySessionLogId(sessionLogId);
+    const workoutExercises = await this.weRepo.findByWorkoutId(sessionLog.workout_id);
+    const results: ProgressionResult[] = [];
+
+    for (const we of workoutExercises) {
+      const exercise = await this.exerciseRepo.findById(we.exercise_id);
+      if (!exercise) continue;
+
+      const blocks = await this.blockRepo.findByWorkoutExerciseId(we.id);
+      const workBlocks = blocks.filter(b => b.is_work_block === 1);
+      if (workBlocks.length === 0) continue;
+
+      const workSets: import('../db/types').Set[] = [];
+      for (const block of workBlocks) {
+        const sets = await this.setRepo.findByBlockId(block.id);
+        workSets.push(...sets);
+      }
+      if (workSets.length === 0) continue;
+
+      const workSetIds = workSets.map(s => s.id);
+      const workSetLogs = setLogs.filter(sl => workSetIds.includes(sl.set_id));
+      if (workSetLogs.length === 0) {
+        results.push({ exerciseId: exercise.id, exerciseName: exercise.name, oldWeight: workSets[0].weight, newWeight: workSets[0].weight, achieved: false, consecutiveSuccesses: 0, threshold: exercise.progression_threshold });
+        continue;
+      }
+
+      const allAchieved = this.checkAllWorkSetsAchieved(workSets, workSetLogs);
+      if (!allAchieved) {
+        results.push({ exerciseId: exercise.id, exerciseName: exercise.name, oldWeight: workSets[0].weight, newWeight: workSets[0].weight, achieved: false, consecutiveSuccesses: 0, threshold: exercise.progression_threshold });
+        continue;
+      }
+
+      // Compter les séances réussies consécutives (inclut la courante)
+      const pastSessions = (await this.sessionLogRepo.findByWorkoutId(sessionLog.workout_id))
+        .filter(s => s.id !== sessionLogId && s.ended_at !== null)
+        .sort((a, b) => b.started_at.localeCompare(a.started_at));
+
+      let consecutiveSuccesses = 1;
+      for (const past of pastSessions.slice(0, exercise.progression_threshold - 1)) {
+        const pastLogs = await this.setLogRepo.findBySessionLogId(past.id);
+        const pastWorkLogs = pastLogs.filter(sl => workSetIds.includes(sl.set_id));
+        if (pastWorkLogs.length === 0 || !this.checkAllWorkSetsAchieved(workSets, pastWorkLogs)) break;
+        consecutiveSuccesses++;
+      }
+
+      const oldWeight = workSets[0].weight;
+
+      if (consecutiveSuccesses >= exercise.progression_threshold) {
+        for (const set of workSets) {
+          if (set.weight !== null) {
+            await this.setRepo.update(set.id, {
+              reps_min: set.reps_min,
+              reps_max: set.reps_max,
+              weight: set.weight + exercise.progression_step,
+              weight_type: set.weight_type,
+              rest_duration: set.rest_duration,
+            });
+          }
+        }
+        const newWeight = oldWeight !== null ? oldWeight + exercise.progression_step : null;
+        results.push({ exerciseId: exercise.id, exerciseName: exercise.name, oldWeight, newWeight, achieved: true, consecutiveSuccesses, threshold: exercise.progression_threshold });
+      } else {
+        results.push({ exerciseId: exercise.id, exerciseName: exercise.name, oldWeight, newWeight: oldWeight, achieved: false, consecutiveSuccesses, threshold: exercise.progression_threshold });
+      }
+    }
+
+    return results;
+  }
+
+  private checkAllWorkSetsAchieved(
+    workSets: import('../db/types').Set[],
+    setLogs: import('../db/types').SetLog[]
+  ): boolean {
+    for (const set of workSets) {
+      const log = setLogs.find(sl => sl.set_id === set.id);
+      if (!log || log.reps_done < set.reps_max) return false;
+    }
+    return true;
+  }
 }
