@@ -21,6 +21,9 @@ export interface UseWorkoutExercisesResult {
   addBlock: (workoutExerciseId: number, name: string, isWorkBlock: 0 | 1) => Promise<void>;
   updateBlock: (blockId: number, dto: UpdateBlockDto) => Promise<void>;
   removeBlock: (blockId: number) => Promise<void>;
+  reorderExercise: (exerciseId: number, direction: 'up' | 'down') => Promise<void>;
+  reorderBlock: (workoutExerciseId: number, blockId: number, direction: 'up' | 'down') => Promise<void>;
+  reorderSet: (blockId: number, setId: number, direction: 'up' | 'down') => Promise<void>;
 }
 
 function makeService(): WorkoutExerciseService {
@@ -149,5 +152,44 @@ export function useWorkoutExercises(workoutId: number): UseWorkoutExercisesResul
     }
   }, [service, refresh]);
 
-  return { exercises, loading, error, add, remove, refresh, updateSet, addSet, removeSet, addBlock, updateBlock, removeBlock };
+  const reorderExercise = useCallback(async (exerciseId: number, direction: 'up' | 'down') => {
+    try {
+      await service.reorderExercise(workoutId, exerciseId, direction);
+      await refresh();
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'Erreur inconnue';
+      if (mountedRef.current) setError(msg);
+      throw e;
+    }
+  }, [service, workoutId, refresh]);
+
+  const reorderBlock = useCallback(async (workoutExerciseId: number, blockId: number, direction: 'up' | 'down') => {
+    try {
+      await service.reorderBlock(workoutExerciseId, blockId, direction);
+      await refresh();
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'Erreur inconnue';
+      if (mountedRef.current) setError(msg);
+      throw e;
+    }
+  }, [service, refresh]);
+
+  const reorderSet = useCallback(async (blockId: number, setId: number, direction: 'up' | 'down') => {
+    try {
+      await service.reorderSet(blockId, setId, direction);
+      await refresh();
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'Erreur inconnue';
+      if (mountedRef.current) setError(msg);
+      throw e;
+    }
+  }, [service, refresh]);
+
+  return {
+    exercises, loading, error,
+    add, remove, refresh,
+    updateSet, addSet, removeSet,
+    addBlock, updateBlock, removeBlock,
+    reorderExercise, reorderBlock, reorderSet,
+  };
 }
