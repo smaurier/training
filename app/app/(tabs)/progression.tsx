@@ -54,7 +54,7 @@ export default function ProgressionScreen() {
         )}
         renderSectionHeader={({ section: { title } }) => (
           <View style={[styles.sectionHeader, { backgroundColor: colors.background }]}>
-            <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>{title}</Text>
+            <Text style={[styles.sectionTitle, { color: colors.textSecondary }]} accessibilityRole="header">{title}</Text>
           </View>
         )}
         ListEmptyComponent={

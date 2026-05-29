@@ -44,7 +44,7 @@ export function SessionCard({ session, onPress }: SessionCardProps) {
         name="chevron-forward"
         size={18}
         color={colors.tabIconDefault}
-        importantForAccessibility="no-hide-descendants"
+        importantForAccessibility="no"
         accessibilityElementsHidden={true}
       />
     </PressableA11y>
