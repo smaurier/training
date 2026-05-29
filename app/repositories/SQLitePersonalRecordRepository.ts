@@ -21,4 +21,18 @@ export class SQLitePersonalRecordRepository implements IPersonalRecordRepository
       [exerciseId]
     );
   }
+
+  async findAllByExerciseId(exerciseId: number): Promise<PersonalRecord[]> {
+    return this.db.getAllAsync<PersonalRecord>(
+      'SELECT * FROM personal_records WHERE exercise_id = ? ORDER BY achieved_at DESC',
+      [exerciseId]
+    );
+  }
+
+  async findRecent(limit: number): Promise<PersonalRecord[]> {
+    return this.db.getAllAsync<PersonalRecord>(
+      'SELECT * FROM personal_records ORDER BY achieved_at DESC LIMIT ?',
+      [limit]
+    );
+  }
 }

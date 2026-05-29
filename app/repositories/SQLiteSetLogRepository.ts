@@ -42,4 +42,25 @@ export class SQLiteSetLogRepository implements ISetLogRepository {
     }
     return result;
   }
+
+  async findByExerciseId(exerciseId: number): Promise<SetLog[]> {
+    return this.db.getAllAsync<SetLog>(
+      'SELECT * FROM set_logs WHERE exercise_id = ? ORDER BY completed_at ASC',
+      [exerciseId]
+    );
+  }
+
+  async findFromDate(from: string): Promise<SetLog[]> {
+    return this.db.getAllAsync<SetLog>(
+      'SELECT * FROM set_logs WHERE completed_at >= ? ORDER BY completed_at ASC',
+      [from]
+    );
+  }
+
+  async findDistinctExerciseIds(): Promise<number[]> {
+    const rows = await this.db.getAllAsync<{ exercise_id: number }>(
+      'SELECT DISTINCT exercise_id FROM set_logs'
+    );
+    return rows.map(r => r.exercise_id);
+  }
 }
