@@ -49,7 +49,7 @@ export default function ProgressionScreen() {
         renderItem={({ item }) => (
           <SessionCard
             session={item}
-            onPress={() => router.push({ pathname: '/history/[id]' as any, params: { id: String(item.id) } })}
+            onPress={() => router.push({ pathname: '/history/[sessionLogId]' as any, params: { sessionLogId: String(item.id) } })}
           />
         )}
         renderSectionHeader={({ section: { title } }) => (
