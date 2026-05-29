@@ -25,7 +25,7 @@ export default function ProgrammeDetailScreen() {
   const { programs } = usePrograms();
   const program = programs.find(p => p.id === programId);
 
-  const { workouts, loading, error, remove, refresh } = useWorkouts(programId);
+  const { workouts, loading, error, remove, reorder, refresh } = useWorkouts(programId);
 
   const isFirstFocus = useRef(true);
   useFocusEffect(
@@ -112,11 +112,15 @@ export default function ProgrammeDetailScreen() {
         <FlatList
           data={workouts}
           keyExtractor={(item) => String(item.id)}
-          renderItem={({ item }) => (
+          renderItem={({ item, index }) => (
             <WorkoutCard
               workout={item}
+              isFirst={index === 0}
+              isLast={index === workouts.length - 1}
               onPress={() => router.push({ pathname: '/workout/[id]', params: { id: String(item.id) } })}
               onLongPress={() => handleLongPress(item)}
+              onMoveUp={() => reorder(item.id, 'up')}
+              onMoveDown={() => reorder(item.id, 'down')}
             />
           )}
           contentContainerStyle={styles.list}

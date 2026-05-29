@@ -29,4 +29,13 @@ export class InMemoryWorkoutRepository implements IWorkoutRepository {
   async delete(id: number): Promise<void> {
     this.workouts = this.workouts.filter(w => w.id !== id);
   }
+
+  async swap(idA: number, idB: number): Promise<void> {
+    const a = this.workouts.find(w => w.id === idA);
+    const b = this.workouts.find(w => w.id === idB);
+    if (!a || !b) throw new Error(`swap: id inconnu (${idA}, ${idB})`);
+    const tmp = a.order_index;
+    a.order_index = b.order_index;
+    b.order_index = tmp;
+  }
 }

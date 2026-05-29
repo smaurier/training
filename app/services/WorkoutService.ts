@@ -45,4 +45,14 @@ export class WorkoutService {
   async remove(id: number): Promise<void> {
     return this.repo.delete(id);
   }
+
+  async reorder(programId: number, workoutId: number, direction: 'up' | 'down'): Promise<void> {
+    const siblings = (await this.repo.findByProgramId(programId))
+      .sort((a, b) => a.order_index - b.order_index);
+    const idx = siblings.findIndex(w => w.id === workoutId);
+    if (idx === -1) return;
+    const neighborIdx = direction === 'up' ? idx - 1 : idx + 1;
+    if (neighborIdx < 0 || neighborIdx >= siblings.length) return;
+    await this.repo.swap(siblings[idx].id, siblings[neighborIdx].id);
+  }
 }

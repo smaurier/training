@@ -1,46 +1,79 @@
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { Workout } from '@/db/types';
+import { PressableA11y } from '@/components/ui/PressableA11y';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
 
 interface WorkoutCardProps {
   workout: Workout;
+  isFirst: boolean;
+  isLast: boolean;
   onPress: () => void;
   onLongPress: () => void;
+  onMoveUp: () => void;
+  onMoveDown: () => void;
 }
 
-export function WorkoutCard({ workout, onPress, onLongPress }: WorkoutCardProps) {
+export function WorkoutCard({ workout, isFirst, isLast, onPress, onLongPress, onMoveUp, onMoveDown }: WorkoutCardProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
 
   return (
-    <TouchableOpacity
-      style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}
-      onPress={onPress}
-      onLongPress={onLongPress}
-      accessibilityRole="button"
-      accessibilityLabel={`Séance ${workout.name}`}
-      accessibilityHint="Appuie pour configurer les exercices, maintiens pour modifier ou supprimer"
-    >
-      <Text style={[styles.name, { color: colors.text }]} numberOfLines={1}>
-        {workout.name}
-      </Text>
-      <Text style={[styles.meta, { color: colors.textSecondary }]}>
-        0 exercice
-      </Text>
-    </TouchableOpacity>
+    <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+      <TouchableOpacity
+        style={styles.main}
+        onPress={onPress}
+        onLongPress={onLongPress}
+        accessibilityRole="button"
+        accessibilityLabel={`Séance ${workout.name}`}
+        accessibilityHint="Appuie pour configurer les exercices, maintiens pour modifier ou supprimer"
+      >
+        <Text style={[styles.name, { color: colors.text }]} numberOfLines={1}>
+          {workout.name}
+        </Text>
+        <Text style={[styles.meta, { color: colors.textSecondary }]}>
+          0 exercice
+        </Text>
+      </TouchableOpacity>
+      <View style={styles.reorderCol}>
+        {!isFirst && (
+          <PressableA11y
+            accessibilityLabel={`Monter ${workout.name}`}
+            onPress={onMoveUp}
+            style={styles.reorderBtn}
+          >
+            <Ionicons name="chevron-up-outline" size={16} color={colors.textSecondary} />
+          </PressableA11y>
+        )}
+        {!isLast && (
+          <PressableA11y
+            accessibilityLabel={`Descendre ${workout.name}`}
+            onPress={onMoveDown}
+            style={styles.reorderBtn}
+          >
+            <Ionicons name="chevron-down-outline" size={16} color={colors.textSecondary} />
+          </PressableA11y>
+        )}
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
     borderRadius: Radius.sm,
     borderWidth: 1,
     marginBottom: 10,
-    gap: 4,
     minHeight: 44,
+  },
+  main: {
+    flex: 1,
+    padding: 16,
+    gap: 4,
   },
   name: {
     fontSize: 16,
@@ -48,6 +81,12 @@ const styles = StyleSheet.create({
   },
   meta: {
     fontSize: 12,
-    marginTop: 2,
   },
+  reorderCol: {
+    paddingRight: 8,
+    gap: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  reorderBtn: { padding: 6, alignItems: 'center', justifyContent: 'center' },
 });

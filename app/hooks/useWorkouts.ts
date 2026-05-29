@@ -11,6 +11,7 @@ export interface UseWorkoutsResult {
   create: (input: CreateWorkoutInput) => Promise<void>;
   update: (id: number, input: UpdateWorkoutInput) => Promise<void>;
   remove: (id: number) => Promise<void>;
+  reorder: (workoutId: number, direction: 'up' | 'down') => Promise<void>;
   refresh: () => Promise<void>;
 }
 
@@ -78,5 +79,16 @@ export function useWorkouts(programId: number): UseWorkoutsResult {
     }
   }, [service, refresh]);
 
-  return { workouts, loading, error, create, update, remove, refresh };
+  const reorder = useCallback(async (workoutId: number, direction: 'up' | 'down') => {
+    try {
+      await service.reorder(programId, workoutId, direction);
+      await refresh();
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'Erreur inconnue';
+      if (mountedRef.current) setError(msg);
+      throw e;
+    }
+  }, [service, programId, refresh]);
+
+  return { workouts, loading, error, create, update, remove, reorder, refresh };
 }

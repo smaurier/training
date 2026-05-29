@@ -9,4 +9,5 @@ export interface IWorkoutRepository {
   save(dto: CreateWorkoutDto): Promise<Workout>;
   update(id: number, dto: UpdateWorkoutDto): Promise<Workout>;
   delete(id: number): Promise<void>;
+  swap(idA: number, idB: number): Promise<void>;
 }
