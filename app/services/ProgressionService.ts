@@ -55,7 +55,7 @@ function toWeekKey(date: Date): string {
 }
 
 const WEEK_LABELS = ['S-3', 'S-2', 'S-1', 'Cette sem.'] as const;
-// 200 covers > 10 years of daily PRs; IPersonalRecordRepository has no findFromDate
+// findRecent sorts DESC so this month is always in the top 200; no findFromDate on PersonalRecord
 const PR_FETCH_LIMIT = 200;
 
 export class ProgressionService {
@@ -132,6 +132,7 @@ export class ProgressionService {
     const results = await Promise.all(exerciseIds.map(async exerciseId => {
       const exercise = await this.exerciseRepo.findById(exerciseId);
       const logs = await this.setLogRepo.findByExerciseId(exerciseId);
+      if (logs.length === 0) return null;
 
       const current1RM = Math.round(Math.max(...logs.map(l => epley(l.weight_done, l.reps_done))) * 10) / 10;
 
@@ -159,7 +160,7 @@ export class ProgressionService {
       };
     }));
 
-    return results.sort((a, b) => b.current1RM - a.current1RM);
+    return (results.filter(Boolean) as Exercise1RM[]).sort((a, b) => b.current1RM - a.current1RM);
   }
 
   async getExercise1RMHistory(exerciseId: number): Promise<Session1RM[]> {

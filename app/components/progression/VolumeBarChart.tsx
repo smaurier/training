@@ -42,19 +42,24 @@ export function VolumeBarChart({ data }: VolumeBarChartProps) {
           </Text>
         )}
       </View>
-      <BarChart
-        data={barData}
-        barWidth={36}
-        noOfSections={3}
-        maxValue={maxVolume}
-        hideRules
-        xAxisThickness={0}
-        yAxisThickness={0}
-        barBorderRadius={3}
-        yAxisTextStyle={{ color: colors.textSecondary, fontSize: 9 }}
-        height={80}
-        width={260}
-      />
+      <View
+        accessible={true}
+        accessibilityLabel={`Graphique volume des 4 dernières semaines. Semaine en cours : ${currentWeek.volume.toLocaleString('fr-FR')} kg`}
+      >
+        <BarChart
+          data={barData}
+          barWidth={36}
+          noOfSections={3}
+          maxValue={maxVolume}
+          hideRules
+          xAxisThickness={0}
+          yAxisThickness={0}
+          barBorderRadius={3}
+          yAxisTextStyle={{ color: colors.textSecondary, fontSize: 9 }}
+          height={80}
+          width={260}
+        />
+      </View>
       <Text style={[styles.total, { color: colors.text }]}>
         {currentWeek.volume.toLocaleString('fr-FR')} kg
       </Text>

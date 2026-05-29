@@ -25,6 +25,7 @@ export default function ExerciseProgressionScreen() {
   const [bestPR, setBestPR] = useState<PersonalRecord | null>(null);
   const [allPRs, setAllPRs] = useState<PersonalRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const mountedRef = useRef(true);
   useEffect(() => () => { mountedRef.current = false; }, []);
@@ -50,7 +51,10 @@ export default function ExerciseProgressionScreen() {
       setAllPRs(prs);
       setIsLoading(false);
     }).catch(() => {
-      if (mountedRef.current) setIsLoading(false);
+      if (mountedRef.current) {
+        setError('Impossible de charger les données');
+        setIsLoading(false);
+      }
     });
   }, [exerciseId]);
 
@@ -58,6 +62,14 @@ export default function ExerciseProgressionScreen() {
     return (
       <View style={[styles.center, { backgroundColor: colors.background }]}>
         <ActivityIndicator color={colors.primary} />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={[styles.center, { backgroundColor: colors.background }]}>
+        <Text style={[styles.emptyText, { color: colors.textSecondary }]}>{error}</Text>
       </View>
     );
   }
@@ -71,22 +83,27 @@ export default function ExerciseProgressionScreen() {
 
   return (
     <ScrollView style={{ backgroundColor: colors.background }} contentContainerStyle={styles.content}>
-      <Text style={[styles.title, { color: colors.text }]}>{exerciseName}</Text>
+      <Text style={[styles.title, { color: colors.text }]} accessibilityRole="header">{exerciseName}</Text>
 
       {history.length > 0 && (
         <View style={[styles.section, { backgroundColor: colors.surface }]}>
           <Text style={[styles.sectionLabel, { color: colors.textSecondary }]}>ÉVOLUTION 1RM ESTIMÉ</Text>
-          <BarChart
-            data={barData}
-            barWidth={history.length <= 6 ? 32 : 20}
-            noOfSections={3}
-            hideRules
-            xAxisThickness={0}
-            yAxisThickness={0}
-            barBorderRadius={3}
-            yAxisTextStyle={{ color: colors.textSecondary, fontSize: 9 }}
-            height={100}
-          />
+          <View
+            accessible={true}
+            accessibilityLabel={`Graphique évolution 1RM estimé de ${exerciseName} sur ${history.length} séance${history.length > 1 ? 's' : ''}`}
+          >
+            <BarChart
+              data={barData}
+              barWidth={history.length <= 6 ? 32 : 20}
+              noOfSections={3}
+              hideRules
+              xAxisThickness={0}
+              yAxisThickness={0}
+              barBorderRadius={3}
+              yAxisTextStyle={{ color: colors.textSecondary, fontSize: 9 }}
+              height={100}
+            />
+          </View>
         </View>
       )}
 
