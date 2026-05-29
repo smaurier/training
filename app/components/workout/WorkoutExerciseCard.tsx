@@ -139,6 +139,11 @@ export function WorkoutExerciseCard({
 
       {expanded && (
         <View style={styles.blocks}>
+          {detail.blocks.length === 1 && (
+            <Text style={[styles.hint, { color: colors.textSecondary }]}>
+              Ajoute des blocs pour structurer ta séance : Échauffement, Travail, Back-off…
+            </Text>
+          )}
           {detail.blocks.length === 0 ? (
             <Text style={[styles.empty, { color: colors.textSecondary }]}>Aucun bloc configuré.</Text>
           ) : (
@@ -191,6 +196,7 @@ const styles = StyleSheet.create({
   muscles: { fontSize: 12 },
   blocks: { padding: 12, paddingTop: 0, gap: 8 },
   empty: { fontSize: 13, fontStyle: 'italic', paddingVertical: 4 },
+  hint: { fontSize: 12, fontStyle: 'italic', paddingVertical: 4, lineHeight: 18 },
   addBlockBtn: { marginTop: 4, paddingVertical: 8 },
   addBlockText: { fontSize: 13, fontWeight: '500' },
 });
