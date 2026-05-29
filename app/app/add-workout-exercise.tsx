@@ -72,21 +72,9 @@ export default function AddWorkoutExerciseScreen() {
               </PressableA11y>
             )}
             ListEmptyComponent={
-              <View style={styles.emptyContainer}>
-                <Text style={[styles.empty, { color: colors.textSecondary }]}>
-                  Aucun exercice trouvé.
-                </Text>
-                <PressableA11y
-                  accessibilityLabel="Créer un exercice"
-                  accessibilityHint="Ouvre le formulaire de création d'exercice"
-                  onPress={() => router.push('/add-exercise')}
-                  style={[styles.createBtn, { borderColor: colors.primary }]}
-                >
-                  <Text style={[styles.createBtnText, { color: colors.primary }]}>
-                    + Créer un exercice
-                  </Text>
-                </PressableA11y>
-              </View>
+              <Text style={[styles.empty, { color: colors.textSecondary }]}>
+                Aucun exercice trouvé.
+              </Text>
             }
           />
         )}
@@ -102,8 +90,5 @@ const styles = StyleSheet.create({
   item: { padding: 16, borderBottomWidth: 1, gap: 2 },
   itemName: { fontSize: 15, fontWeight: '500' },
   itemMuscles: { fontSize: 13 },
-  emptyContainer: { alignItems: 'center', marginTop: 48, gap: 16 },
-  empty: { fontSize: 15 },
-  createBtn: { borderWidth: 1, borderRadius: Radius.sm, paddingHorizontal: 20, paddingVertical: 10 },
-  createBtnText: { fontSize: 15, fontWeight: '500' },
+  empty: { textAlign: 'center', marginTop: 48, fontSize: 15 },
 });
