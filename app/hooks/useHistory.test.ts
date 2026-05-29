@@ -15,22 +15,6 @@ jest.mock('../db');
 
 const MockHistoryService = HistoryService as jest.MockedClass<typeof HistoryService>;
 
-// Minimal renderHook using react-test-renderer
-function renderHook<T>(useHook: () => T): { getResult: () => T } {
-  let result!: T;
-
-  function TestComponent() {
-    result = useHook();
-    return null;
-  }
-
-  act(() => {
-    create(React.createElement(TestComponent));
-  });
-
-  return { getResult: () => result };
-}
-
 function makeSummary(overrides: Partial<SessionSummary> & { startedAt: string }): SessionSummary {
   return {
     id: 1,

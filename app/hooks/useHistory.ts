@@ -44,7 +44,7 @@ function groupByMonth(sessions: SessionSummary[]): HistorySection[] {
   return [...map.entries()]
     .sort((a, b) => b[0].localeCompare(a[0])) // DESC: most recent first
     .map(([key, data]) => {
-      const label = new Date(key + '-01').toLocaleDateString('fr-FR', {
+      const label = new Date(key + '-01T12:00:00').toLocaleDateString('fr-FR', {
         month: 'long',
         year: 'numeric',
       });
