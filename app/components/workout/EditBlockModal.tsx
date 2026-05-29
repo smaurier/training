@@ -62,6 +62,7 @@ export function EditBlockModal({ visible, block, workoutExerciseId: _workoutExer
                 <PressableA11y
                   key={chip.label}
                   accessibilityLabel={`Suggérer ${chip.label}`}
+                  accessibilityState={{ selected: name === chip.label }}
                   onPress={() => { setName(chip.label); setIsWorkBlock(chip.isWork); }}
                   style={[
                     styles.chip,
