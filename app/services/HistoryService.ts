@@ -43,6 +43,11 @@ export class HistoryService {
     private exerciseRepo: IExerciseRepository,
   ) {}
 
+  private computeDuration(startedAt: string, endedAt: string | null): number {
+    if (!endedAt) return 0;
+    return Math.round((new Date(endedAt).getTime() - new Date(startedAt).getTime()) / 1000);
+  }
+
   async getSessionList(): Promise<SessionSummary[]> {
     const sessions = await this.sessionLogRepo.findAll();
     if (sessions.length === 0) return [];
@@ -61,9 +66,7 @@ export class HistoryService {
       id: s.id,
       workoutName: workoutMap.get(s.workout_id) ?? 'Séance inconnue',
       startedAt: s.started_at,
-      durationSeconds: s.ended_at
-        ? Math.round((new Date(s.ended_at).getTime() - new Date(s.started_at).getTime()) / 1000)
-        : 0,
+      durationSeconds: this.computeDuration(s.started_at, s.ended_at),
       totalSets: counts[s.id] ?? 0,
     }));
   }
@@ -102,9 +105,7 @@ export class HistoryService {
         sets,
       }));
 
-    const durationSeconds = session.ended_at
-      ? Math.round((new Date(session.ended_at).getTime() - new Date(session.started_at).getTime()) / 1000)
-      : 0;
+    const durationSeconds = this.computeDuration(session.started_at, session.ended_at);
 
     return {
       id: session.id,
