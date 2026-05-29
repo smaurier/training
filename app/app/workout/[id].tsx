@@ -122,6 +122,15 @@ export default function WorkoutDetailScreen() {
         >
           <Ionicons name="add" size={28} color={FAB_ICON_COLOR} />
         </PressableA11y>
+        <PressableA11y
+          accessibilityLabel="Démarrer la séance"
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onPress={() => router.push({ pathname: '/session/[workoutId]' as any, params: { workoutId: String(workoutId) } })}
+          style={[styles.startBtn, { backgroundColor: '#16a34a' }]}
+        >
+          <Ionicons name="play" size={18} color="#fff" />
+          <Text style={styles.startBtnText}>Démarrer la séance</Text>
+        </PressableA11y>
       </View>
     </>
   );
@@ -148,4 +157,22 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
   },
+  startBtn: {
+    position: 'absolute',
+    bottom: 24,
+    left: 24,
+    right: 88,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingVertical: 14,
+    borderRadius: 12,
+    elevation: 4,
+    shadowColor: SHADOW_COLOR,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  startBtnText: { color: '#fff', fontSize: 15, fontWeight: '600' },
 });
