@@ -254,6 +254,20 @@
 
 ---
 
+## 12. Trace — Refonte visuelle (session 12)
+
+- [ ] Dark mode : fond #0D0D0D, surface #1A1A1A, texte blanc pur
+- [ ] Light mode : fond #F5F5F5, surface #FFFFFF, texte #0D0D0D
+- [ ] Tab bar : icône active = blanc (dark) / noir (light) ; icône inactive = grise
+- [ ] Toutes les cartes et boutons : borderRadius 4px (Sharp)
+- [ ] Police Inter visible sur tous les écrans (pas de system font / SF Pro)
+- [ ] Splash screen : fond #0D0D0D
+- [ ] Titre app "Trace" dans header natif
+- [ ] Couleurs delta vert #22C55E / rouge #EF4444 inchangées (Progression)
+- [ ] Segmented control Progression : shape Sharp, contraste correct dark/light
+
+---
+
 ## Notes de passe
 
 | Date | Version | Résultat | Remarques |

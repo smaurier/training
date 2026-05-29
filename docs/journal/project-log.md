@@ -4,6 +4,29 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 
 ---
 
+## Session 12 — 2026-05-29 — Refonte visuelle Trace
+
+### Réalisé
+- Design tokens : Colors.ts réécriture (anthracite/blanc monochrome), Radius.ts (Sharp sm=4px), Typography.ts (Inter fontFamily)
+- Font Inter chargée via @expo-google-fonts/inter (_layout.tsx + Themed.tsx Text wrapper)
+- app.json : name "Trace", splash backgroundColor #0D0D0D, android adaptiveIcon #0D0D0D
+- Migration borderRadius → Radius tokens : ~47 occurrences dans 22 fichiers
+  - 4 FABs (exercices, programmes, programme/[id], workout/[id]) → Radius.full
+  - 1 chip pill (EditBlockModal) → Radius.full
+  - Tout le reste → Radius.sm (4px)
+
+### Décisions techniques
+- Inter via @expo-google-fonts/inter (package officiel Expo) — pas de chargement local
+- fontFamily explicite dans Typography.ts (fontWeight ignoré par React Native sur polices custom)
+- Overrides sémantiques (#22C55E, #EF4444, #BFDBFE, #1E40AF) maintenus hardcodés (convention projet)
+- EditScreenInfo.tsx (boilerplate non utilisé) laissé tel quel
+
+### Prochaine étape
+- Tester visuellement sur device/simulateur
+- Capturer screenshots pour le manager
+
+---
+
 ## Session 1 — 2026-05-22 · Specs & initialisation
 
 ### Ce qui a été demandé
