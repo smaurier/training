@@ -91,6 +91,7 @@ export function runSessionLogRepositoryContractTests(createRepo: () => ISessionL
       const all = await repo.findAll();
       expect(all).toHaveLength(3);
       expect(all[0].started_at).toBe('2026-01-03T10:00:00.000Z');
+      expect(all[1].started_at).toBe('2026-01-02T10:00:00.000Z');
       expect(all[2].started_at).toBe('2026-01-01T10:00:00.000Z');
     });
   });
