@@ -29,4 +29,13 @@ export class InMemoryBlockRepository implements IBlockRepository {
   async delete(id: number): Promise<void> {
     this.items = this.items.filter(i => i.id !== id);
   }
+
+  async swap(idA: number, idB: number): Promise<void> {
+    const a = this.items.find(i => i.id === idA);
+    const b = this.items.find(i => i.id === idB);
+    if (!a || !b) throw new Error(`swap: id inconnu (${idA}, ${idB})`);
+    const tmp = a.order_index;
+    a.order_index = b.order_index;
+    b.order_index = tmp;
+  }
 }

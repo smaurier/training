@@ -7,4 +7,5 @@ export interface IWorkoutExerciseRepository {
   findById(id: number): Promise<WorkoutExercise | null>;
   save(dto: CreateWorkoutExerciseDto): Promise<WorkoutExercise>;
   delete(id: number): Promise<void>;
+  swap(idA: number, idB: number): Promise<void>;
 }

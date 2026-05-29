@@ -9,4 +9,5 @@ export interface IBlockRepository {
   save(dto: CreateBlockDto): Promise<Block>;
   update(id: number, dto: UpdateBlockDto): Promise<Block>;
   delete(id: number): Promise<void>;
+  swap(idA: number, idB: number): Promise<void>;
 }

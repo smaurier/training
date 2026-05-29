@@ -9,4 +9,5 @@ export interface ISetRepository {
   save(dto: CreateSetDto): Promise<Set>;
   update(id: number, dto: UpdateSetDto): Promise<Set>;
   delete(id: number): Promise<void>;
+  swap(idA: number, idB: number): Promise<void>;
 }

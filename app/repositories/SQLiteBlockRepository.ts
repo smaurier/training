@@ -42,4 +42,20 @@ export class SQLiteBlockRepository implements IBlockRepository {
   async delete(id: number): Promise<void> {
     await this.db.runAsync('DELETE FROM blocks WHERE id = ?', [id]);
   }
+
+  async swap(idA: number, idB: number): Promise<void> {
+    const a = await this.findById(idA);
+    const b = await this.findById(idB);
+    if (!a || !b) throw new Error(`swap: id inconnu (${idA}, ${idB})`);
+    await this.db.withTransactionAsync(async () => {
+      await this.db.runAsync(
+        'UPDATE blocks SET order_index=? WHERE id=?',
+        [b.order_index, idA]
+      );
+      await this.db.runAsync(
+        'UPDATE blocks SET order_index=? WHERE id=?',
+        [a.order_index, idB]
+      );
+    });
+  }
 }
