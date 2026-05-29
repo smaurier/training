@@ -44,7 +44,7 @@ npx expo install react-native-gifted-charts expo-linear-gradient react-native-sv
 |---|---|---|
 | Séances | count sessions ce mois | `sessionLogRepo.findAll()` filtré par mois courant |
 | PRs | count PRs ce mois | `personalRecordRepo.findRecent()` filtré par mois courant |
-| Exercices | count exercices distincts loggés | `setLogRepo.findDistinctExerciseIds()` |
+| Exercices | count exercices distincts loggés ce mois | `setLogRepo.findFromDate(début_mois)` filtré par mois courant |
 
 ### Section 2 — Volume par semaine ISO (4 barres)
 
@@ -112,12 +112,11 @@ export interface Exercise1RM {
 
 ### Graphique 1RM par session
 
-`BarChart` (gifted-charts) — une barre = max Epley de la session (groupé par `session_log_id`).
+`BarChart` (gifted-charts) — une barre = max Epley par date calendaire (groupé par `date(completed_at)`). Deux séances le même jour → une seule barre (max des deux).
 
 ```typescript
 export interface Session1RM {
-  sessionLogId: number;
-  date: string;        // min(completed_at) du groupe, formaté "JJ/MM"
+  date: string;        // date calendaire groupée, formatée "JJ/MM"
   estimated1RM: number;
 }
 ```
@@ -194,7 +193,7 @@ export class ProgressionService {
   async getVolumeByWeek(): Promise<WeeklyVolume[]>   // toujours 4 semaines ISO
   async getRecentPRs(limit: number): Promise<RecentPR[]>
   async getExercise1RMList(): Promise<Exercise1RM[]>
-  async getExercise1RMHistory(exerciseId: number): Promise<Session1RM[]>
+  async getExercise1RMHistory(exerciseId: number): Promise<Session1RM[]>  // groupé par date calendaire
 }
 ```
 
@@ -210,8 +209,8 @@ export class ProgressionService {
 - `getExercise1RMList` → 1RM = max Epley par exercice
 - `getExercise1RMList` → delta null si tous logs < 30j
 - `getExercise1RMList` → delta correct si logs > 30j
-- `getExercise1RMHistory` → une entrée par session (groupé par session_log_id)
-- `getExercise1RMHistory` → ordré ASC par date
+- `getExercise1RMHistory` → une entrée par date calendaire (deux séances même jour → max des deux)
+- `getExercise1RMHistory` → ordonné ASC par date
 
 ---
 
@@ -289,7 +288,8 @@ Section `## 11. Progression Stats` à ajouter :
 ## Hors scope Session 11
 
 - Corrélation RPE / performance
-- Filtre par période personnalisable
+- Filtre par période (mois / année / all-time) sur les chips du dashboard
 - Graphique ligne (1RM lissé)
 - Export CSV
 - Comparaison entre exercices
+- Avertissement "deux séances le même jour" (UX — fusionnées silencieusement dans le graphique)
