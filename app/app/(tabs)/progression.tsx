@@ -36,7 +36,7 @@ export default function ProgressionScreen() {
   );
 
   const segmentControl = (
-    <View style={[styles.segmentContainer, { backgroundColor: colors.background }]}>
+    <View style={[styles.segmentContainer, { backgroundColor: colors.background }]} accessibilityRole="tablist">
       <View style={[styles.segmentTrack, { backgroundColor: colors.surface }]}>
         {(['historique', 'stats'] as Segment[]).map(seg => (
           <Pressable
