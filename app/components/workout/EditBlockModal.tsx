@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Modal, View, Text, TextInput, Switch, StyleSheet } from 'react-native';
+import { Modal, View, Text, TextInput, Switch, StyleSheet, ScrollView } from 'react-native';
 import type { Block } from '@/db/types';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import Colors from '@/constants/Colors';
@@ -8,6 +8,12 @@ import { Radius } from '@/constants/Radius';
 
 const MODAL_OVERLAY_COLOR = 'rgba(0,0,0,0.4)' as const;
 const BTN_PRIMARY_TEXT = '#fff' as const;
+
+const CHIPS = [
+  { label: 'Échauffement', isWork: false },
+  { label: 'Travail',      isWork: true  },
+  { label: 'Back-off',     isWork: true  },
+] as const;
 
 interface EditBlockModalProps {
   visible: boolean;
@@ -44,6 +50,30 @@ export function EditBlockModal({ visible, block, workoutExerciseId: _workoutExer
           <Text style={[styles.title, { color: colors.text }]}>
             {block ? 'Renommer le bloc' : 'Nouveau bloc'}
           </Text>
+
+          {!block && (
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.chipsScroll}
+              contentContainerStyle={styles.chipsRow}
+            >
+              {CHIPS.map(chip => (
+                <PressableA11y
+                  key={chip.label}
+                  accessibilityLabel={`Suggérer ${chip.label}`}
+                  onPress={() => { setName(chip.label); setIsWorkBlock(chip.isWork); }}
+                  style={[
+                    styles.chip,
+                    { borderColor: colors.primary },
+                    ...(name === chip.label ? [{ backgroundColor: colors.primary + '15' }] : []),
+                  ]}
+                >
+                  <Text style={[styles.chipText, { color: colors.primary }]}>{chip.label}</Text>
+                </PressableA11y>
+              ))}
+            </ScrollView>
+          )}
 
           <TextInput
             style={[styles.input, { color: colors.text, borderColor: colors.border, backgroundColor: colors.background }]}
@@ -97,4 +127,7 @@ const styles = StyleSheet.create({
   buttons: { flexDirection: 'row', gap: 12, marginTop: 4 },
   btn: { flex: 1, alignItems: 'center', paddingVertical: 12, borderRadius: Radius.sm },
   chip: { borderWidth: 1, borderRadius: Radius.full, paddingHorizontal: 14, paddingVertical: 6 },
+  chipsScroll: { marginBottom: -4 },
+  chipsRow: { flexDirection: 'row', gap: 8, paddingBottom: 4 },
+  chipText: { fontSize: 13, fontWeight: '500' },
 });
