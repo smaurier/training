@@ -121,15 +121,17 @@ export default function WorkoutDetailScreen() {
         >
           <Ionicons name="add" size={28} color={FAB_ICON_COLOR} />
         </PressableA11y>
-        <PressableA11y
-          accessibilityLabel="Démarrer la séance"
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onPress={() => router.push({ pathname: '/session/[workoutId]' as any, params: { workoutId: String(workoutId) } })}
-          style={[styles.startBtn, { backgroundColor: '#16a34a' }]}
-        >
-          <Ionicons name="play" size={18} color="#fff" />
-          <Text style={styles.startBtnText}>Démarrer la séance</Text>
-        </PressableA11y>
+        {exercises.length > 0 && (
+          <PressableA11y
+            accessibilityLabel="Démarrer la séance"
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            onPress={() => router.push({ pathname: '/session/[workoutId]' as any, params: { workoutId: String(workoutId) } })}
+            style={[styles.startBtn, { backgroundColor: '#16a34a' }]}
+          >
+            <Ionicons name="play" size={18} color="#fff" />
+            <Text style={styles.startBtnText}>Démarrer la séance</Text>
+          </PressableA11y>
+        )}
       </View>
     </>
   );

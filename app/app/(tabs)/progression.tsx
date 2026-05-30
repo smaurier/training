@@ -1,4 +1,5 @@
-import { SectionList, View, Text, ScrollView, ActivityIndicator, StyleSheet, Pressable } from 'react-native';
+import { SectionList, View, Text, ScrollView, ActivityIndicator, StyleSheet } from 'react-native';
+import { PressableA11y } from '@/components/ui/PressableA11y';
 import { useRouter } from 'expo-router';
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
@@ -40,9 +41,9 @@ export default function ProgressionScreen() {
     <View style={[styles.segmentContainer, { backgroundColor: colors.background }]} accessibilityRole="tablist">
       <View style={[styles.segmentTrack, { backgroundColor: colors.surface }]}>
         {(['historique', 'stats'] as Segment[]).map(seg => (
-          <Pressable
+          <PressableA11y
             key={seg}
-            style={[styles.segmentButton, activeSegment === seg && { backgroundColor: colors.primary }]}
+            style={activeSegment === seg ? [styles.segmentButton, { backgroundColor: colors.primary }] : styles.segmentButton}
             onPress={() => setActiveSegment(seg)}
             accessibilityLabel={seg === 'historique' ? 'Historique' : 'Stats'}
             accessibilityRole="tab"
@@ -51,7 +52,7 @@ export default function ProgressionScreen() {
             <Text style={[styles.segmentText, { color: activeSegment === seg ? '#fff' : colors.textSecondary }]}>
               {seg === 'historique' ? 'Historique' : 'Stats'}
             </Text>
-          </Pressable>
+          </PressableA11y>
         ))}
       </View>
     </View>

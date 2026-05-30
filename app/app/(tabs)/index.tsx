@@ -102,6 +102,13 @@ export default function HomeScreen() {
       ) : (
         <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
           <Text style={[styles.cardLabel, { color: colors.textSecondary }]}>Aucune séance configurée</Text>
+          <PressableA11y
+            accessibilityLabel="Aller aux programmes"
+            onPress={() => router.push('/(tabs)/programmes')}
+            style={styles.linkBtn}
+          >
+            <Text style={[styles.linkText, { color: colors.primary }]}>Configurer une séance →</Text>
+          </PressableA11y>
         </View>
       )}
     </View>

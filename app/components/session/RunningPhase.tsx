@@ -121,7 +121,7 @@ export function RunningPhase({ exercise, block, set, progressLabel, timer, onVal
             accessibilityLabel="Répétitions réalisées"
           />
         </View>
-        <View style={styles.inputGroup}>
+        <View style={[styles.inputGroup, set.weight_type !== 'fixed' && styles.inputGroupDisabled]}>
           <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>Poids (kg)</Text>
           <TextInput
             style={[styles.input, { color: colors.text, borderColor: colors.border, backgroundColor: colors.surface }]}
@@ -202,6 +202,7 @@ const styles = StyleSheet.create({
   timerLabel: { fontSize: 11, fontWeight: '500', letterSpacing: 0.3 },
   inputRow: { flexDirection: 'row', gap: 10 },
   inputGroup: { flex: 1, gap: 4 },
+  inputGroupDisabled: { opacity: 0.4 },
   inputLabel: { fontSize: 11, fontWeight: '500', textAlign: 'center' },
   inputHint: { fontSize: 10, textAlign: 'center', marginBottom: 2 },
   input: { borderWidth: 1, borderRadius: Radius.sm, padding: 10, fontSize: 18, fontWeight: '600', textAlign: 'center' },
