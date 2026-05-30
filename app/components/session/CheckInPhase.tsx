@@ -7,22 +7,16 @@ import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
 
-interface CheckInOption {
-  value: 1 | 2 | 3;
-  emoji: string;
-  text: string;
-}
-
 interface CheckInRowConfig {
   label: string;
-  options: readonly CheckInOption[];
+  options: readonly { value: 1 | 2 | 3; text: string }[];
 }
 
-const CHECKIN_LABELS: Record<string, CheckInRowConfig> = {
-  energy: { label: 'Énergie', options: [{ value: 1, emoji: '😴', text: 'Faible' }, { value: 2, emoji: '😐', text: 'Normale' }, { value: 3, emoji: '💪', text: 'Élevée' }] },
-  fatigue: { label: 'Fatigue', options: [{ value: 1, emoji: '🟢', text: 'Reposé' }, { value: 2, emoji: '🟡', text: 'Modérée' }, { value: 3, emoji: '🔴', text: 'Élevée' }] },
-  sleep: { label: 'Sommeil', options: [{ value: 1, emoji: '😴', text: 'Mauvais' }, { value: 2, emoji: '😐', text: 'Correct' }, { value: 3, emoji: '🌙', text: 'Bon' }] },
-} as const;
+const CHECKIN_ROWS: CheckInRowConfig[] = [
+  { label: 'Énergie', options: [{ value: 1, text: 'Faible' }, { value: 2, text: 'Normale' }, { value: 3, text: 'Élevée' }] },
+  { label: 'Fatigue', options: [{ value: 1, text: 'Reposé' }, { value: 2, text: 'Modérée' }, { value: 3, text: 'Élevée' }] },
+  { label: 'Sommeil', options: [{ value: 1, text: 'Mauvais' }, { value: 2, text: 'Correct' }, { value: 3, text: 'Bon' }] },
+];
 
 interface CheckInPhaseProps {
   onStart: (checkin: CheckIn) => Promise<void>;
@@ -39,60 +33,61 @@ export function CheckInPhase({ onStart }: CheckInPhaseProps) {
 
   const canStart = energy !== null && fatigue !== null && sleep !== null;
 
+  const setters = [setEnergy, setFatigue, setSleep];
+  const values = [energy, fatigue, sleep];
+
   async function handleStart() {
     if (!canStart || loading) return;
     setLoading(true);
     try {
-      await onStart({ checkin_energy: energy, checkin_fatigue: fatigue, checkin_sleep: sleep });
+      await onStart({ checkin_energy: energy!, checkin_fatigue: fatigue!, checkin_sleep: sleep! });
     } finally {
       setLoading(false);
     }
   }
 
-  function renderRow(
-    config: CheckInRowConfig,
-    selected: 1 | 2 | 3 | null,
-    onSelect: (v: 1 | 2 | 3) => void
-  ) {
-    return (
-      <View style={styles.row}>
-        <Text style={[styles.rowLabel, { color: colors.text }]}>{config.label}</Text>
-        <View style={styles.options}>
-          {config.options.map(opt => {
-            const isSelected = selected === opt.value;
-            const optStyle: ViewStyle[] = [
-              styles.option,
-              { borderColor: isSelected ? colors.primary : colors.border },
-              ...(isSelected ? [{ backgroundColor: colors.primary + '15' } as ViewStyle] : []),
-            ];
-            return (
-            <PressableA11y
-              key={opt.value}
-              accessibilityLabel={`${config.label} : ${opt.text}`}
-              accessibilityState={{ selected: isSelected }}
-              onPress={() => onSelect(opt.value)}
-              style={optStyle}
-            >
-              <Text style={styles.optionEmoji}>{opt.emoji}</Text>
-              <Text style={[styles.optionText, { color: isSelected ? colors.primary : colors.textSecondary }]}>
-                {opt.text}
-              </Text>
-            </PressableA11y>
-            );
-          })}
-        </View>
-      </View>
-    );
-  }
-
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={[styles.title, { color: colors.text }]}>Comment tu te sens ?</Text>
-      <Text style={[styles.subtitle, { color: colors.textSecondary }]}>3 questions rapides avant de commencer</Text>
+    <ScrollView contentContainerStyle={[styles.container, { backgroundColor: colors.background }]}>
+      <View style={styles.hero}>
+        <Text style={[styles.title, { color: colors.text }]}>Comment tu te sens ?</Text>
+        <Text style={[styles.subtitle, { color: colors.textSecondary }]}>3 questions avant de commencer</Text>
+      </View>
 
-      {renderRow(CHECKIN_LABELS.energy, energy, setEnergy)}
-      {renderRow(CHECKIN_LABELS.fatigue, fatigue, setFatigue)}
-      {renderRow(CHECKIN_LABELS.sleep, sleep, setSleep)}
+      {CHECKIN_ROWS.map((row, i) => (
+        <View key={row.label} style={styles.row}>
+          <Text style={[styles.rowLabel, { color: colors.textSecondary }]}>{row.label.toUpperCase()}</Text>
+          <View style={[styles.segment, { borderColor: colors.border }]}>
+            {row.options.map((opt, j) => {
+              const isSelected = values[i] === opt.value;
+              const isFirst = j === 0;
+              const isLast = j === row.options.length - 1;
+              return (
+                <PressableA11y
+                  key={opt.value}
+                  accessibilityLabel={`${row.label} : ${opt.text}`}
+                  accessibilityState={{ selected: isSelected }}
+                  onPress={() => setters[i](opt.value)}
+                  style={[
+                    styles.segmentBtn,
+                    { backgroundColor: isSelected ? colors.primary : colors.surface },
+                    isFirst ? styles.segmentFirst : undefined as unknown as ViewStyle,
+                    isLast ? styles.segmentLast : undefined as unknown as ViewStyle,
+                    (!isLast ? { borderRightWidth: StyleSheet.hairlineWidth, borderRightColor: colors.border } : undefined) as ViewStyle,
+                  ]}
+                >
+                  <Text style={[
+                    styles.segmentText,
+                    { color: isSelected ? '#fff' : colors.textSecondary },
+                    isSelected && styles.segmentTextSelected,
+                  ]}>
+                    {opt.text}
+                  </Text>
+                </PressableA11y>
+              );
+            })}
+          </View>
+        </View>
+      ))}
 
       <PressableA11y
         accessibilityLabel="Commencer la séance"
@@ -107,15 +102,18 @@ export function CheckInPhase({ onStart }: CheckInPhaseProps) {
 }
 
 const styles = StyleSheet.create({
-  container: { flexGrow: 1, padding: 24, gap: 24 },
-  title: { fontSize: 24, fontWeight: '700', textAlign: 'center', marginTop: 32 },
-  subtitle: { fontSize: 14, textAlign: 'center', marginTop: -16 },
+  container: { flexGrow: 1, padding: 24, gap: 28 },
+  hero: { alignItems: 'center', paddingTop: 32, gap: 6 },
+  title: { fontSize: 24, fontWeight: '700', textAlign: 'center' },
+  subtitle: { fontSize: 14, textAlign: 'center' },
   row: { gap: 10 },
-  rowLabel: { fontSize: 16, fontWeight: '600' },
-  options: { flexDirection: 'row', gap: 10 },
-  option: { flex: 1, alignItems: 'center', paddingVertical: 12, borderRadius: Radius.sm, borderWidth: 1.5, gap: 4 },
-  optionEmoji: { fontSize: 22 },
-  optionText: { fontSize: 11, fontWeight: '500' },
+  rowLabel: { fontSize: 11, fontWeight: '700', letterSpacing: 0.8 },
+  segment: { flexDirection: 'row', borderWidth: 1, borderRadius: Radius.sm, overflow: 'hidden' },
+  segmentBtn: { flex: 1, alignItems: 'center', paddingVertical: 14 },
+  segmentFirst: { borderTopLeftRadius: Radius.sm, borderBottomLeftRadius: Radius.sm },
+  segmentLast: { borderTopRightRadius: Radius.sm, borderBottomRightRadius: Radius.sm },
+  segmentText: { fontSize: 14, fontWeight: '500' },
+  segmentTextSelected: { fontWeight: '700' },
   startBtn: { marginTop: 8, paddingVertical: 16, borderRadius: Radius.sm, alignItems: 'center' },
   startBtnText: { color: '#fff', fontSize: 17, fontWeight: '600' },
 });
