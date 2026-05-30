@@ -250,7 +250,7 @@ Tap sur une séance dans la liste.
 
 - [ ] Header : durée, nb séries, RPE moyen (si au moins un RPE saisi)
 - [ ] Pas de RPE saisi → colonne RPE absente
-- [ ] Check-in : énergie / fatigue / sommeil avec emojis
+- [ ] Check-in : énergie / fatigue / sommeil affichés (segmented control — pas d'emojis)
 - [ ] Exercices listés avec sets : "80 kg × 8 · RPE 7"
 - [ ] Sets sans RPE → pas de "· RPE"
 - [ ] Séance avec plusieurs exercices → scroll fluide

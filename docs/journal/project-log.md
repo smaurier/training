@@ -14,13 +14,19 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 - **Flèches séries supprimées** : `BlockCard` n'a plus ↑↓ par série — delete+recréer suffisant. Séparateur hairline entre blocs ajouté
 - Plans docs archivés : `2026-05-28-set-block-editing.md`, `2026-05-29-conduite-seance.md`
 
-### Backlog restant
-- Hiérarchie infos RunningPhase (informationnel — V2)
-- Type de séance running/stretching (feature — V2)
-- Long-press affordance visuelle sur les cartes (V2)
+### Statut MVP
+MVP déclaré complet. Tous les bugs bloquants résolus, aucun code manquant. Les `[ ]` restants dans `parcours-test-utilisateur.md` sont des vérifications manuelles nécessitant des données réelles (progressions, historique, stats) — pas du code à écrire.
+
+### Backlog V2
+- Hiérarchie infos RunningPhase
+- Type de séance running/stretching (DB schema change nécessaire)
+- Drag & drop réordonnancement (replace ↑↓)
+- Feedback couleur timer pendant le décompte
+- Long-press affordance visuelle sur les cartes
 
 ### Prochaine étape
-- Semaine de test réelle
+- Semaine de test réelle — utilisation quotidienne sur de vraies séances
+- Remonter les bugs trouvés → session V2
 
 ---
 
