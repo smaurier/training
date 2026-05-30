@@ -12,16 +12,15 @@ import { Radius } from '@/constants/Radius';
 
 interface BlockCardProps {
   block: BlockWithSets;
+  isFirst: boolean;
+  isLast: boolean;
   onUpdateSet: (setId: number, dto: UpdateSetDto) => Promise<void>;
   onAddSet: (blockId: number) => Promise<void>;
   onRemoveSet: (setId: number) => Promise<void>;
   onRenameBlock: (block: BlockWithSets) => void;
   onRemoveBlock: (blockId: number) => Promise<void>;
-  isFirst: boolean;
-  isLast: boolean;
   onMoveUp: () => Promise<void>;
   onMoveDown: () => Promise<void>;
-  onReorderSet: (setId: number, direction: 'up' | 'down') => Promise<void>;
 }
 
 function formatSet(set: TrainingSet): string {
@@ -41,7 +40,7 @@ function formatSet(set: TrainingSet): string {
   return `${reps} @ ${weight} — ${rest}`;
 }
 
-export function BlockCard({ block, onUpdateSet, onAddSet, onRemoveSet, onRenameBlock, onRemoveBlock, isFirst, isLast, onMoveUp, onMoveDown, onReorderSet }: BlockCardProps) {
+export function BlockCard({ block, isFirst, isLast, onUpdateSet, onAddSet, onRemoveSet, onRenameBlock, onRemoveBlock, onMoveUp, onMoveDown }: BlockCardProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const [editingSet, setEditingSet] = useState<TrainingSet | null>(null);
@@ -80,7 +79,7 @@ export function BlockCard({ block, onUpdateSet, onAddSet, onRemoveSet, onRenameB
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, !isFirst && { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: colors.border }]}>
       <View style={styles.blockHeader}>
         <PressableA11y
           accessibilityLabel={`${block.name}, appuyer longuement pour modifier`}
@@ -129,38 +128,18 @@ export function BlockCard({ block, onUpdateSet, onAddSet, onRemoveSet, onRenameB
       {block.sets.length === 0 ? (
         <Text style={[styles.set, { color: colors.textSecondary }]}>Aucune série.</Text>
       ) : (
-        block.sets.map((set, index) => (
-          <View key={set.id} style={styles.setRow}>
-            <PressableA11y
-              accessibilityLabel={`${formatSet(set)}, appuyer pour modifier`}
-              accessibilityHint="Appuyer longuement pour supprimer"
-              onPress={() => setEditingSet(set)}
-              onLongPress={() => handleSetLongPress(set)}
-              style={styles.setMain}
-            >
-              <Text style={[styles.set, { color: colors.text }]}>
-                {formatSet(set)}
-              </Text>
-            </PressableA11y>
-            {index > 0 && (
-              <PressableA11y
-                accessibilityLabel={`Monter série ${index + 1}`}
-                onPress={() => onReorderSet(set.id, 'up')}
-                style={styles.reorderBtn}
-              >
-                <Ionicons name="chevron-up-outline" size={14} color={colors.textSecondary} />
-              </PressableA11y>
-            )}
-            {index < block.sets.length - 1 && (
-              <PressableA11y
-                accessibilityLabel={`Descendre série ${index + 1}`}
-                onPress={() => onReorderSet(set.id, 'down')}
-                style={styles.reorderBtn}
-              >
-                <Ionicons name="chevron-down-outline" size={14} color={colors.textSecondary} />
-              </PressableA11y>
-            )}
-          </View>
+        block.sets.map((set) => (
+          <PressableA11y
+            key={set.id}
+            accessibilityLabel={`${formatSet(set)}, appuyer pour modifier`}
+            accessibilityHint="Appuyer longuement pour supprimer"
+            onPress={() => setEditingSet(set)}
+            onLongPress={() => handleSetLongPress(set)}
+          >
+            <Text style={[styles.set, { color: colors.text }]}>
+              {formatSet(set)}
+            </Text>
+          </PressableA11y>
         ))
       )}
 
@@ -199,8 +178,6 @@ const styles = StyleSheet.create({
   },
   badge: { borderRadius: Radius.xs, paddingHorizontal: 5, paddingVertical: 1 },
   badgeText: { fontSize: 9, fontWeight: '700', letterSpacing: 0.4 },
-  setRow: { flexDirection: 'row', alignItems: 'center' },
-  setMain: { flex: 1 },
   set: { fontSize: 14, lineHeight: 20, paddingVertical: 2 },
   reorderBtn: { alignItems: 'center', justifyContent: 'center' },
   addBtn: { marginTop: 4 },

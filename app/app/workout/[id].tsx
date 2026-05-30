@@ -38,7 +38,6 @@ export default function WorkoutDetailScreen() {
     removeBlock,
     reorderExercise,
     reorderBlock,
-    reorderSet,
   } = useWorkoutExercises(workoutId);
 
   useEffect(() => {
@@ -98,7 +97,6 @@ export default function WorkoutDetailScreen() {
               onMoveUp={() => reorderExercise(item.id, 'up')}
               onMoveDown={() => reorderExercise(item.id, 'down')}
               onReorderBlock={reorderBlock}
-              onReorderSet={reorderSet}
               onRemove={() => confirmRemove(item)}
               onUpdateSet={updateSet}
               onAddSet={addSet}

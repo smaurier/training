@@ -26,7 +26,6 @@ interface WorkoutExerciseCardProps {
   onMoveUp: () => Promise<void>;
   onMoveDown: () => Promise<void>;
   onReorderBlock: (workoutExerciseId: number, blockId: number, direction: 'up' | 'down') => Promise<void>;
-  onReorderSet: (blockId: number, setId: number, direction: 'up' | 'down') => Promise<void>;
 }
 
 export function WorkoutExerciseCard({
@@ -43,7 +42,6 @@ export function WorkoutExerciseCard({
   onMoveUp,
   onMoveDown,
   onReorderBlock,
-  onReorderSet,
 }: WorkoutExerciseCardProps) {
   const [expanded, setExpanded] = useState(false);
   const [showAddBlock, setShowAddBlock] = useState(false);
@@ -155,7 +153,6 @@ export function WorkoutExerciseCard({
                 isLast={index === detail.blocks.length - 1}
                 onMoveUp={() => onReorderBlock(detail.id, block.id, 'up')}
                 onMoveDown={() => onReorderBlock(detail.id, block.id, 'down')}
-                onReorderSet={(setId, dir) => onReorderSet(block.id, setId, dir)}
                 onUpdateSet={onUpdateSet}
                 onAddSet={onAddSet}
                 onRemoveSet={onRemoveSet}
