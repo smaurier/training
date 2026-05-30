@@ -4,6 +4,26 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 
 ---
 
+## Session 15 — 2026-05-30 — Backlog UX post-tests
+
+### Réalisé
+- **Auto-activation premier programme** : `ProgramService.create()` crée avec `is_active=1` si aucun programme actif — fini la friction manuelle au premier lancement
+- **Pre-fill nom exercice** : `add-exercise.tsx` lit `initialName` depuis les params Expo Router ; `add-workout-exercise.tsx` passe le `search` en param à `/add-exercise`
+- **Timer background** : `useTimer` remplacé par timestamp absolu `endTime` + `AppState` listener pour recalculer au retour foreground + vibration `[0,400,150,400]` à la fin
+- **Check-in redesign** : emojis remplacés par segmented control texte pur — cohérent avec design monochrome de l'app
+- **Flèches séries supprimées** : `BlockCard` n'a plus ↑↓ par série — delete+recréer suffisant. Séparateur hairline entre blocs ajouté
+- Plans docs archivés : `2026-05-28-set-block-editing.md`, `2026-05-29-conduite-seance.md`
+
+### Backlog restant
+- Hiérarchie infos RunningPhase (informationnel — V2)
+- Type de séance running/stretching (feature — V2)
+- Long-press affordance visuelle sur les cartes (V2)
+
+### Prochaine étape
+- Semaine de test réelle
+
+---
+
 ## Session 14 — 2026-05-30 — Tests manuels + correctifs bugs
 
 ### Réalisé
