@@ -149,20 +149,20 @@ export function RunningPhase({ exercise, block, set, progressLabel, timer, onVal
 
       {/* Boutons */}
       <PressableA11y
-        accessibilityLabel="Valider la série"
+        accessibilityLabel="Tout réussi — valider avec les valeurs cibles"
+        onPress={handleToutReussi}
+        style={[styles.toutReussiBtn, { backgroundColor: '#ca8a04' }]}
+      >
+        <Text style={styles.toutReussiBtnText}>⚡ Tout réussi</Text>
+      </PressableA11y>
+
+      <PressableA11y
+        accessibilityLabel="Valider la série avec les valeurs saisies"
         onPress={handleValidate}
         style={[styles.validateBtn, { backgroundColor: '#16a34a' }]}
       >
         <Ionicons name="checkmark" size={20} color="#fff" />
         <Text style={styles.validateBtnText}>{loading ? 'Validation…' : 'Valider'}</Text>
-      </PressableA11y>
-
-      <PressableA11y
-        accessibilityLabel="Tout réussi — valider avec les valeurs cibles"
-        onPress={handleToutReussi}
-        style={[styles.toutReussiBtn, { borderColor: colors.primary }]}
-      >
-        <Text style={[styles.toutReussiBtnText, { color: colors.primary }]}>Tout réussi ⚡</Text>
       </PressableA11y>
 
       {/* Séries restantes */}
@@ -207,8 +207,8 @@ const styles = StyleSheet.create({
   input: { borderWidth: 1, borderRadius: Radius.sm, padding: 10, fontSize: 18, fontWeight: '600', textAlign: 'center' },
   validateBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 14, borderRadius: Radius.sm },
   validateBtnText: { color: '#fff', fontSize: 17, fontWeight: '600' },
-  toutReussiBtn: { borderWidth: 1.5, borderRadius: Radius.sm, paddingVertical: 12, alignItems: 'center' },
-  toutReussiBtnText: { fontSize: 15, fontWeight: '600' },
+  toutReussiBtn: { borderRadius: Radius.sm, paddingVertical: 14, alignItems: 'center' },
+  toutReussiBtnText: { color: '#fff', fontSize: 17, fontWeight: '700' },
   restSection: { gap: 4 },
   restLabel: { fontSize: 10, fontWeight: '600', letterSpacing: 0.5 },
   restSet: { fontSize: 13, lineHeight: 20 },
