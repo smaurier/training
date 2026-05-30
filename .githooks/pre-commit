@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Vérifie les types TypeScript avant chaque commit.
+# Installation (une fois) : git config core.hooksPath .githooks
+
+set -e
+
+echo "→ TypeScript check..."
+cd app && npx tsc --noEmit
+
+echo "✓ Types OK"

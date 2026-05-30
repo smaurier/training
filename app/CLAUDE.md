@@ -50,9 +50,18 @@ npx tsc --noEmit      # vérifier les types TypeScript
 - Architecture technique : `../docs/architecture.md`
 - Changelog : `../docs/changelog.md`
 
+## Git hooks
+
+Pre-commit TypeScript check installé dans `.githooks/`. Activer une fois :
+
+```bash
+git config core.hooksPath .githooks
+```
+
 ## Règles importantes
 
-- **Début de session** : lire `../docs/journal/project-log.md` pour connaître l'état du projet et ce qui a été fait en dernière session
+- **Début de session** : annoncer le scope explicitement + lire `../docs/journal/project-log.md`
+- **Scope creep** : signaler toute dérive hors scope avant d'agir, proposer de reporter
 - **Fin de session** : mettre à jour `../docs/journal/project-log.md` avec ce qui a été fait, les décisions prises et la prochaine étape
 - Mettre à jour `../docs/architecture.md` après chaque décision technique structurante
 - Mettre à jour ce fichier si la stack, la structure ou les conventions changent
