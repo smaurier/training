@@ -4,6 +4,35 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 
 ---
 
+## Session 14 — 2026-05-30 — Tests manuels + correctifs bugs
+
+### Réalisé
+- Tests manuels complets sur device (parcours 7 parties documenté dans `docs/parcours-test-utilisateur.md`)
+- **B1** : résumé absent après dernière série — `calculateProgressions` isolé dans try/catch imbriqué dans `useSession.ts` → `setPhase('summary')` garanti après `completeSession`
+- **B3** : toggle se fermait à l'ajout de série — `workout/[id].tsx` affiche spinner uniquement si `loading && exercises.length === 0`, plus de démontage de la FlatList au refresh
+- **B4** : compteur "0 exercice" hardcodé dans `WorkoutCard` — requête réelle via `SQLiteWorkoutExerciseRepository.findByWorkoutId` dans `programme/[id].tsx`
+- **B5** : liste exercices périmée après création — `useFocusEffect` + `refresh` dans `add-workout-exercise.tsx`
+- **RPE** : label rendu explicite "RPE (1–10)" + sous-titre "Effort perçu — optionnel"
+
+### Décisions techniques
+- Spinner initial seulement : `loading && exercises.length === 0` plutôt que split `isFirstLoad` ref dans le hook — plus simple, même résultat
+- `calculateProgressions` défaillant ne bloque plus la phase summary : progressions vides préférables à résumé absent
+- Compteur exercices chargé côté écran (useEffect dans `programme/[id].tsx`) sur le même pattern que `workoutCounts` dans `programmes.tsx`
+
+### Bugs restants / backlog UX
+- Session running : 0 exercice affiché (lié à données de test vides — à vérifier avec vraie séance)
+- Timer s'arrête en background (OS suspend le JS thread) — V2
+- Vibration/son fin de timer — V2
+- Auto-activation premier programme — V2
+- Hiérarchie infos RunningPhase — V2
+- Smileys check-in plus stylisés — V2
+
+### Prochaine étape
+- Test séance complète sur device (vérifier B1 résolu, résumé visible)
+- Semaine d'utilisation réelle pour identifier autres bugs
+
+---
+
 ## Session 13 — 2026-05-29 — Config séance UX
 
 ### Réalisé
