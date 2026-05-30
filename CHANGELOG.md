@@ -5,6 +5,16 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.1.0] — 2026-05-30
+
+68608d3 fix(a11y): migrer TouchableOpacity → PressableA11y sur tous les écrans restants
+6daf07b fix: protéger JSON.parse muscle_groups contre données corrompues
+1f0624c chore: supprimer modal.tsx + EditScreenInfo (artefacts template Expo)
+c9e1185 chore(workflow): pre-commit tsc hook + suppr plans archivés + scope creep rules
+faefadf chore: add CHANGELOG.md + version-bump script
+
+---
+
 ## [1.0.0] — 2026-05-30 — MVP
 
 ### feat
