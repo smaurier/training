@@ -81,10 +81,13 @@ export function WorkoutExerciseCard({
     setEditingBlock(null);
   }
 
-  const parsedMuscles = detail.exercise.muscle_groups
-    ? JSON.parse(detail.exercise.muscle_groups)
-    : [];
-  const muscleGroups = Array.isArray(parsedMuscles) ? parsedMuscles.join(', ') : '';
+  let muscleGroups = '';
+  try {
+    const parsedMuscles = detail.exercise.muscle_groups ? JSON.parse(detail.exercise.muscle_groups) : [];
+    muscleGroups = Array.isArray(parsedMuscles) ? parsedMuscles.join(', ') : '';
+  } catch {
+    muscleGroups = '';
+  }
 
   return (
     <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>

@@ -43,8 +43,12 @@ export default function AddWorkoutExerciseScreen() {
   }
 
   function parseMuscleGroups(raw: string): string {
-    const parsed = raw ? JSON.parse(raw) : [];
-    return Array.isArray(parsed) ? parsed.join(', ') : '';
+    try {
+      const parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed.join(', ') : '';
+    } catch {
+      return '';
+    }
   }
 
   return (
