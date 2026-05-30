@@ -133,7 +133,8 @@ export function RunningPhase({ exercise, block, set, progressLabel, timer, onVal
           />
         </View>
         <View style={styles.inputGroup}>
-          <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>RPE</Text>
+          <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>RPE (1–10)</Text>
+          <Text style={[styles.inputHint, { color: colors.textSecondary }]}>Effort perçu — optionnel</Text>
           <TextInput
             style={[styles.input, { color: colors.text, borderColor: colors.border, backgroundColor: colors.surface }]}
             value={rpe}
@@ -141,7 +142,7 @@ export function RunningPhase({ exercise, block, set, progressLabel, timer, onVal
             keyboardType="numeric"
             placeholder="—"
             placeholderTextColor={colors.textSecondary}
-            accessibilityLabel="RPE (1 à 10)"
+            accessibilityLabel="RPE effort perçu de 1 à 10, optionnel"
           />
         </View>
       </View>
@@ -202,6 +203,7 @@ const styles = StyleSheet.create({
   inputRow: { flexDirection: 'row', gap: 10 },
   inputGroup: { flex: 1, gap: 4 },
   inputLabel: { fontSize: 11, fontWeight: '500', textAlign: 'center' },
+  inputHint: { fontSize: 10, textAlign: 'center', marginBottom: 2 },
   input: { borderWidth: 1, borderRadius: Radius.sm, padding: 10, fontSize: 18, fontWeight: '600', textAlign: 'center' },
   validateBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 14, borderRadius: Radius.sm },
   validateBtnText: { color: '#fff', fontSize: 17, fontWeight: '600' },

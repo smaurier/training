@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { View, Text, FlatList, TextInput, ActivityIndicator, StyleSheet, Alert } from 'react-native';
-import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
+import { useLocalSearchParams, useRouter, Stack, useFocusEffect } from 'expo-router';
 import { useWorkoutExercises } from '@/hooks/useWorkoutExercises';
 import { useExercises } from '@/hooks/useExercises';
 import { PressableA11y } from '@/components/ui/PressableA11y';
@@ -18,7 +18,15 @@ export default function AddWorkoutExerciseScreen() {
 
   const [search, setSearch] = useState('');
   const { add } = useWorkoutExercises(workoutId);
-  const { exercises, loading } = useExercises();
+  const { exercises, loading, refresh } = useExercises();
+
+  const isFirstFocus = useRef(true);
+  useFocusEffect(
+    useCallback(() => {
+      if (isFirstFocus.current) { isFirstFocus.current = false; return; }
+      refresh();
+    }, [refresh])
+  );
 
   const filtered = exercises.filter(ex => {
     const q = search.toLowerCase();

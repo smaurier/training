@@ -10,42 +10,44 @@
 
 ### 1.1 Premier lancement
 
-- [ ] L'accueil affiche "Aucun programme actif"
-- [ ] Un lien / bouton "Créer un programme →" est visible
-- [ ] Tap dessus → onglet Programmes s'ouvre
-- [ ] Aucun crash, aucun écran blanc
+- [ok] L'accueil affiche "Aucun programme actif"
+- [ok] Un lien / bouton "Créer un programme →" est visible
+- [ok ] Tap dessus → onglet Programmes s'ouvre
+- [ ok] Aucun crash, aucun écran blanc
 
 ### 1.2 Créer un premier programme
 
-- [ ] Tap FAB (+) → formulaire de création s'ouvre
-- [ ] Saisir un nom (ex : "Push Pull Legs") → valider
-- [ ] Programme apparaît dans la liste
-- [ ] Badge "actif" absent par défaut
+- [ ok] Tap FAB (+) → formulaire de création s'ouvre
+- [ ok] Saisir un nom (ex : "Push Pull Legs") → valider
+- [ ok] Programme apparaît dans la liste
+- [ ] Badge "actif" absent par défaut -> s'il n'y a qu'un programme, le rendre actif par défaut, et par défaut, le dernier ajouté est actif jusqu'a ce que l'utilisateur rende un programme actif. Est-ce que ce serait ergonomique ?
 
 ### 1.3 Créer un deuxième programme
 
-- [ ] Créer un 2e programme (ex : "Full Body")
-- [ ] Les deux programmes sont visibles dans la liste
+- [ok ] Créer un 2e programme (ex : "Full Body")
+- [ok ] Les deux programmes sont visibles dans la liste
 - [ ] Aucun n'est actif
+
+Je reflechis au fait que l'on a aucune indication d'edition si l'on veut supprimer modifier rendre actif etc. le programme
 
 ### 1.4 Activer un programme
 
-- [ ] Long-press sur "Push Pull Legs" → menu apparaît avec "Modifier / Activer / Supprimer / Annuler"
-- [ ] Tap "Activer" → badge "actif" apparaît sur la carte
-- [ ] Retour accueil → affiche "Aucune séance configurée" (programme actif mais sans séances)
+- [ ok] Long-press sur "Push Pull Legs" → menu apparaît avec "Modifier / Activer / Supprimer / Annuler"
+- [ ok] Tap "Activer" → badge "actif" apparaît sur la carte
+- [ ok] Retour accueil → affiche "Aucune séance configurée" (programme actif mais sans séances)
 
 ### 1.5 Un seul programme actif à la fois
 
-- [ ] Long-press sur "Full Body" → tap "Activer"
-- [ ] "Full Body" devient actif, "Push Pull Legs" perd son badge
-- [ ] Réactiver "Push Pull Legs" pour la suite
+- [ ok] Long-press sur "Full Body" → tap "Activer"
+- [ ok] "Full Body" devient actif, "Push Pull Legs" perd son badge
+- [ ok] Réactiver "Push Pull Legs" pour la suite
 
 ### 1.6 Modifier et supprimer
 
-- [ ] Long-press → "Modifier" → changer le nom → sauvegarder → nom mis à jour
-- [ ] Créer un 3e programme "Test" → long-press → "Supprimer" → confirmation → disparaît
-- [ ] Supprimer le programme actif → accueil repasse en "Aucun programme actif"
-- [ ] Réactiver "Push Pull Legs" avant de continuer
+- [ ok] Long-press → "Modifier" → changer le nom → sauvegarder → nom mis à jour
+- [ok ] Créer un 3e programme "Test" → long-press → "Supprimer" → confirmation → disparaît
+- [ok ] Supprimer le programme actif → accueil repasse en "Aucun programme actif"
+- [ ok] Réactiver "Push Pull Legs" avant de continuer
 
 ---
 
@@ -55,17 +57,19 @@
 
 Ouvrir le programme "Push Pull Legs".
 
-- [ ] Tap FAB (+) → créer "Push"
-- [ ] Créer "Pull"
-- [ ] Créer "Legs"
-- [ ] Les 3 séances apparaissent dans la liste
+- [ ok] Tap FAB (+) → créer "Push"
+- [ ok] Créer "Pull"
+- [ ok] Créer "Legs"
+- [ ok] Les 3 séances apparaissent dans la liste
+
+Mouais, peut etre que le drag and drop était plus ergonomique après coup finalement
 
 ### 2.2 Réordonner les séances
 
-- [ ] Flèche ↑ sur "Pull" → "Pull" passe avant "Push"
-- [ ] Flèche ↓ sur "Pull" → revient à l'ordre initial
-- [ ] L'ordre est persisté après navigation (quitter et revenir)
-- [ ] La flèche ↑ est absente sur la 1re séance, ↓ absente sur la dernière
+- [ok ] Flèche ↑ sur "Pull" → "Pull" passe avant "Push"
+- [ ok] Flèche ↓ sur "Pull" → revient à l'ordre initial
+- [ ok] L'ordre est persisté après navigation (quitter et revenir)
+- [ok ] La flèche ↑ est absente sur la 1re séance, ↓ absente sur la dernière
 
 ### 2.3 Configurer la séance Push
 
@@ -73,54 +77,56 @@ Tap sur "Push".
 
 #### Ajouter des exercices
 
-- [ ] Tap FAB (+) → écran de recherche s'ouvre
-- [ ] Taper "bench" → résultats filtrés en temps réel
-- [ ] Taper une chaîne sans résultat → message "Aucun exercice trouvé" + bouton "Créer un exercice"
-- [ ] Tap "Créer un exercice" → navigue vers le formulaire de création
-- [ ] Revenir, chercher "bench" → ajouter "Bench Press"
-- [ ] Bench Press apparaît dans la liste avec un bloc "Travail" par défaut
-- [ ] Ajouter aussi "Overhead Press" et "Tricep Pushdown"
+- [ok ] Tap FAB (+) → écran de recherche s'ouvre
+- [ ok] Taper "bench" → résultats filtrés en temps réel
+- [ok ] Taper une chaîne sans résultat → message "Aucun exercice trouvé" + bouton "Créer un exercice"
+- [ ok] Tap "Créer un exercice" → navigue vers le formulaire de création -> peut etre qu'a ce moment, on pourrait renseigner le champ nom avec la recherche qui a été faite non ?
+  .
+
+- [ ok] Revenir, chercher "bench" → ajouter "Bench Press" -> la liste ne semble pas se mettre a jour apres avoir créé "Bench press", on doit quitter la partie exercice pour revenir ensuite pour que ça se rafraichisse
+- [ok ] Bench Press apparaît dans la liste avec un bloc "Travail" par défaut
+- [ok ] Ajouter aussi "Overhead Press" et "Tricep Pushdown"
 
 #### Réordonner les exercices
 
-- [ ] Flèche ↑/↓ sur Overhead Press → fonctionne
-- [ ] Ordre persisté après navigation
+- [oik ] Flèche ↑/↓ sur Overhead Press → fonctionne
+- [ok ] Ordre persisté après navigation : ok pour l'ordre mais par exmple pour leg, j'ai renseigné des exercices et si je fais retour, le state ne se met pas ajour : j'ai toujours "0 exercice" d'affiché
 
 #### Configurer les blocs de Bench Press
 
 Tap sur la carte Bench Press pour l'étendre.
 
-- [ ] Badge TRAVAIL (couleur primaire) visible sur le bloc existant
-- [ ] Bloc unique → hint en italique "Ajoute des blocs pour structurer ta séance..."
-- [ ] Tap "+" (ajouter bloc) → modal s'ouvre avec chips "Échauffement / Travail / Back-off"
-- [ ] Tap chip "Échauffement" → nom pré-rempli "Échauffement", toggle is_work_block = REPOS
-- [ ] Tap chip "Travail" → nom pré-rempli "Travail", toggle is_work_block = TRAVAIL
-- [ ] Chip sélectionnée → fond légèrement teinté
-- [ ] Sauvegarder → bloc ajouté, hint disparaît (2 blocs maintenant)
-- [ ] Badge REPOS (gris) sur Échauffement, badge TRAVAIL sur Travail
+- [ok] Badge TRAVAIL (couleur primaire) visible sur le bloc existant
+- [ok] Bloc unique → hint en italique "Ajoute des blocs pour structurer ta séance..."
+- [ok] Tap "+" (ajouter bloc) → modal s'ouvre avec chips "Échauffement / Travail / Back-off"
+- [ok] Tap chip "Échauffement" → nom pré-rempli "Échauffement", toggle is_work_block = REPOS
+- [ok] Tap chip "Travail" → nom pré-rempli "Travail", toggle is_work_block = TRAVAIL
+- [ ok] Chip sélectionnée → fond légèrement teinté
+- [ok ] Sauvegarder → bloc ajouté, hint disparaît (2 blocs maintenant)
+- [ok ] Badge REPOS (gris) sur Échauffement, badge TRAVAIL sur Travail
 
 #### Modifier les blocs
 
-- [ ] Long-press sur un bloc → modal s'ouvre en mode édition
-- [ ] Chips absentes en mode édition
-- [ ] Renommer le bloc → sauvegardé
+- [ ok] Long-press sur un bloc → modal s'ouvre en mode édition
+- [ ok] Chips absentes en mode édition
+- [ok ] Renommer le bloc → sauvegardé
 
 #### Réordonner les blocs
 
-- [ ] Flèches ↑/↓ sur les blocs → fonctionne
-- [ ] Ordre persisté
+- [ok ] Flèches ↑/↓ sur les blocs → fonctionne
+- [ ok] Ordre persisté : globalement y a trop de fleches de partout et l'ui doit delimiter un peu plus les blocs entre eux
 
 #### Configurer les séries du bloc Travail
 
 Tap sur le bloc "Travail" pour l'étendre.
 
-- [ ] Tap "+" → série ajoutée avec valeurs par défaut (reps, poids, repos)
-- [ ] Modifier reps → sauvegardé
-- [ ] Modifier poids → sauvegardé
-- [ ] Modifier durée repos → sauvegardé
-- [ ] Ajouter une 2e et 3e série
-- [ ] Flèches ↑/↓ → réordonner les séries, persisté
-- [ ] Supprimer une série → disparaît
+- [ ok] Tap "+" → série ajoutée avec valeurs par défaut (reps, poids, repos)
+- [ok ] Modifier reps → sauvegardé
+- [ ok] Modifier poids → sauvegardé
+- [ ok] Modifier durée repos → sauvegardé
+- [ ok] Ajouter une 2e et 3e série : probleme lorsque onb ajoute une série, le toggle se ferme
+- [ ok] Flèches ↑/↓ → réordonner les séries, persisté - trop de fleches encore
+- [ ok] Supprimer une série → disparaît
 
 ---
 
@@ -128,65 +134,81 @@ Tap sur le bloc "Travail" pour l'étendre.
 
 ### 3.1 Lancer la séance
 
-- [ ] Retour accueil → carte "PROCHAINE SÉANCE : Push" visible
-- [ ] Tap "Démarrer" → écran de session s'ouvre
+- [ ok] Retour accueil → carte "PROCHAINE SÉANCE : Push" visible
+- [ ok] Tap "Démarrer" → écran de session s'ouvre
 
 ### 3.2 Check-in
 
-- [ ] 3 lignes : Énergie / Fatigue / Sommeil
-- [ ] Bouton "Commencer" désactivé tant que les 3 ne sont pas sélectionnés
-- [ ] Sélectionner les 3 → bouton s'active
-- [ ] Tap "Commencer" → phase Running
+- [ ok] 3 lignes : Énergie / Fatigue / Sommeil
+- [ ok] Bouton "Commencer" désactivé tant que les 3 ne sont pas sélectionnés
+- [ ok] Sélectionner les 3 → bouton s'active
+- [ ok] Tap "Commencer" → phase Running
+
+Sympa les smileys mais je pense que l'on pourrait avoir quelque chose de plus stylisé pour l'appli
 
 ### 3.3 Phase Running
 
-- [ ] Header affiche le nom de l'exercice + progression ("1 / 3 exercices")
-- [ ] Badge du bloc visible (ex : TRAVAIL, ÉCHAUFFEMENT)
-- [ ] Cible affichée (ex : "80 kg × 6–8 rép")
-- [ ] Séries restantes du bloc affichées en bas (grisées)
+- [ ok] Header affiche le nom de l'exercice + progression ("1 / 3 exercices")
+- [ok ] Badge du bloc visible (ex : TRAVAIL, ÉCHAUFFEMENT)
+- [ ok] Cible affichée (ex : "80 kg × 6–8 rép")
+- [ ok] Séries restantes du bloc affichées en bas (grisées)
+
+Globalement, sur cette page, je pense que l'on peut faire mieux dans la hierarchie de l'info encore.
+
+Malgré que des exercices soient mis dans la séance, 0 exercices restent affichés
+
+Au niveau de la logique peut etre devrions nous prévoir directement un type de séance qui ne serait pas muscu mais running ou stretching. Et avoir des exercices en fonction.
 
 ### 3.4 Valider une série
 
-- [ ] Champs Reps et Poids pré-remplis avec les valeurs cible
-- [ ] Modifier les reps → modifiable
-- [ ] Champ RPE optionnel (laisser vide = null)
-- [ ] Tap "Valider" → série loggée, timer démarre
+- [ok ] Champs Reps et Poids pré-remplis avec les valeurs cible
+- [ ok] Modifier les reps → modifiable
+- [ ok] Champ RPE optionnel (laisser vide = null) -> C'est quoi RPE deja ?
+- [ ok] Tap "Valider" → série loggée, timer démarre
+
+Une sonnerie et/ou vibration devrait etre declanché a la fin du timer. Aussi j'ai remarqué que le timer s'arretait lorsqu'on mettait l'application en fond et que l'on faisait autre chose. Pas ok pour ça.
 
 ### 3.5 Timer de repos
 
-- [ ] Timer démarre automatiquement après validation
-- [ ] Tap timer → pause
-- [ ] Tap à nouveau → reprend
-- [ ] Timer atteint 00:00 → s'arrête (pas de négatif)
-- [ ] Série suivante → timer reset avec sa propre durée de repos
+- [ ok] Timer démarre automatiquement après validation
+- [ ok] Tap timer → pause
+- [ok ] Tap à nouveau → reprend
+- [ok ] Timer atteint 00:00 → s'arrête (pas de négatif)
+- [ok ] Série suivante → timer reset avec sa propre durée de repos
+
+Autre chose avec le timer, pourrait changer de couleur en fonction du rebours. Pensons a d'autres fonctionalités et peut etre faire plus graphique.
+Amener les milisecondes par exemple. Mais d'autres idées aussi
 
 ### 3.6 Bouton "Passer"
 
-- [ ] Tap "Passer →" → avance sans logger
-- [ ] La série passer n'apparaît pas dans le résumé final
+- [ ok] Tap "Passer →" → avance sans logger
+- [ ok] La série passer n'apparaît pas dans le résumé final
 
 ### 3.7 Bouton "Tout réussi ⚡"
 
 - [ ] Tap → valide avec reps_max + poids cible, RPE null
 - [ ] Avance à la série suivante
 
+-> graphiquement mettre peut etre avant valider ? Et ne ressort peut etre pas assez
+
 ### 3.8 Navigation arrière
 
-- [ ] Bouton Back système → la session reste en cours (pas de reset)
-- [ ] Naviguer dans l'app → session non détruite
+- [ ok] Bouton Back système → la session reste en cours (pas de reset)
+- [ ok] Naviguer dans l'app → session non détruite
 
 ### 3.9 Fin de séance
 
-- [ ] Après la dernière série → écran Summary automatiquement
+- [ko ] Après la dernière série → écran Summary automatiquement
+  Je n'ai pas de résumé de séance
 
 ---
 
 ## Partie 4 — Résumé de séance
 
-- [ ] "🎉 Séance terminée !" affiché
-- [ ] Durée totale affichée
-- [ ] Nombre de séries loggées correct
-- [ ] Nombre de progressions affiché
+- [ko ] "🎉 Séance terminée !" affiché
+- [ ko] Durée totale affichée
+- [ ko] Nombre de séries loggées correct
+- [ ko] Nombre de progressions affiché
 
 ### 4.1 Progression seuil 1
 
@@ -275,10 +297,12 @@ Onglet Progression → segment Stats.
 
 ## Récapitulatif bugs / anomalies
 
-| # | Écran | Action | Comportement observé | Sévérité |
-|---|-------|--------|----------------------|----------|
-| | | | | |
+| #   | Écran | Action | Comportement observé | Sévérité |
+| --- | ----- | ------ | -------------------- | -------- |
+|     |       |        |                      |          |
 
 ---
 
 > Dernière mise à jour : 2026-05-29 (session 14)
+
+J'arrete ici, je vais l'essayer pendant une semaine et vais noter mes retours

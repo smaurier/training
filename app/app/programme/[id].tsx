@@ -1,7 +1,7 @@
 import { FlatList, View, Text, TouchableOpacity, ActivityIndicator, StyleSheet, Alert } from 'react-native';
 import { useRouter, useLocalSearchParams, Stack } from 'expo-router';
 import { useFocusEffect } from 'expo-router';
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef, useState, useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { usePrograms } from '@/hooks/usePrograms';
 import { useWorkouts } from '@/hooks/useWorkouts';
@@ -10,6 +10,8 @@ import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
 import { Workout } from '@/db/types';
+import { SQLiteWorkoutExerciseRepository } from '@/repositories/SQLiteWorkoutExerciseRepository';
+import { getDb } from '@/db';
 
 const FAB_ICON_COLOR = '#fff' as const;
 const SHADOW_COLOR = '#000' as const;
@@ -26,6 +28,15 @@ export default function ProgrammeDetailScreen() {
   const program = programs.find(p => p.id === programId);
 
   const { workouts, loading, error, remove, reorder, refresh } = useWorkouts(programId);
+
+  const [exerciseCounts, setExerciseCounts] = useState<Record<number, number>>({});
+  useEffect(() => {
+    if (workouts.length === 0) return;
+    const repo = new SQLiteWorkoutExerciseRepository(getDb());
+    Promise.all(workouts.map(w => repo.findByWorkoutId(w.id).then(es => [w.id, es.length] as [number, number])))
+      .then(entries => setExerciseCounts(Object.fromEntries(entries)))
+      .catch(() => {});
+  }, [workouts]);
 
   const isFirstFocus = useRef(true);
   useFocusEffect(
@@ -115,6 +126,7 @@ export default function ProgrammeDetailScreen() {
           renderItem={({ item, index }) => (
             <WorkoutCard
               workout={item}
+              exerciseCount={exerciseCounts[item.id] ?? 0}
               isFirst={index === 0}
               isLast={index === workouts.length - 1}
               onPress={() => router.push({ pathname: '/workout/[id]', params: { id: String(item.id) } })}

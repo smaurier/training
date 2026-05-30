@@ -67,7 +67,7 @@ export default function WorkoutDetailScreen() {
     );
   }
 
-  if (loading) {
+  if (loading && exercises.length === 0) {
     return (
       <View style={[styles.center, { backgroundColor: colors.background }]}>
         <ActivityIndicator color={colors.primary} />

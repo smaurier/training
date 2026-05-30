@@ -8,6 +8,7 @@ import { Radius } from '@/constants/Radius';
 
 interface WorkoutCardProps {
   workout: Workout;
+  exerciseCount: number;
   isFirst: boolean;
   isLast: boolean;
   onPress: () => void;
@@ -16,7 +17,7 @@ interface WorkoutCardProps {
   onMoveDown: () => void;
 }
 
-export function WorkoutCard({ workout, isFirst, isLast, onPress, onLongPress, onMoveUp, onMoveDown }: WorkoutCardProps) {
+export function WorkoutCard({ workout, exerciseCount, isFirst, isLast, onPress, onLongPress, onMoveUp, onMoveDown }: WorkoutCardProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
 
@@ -34,7 +35,7 @@ export function WorkoutCard({ workout, isFirst, isLast, onPress, onLongPress, on
           {workout.name}
         </Text>
         <Text style={[styles.meta, { color: colors.textSecondary }]}>
-          0 exercice
+          {exerciseCount} exercice{exerciseCount !== 1 ? 's' : ''}
         </Text>
       </TouchableOpacity>
       <View style={styles.reorderCol}>

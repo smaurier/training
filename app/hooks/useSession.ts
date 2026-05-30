@@ -106,8 +106,12 @@ export function useSession(workoutId: number, workoutDetails: WorkoutExerciseDet
       const next = advancePosition(position, workoutDetails);
       if (next === null) {
         await service.completeSession(sessionLogId);
-        const progs = await service.calculateProgressions(sessionLogId);
-        setProgressions(progs);
+        try {
+          const progs = await service.calculateProgressions(sessionLogId);
+          setProgressions(progs);
+        } catch {
+          setProgressions([]);
+        }
         setPhase('summary');
       } else {
         setPosition(next);
