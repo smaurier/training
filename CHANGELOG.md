@@ -5,6 +5,12 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.1.1] — 2026-05-30
+
+687799e ux: corrections ergonomie — CTA séance vide, poids disabled, 404 FR, Themed supprimé, PressableA11y unifié
+
+---
+
 ## [1.1.0] — 2026-05-30
 
 68608d3 fix(a11y): migrer TouchableOpacity → PressableA11y sur tous les écrans restants
