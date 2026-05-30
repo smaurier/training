@@ -1,9 +1,10 @@
-import { FlatList, View, Text, TouchableOpacity, ActivityIndicator, StyleSheet, Alert } from 'react-native';
+import { FlatList, View, Text, ActivityIndicator, StyleSheet, Alert } from 'react-native';
 import { useRouter, useLocalSearchParams, Stack } from 'expo-router';
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useRef, useState, useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { usePrograms } from '@/hooks/usePrograms';
+import { PressableA11y } from '@/components/ui/PressableA11y';
 import { useWorkouts } from '@/hooks/useWorkouts';
 import { WorkoutCard } from '@/components/programmes/WorkoutCard';
 import Colors from '@/constants/Colors';
@@ -106,16 +107,15 @@ export default function ProgrammeDetailScreen() {
         options={{
           title: program?.name ?? 'Programme',
           headerRight: () => (
-            <TouchableOpacity
+            <PressableA11y
               onPress={() =>
                 router.push({ pathname: '/add-programme', params: { id: String(programId) } })
               }
               style={styles.headerBtn}
               accessibilityLabel="Modifier le programme"
-              accessibilityRole="button"
             >
               <Ionicons name="create-outline" size={22} color={colors.primary} />
-            </TouchableOpacity>
+            </PressableA11y>
           ),
         }}
       />
@@ -142,16 +142,15 @@ export default function ProgrammeDetailScreen() {
             </Text>
           }
         />
-        <TouchableOpacity
+        <PressableA11y
           style={[styles.fab, { backgroundColor: colors.primary }]}
           onPress={() =>
             router.push({ pathname: '/add-workout', params: { programId: String(programId) } })
           }
           accessibilityLabel="Ajouter une séance"
-          accessibilityRole="button"
         >
           <Ionicons name="add" size={28} color={FAB_ICON_COLOR} />
-        </TouchableOpacity>
+        </PressableA11y>
       </View>
     </>
   );

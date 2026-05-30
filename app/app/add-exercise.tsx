@@ -1,9 +1,10 @@
 // app/add-exercise.tsx
 import {
-  View, Text, TextInput, TouchableOpacity,
+  View, Text, TextInput,
   StyleSheet, ScrollView, Alert, ActivityIndicator
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
+import { PressableA11y } from '@/components/ui/PressableA11y';
 import { useState } from 'react';
 import { useExercises } from '@/hooks/useExercises';
 import Colors from '@/constants/Colors';
@@ -71,7 +72,7 @@ export default function AddExerciseModal() {
       <Text style={[styles.label, { color: colors.text }]}>Type</Text>
       <View style={styles.typeRow}>
         {TYPES.map((t) => (
-          <TouchableOpacity
+          <PressableA11y
             key={t}
             style={[
               styles.typeBtn,
@@ -79,12 +80,12 @@ export default function AddExerciseModal() {
             ]}
             onPress={() => setType(t)}
             accessibilityLabel={`Type ${t}`}
-            accessibilityRole="button"
+            accessibilityState={{ selected: type === t }}
           >
             <Text style={{ color: type === t ? '#fff' : colors.text, fontSize: 13, fontWeight: '500' }}>
               {t}
             </Text>
-          </TouchableOpacity>
+          </PressableA11y>
         ))}
       </View>
 
@@ -109,18 +110,18 @@ export default function AddExerciseModal() {
         accessibilityLabel="Pas de progression en kilogrammes"
       />
 
-      <TouchableOpacity
+      <PressableA11y
         style={[styles.submitBtn, { backgroundColor: colors.primary, opacity: submitting ? 0.6 : 1 }]}
         onPress={handleSubmit}
         disabled={submitting}
         accessibilityLabel="Créer l'exercice"
-        accessibilityRole="button"
+        accessibilityState={{ disabled: submitting }}
       >
         {submitting
           ? <ActivityIndicator color="#fff" />
           : <Text style={styles.submitText}>Créer l'exercice</Text>
         }
-      </TouchableOpacity>
+      </PressableA11y>
     </ScrollView>
   );
 }

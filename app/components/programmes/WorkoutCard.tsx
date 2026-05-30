@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Workout } from '@/db/types';
 import { PressableA11y } from '@/components/ui/PressableA11y';
@@ -23,11 +23,10 @@ export function WorkoutCard({ workout, exerciseCount, isFirst, isLast, onPress, 
 
   return (
     <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-      <TouchableOpacity
+      <PressableA11y
         style={styles.main}
         onPress={onPress}
         onLongPress={onLongPress}
-        accessibilityRole="button"
         accessibilityLabel={`Séance ${workout.name}`}
         accessibilityHint="Appuie pour configurer les exercices, maintiens pour modifier ou supprimer"
       >
@@ -37,7 +36,7 @@ export function WorkoutCard({ workout, exerciseCount, isFirst, isLast, onPress, 
         <Text style={[styles.meta, { color: colors.textSecondary }]}>
           {exerciseCount} exercice{exerciseCount !== 1 ? 's' : ''}
         </Text>
-      </TouchableOpacity>
+      </PressableA11y>
       <View style={styles.reorderCol}>
         {!isFirst && (
           <PressableA11y

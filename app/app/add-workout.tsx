@@ -1,8 +1,9 @@
 import {
-  View, Text, TextInput, TouchableOpacity,
+  View, Text, TextInput,
   StyleSheet, ScrollView, Alert, ActivityIndicator
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
+import { PressableA11y } from '@/components/ui/PressableA11y';
 import { useState, useEffect } from 'react';
 import { useWorkouts } from '@/hooks/useWorkouts';
 import Colors from '@/constants/Colors';
@@ -72,18 +73,18 @@ export default function AddWorkoutModal() {
         autoFocus
       />
 
-      <TouchableOpacity
+      <PressableA11y
         style={[styles.submitBtn, { backgroundColor: colors.primary, opacity: submitting ? 0.6 : 1 }]}
         onPress={handleSubmit}
         disabled={submitting}
         accessibilityLabel={isEditing ? 'Enregistrer les modifications' : 'Créer la séance'}
-        accessibilityRole="button"
+        accessibilityState={{ disabled: submitting }}
       >
         {submitting
           ? <ActivityIndicator color={SUBMIT_TEXT_COLOR} />
           : <Text style={styles.submitText}>{isEditing ? 'Enregistrer' : 'Créer la séance'}</Text>
         }
-      </TouchableOpacity>
+      </PressableA11y>
     </ScrollView>
   );
 }

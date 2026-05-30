@@ -1,9 +1,10 @@
-import { FlatList, View, Text, TouchableOpacity, ActivityIndicator, StyleSheet, Alert } from 'react-native';
+import { FlatList, View, Text, ActivityIndicator, StyleSheet, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useRef, useState, useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { usePrograms } from '@/hooks/usePrograms';
+import { PressableA11y } from '@/components/ui/PressableA11y';
 import { ProgramCard } from '@/components/programmes/ProgramCard';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
@@ -110,14 +111,13 @@ export default function ProgrammesScreen() {
           </Text>
         }
       />
-      <TouchableOpacity
+      <PressableA11y
         style={[styles.fab, { backgroundColor: colors.primary }]}
         onPress={() => router.push('/add-programme')}
         accessibilityLabel="Créer un programme"
-        accessibilityRole="button"
       >
         <Ionicons name="add" size={28} color={FAB_ICON_COLOR} />
-      </TouchableOpacity>
+      </PressableA11y>
     </View>
   );
 }

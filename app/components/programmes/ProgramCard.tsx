@@ -1,5 +1,6 @@
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { Program } from '@/db/types';
+import { PressableA11y } from '@/components/ui/PressableA11y';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
@@ -18,11 +19,10 @@ export function ProgramCard({ program, workoutCount, onPress, onLongPress }: Pro
   const colors = Colors[colorScheme ?? 'light'];
 
   return (
-    <TouchableOpacity
+    <PressableA11y
       style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}
       onPress={onPress}
       onLongPress={onLongPress}
-      accessibilityRole="button"
       accessibilityLabel={`Programme ${program.name}, ${workoutCount} séance${workoutCount !== 1 ? 's' : ''}`}
       accessibilityHint="Appuie pour voir les séances, maintiens pour modifier ou supprimer"
     >
@@ -47,7 +47,7 @@ export function ProgramCard({ program, workoutCount, onPress, onLongPress }: Pro
       <Text style={[styles.meta, { color: colors.textSecondary }]}>
         {workoutCount} séance{workoutCount !== 1 ? 's' : ''}
       </Text>
-    </TouchableOpacity>
+    </PressableA11y>
   );
 }
 

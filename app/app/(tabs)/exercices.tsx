@@ -1,11 +1,12 @@
 // app/(tabs)/exercices.tsx
-import { FlatList, View, Text, TouchableOpacity, ActivityIndicator, StyleSheet } from 'react-native';
+import { FlatList, View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useRef } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { useExercises } from '@/hooks/useExercises';
 import { ExerciseCard } from '@/components/exercises/ExerciseCard';
+import { PressableA11y } from '@/components/ui/PressableA11y';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
@@ -59,14 +60,13 @@ export default function ExercicesScreen() {
           </Text>
         }
       />
-      <TouchableOpacity
+      <PressableA11y
         style={[styles.fab, { backgroundColor: colors.primary }]}
         onPress={() => router.push('/add-exercise')}
         accessibilityLabel="Ajouter un exercice"
-        accessibilityRole="button"
       >
         <Ionicons name="add" size={28} color={FAB_ICON_COLOR} />
-      </TouchableOpacity>
+      </PressableA11y>
     </View>
   );
 }

@@ -1,8 +1,9 @@
 import {
-  View, Text, TextInput, TouchableOpacity,
+  View, Text, TextInput,
   StyleSheet, ScrollView, Alert, ActivityIndicator
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
+import { PressableA11y } from '@/components/ui/PressableA11y';
 import { useState, useEffect } from 'react';
 import { usePrograms } from '@/hooks/usePrograms';
 import Colors from '@/constants/Colors';
@@ -83,18 +84,18 @@ export default function AddProgrammeModal() {
         numberOfLines={3}
       />
 
-      <TouchableOpacity
+      <PressableA11y
         style={[styles.submitBtn, { backgroundColor: colors.primary, opacity: submitting ? 0.6 : 1 }]}
         onPress={handleSubmit}
         disabled={submitting}
         accessibilityLabel={isEditing ? 'Enregistrer les modifications' : 'Créer le programme'}
-        accessibilityRole="button"
+        accessibilityState={{ disabled: submitting }}
       >
         {submitting
           ? <ActivityIndicator color={SUBMIT_TEXT_COLOR} />
           : <Text style={styles.submitText}>{isEditing ? 'Enregistrer' : 'Créer le programme'}</Text>
         }
-      </TouchableOpacity>
+      </PressableA11y>
     </ScrollView>
   );
 }
