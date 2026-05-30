@@ -4,6 +4,34 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 
 ---
 
+## Session 16 — 2026-05-30 — Audit workflow + fixes MVP + UX
+
+### Réalisé
+- **Audit workflow Claude** : plans superpowers archivés supprimés (10 fichiers), pre-commit hook tsc ajouté (`.githooks/pre-commit`), task #14 stale supprimée, règle scope creep ajoutée en mémoire + CLAUDE.md
+- **Audit MVP technique** : 3 fixes livrés en v1.1.0
+  - `modal.tsx` + `EditScreenInfo` (artefacts template) supprimés
+  - `JSON.parse` muscle_groups protégé dans try/catch (2 fichiers)
+  - `TouchableOpacity` → `PressableA11y` sur 8 fichiers restants
+- **Audit UX utilisateur** : 5 corrections livrées en v1.1.1
+  - Home : CTA "Configurer une séance →" quand programme actif sans séances
+  - `workout/[id]` : bouton "Démarrer" masqué si liste exercices vide
+  - RunningPhase : opacité 0.4 sur champ Poids non éditable (bodyweight/barre)
+  - `+not-found.tsx` : francisé + `Themed.tsx` / `StyledText.tsx` supprimés
+  - `progression.tsx` : `Pressable` → `PressableA11y` sur segmented control
+- **CHANGELOG.md** + script `scripts/version-bump.sh` ajoutés
+- Versioning : v1.0.0 → v1.1.0 → v1.1.1
+
+### Décisions techniques
+- Hook pre-commit commité dans `.githooks/` — activation manuelle `git config core.hooksPath .githooks`
+- Bump version = décision humaine via script, proposé proactivement en fin de session
+- `Themed.tsx`/`StyledText.tsx` : artefacts template Expo, supprimés proprement après vérification 0 usage
+
+### Prochaine étape
+- Semaine de test réel (v1.1.1)
+- Remonter bugs → session V2
+
+---
+
 ## Session 15 — 2026-05-30 — Backlog UX post-tests
 
 ### Réalisé
