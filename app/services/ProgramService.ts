@@ -16,10 +16,12 @@ export class ProgramService {
 
   async create(input: CreateProgramInput): Promise<Program> {
     if (!input.name.trim()) throw new Error('Le nom est requis');
+    const existing = await this.repo.findAll();
+    const hasActive = existing.some(p => p.is_active === 1);
     const dto: CreateProgramDto = {
       name: input.name.trim(),
       description: input.description ?? null,
-      is_active: 0,
+      is_active: hasActive ? 0 : 1,
     };
     return this.repo.save(dto);
   }

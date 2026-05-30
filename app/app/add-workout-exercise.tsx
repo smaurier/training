@@ -87,7 +87,7 @@ export default function AddWorkoutExerciseScreen() {
                 <PressableA11y
                   accessibilityLabel="Créer un exercice"
                   accessibilityHint="Ouvre le formulaire de création d'exercice"
-                  onPress={() => router.push('/add-exercise')}
+                  onPress={() => router.push({ pathname: '/add-exercise', params: { initialName: search } })}
                   style={[styles.createBtn, { borderColor: colors.primary }]}
                 >
                   <Text style={[styles.createBtnText, { color: colors.primary }]}>

@@ -3,7 +3,7 @@ import {
   View, Text, TextInput, TouchableOpacity,
   StyleSheet, ScrollView, Alert, ActivityIndicator
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { useExercises } from '@/hooks/useExercises';
 import Colors from '@/constants/Colors';
@@ -15,11 +15,12 @@ const TYPES: ExerciseType[] = ['musculation', 'cardio', 'etirement'];
 
 export default function AddExerciseModal() {
   const router = useRouter();
+  const { initialName } = useLocalSearchParams<{ initialName?: string }>();
   const { create } = useExercises();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
 
-  const [name, setName] = useState('');
+  const [name, setName] = useState(initialName ?? '');
   const [type, setType] = useState<ExerciseType>('musculation');
   const [muscleGroupsRaw, setMuscleGroupsRaw] = useState('');
   const [progressionStep, setProgressionStep] = useState('2.5');
