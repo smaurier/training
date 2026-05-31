@@ -32,7 +32,8 @@ npm start             # lancer le serveur Expo
 npm run android       # lancer sur Android
 npm run ios           # lancer sur iOS
 npm run web           # lancer dans le navigateur
-npx tsc --noEmit      # vérifier les types TypeScript
+npm run typecheck     # vérifier les types TypeScript (tsc --noEmit)
+npm test              # lancer la suite de tests Jest
 ```
 
 ## Conventions
