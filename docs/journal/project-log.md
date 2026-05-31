@@ -4,6 +4,34 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 
 ---
 
+## Session 17 — 2026-05-31 — Programme PPL complet + mode durée séries
+
+### Réalisé
+- **Migration v3** : colonne `duration_seconds INTEGER` ajoutée à la table `sets`
+- **types.ts** : `Set.duration_seconds: number | null` — null = mode reps, nombre = mode durée (secondes)
+- **Repository layer** : `CreateSetDto.duration_seconds` optionnel, `SQLiteSetRepository.save()` et `InMemorySetRepository.save()` normalisés
+- **Seeds PPL complet** : programme 6 séances auto-chargé au premier lancement
+  - Push (Pecs/Épaules/Triceps), Pull (Dos/Biceps/V), Legs, Bonus
+  - Footing Mardi + Footing Jeudi : routines d'étirements post-footing avec durées
+  - Helpers `mob(seconds)`, `mobilityBlock()`, `stretchBlock()` — sémantique claire
+  - Idempotent : supprime le programme existant à chaque seed (safe — pas encore de sessions)
+- **RunningPhase** : mode durée activé quand `set.duration_seconds !== null`
+  - Décompte auto-démarré (useEffect + setInterval, safe car remount par série)
+  - Bouton "C'est fait" passe au vert + vibration `[0,300,100,300]` à 0
+  - Valide avec `repsDone=1, weightDone=0, rpe=null`
+
+### Décisions techniques
+- `duration_seconds` encodé dans la DB plutôt que hack `reps=secondes` — meilleure sémantique pour le mode séance
+- Mode durée = set avec `duration_seconds > 0` ; mode reps = `duration_seconds === null`
+- Footing intégré comme 2 séances du programme PPL (pas programme séparé) — cohérence semaine
+- `Vibration.vibrate([0,300,100,300])` : double pulse = signal fin d'exercice
+
+### Prochaine étape
+- Test réel sur une semaine — vérifier expérience séance avec les blocs mobilité/étirements
+- Remonter bugs → session V2
+
+---
+
 ## Session 16 — 2026-05-30 — Audit workflow + fixes MVP + UX
 
 ### Réalisé
