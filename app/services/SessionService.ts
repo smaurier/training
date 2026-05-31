@@ -14,6 +14,8 @@ export interface SetActual {
   repsDone: number;
   weightDone: number;
   rpe: number | null;
+  durationSeconds?: number | null;
+  distanceMeters?: number | null;
 }
 
 export interface ProgressionResult {
@@ -57,6 +59,8 @@ export class SessionService {
       reps_done: actual.repsDone,
       weight_done: actual.weightDone,
       rpe: actual.rpe,
+      duration_seconds: actual.durationSeconds ?? null,
+      distance_meters: actual.distanceMeters ?? null,
       completed_at: new Date().toISOString(),
     });
 

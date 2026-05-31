@@ -6,7 +6,7 @@ export class InMemorySetLogRepository implements ISetLogRepository {
   private nextId = 1;
 
   async save(dto: CreateSetLogDto): Promise<SetLog> {
-    const item: SetLog = { ...dto, id: this.nextId++ };
+    const item: SetLog = { ...dto, id: this.nextId++, duration_seconds: dto.duration_seconds ?? null, distance_meters: dto.distance_meters ?? null };
     this.items.push(item);
     return item;
   }

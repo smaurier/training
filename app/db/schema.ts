@@ -140,4 +140,8 @@ export const MIGRATIONS: string[] = [
 
   // v3 — support durée sur les séries (étirements/mobilité)
   `ALTER TABLE sets ADD COLUMN duration_seconds INTEGER;`,
+
+  // v4 — cardio logging : durée et distance sur set_logs
+  `ALTER TABLE set_logs ADD COLUMN duration_seconds INTEGER;`,
+  `ALTER TABLE set_logs ADD COLUMN distance_meters REAL;`,
 ];

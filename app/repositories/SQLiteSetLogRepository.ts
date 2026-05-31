@@ -7,8 +7,8 @@ export class SQLiteSetLogRepository implements ISetLogRepository {
 
   async save(dto: CreateSetLogDto): Promise<SetLog> {
     const result = await this.db.runAsync(
-      'INSERT INTO set_logs (session_log_id, set_id, exercise_id, reps_done, weight_done, rpe, completed_at) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [dto.session_log_id, dto.set_id, dto.exercise_id, dto.reps_done, dto.weight_done, dto.rpe, dto.completed_at]
+      'INSERT INTO set_logs (session_log_id, set_id, exercise_id, reps_done, weight_done, rpe, completed_at, duration_seconds, distance_meters) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [dto.session_log_id, dto.set_id, dto.exercise_id, dto.reps_done, dto.weight_done, dto.rpe, dto.completed_at, dto.duration_seconds ?? null, dto.distance_meters ?? null]
     );
     const saved = await this.db.getFirstAsync<SetLog>('SELECT * FROM set_logs WHERE id = ?', [result.lastInsertRowId]);
     if (!saved) throw new Error(`SetLog ${result.lastInsertRowId} introuvable après insertion`);

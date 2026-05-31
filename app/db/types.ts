@@ -75,6 +75,8 @@ export interface SetLog {
   weight_done: number;
   rpe: number | null;
   completed_at: string;
+  duration_seconds: number | null;
+  distance_meters: number | null;
 }
 
 export interface PersonalRecord {

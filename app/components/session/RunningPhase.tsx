@@ -31,7 +31,8 @@ export function RunningPhase({ exercise, block, set, progressLabel, timer, onVal
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
 
-  const isDuration = (set.duration_seconds ?? 0) > 0;
+  const isCardio = exercise.exercise.type === 'cardio';
+  const isDuration = !isCardio && (set.duration_seconds ?? 0) > 0;
 
   const [reps, setReps] = useState(String(set.reps_max));
   const [weight, setWeight] = useState(set.weight != null ? String(set.weight) : '0');
@@ -39,6 +40,8 @@ export function RunningPhase({ exercise, block, set, progressLabel, timer, onVal
   const [loading, setLoading] = useState(false);
   const [countdown, setCountdown] = useState(set.duration_seconds ?? 0);
   const [timerDone, setTimerDone] = useState(false);
+  const [cardioMinutes, setCardioMinutes] = useState('');
+  const [cardioDistance, setCardioDistance] = useState('');
 
   // Safe: component remounts per set (key={set.id} on ScrollView)
   useEffect(() => {
@@ -84,6 +87,24 @@ export function RunningPhase({ exercise, block, set, progressLabel, timer, onVal
     }
   }
 
+  async function handleCardioValidate() {
+    if (loading) return;
+    setLoading(true);
+    try {
+      const mins = parseFloat(cardioMinutes);
+      const km = parseFloat(cardioDistance);
+      await onValidate({
+        repsDone: 1,
+        weightDone: 0,
+        rpe: null,
+        durationSeconds: isNaN(mins) ? null : Math.round(mins * 60),
+        distanceMeters: isNaN(km) ? null : Math.round(km * 1000),
+      });
+    } finally {
+      setLoading(false);
+    }
+  }
+
   async function handleToutReussi() {
     if (loading) return;
     setLoading(true);
@@ -121,7 +142,49 @@ export function RunningPhase({ exercise, block, set, progressLabel, timer, onVal
         </View>
       </View>
 
-      {isDuration ? (
+      {isCardio ? (
+        <>
+          <View style={[styles.targetCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+            <Text style={[styles.targetText, { color: colors.text }]}>🏃 Footing</Text>
+          </View>
+
+          <View style={styles.inputRow}>
+            <View style={styles.inputGroup}>
+              <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>Durée (min)</Text>
+              <TextInput
+                style={[styles.input, { color: colors.text, borderColor: colors.border, backgroundColor: colors.surface }]}
+                value={cardioMinutes}
+                onChangeText={setCardioMinutes}
+                keyboardType="decimal-pad"
+                placeholder="—"
+                placeholderTextColor={colors.textSecondary}
+                accessibilityLabel="Durée du footing en minutes"
+              />
+            </View>
+            <View style={styles.inputGroup}>
+              <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>Distance (km)</Text>
+              <TextInput
+                style={[styles.input, { color: colors.text, borderColor: colors.border, backgroundColor: colors.surface }]}
+                value={cardioDistance}
+                onChangeText={setCardioDistance}
+                keyboardType="decimal-pad"
+                placeholder="—"
+                placeholderTextColor={colors.textSecondary}
+                accessibilityLabel="Distance du footing en kilomètres"
+              />
+            </View>
+          </View>
+
+          <PressableA11y
+            accessibilityLabel="Valider le footing"
+            onPress={handleCardioValidate}
+            style={[styles.validateBtn, { backgroundColor: '#ea580c' }]}
+          >
+            <Ionicons name="checkmark" size={20} color="#fff" />
+            <Text style={styles.validateBtnText}>{loading ? 'Validation…' : 'Valider le footing'}</Text>
+          </PressableA11y>
+        </>
+      ) : isDuration ? (
         <>
           {/* Durée cible */}
           <View style={[styles.targetCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>

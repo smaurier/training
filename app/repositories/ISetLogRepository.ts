@@ -1,6 +1,9 @@
 import type { SetLog } from '../db/types';
 
-export type CreateSetLogDto = Omit<SetLog, 'id'>;
+export type CreateSetLogDto = Omit<SetLog, 'id' | 'duration_seconds' | 'distance_meters'> & {
+  duration_seconds?: number | null;
+  distance_meters?: number | null;
+};
 
 export interface ISetLogRepository {
   save(dto: CreateSetLogDto): Promise<SetLog>;
