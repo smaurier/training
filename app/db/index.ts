@@ -1,6 +1,6 @@
 import * as SQLite from 'expo-sqlite';
 import { runMigrations } from './migrations';
-import { seedExercises } from './seeds';
+import { seedExercises, seedProgram } from './seeds';
 
 let _db: SQLite.SQLiteDatabase | null = null;
 
@@ -16,4 +16,5 @@ export async function initDatabase(): Promise<void> {
   const db = getDb();
   await runMigrations(db);
   await seedExercises(db);
+  await seedProgram(db);
 }
