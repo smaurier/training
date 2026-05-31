@@ -575,11 +575,6 @@ const PPL: { name: string; description: string; workouts: WorkoutSpec[] } = {
 // ─── Seed ────────────────────────────────────────────────────────────────────
 
 export async function seedProgram(db: SQLiteDatabase): Promise<void> {
-  const existing = await db.getFirstAsync<{ count: number }>(
-    "SELECT COUNT(*) as count FROM programs WHERE name = 'PPL — Push / Pull / Legs'"
-  );
-  if (existing && existing.count > 0) return;
-
   // Supprimer les anciens programmes (CASCADE → workouts → workout_exercises → blocks → sets → session_logs)
   await db.runAsync('DELETE FROM programs');
 
