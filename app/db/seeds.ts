@@ -319,6 +319,12 @@ const EXTRA_EXERCISES = [
 
   // ── Footing — récupération et mobilité ────────────────────────────────────
   {
+    name: 'Footing',
+    type: 'cardio',
+    muscle_groups: '["cardio","membres inférieurs"]',
+    technical_notes: 'Course continue. Durée variable (20–40 min). Valider quand le footing est terminé.',
+  },
+  {
     name: "World's Greatest Stretch",
     type: 'etirement',
     muscle_groups: '["fléchisseurs de hanche","ischio-jambiers","thoracique","épaules"]',
@@ -471,6 +477,7 @@ const PPL: { name: string; description: string; workouts: WorkoutSpec[] } = {
     {
       name: 'Footing Mardi — Récupération',
       exercises: [
+        { exercise: 'Footing',                 blocks: [workBlock([bw(1, 1, 0)])] },
         { exercise: 'Deep squat hold',         blocks: [stretchBlock([mob(60)])] },
         { exercise: 'Couch stretch',           blocks: [stretchBlock([mob(60)])] },
         { exercise: 'Étirement mollets',       blocks: [stretchBlock([mob(60)])] },
@@ -509,6 +516,7 @@ const PPL: { name: string; description: string; workouts: WorkoutSpec[] } = {
     {
       name: 'Footing Jeudi — Mobilité',
       exercises: [
+        { exercise: 'Footing',           blocks: [workBlock([bw(1, 1, 0)])] },
         { exercise: 'Deep squat hold',   blocks: [stretchBlock([mob(60)])] },
         { exercise: 'Cossack squat',     blocks: [stretchBlock([bw(8, 8, 0)])] },
         { exercise: 'Butterfly stretch', blocks: [stretchBlock([mob(60)])] },

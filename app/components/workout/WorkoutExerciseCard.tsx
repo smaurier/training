@@ -89,8 +89,15 @@ export function WorkoutExerciseCard({
     muscleGroups = '';
   }
 
+  const typeColor = detail.exercise.type === 'etirement'
+    ? '#16a34a'
+    : detail.exercise.type === 'cardio'
+    ? '#ea580c'
+    : colors.primary;
+
   return (
     <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+      <View style={[styles.typeStripe, { backgroundColor: typeColor }]} />
       <View style={styles.header}>
         <PressableA11y
           accessibilityLabel={`${detail.exercise.name}, ${expanded ? 'réduire' : 'développer'}`}
@@ -188,6 +195,7 @@ export function WorkoutExerciseCard({
 
 const styles = StyleSheet.create({
   card: { borderRadius: Radius.sm, borderWidth: 1, marginBottom: 10, overflow: 'hidden' },
+  typeStripe: { position: 'absolute', left: 0, top: 0, bottom: 0, width: 3 },
   header: { flexDirection: 'row', alignItems: 'center', paddingRight: 4, minHeight: 56 },
   headerMain: { flex: 1, flexDirection: 'row', alignItems: 'center', paddingLeft: 16, paddingVertical: 16, paddingRight: 8, gap: 8 },
   headerContent: { flex: 1, gap: 2 },
