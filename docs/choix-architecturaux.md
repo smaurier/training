@@ -832,30 +832,48 @@ Le singleton garantit une seule connexion partagée pendant toute la vie de l'ap
 ## 18. Seeds — données initiales
 
 ### Ce qu'on a fait
-```typescript
-// db/seeds.ts
-const PREDEFINED_EXERCISES = [
-  { name: 'Squat', type: 'musculation', muscle_groups: '["quadriceps","fessiers","ischio-jambiers"]', ... },
-  { name: 'Développé couché', type: 'musculation', muscle_groups: '["pectoraux","deltoïdes","triceps"]', ... },
-  // 15 autres exercices...
-];
 
+Deux fonctions appelées dans `initDatabase()` à chaque démarrage :
+
+```typescript
+// seedExercises — idempotent (skip si exercices existent)
 export async function seedExercises(db: SQLiteDatabase): Promise<void> {
   const existing = await db.getFirstAsync<{ count: number }>('SELECT COUNT(*) as count FROM exercises');
-  if (existing && existing.count > 0) return; // ne pas re-seeder si des exercices existent
-  
-  for (const ex of PREDEFINED_EXERCISES) {
-    await db.runAsync('INSERT INTO exercises ...', [...]);
-  }
+  if (existing && existing.count > 0) return;
+  for (const ex of BASE_EXERCISES) { await db.runAsync('INSERT INTO exercises ...'); }
+}
+
+// seedProgram — TOUJOURS supprime et recrée le programme PPL
+export async function seedProgram(db: SQLiteDatabase): Promise<void> {
+  await db.runAsync('DELETE FROM programs'); // CASCADE → workouts → … → sets
+  // insère 6 séances + ~50 exercices + blocs + séries
 }
 ```
 
-### Pourquoi ?
-Sans seeds, l'utilisateur arrive sur un app vide. Il doit créer tous ses exercices avant de pouvoir configurer une séance. Friction maximale au premier lancement.
+### Pourquoi deux comportements différents ?
 
-Les seeds préchargent 17 exercices courants (Squat, Développé couché, Soulevé de terre...). L'utilisateur peut créer sa première séance en 2 minutes.
+`seedExercises` est idempotent : si l'utilisateur a créé ses propres exercices, on ne les écrase pas.
 
-**Le `if count > 0 return`** : les seeds ne s'exécutent qu'une fois (si la table est vide). À chaque démarrage de l'app, `seedExercises` est appelé, mais ne fait rien si des exercices existent déjà — que ce soient les seeds eux-mêmes ou des exercices créés par l'utilisateur.
+`seedProgram` re-seed toujours : le programme PPL est "le programme de référence" du développeur-utilisateur. Pendant la phase de test, le schéma évolue (nouvelles colonnes, nouveaux blocs). Un guard `if exists return` empêcherait les mises à jour d'atteindre la DB — le bug s'est manifesté en session 17 (6 séances → bloqué à 4).
+
+**Quand passer à idempotent ?** Quand il y aura de vraies sessions enregistrées (le CASCADE supprime tout l'historique). Pour l'instant, pas de sessions → suppression safe.
+
+### Structure du programme PPL seedé
+
+```
+PPL — Push / Pull / Legs
+├── Push — Pecs / Épaules / Triceps
+│   ├── Mobilité (4 exercices, mob() → duration_seconds)
+│   ├── Travail (6 exercices, is_work_block=1)
+│   └── Étirements (4 exercices, mob())
+├── Footing Mardi — Récupération
+│   ├── Footing (cardio, bw(1,1,0))
+│   └── Étirements post-footing (5 exercices)
+├── Pull — Dos / Biceps / V (même structure que Push)
+├── Footing Jeudi — Mobilité (même structure que Footing Mardi)
+├── Legs — Jambes (même structure)
+└── Bonus — Force couché / Bras / Épaules (même structure)
+```
 
 ---
 
@@ -1330,6 +1348,37 @@ Ces cas n'existent pas encore → YAGNI.
 > "Redux/Zustand résolvent le *prop drilling* et la synchronisation d'état cross-composant. Si tu n'as pas ces problèmes, tu n'as pas besoin de ces outils."
 
 SQLite + hooks custom + `useFocusEffect` suffisent pour une app offline-first à données locales.
+
+---
+
+## 25. Modélisation des séries non-reps
+
+### Le problème
+
+Les exercices de mobilité et d'étirement ne se font pas "en répétitions". Un "Child pose 60 secondes" codé comme `reps=60` est un hack : la valeur perd son sens, le UI affiche "60 répétitions", la progression auto essaie d'augmenter le nombre de reps.
+
+### Ce qu'on a fait
+
+**`sets.duration_seconds INTEGER`** (nullable) : si `NULL`, mode reps normal. Si nombre, mode durée — l'UI affiche un décompte, valide avec `repsDone=1`.
+
+```typescript
+// seeds.ts
+function mob(seconds: number): SetSpec {
+  return { reps_min: 1, reps_max: 1, weight: null, weight_type: 'bodyweight', rest: 0, duration_seconds: seconds };
+}
+```
+
+**`blocks.is_work_block`** : 0 pour les blocs Mobilité et Étirements. La logique de progression (`SessionService.checkAllWorkSetsAchieved`) ignore ces blocs — pas de tentative d'augmenter le poids d'un étirement.
+
+**`exercise.type === 'cardio'`** : troisième mode dans `RunningPhase`. Prioritaire sur `isDuration`. Inputs durée (minutes) + distance (km) stockés dans `set_logs.duration_seconds` et `set_logs.distance_meters`.
+
+### Pourquoi pas une table séparée ?
+
+YAGNI. Une colonne nullable sur `sets` suffit pour deux comportements distincts. Si les types de séances prolifèrent (AMRAP, EMOM, time cap), on réévaluera avec une vraie modélisation (ex: `set_type ENUM`).
+
+### Règle à retenir
+
+> Une colonne nullable peut encoder une alternative binaire. Dès qu'il y a plus de 2 cas, passer à un type enum explicite.
 
 ---
 
