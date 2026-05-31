@@ -14,7 +14,7 @@ export class InMemorySetRepository implements ISetRepository {
   }
 
   async save(dto: CreateSetDto): Promise<TrainingSet> {
-    const item: TrainingSet = { ...dto, id: this.nextId++ };
+    const item: TrainingSet = { ...dto, id: this.nextId++, duration_seconds: dto.duration_seconds ?? null };
     this.items.push(item);
     return item;
   }

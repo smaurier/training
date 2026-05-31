@@ -52,6 +52,7 @@ export interface Set {
   weight_type: WeightType;
   rest_duration: number;
   order_index: number;
+  duration_seconds: number | null;
 }
 
 export interface SessionLog {

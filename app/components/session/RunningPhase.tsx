@@ -1,6 +1,6 @@
 // app/components/session/RunningPhase.tsx
-import { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, ScrollView } from 'react-native';
+import { useState, useEffect } from 'react';
+import { View, Text, TextInput, StyleSheet, ScrollView, Vibration } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import type { WorkoutExerciseDetail, BlockWithSets } from '@/services/WorkoutExerciseService';
@@ -31,10 +31,31 @@ export function RunningPhase({ exercise, block, set, progressLabel, timer, onVal
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
 
+  const isDuration = (set.duration_seconds ?? 0) > 0;
+
   const [reps, setReps] = useState(String(set.reps_max));
   const [weight, setWeight] = useState(set.weight != null ? String(set.weight) : '0');
   const [rpe, setRpe] = useState('');
   const [loading, setLoading] = useState(false);
+  const [countdown, setCountdown] = useState(set.duration_seconds ?? 0);
+  const [timerDone, setTimerDone] = useState(false);
+
+  // Safe: component remounts per set (key={set.id} on ScrollView)
+  useEffect(() => {
+    if (!isDuration) return;
+    const interval = setInterval(() => {
+      setCountdown(c => {
+        if (c <= 1) {
+          clearInterval(interval);
+          setTimerDone(true);
+          Vibration.vibrate([0, 300, 100, 300]);
+          return 0;
+        }
+        return c - 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Reset inputs when set changes
   const setKey = set.id;
@@ -48,6 +69,16 @@ export function RunningPhase({ exercise, block, set, progressLabel, timer, onVal
         weightDone: parseFloat(weight) || 0,
         rpe: rpe.trim() ? parseInt(rpe, 10) : null,
       });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleDurationValidate() {
+    if (loading) return;
+    setLoading(true);
+    try {
+      await onValidate({ repsDone: 1, weightDone: 0, rpe: null });
     } finally {
       setLoading(false);
     }
@@ -90,80 +121,111 @@ export function RunningPhase({ exercise, block, set, progressLabel, timer, onVal
         </View>
       </View>
 
-      {/* Cible */}
-      <View style={[styles.targetCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-        <Text style={[styles.targetText, { color: colors.text }]}>{weightLabel} × {setLabel}</Text>
-      </View>
+      {isDuration ? (
+        <>
+          {/* Durée cible */}
+          <View style={[styles.targetCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+            <Text style={[styles.targetText, { color: colors.text }]}>{formatTime(set.duration_seconds!)}</Text>
+          </View>
 
-      {/* Timer */}
-      <PressableA11y
-        accessibilityLabel={timer.isRunning ? 'Pause du chrono' : 'Reprendre le chrono'}
-        onPress={timer.isRunning ? timer.pause : timer.start}
-        style={[styles.timerContainer, { backgroundColor: timer.isRunning ? colors.primary + '15' : colors.surface, borderColor: timer.isRunning ? colors.primary : colors.border }]}
-      >
-        <Text style={[styles.timerText, { color: timer.isRunning ? colors.primary : colors.textSecondary }]}>
-          {formatTime(timer.remaining)}
-        </Text>
-        <Text style={[styles.timerLabel, { color: colors.textSecondary }]}>
-          {timer.isRunning ? 'PAUSE — tap pour stopper' : 'CHRONO — tap pour lancer'}
-        </Text>
-      </PressableA11y>
+          {/* Décompte */}
+          <View style={[styles.timerContainer, { backgroundColor: timerDone ? '#16a34a15' : colors.surface, borderColor: timerDone ? '#16a34a' : colors.primary }]}>
+            <Text style={[styles.timerText, { color: timerDone ? '#16a34a' : colors.primary }]}>
+              {formatTime(countdown)}
+            </Text>
+            <Text style={[styles.timerLabel, { color: colors.textSecondary }]}>
+              {timerDone ? 'TERMINÉ ✓' : 'EN COURS…'}
+            </Text>
+          </View>
 
-      {/* Saisie */}
-      <View style={styles.inputRow}>
-        <View style={styles.inputGroup}>
-          <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>Reps</Text>
-          <TextInput
-            style={[styles.input, { color: colors.text, borderColor: colors.border, backgroundColor: colors.surface }]}
-            value={reps}
-            onChangeText={setReps}
-            keyboardType="numeric"
-            accessibilityLabel="Répétitions réalisées"
-          />
-        </View>
-        <View style={[styles.inputGroup, set.weight_type !== 'fixed' && styles.inputGroupDisabled]}>
-          <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>Poids (kg)</Text>
-          <TextInput
-            style={[styles.input, { color: colors.text, borderColor: colors.border, backgroundColor: colors.surface }]}
-            value={weight}
-            onChangeText={setWeight}
-            keyboardType="decimal-pad"
-            accessibilityLabel="Poids utilisé"
-            editable={set.weight_type === 'fixed'}
-          />
-        </View>
-        <View style={styles.inputGroup}>
-          <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>RPE (1–10)</Text>
-          <Text style={[styles.inputHint, { color: colors.textSecondary }]}>Effort perçu — optionnel</Text>
-          <TextInput
-            style={[styles.input, { color: colors.text, borderColor: colors.border, backgroundColor: colors.surface }]}
-            value={rpe}
-            onChangeText={setRpe}
-            keyboardType="numeric"
-            placeholder="—"
-            placeholderTextColor={colors.textSecondary}
-            accessibilityLabel="RPE effort perçu de 1 à 10, optionnel"
-          />
-        </View>
-      </View>
+          {/* Bouton durée */}
+          <PressableA11y
+            accessibilityLabel="C'est fait — valider cet exercice"
+            onPress={handleDurationValidate}
+            style={[styles.validateBtn, { backgroundColor: timerDone ? '#16a34a' : colors.primary }]}
+          >
+            <Ionicons name="checkmark" size={20} color="#fff" />
+            <Text style={styles.validateBtnText}>{loading ? 'Validation…' : "C'est fait"}</Text>
+          </PressableA11y>
+        </>
+      ) : (
+        <>
+          {/* Cible */}
+          <View style={[styles.targetCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+            <Text style={[styles.targetText, { color: colors.text }]}>{weightLabel} × {setLabel}</Text>
+          </View>
 
-      {/* Boutons */}
-      <PressableA11y
-        accessibilityLabel="Tout réussi — valider avec les valeurs cibles"
-        onPress={handleToutReussi}
-        style={[styles.toutReussiBtn, { backgroundColor: '#ca8a04' }]}
-      >
-        <Text style={styles.toutReussiBtnText}>⚡ Tout réussi</Text>
-      </PressableA11y>
+          {/* Timer repos */}
+          <PressableA11y
+            accessibilityLabel={timer.isRunning ? 'Pause du chrono' : 'Reprendre le chrono'}
+            onPress={timer.isRunning ? timer.pause : timer.start}
+            style={[styles.timerContainer, { backgroundColor: timer.isRunning ? colors.primary + '15' : colors.surface, borderColor: timer.isRunning ? colors.primary : colors.border }]}
+          >
+            <Text style={[styles.timerText, { color: timer.isRunning ? colors.primary : colors.textSecondary }]}>
+              {formatTime(timer.remaining)}
+            </Text>
+            <Text style={[styles.timerLabel, { color: colors.textSecondary }]}>
+              {timer.isRunning ? 'PAUSE — tap pour stopper' : 'CHRONO — tap pour lancer'}
+            </Text>
+          </PressableA11y>
 
-      <PressableA11y
-        accessibilityLabel="Valider la série avec les valeurs saisies"
-        onPress={handleValidate}
-        style={[styles.validateBtn, { backgroundColor: '#16a34a' }]}
-      >
-        <Ionicons name="checkmark" size={20} color="#fff" />
-        <Text style={styles.validateBtnText}>{loading ? 'Validation…' : 'Valider'}</Text>
-      </PressableA11y>
+          {/* Saisie */}
+          <View style={styles.inputRow}>
+            <View style={styles.inputGroup}>
+              <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>Reps</Text>
+              <TextInput
+                style={[styles.input, { color: colors.text, borderColor: colors.border, backgroundColor: colors.surface }]}
+                value={reps}
+                onChangeText={setReps}
+                keyboardType="numeric"
+                accessibilityLabel="Répétitions réalisées"
+              />
+            </View>
+            <View style={[styles.inputGroup, set.weight_type !== 'fixed' && styles.inputGroupDisabled]}>
+              <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>Poids (kg)</Text>
+              <TextInput
+                style={[styles.input, { color: colors.text, borderColor: colors.border, backgroundColor: colors.surface }]}
+                value={weight}
+                onChangeText={setWeight}
+                keyboardType="decimal-pad"
+                accessibilityLabel="Poids utilisé"
+                editable={set.weight_type === 'fixed'}
+              />
+            </View>
+            <View style={styles.inputGroup}>
+              <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>RPE (1–10)</Text>
+              <Text style={[styles.inputHint, { color: colors.textSecondary }]}>Effort perçu — optionnel</Text>
+              <TextInput
+                style={[styles.input, { color: colors.text, borderColor: colors.border, backgroundColor: colors.surface }]}
+                value={rpe}
+                onChangeText={setRpe}
+                keyboardType="numeric"
+                placeholder="—"
+                placeholderTextColor={colors.textSecondary}
+                accessibilityLabel="RPE effort perçu de 1 à 10, optionnel"
+              />
+            </View>
+          </View>
+
+          {/* Boutons */}
+          <PressableA11y
+            accessibilityLabel="Tout réussi — valider avec les valeurs cibles"
+            onPress={handleToutReussi}
+            style={[styles.toutReussiBtn, { backgroundColor: '#ca8a04' }]}
+          >
+            <Text style={styles.toutReussiBtnText}>⚡ Tout réussi</Text>
+          </PressableA11y>
+
+          <PressableA11y
+            accessibilityLabel="Valider la série avec les valeurs saisies"
+            onPress={handleValidate}
+            style={[styles.validateBtn, { backgroundColor: '#16a34a' }]}
+          >
+            <Ionicons name="checkmark" size={20} color="#fff" />
+            <Text style={styles.validateBtnText}>{loading ? 'Validation…' : 'Valider'}</Text>
+          </PressableA11y>
+        </>
+      )}
 
       {/* Séries restantes */}
       {restSets.length > 0 && (

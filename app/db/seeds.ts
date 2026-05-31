@@ -117,8 +117,9 @@ const BASE_EXERCISES = [
   },
 ];
 
-// Exercices manquants pour le programme PPL
+// Exercices supplémentaires : PPL + mobilité/étirements
 const EXTRA_EXERCISES = [
+  // ── Musculation PPL ────────────────────────────────────────────────────────
   {
     name: 'Crunch poulie haute',
     type: 'musculation',
@@ -179,6 +180,162 @@ const EXTRA_EXERCISES = [
     muscle_groups: '["triceps","pectoraux","deltoïdes antérieurs"]',
     technical_notes: 'Barre posée sur les sécurités avant chaque répétition. Renforce la phase initiale de poussée du développé couché.',
   },
+
+  // ── Mobilité — avant séance ────────────────────────────────────────────────
+  {
+    name: 'Cercles épaules',
+    type: 'etirement',
+    muscle_groups: '["deltoïdes","coiffe des rotateurs"]',
+    technical_notes: 'Grands cercles lents vers l\'avant puis vers l\'arrière. Amplitude maximale.',
+  },
+  {
+    name: 'Rotations thoraciques',
+    type: 'etirement',
+    muscle_groups: '["érecteurs du rachis","obliques"]',
+    technical_notes: 'Assis ou à quatre pattes. Rotation du torse en ouvrant le coude vers le plafond. Reps = par côté.',
+  },
+  {
+    name: 'Band pull-aparts',
+    type: 'etirement',
+    muscle_groups: '["deltoïdes postérieurs","rhomboïdes","trapèzes"]',
+    technical_notes: 'Bras tendus devant soi, élastique horizontal. Écarter les bras jusqu\'à toucher la poitrine. Coudes légèrement fléchis.',
+  },
+  {
+    name: 'Suspension passive',
+    type: 'etirement',
+    muscle_groups: '["érecteurs du rachis","grand dorsal","épaules"]',
+    technical_notes: 'Suspendu à une barre, relâcher complètement le dos. Décompresse la colonne vertébrale.',
+  },
+  {
+    name: 'Cat-cow',
+    type: 'etirement',
+    muscle_groups: '["érecteurs du rachis","abdominaux"]',
+    technical_notes: 'À quatre pattes. Alterner arrondi du dos (cat) et creux du dos (cow). Synchroniser avec la respiration.',
+  },
+  {
+    name: 'Hip hinge léger',
+    type: 'etirement',
+    muscle_groups: '["ischio-jambiers","fessiers","érecteurs du rachis"]',
+    technical_notes: 'Debout, mains sur les hanches. Charnière au niveau des hanches, dos plat. Activation de la chaîne postérieure.',
+  },
+  {
+    name: 'Rotations poignets',
+    type: 'etirement',
+    muscle_groups: '["poignets","avant-bras"]',
+    technical_notes: 'Bras tendus devant soi. Grands cercles lents dans les deux sens. Reps = par côté.',
+  },
+
+  // ── Étirements — après séance ──────────────────────────────────────────────
+  {
+    name: 'Étirement pectoraux au mur',
+    type: 'etirement',
+    muscle_groups: '["pectoraux","deltoïdes antérieurs"]',
+    technical_notes: 'Bras à 90° contre un mur. Rotation lente du corps vers l\'opposé. Durée par côté.',
+  },
+  {
+    name: 'Child pose',
+    type: 'etirement',
+    muscle_groups: '["grand dorsal","érecteurs du rachis","épaules"]',
+    technical_notes: 'À genoux, bras tendus devant soi, front au sol. Respiration profonde.',
+  },
+  {
+    name: 'Couch stretch',
+    type: 'etirement',
+    muscle_groups: '["fléchisseurs de hanche","quadriceps"]',
+    technical_notes: 'Pied arrière contre un mur, genou au sol. Avancer les hanches. Critique pour les coureurs. Durée par côté.',
+  },
+  {
+    name: 'Respiration diaphragmatique',
+    type: 'etirement',
+    muscle_groups: '["diaphragme"]',
+    technical_notes: 'Allongé sur le dos. Inspiration 4 sec, rétention 4 sec, expiration 6 sec. Durée totale.',
+  },
+  {
+    name: 'Étirement dorsaux',
+    type: 'etirement',
+    muscle_groups: '["grand dorsal","rhomboïdes"]',
+    technical_notes: 'Bras croisés, traction vers la poitrine ou étirement latéral suspendu.',
+  },
+  {
+    name: 'Child pose latéral',
+    type: 'etirement',
+    muscle_groups: '["grand dorsal","intercostaux","obliques"]',
+    technical_notes: 'Child pose avec bras décalés vers le côté. Tire la chaîne latérale. Durée par côté.',
+  },
+  {
+    name: 'Figure 4 stretch',
+    type: 'etirement',
+    muscle_groups: '["piriforme","fessiers","rotateurs externes de hanche"]',
+    technical_notes: 'Allongé sur le dos, cheville posée sur le genou opposé. Tirer la cuisse vers la poitrine. Durée par côté.',
+  },
+  {
+    name: 'Deep squat hold',
+    type: 'etirement',
+    muscle_groups: '["hanches","chevilles","fessiers","adducteurs"]',
+    technical_notes: 'Position squat profond maintenue, talons au sol si possible. Coudes contre les genoux pour ouvrir les hanches.',
+  },
+  {
+    name: 'Leg swings avant/arrière',
+    type: 'etirement',
+    muscle_groups: '["fléchisseurs de hanche","ischio-jambiers"]',
+    technical_notes: 'Debout, appui sur un mur. Balancer la jambe en pendule avant/arrière. Amplitude progressive. Reps = par jambe.',
+  },
+  {
+    name: 'Leg swings latéraux',
+    type: 'etirement',
+    muscle_groups: '["abducteurs","adducteurs","fléchisseurs de hanche"]',
+    technical_notes: 'Debout, appui sur un mur. Balancer la jambe latéralement. Amplitude progressive. Reps = par jambe.',
+  },
+  {
+    name: 'Cossack squat',
+    type: 'etirement',
+    muscle_groups: '["adducteurs","hanches","chevilles","quadriceps"]',
+    technical_notes: 'Squat latéral alterné. Jambe tendue d\'un côté, genou fléchi de l\'autre. Excellent pour la mobilité de hanche.',
+  },
+  {
+    name: 'Étirement mollets',
+    type: 'etirement',
+    muscle_groups: '["gastrocnémiens","soléaires"]',
+    technical_notes: 'Contre un mur ou sur un step. Jambe tendue pour gastrocnémien, légèrement fléchie pour soléaire. Durée par côté.',
+  },
+  {
+    name: 'Butterfly stretch',
+    type: 'etirement',
+    muscle_groups: '["adducteurs","fléchisseurs de hanche"]',
+    technical_notes: 'Assis, plantes de pieds jointes, genoux vers le sol. Pencher légèrement le buste vers l\'avant.',
+  },
+  {
+    name: 'Pigeon pose',
+    type: 'etirement',
+    muscle_groups: '["piriforme","fessiers","fléchisseurs de hanche"]',
+    technical_notes: 'Jambe avant à 90°, jambe arrière tendue. Étirement profond des hanches. Essentiel pour les coureurs. Durée par côté.',
+  },
+  {
+    name: 'Étirement épaule cross-body',
+    type: 'etirement',
+    muscle_groups: '["deltoïdes postérieurs","rhomboïdes"]',
+    technical_notes: 'Bras croisé devant la poitrine, maintenu par le bras opposé. Durée par côté.',
+  },
+
+  // ── Footing — récupération et mobilité ────────────────────────────────────
+  {
+    name: "World's Greatest Stretch",
+    type: 'etirement',
+    muscle_groups: '["fléchisseurs de hanche","ischio-jambiers","thoracique","épaules"]',
+    technical_notes: 'Fente avant avec main au sol, rotation du buste en levant le bras vers le plafond. Mobilité multi-plan. Reps = par côté.',
+  },
+  {
+    name: 'Pancake stretch',
+    type: 'etirement',
+    muscle_groups: '["adducteurs","ischio-jambiers","érecteurs du rachis"]',
+    technical_notes: 'Assis au sol, jambes écartées au maximum. Incliner doucement le buste vers l\'avant, dos droit. Début de travail grand écart latéral. Progressif, sans forcer.',
+  },
+  {
+    name: 'Frog stretch',
+    type: 'etirement',
+    muscle_groups: '["adducteurs","hanches","fléchisseurs de hanche"]',
+    technical_notes: 'À quatre pattes, genoux écartés au-delà de la largeur des hanches, pieds vers l\'extérieur. Reculer doucement les fesses. TRÈS léger — pas de douleur articulaire. Début de travail grand écart latéral.',
+  },
 ];
 
 export async function seedExercises(db: SQLiteDatabase): Promise<void> {
@@ -197,7 +354,7 @@ export async function seedExercises(db: SQLiteDatabase): Promise<void> {
   }
 }
 
-// ─── Types internes pour la description du programme ───────────────────────
+// ─── Types internes ──────────────────────────────────────────────────────────
 
 type WeightType = 'fixed' | 'bodyweight' | 'bar';
 
@@ -207,6 +364,7 @@ type SetSpec = {
   weight: number | null;
   weight_type: WeightType;
   rest: number;
+  duration_seconds?: number | null;
 };
 
 type BlockSpec = {
@@ -216,7 +374,7 @@ type BlockSpec = {
 };
 
 type ExerciseSpec = {
-  exercise: string; // nom exact dans la table exercises
+  exercise: string;
   blocks: BlockSpec[];
 };
 
@@ -225,34 +383,52 @@ type WorkoutSpec = {
   exercises: ExerciseSpec[];
 };
 
-// ─── Helpers ────────────────────────────────────────────────────────────────
+// ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function f(reps_min: number, reps_max: number, rest: number, weight: number | null = null): SetSpec {
   return { reps_min, reps_max, weight, weight_type: 'fixed', rest };
 }
-
 function bw(reps_min: number, reps_max: number, rest: number): SetSpec {
   return { reps_min, reps_max, weight: null, weight_type: 'bodyweight', rest };
 }
-
 function barOnly(reps: number, rest: number): SetSpec {
   return { reps_min: reps, reps_max: reps, weight: null, weight_type: 'bar', rest };
+}
+// Mobilité/étirements : duration_seconds = durée réelle, reps_min/max = 1
+function mob(seconds: number): SetSpec {
+  return { reps_min: 1, reps_max: 1, weight: null, weight_type: 'bodyweight', rest: 0, duration_seconds: seconds };
 }
 
 function workBlock(sets: SetSpec[]): BlockSpec {
   return { name: 'Travail', is_work: true, sets };
 }
+// Exercices de mobilité/activation avant séance (pas d'échauffement — inclus dans les premières séries des exos)
+function mobilityBlock(sets: SetSpec[]): BlockSpec {
+  return { name: 'Mobilité', is_work: false, sets };
+}
+// Étirements post-séance ou post-footing
+function stretchBlock(sets: SetSpec[]): BlockSpec {
+  return { name: 'Étirements', is_work: false, sets };
+}
 
-// ─── Programme PPL ──────────────────────────────────────────────────────────
+// ─── Programme PPL ───────────────────────────────────────────────────────────
 
 const PPL: { name: string; description: string; workouts: WorkoutSpec[] } = {
   name: 'PPL — Push / Pull / Legs',
-  description: 'Lundi Push · Mercredi Pull · Vendredi Legs · Sam/Dim Bonus. Séances 40–45 min, Bonus 25–30 min.',
+  description: 'Lundi Push · Mardi Footing · Mercredi Pull · Jeudi Footing · Vendredi Legs · Sam/Dim Bonus.',
   workouts: [
-    // ── PUSH ──────────────────────────────────────────────────────────────
+
+    // ── LUNDI : PUSH ──────────────────────────────────────────────────────────
     {
       name: 'Push — Pecs / Épaules / Triceps',
       exercises: [
+        // Mobilité (5 min) — activation articulaire avant pressing
+        { exercise: 'Cercles épaules',       blocks: [mobilityBlock([mob(20)])] },
+        { exercise: 'Rotations thoraciques', blocks: [mobilityBlock([mob(10)])] },
+        { exercise: 'Band pull-aparts',      blocks: [mobilityBlock([mob(20)])] },
+        { exercise: 'Suspension passive',    blocks: [mobilityBlock([mob(30)])] },
+
+        // Musculation
         {
           exercise: 'Développé couché barre',
           blocks: [
@@ -277,55 +453,126 @@ const PPL: { name: string; description: string; workouts: WorkoutSpec[] } = {
             },
           ],
         },
-        { exercise: 'Développé incliné haltères', blocks: [workBlock([f(8, 10, 60), f(8, 10, 60), f(8, 10, 60)])] },
+        { exercise: 'Développé incliné haltères',    blocks: [workBlock([f(8, 10, 60), f(8, 10, 60), f(8, 10, 60)])] },
         { exercise: 'Élévations latérales haltères', blocks: [workBlock([f(15, 15, 60), f(15, 15, 60), f(15, 15, 60)])] },
-        { exercise: 'Dips', blocks: [workBlock([bw(8, 12, 60), bw(8, 12, 60), bw(8, 12, 60)])] },
+        { exercise: 'Dips',                          blocks: [workBlock([bw(8, 12, 60), bw(8, 12, 60), bw(8, 12, 60)])] },
         { exercise: 'Extension triceps poulie haute', blocks: [workBlock([f(10, 12, 60), f(10, 12, 60), f(10, 12, 60)])] },
-        { exercise: 'Crunch poulie haute', blocks: [workBlock([f(12, 15, 45), f(12, 15, 45), f(12, 15, 45)])] },
+        { exercise: 'Crunch poulie haute',           blocks: [workBlock([f(12, 15, 45), f(12, 15, 45), f(12, 15, 45)])] },
+
+        // Étirements (5–10 min)
+        { exercise: 'Étirement pectoraux au mur', blocks: [stretchBlock([mob(60)])] },
+        { exercise: 'Child pose',                 blocks: [stretchBlock([mob(60)])] },
+        { exercise: 'Couch stretch',              blocks: [stretchBlock([mob(60)])] },
+        { exercise: 'Respiration diaphragmatique', blocks: [stretchBlock([mob(120)])] },
       ],
     },
 
-    // ── PULL ──────────────────────────────────────────────────────────────
+    // ── MARDI : FOOTING + RÉCUPÉRATION ───────────────────────────────────────
+    {
+      name: 'Footing Mardi — Récupération',
+      exercises: [
+        { exercise: 'Deep squat hold',         blocks: [stretchBlock([mob(60)])] },
+        { exercise: 'Couch stretch',           blocks: [stretchBlock([mob(60)])] },
+        { exercise: 'Étirement mollets',       blocks: [stretchBlock([mob(60)])] },
+        { exercise: "World's Greatest Stretch", blocks: [stretchBlock([bw(5, 5, 0)])] },
+        { exercise: 'Pancake stretch',         blocks: [stretchBlock([mob(60)])] },
+      ],
+    },
+
+    // ── MERCREDI : PULL ───────────────────────────────────────────────────────
     {
       name: 'Pull — Dos / Biceps / V',
       exercises: [
-        { exercise: 'Tractions', blocks: [workBlock([bw(6, 10, 120), bw(6, 10, 120), bw(6, 10, 120), bw(6, 10, 120)])] },
-        { exercise: 'Rowing barre', blocks: [workBlock([f(6, 8, 90), f(6, 8, 90), f(6, 8, 90), f(6, 8, 90)])] },
-        { exercise: 'Face pull', blocks: [workBlock([f(15, 15, 60), f(15, 15, 60), f(15, 15, 60)])] },
-        { exercise: 'Curl barre EZ', blocks: [workBlock([f(10, 12, 60), f(10, 12, 60), f(10, 12, 60)])] },
+        // Mobilité (5 min)
+        { exercise: 'Cat-cow',               blocks: [mobilityBlock([mob(10)])] },
+        { exercise: 'Rotations thoraciques', blocks: [mobilityBlock([mob(10)])] },
+        { exercise: 'Suspension passive',    blocks: [mobilityBlock([mob(30)])] },
+        { exercise: 'Hip hinge léger',       blocks: [mobilityBlock([mob(10)])] },
+
+        // Musculation
+        { exercise: 'Tractions',           blocks: [workBlock([bw(6, 10, 120), bw(6, 10, 120), bw(6, 10, 120), bw(6, 10, 120)])] },
+        { exercise: 'Rowing barre',        blocks: [workBlock([f(6, 8, 90), f(6, 8, 90), f(6, 8, 90), f(6, 8, 90)])] },
+        { exercise: 'Face pull',           blocks: [workBlock([f(15, 15, 60), f(15, 15, 60), f(15, 15, 60)])] },
+        { exercise: 'Curl barre EZ',       blocks: [workBlock([f(10, 12, 60), f(10, 12, 60), f(10, 12, 60)])] },
         { exercise: 'Tirage poulie basse', blocks: [workBlock([f(10, 12, 60), f(10, 12, 60), f(10, 12, 60)])] },
         { exercise: 'Relevés de jambes suspendu', blocks: [workBlock([bw(12, 15, 45), bw(12, 15, 45), bw(12, 15, 45)])] },
+
+        // Étirements (5–10 min)
+        { exercise: 'Étirement dorsaux',          blocks: [stretchBlock([mob(60)])] },
+        { exercise: 'Child pose latéral',         blocks: [stretchBlock([mob(60)])] },
+        { exercise: 'Figure 4 stretch',           blocks: [stretchBlock([mob(60)])] },
+        { exercise: 'Respiration diaphragmatique', blocks: [stretchBlock([mob(120)])] },
       ],
     },
 
-    // ── LEGS ──────────────────────────────────────────────────────────────
+    // ── JEUDI : FOOTING + MOBILITÉ ────────────────────────────────────────────
+    {
+      name: 'Footing Jeudi — Mobilité',
+      exercises: [
+        { exercise: 'Deep squat hold',   blocks: [stretchBlock([mob(60)])] },
+        { exercise: 'Cossack squat',     blocks: [stretchBlock([bw(8, 8, 0)])] },
+        { exercise: 'Butterfly stretch', blocks: [stretchBlock([mob(60)])] },
+        { exercise: 'Pancake stretch',   blocks: [stretchBlock([mob(90)])] },   // progression vs mardi
+        { exercise: 'Frog stretch',      blocks: [stretchBlock([mob(45)])] },   // 30–60 sec, progressif
+      ],
+    },
+
+    // ── VENDREDI : LEGS ───────────────────────────────────────────────────────
     {
       name: 'Legs — Jambes',
       exercises: [
-        { exercise: 'Squat barre', blocks: [workBlock([f(6, 8, 120), f(6, 8, 120), f(6, 8, 120), f(6, 8, 120)])] },
+        // Mobilité (5 min) — dynamique, axé hanche/cheville
+        { exercise: 'Deep squat hold',          blocks: [mobilityBlock([mob(30)])] },
+        { exercise: 'Leg swings avant/arrière', blocks: [mobilityBlock([mob(10)])] },
+        { exercise: 'Leg swings latéraux',      blocks: [mobilityBlock([mob(10)])] },
+        { exercise: 'Cossack squat',            blocks: [mobilityBlock([bw(8, 8, 0)])] },
+
+        // Musculation
+        { exercise: 'Squat barre',       blocks: [workBlock([f(6, 8, 120), f(6, 8, 120), f(6, 8, 120), f(6, 8, 120)])] },
         { exercise: 'Romanian Deadlift', blocks: [workBlock([f(8, 8, 90), f(8, 8, 90), f(8, 8, 90)])] },
-        { exercise: 'Fentes bulgares', blocks: [workBlock([f(10, 10, 60), f(10, 10, 60), f(10, 10, 60)])] },
-        { exercise: 'Leg curl poulie', blocks: [workBlock([f(12, 12, 60), f(12, 12, 60), f(12, 12, 60)])] },
+        { exercise: 'Fentes bulgares',   blocks: [workBlock([f(10, 10, 60), f(10, 10, 60), f(10, 10, 60)])] },
+        { exercise: 'Leg curl poulie',   blocks: [workBlock([f(12, 12, 60), f(12, 12, 60), f(12, 12, 60)])] },
         { exercise: 'Mollets debout sur step', blocks: [workBlock([bw(15, 20, 45), bw(15, 20, 45), bw(15, 20, 45), bw(15, 20, 45)])] },
+
+        // Étirements très léger (5 min)
+        { exercise: 'Couch stretch',              blocks: [stretchBlock([mob(60)])] },
+        { exercise: 'Étirement mollets',          blocks: [stretchBlock([mob(60)])] },
+        { exercise: 'Butterfly stretch',          blocks: [stretchBlock([mob(60)])] },
+        { exercise: 'Respiration diaphragmatique', blocks: [stretchBlock([mob(120)])] },
       ],
     },
 
-    // ── BONUS ─────────────────────────────────────────────────────────────
+    // ── BONUS : Force couché + Bras + Épaules ─────────────────────────────────
+    // Mobilité ciblée pressing + bridge running
     {
       name: 'Bonus — Force Couché / Bras / Épaules',
       exercises: [
-        { exercise: 'Pin Press', blocks: [workBlock([f(5, 5, 120), f(5, 5, 120), f(5, 5, 120), f(5, 5, 120)])] },
-        { exercise: 'Tractions', blocks: [workBlock([bw(6, 10, 90), bw(6, 10, 90), bw(6, 10, 90)])] },
-        { exercise: 'Curl barre EZ', blocks: [workBlock([f(10, 12, 60), f(10, 12, 60), f(10, 12, 60), f(10, 12, 60)])] },
+        // Mobilité (5 min)
+        { exercise: 'Cercles épaules',    blocks: [mobilityBlock([mob(20)])] },
+        { exercise: 'Band pull-aparts',   blocks: [mobilityBlock([mob(15)])] },
+        { exercise: 'Couch stretch',      blocks: [mobilityBlock([mob(30)])] },
+        { exercise: 'Rotations poignets', blocks: [mobilityBlock([mob(10)])] },
+
+        // Musculation
+        { exercise: 'Pin Press',                     blocks: [workBlock([f(5, 5, 120), f(5, 5, 120), f(5, 5, 120), f(5, 5, 120)])] },
+        { exercise: 'Tractions',                     blocks: [workBlock([bw(6, 10, 90), bw(6, 10, 90), bw(6, 10, 90)])] },
+        { exercise: 'Curl barre EZ',                 blocks: [workBlock([f(10, 12, 60), f(10, 12, 60), f(10, 12, 60), f(10, 12, 60)])] },
         { exercise: 'Extension triceps poulie haute', blocks: [workBlock([f(10, 12, 60), f(10, 12, 60), f(10, 12, 60), f(10, 12, 60)])] },
         { exercise: 'Élévations latérales haltères', blocks: [workBlock([f(15, 15, 60), f(15, 15, 60), f(15, 15, 60), f(15, 15, 60)])] },
-        { exercise: 'Mollets debout sur step', blocks: [workBlock([bw(20, 20, 30), bw(20, 20, 30), bw(20, 20, 30)])] },
+        { exercise: 'Mollets debout sur step',       blocks: [workBlock([bw(20, 20, 30), bw(20, 20, 30), bw(20, 20, 30)])] },
+
+        // Étirements bridge running (8 min)
+        { exercise: 'Pigeon pose',                blocks: [stretchBlock([mob(60)])] },
+        { exercise: 'Couch stretch',              blocks: [stretchBlock([mob(60)])] },
+        { exercise: 'Étirement épaule cross-body', blocks: [stretchBlock([mob(60)])] },
+        { exercise: 'Étirement mollets',          blocks: [stretchBlock([mob(60)])] },
+        { exercise: 'Respiration diaphragmatique', blocks: [stretchBlock([mob(120)])] },
       ],
     },
   ],
 };
 
-// ─── Seed ───────────────────────────────────────────────────────────────────
+// ─── Seed ────────────────────────────────────────────────────────────────────
 
 export async function seedProgram(db: SQLiteDatabase): Promise<void> {
   const existing = await db.getFirstAsync<{ count: number }>(
@@ -333,7 +580,7 @@ export async function seedProgram(db: SQLiteDatabase): Promise<void> {
   );
   if (existing && existing.count > 0) return;
 
-  // Supprimer les anciens programmes (CASCADE → workouts → workout_exercises → blocks → sets → session_logs → set_logs)
+  // Supprimer les anciens programmes (CASCADE → workouts → workout_exercises → blocks → sets → session_logs)
   await db.runAsync('DELETE FROM programs');
 
   // Ajouter les exercices manquants
@@ -391,8 +638,8 @@ export async function seedProgram(db: SQLiteDatabase): Promise<void> {
         for (let si = 0; si < block.sets.length; si++) {
           const s = block.sets[si];
           await db.runAsync(
-            'INSERT INTO sets (block_id, reps_min, reps_max, weight, weight_type, rest_duration, order_index) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            [blockId, s.reps_min, s.reps_max, s.weight, s.weight_type, s.rest, si]
+            'INSERT INTO sets (block_id, reps_min, reps_max, weight, weight_type, rest_duration, order_index, duration_seconds) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+            [blockId, s.reps_min, s.reps_max, s.weight, s.weight_type, s.rest, si, s.duration_seconds ?? null]
           );
         }
       }

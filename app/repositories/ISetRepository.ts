@@ -1,6 +1,6 @@
 import type { Set } from '../db/types';
 
-export type CreateSetDto = Omit<Set, 'id'>;
+export type CreateSetDto = Omit<Set, 'id' | 'duration_seconds'> & { duration_seconds?: number | null };
 export type UpdateSetDto = Pick<Set, 'reps_min' | 'reps_max' | 'weight' | 'weight_type' | 'rest_duration'>;
 
 export interface ISetRepository {

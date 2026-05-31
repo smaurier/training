@@ -137,4 +137,7 @@ export const MIGRATIONS: string[] = [
   ALTER TABLE set_logs_new RENAME TO set_logs;
   ALTER TABLE personal_records_new RENAME TO personal_records;
   `,
+
+  // v3 — support durée sur les séries (étirements/mobilité)
+  `ALTER TABLE sets ADD COLUMN duration_seconds INTEGER;`,
 ];

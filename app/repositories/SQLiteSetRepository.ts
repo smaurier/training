@@ -18,8 +18,8 @@ export class SQLiteSetRepository implements ISetRepository {
 
   async save(dto: CreateSetDto): Promise<TrainingSet> {
     const result = await this.db.runAsync(
-      'INSERT INTO sets (block_id, reps_min, reps_max, weight, weight_type, rest_duration, order_index) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [dto.block_id, dto.reps_min, dto.reps_max, dto.weight, dto.weight_type, dto.rest_duration, dto.order_index]
+      'INSERT INTO sets (block_id, reps_min, reps_max, weight, weight_type, rest_duration, order_index, duration_seconds) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [dto.block_id, dto.reps_min, dto.reps_max, dto.weight, dto.weight_type, dto.rest_duration, dto.order_index, dto.duration_seconds ?? null]
     );
     const saved = await this.findById(result.lastInsertRowId);
     if (!saved) throw new Error(`Set ${result.lastInsertRowId} introuvable après insertion`);
