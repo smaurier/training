@@ -53,6 +53,22 @@ export function advancePosition(
   return null;
 }
 
+export function computeNextLabel(
+  next: SessionPosition,
+  exercises: WorkoutExerciseDetail[],
+  exerciseChanges: boolean
+): string {
+  if (exerciseChanges) {
+    return `Exercice suivant : ${exercises[next.exerciseIdx]?.exercise.name ?? ''}`;
+  }
+  const nextBlock = exercises[next.exerciseIdx]?.blocks[next.blockIdx];
+  const totalSets = nextBlock?.sets.length ?? 1;
+  const setNum = next.setIdx + 1;
+  const weight = nextBlock?.sets[next.setIdx]?.weight;
+  const weightLabel = weight != null ? ` — ${weight}kg` : '';
+  return `Série ${setNum}/${totalSets}${weightLabel}`;
+}
+
 function makeService(): SessionService {
   const db = getDb();
   return new SessionService(
