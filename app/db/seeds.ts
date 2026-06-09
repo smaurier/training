@@ -389,13 +389,6 @@ const EXTRA_EXERCISES: ExerciseDefinition[] = [
 
   // ── Exercices templates ────────────────────────────────────────────────────
   {
-    name: 'Soulevé de terre',
-    type: 'musculation',
-    muscle_groups: '["dos","jambes","lombaires"]',
-    technical_notes: 'Dos plat, barre contre les tibias. Pousser le sol, ne pas tirer. Hanches et épaules montent ensemble.',
-    description: 'Barre au sol, prise en pronation ou alternée. Pied à largeur de hanches. Garder la barre proche du corps sur toute la montée. Mouvement fondateur de la force.',
-  },
-  {
     name: 'Soulevé de terre jambes tendues',
     type: 'musculation',
     muscle_groups: '["ischio-jambiers","lombaires","fessiers"]',
