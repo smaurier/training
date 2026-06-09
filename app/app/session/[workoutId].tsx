@@ -13,6 +13,7 @@ import { RestPhase } from '@/components/session/RestPhase';
 import { ExerciseTransitionPhase } from '@/components/session/ExerciseTransitionPhase';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
+import { resolveWeights } from '@/services/weightRatio';
 
 export default function SessionScreen() {
   const { workoutId: param } = useLocalSearchParams<{ workoutId: string }>();
@@ -22,7 +23,8 @@ export default function SessionScreen() {
   const colors = Colors[colorScheme ?? 'light'];
 
   const { exercises, refresh } = useWorkoutExercises(workoutId);
-  const session = useSession(workoutId, exercises);
+  const resolvedExercises = useMemo(() => exercises.map(resolveWeights), [exercises]);
+  const session = useSession(workoutId, resolvedExercises);
   const timer = useTimer(120);
 
   const needsStartingWeight = useMemo(() => {
