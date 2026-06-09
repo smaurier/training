@@ -43,6 +43,9 @@ export function useHomeWorkout(): HomeWorkoutState {
   const serviceRef = useRef<SessionService | null>(null);
   if (!serviceRef.current) serviceRef.current = makeSessionService();
 
+  // Fix 1: refresh ID ref for unmount guard / stale-call discard
+  const refreshIdRef = useRef(0);
+
   const [workouts, setWorkouts] = useState<Workout[]>([]);
   const [suggestedWorkout, setSuggestedWorkout] = useState<Workout | null>(null);
   const [selectedWorkout, setSelectedWorkout] = useState<Workout | null>(null);
@@ -52,12 +55,14 @@ export function useHomeWorkout(): HomeWorkoutState {
   const [error, setError] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
+    const id = ++refreshIdRef.current;
     setLoading(true);
     setError(null);
     try {
       const db = getDb();
       const programRepo = new SQLiteProgramRepository(db);
       const programs = await programRepo.findAll();
+      if (refreshIdRef.current !== id) return;
       const active = programs.find(p => p.is_active === 1);
       if (!active) {
         setHasActiveProgram(false);
@@ -65,6 +70,7 @@ export function useHomeWorkout(): HomeWorkoutState {
         setSuggestedWorkout(null);
         setSelectedWorkout(null);
         setLastDates(new Map());
+        setLoading(false);
         return;
       }
       setHasActiveProgram(true);
@@ -72,19 +78,26 @@ export function useHomeWorkout(): HomeWorkoutState {
       const workoutRepo = new SQLiteWorkoutRepository(db);
       const allWorkouts = (await workoutRepo.findByProgramId(active.id))
         .sort((a, b) => a.order_index - b.order_index);
+      if (refreshIdRef.current !== id) return;
       setWorkouts(allWorkouts);
 
       const suggested = await serviceRef.current!.getNextWorkout(active.id);
+      if (refreshIdRef.current !== id) return;
       setSuggestedWorkout(suggested);
       setSelectedWorkout(suggested);
 
       const sessionLogRepo = new SQLiteSessionLogRepository(db);
       const dates = await sessionLogRepo.findLatestDatesPerWorkout(allWorkouts.map(w => w.id));
+      if (refreshIdRef.current !== id) return;
       setLastDates(dates);
     } catch (e) {
+      if (refreshIdRef.current !== id) return;
       setError(e instanceof Error ? e.message : 'Erreur chargement séance');
     } finally {
-      setLoading(false);
+      // Only clear loading if this call is still the latest
+      if (refreshIdRef.current === id) {
+        setLoading(false);
+      }
     }
   }, []);
 
@@ -94,7 +107,8 @@ export function useHomeWorkout(): HomeWorkoutState {
     setSelectedWorkout(w);
   }, []);
 
-  const isSuggestion = selectedWorkout?.id === suggestedWorkout?.id;
+  // Fix 2: null guard — false when both are null/undefined
+  const isSuggestion = selectedWorkout != null && selectedWorkout.id === suggestedWorkout?.id;
 
   return {
     workouts,
