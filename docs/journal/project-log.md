@@ -4,6 +4,41 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 
 ---
 
+## Session 22 — 2026-06-09 — Timer circulaire SVG
+
+### Réalisé
+
+**CircularTimer** (`app/components/ui/CircularTimer.tsx`) :
+- Arc SVG via `stroke-dasharray`/`stroke-dashoffset`, rotation -90°, `strokeLinecap="round"`
+- Couleur arc : vert >60%, orange 30–60%, rouge <30%, vert à 0 (terminé)
+- `formatTime` avec guard `Math.max(0, Math.round(...))` contre valeurs négatives/décimales
+- Label proportionnel au `size` (`size * 0.07`)
+- Accessibilité : `accessibilityElementsHidden` + `importantForAccessibility="no"` (parent fournit le label)
+- Commits `c1f4c2b` → `27274af`
+
+**RestPhase** (`app/components/session/RestPhase.tsx`) :
+- Supprimé : grand nombre 72px (`timerText`), barre horizontale (`progressTrack`/`progressFill`), `formatTime` local
+- Ajouté : `CircularTimer` size=200, `label` dynamique ("REPOS" / "C'EST PARTI")
+- Accessibilité : View wrapper avec `accessibilityLabel` en secondes
+- Commit `9535dbb`
+
+**RunningPhase** (`app/components/session/RunningPhase.tsx`) :
+- Remplacé `timerContainer` dans le mode durée par `CircularTimer` size=160
+- Préservé : `formatTime`, `timerContainer`/`timerText`/`timerLabel` styles (utilisés par mode CHRONO/reps)
+- Commit `59864c7`
+
+### Décisions techniques
+- `progress <= 0` dans `arcColor` est intentionnel (état "terminé" distinct du vert >60%) — pas du dead code
+- `?? 1` fallback sur `set.duration_seconds` dans RunningPhase : défensif mais spec-requis, `isDuration` garantit >0
+- Commentaires inline retirés (convention projet : pas de commentaires évidents)
+- 267/267 tests passent
+
+### Prochaine étape
+- `weight_ratio` back-off (algorithme suggestion séance)
+- Puis templates de programmes, puis onboarding
+
+---
+
 ## Session 21 — 2026-06-09 — CI + backlog audit
 
 ### Réalisé
