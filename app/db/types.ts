@@ -20,6 +20,7 @@ export interface Program {
   description: string | null;
   is_active: 0 | 1;
   created_at: string;
+  template_id: string | null;
 }
 
 export interface Workout {

@@ -18,6 +18,7 @@ export class InMemoryProgramRepository implements IProgramRepository {
       ...dto,
       id: this.nextId++,
       created_at: new Date().toISOString(),
+      template_id: dto.template_id ?? null,
     };
     this.programs.push(program);
     return program;

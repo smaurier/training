@@ -18,8 +18,8 @@ export class SQLiteProgramRepository implements IProgramRepository {
 
   async save(dto: CreateProgramDto): Promise<Program> {
     const result = await this.db.runAsync(
-      `INSERT INTO programs (name, description, is_active) VALUES (?, ?, ?)`,
-      [dto.name, dto.description ?? null, dto.is_active]
+      `INSERT INTO programs (name, description, is_active, template_id) VALUES (?, ?, ?, ?)`,
+      [dto.name, dto.description ?? null, dto.is_active, dto.template_id ?? null]
     );
     const saved = await this.findById(result.lastInsertRowId);
     if (!saved) throw new Error(`Programme ${result.lastInsertRowId} introuvable après insertion`);
