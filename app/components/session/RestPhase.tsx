@@ -23,7 +23,7 @@ export function RestPhase({ durationSeconds, timer, nextLabel, onContinue }: Res
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
 
-  const isDone = timer.remaining === 0 && !timer.isRunning;
+  const isDone = durationSeconds === 0 || (timer.remaining === 0 && !timer.isRunning);
   const progress = durationSeconds > 0 ? timer.remaining / durationSeconds : 0;
 
   return (

@@ -16,7 +16,7 @@ export function ExerciseStartingWeightPhase({
   onConfirm,
 }: ExerciseStartingWeightPhaseProps) {
   const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme];
+  const colors = Colors[colorScheme ?? 'light'];
   const [weight, setWeight] = useState('');
   const [loading, setLoading] = useState(false);
 

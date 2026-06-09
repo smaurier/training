@@ -30,7 +30,7 @@ export interface UseSessionResult {
   progressLabel: string;
   startSession: (checkin: CheckIn) => Promise<void>;
   validateSet: (actual: SetActual) => Promise<void>;
-  skipSet: () => void;
+  skipSet: () => Promise<void>;
   setStartingWeight: (weight: number) => Promise<void>;
   confirmTransition: () => void;
   confirmRest: () => void;
@@ -111,6 +111,10 @@ export function useSession(workoutId: number, workoutDetails: WorkoutExerciseDet
     : '';
 
   const startSession = useCallback(async (checkin: CheckIn) => {
+    if (workoutDetails.length === 0) {
+      setError('Cette séance ne contient aucun exercice');
+      return;
+    }
     try {
       const log = await service.startSession(workoutId, checkin);
       setSessionLogId(log.id);
@@ -119,7 +123,7 @@ export function useSession(workoutId: number, workoutDetails: WorkoutExerciseDet
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Erreur démarrage séance');
     }
-  }, [service, workoutId]);
+  }, [service, workoutId, workoutDetails]);
 
   const validateSet = useCallback(async (actual: SetActual) => {
     if (!sessionLogId || !currentSet || !currentExercise) return;
@@ -143,6 +147,13 @@ export function useSession(workoutId: number, workoutDetails: WorkoutExerciseDet
       }
 
       const exerciseChanges = next.exerciseIdx !== position.exerciseIdx;
+
+      if (completedRestDuration === 0) {
+        setPosition(next);
+        setPhase(exerciseChanges ? 'exercise_transition' : 'running');
+        return;
+      }
+
       setRestDuration(completedRestDuration);
       setPendingPhase(exerciseChanges ? 'exercise_transition' : 'running');
       setNextLabel(computeNextLabel(next, workoutDetails, exerciseChanges));
@@ -161,14 +172,22 @@ export function useSession(workoutId: number, workoutDetails: WorkoutExerciseDet
     setPhase('running');
   }, []);
 
-  const skipSet = useCallback(() => {
+  const skipSet = useCallback(async () => {
+    if (!sessionLogId) return;
     const next = advancePosition(position, workoutDetails);
     if (next === null) {
+      await service.completeSession(sessionLogId);
+      try {
+        const progs = await service.calculateProgressions(sessionLogId);
+        setProgressions(progs);
+      } catch {
+        setProgressions([]);
+      }
       setPhase('summary');
     } else {
       setPosition(next);
     }
-  }, [position, workoutDetails]);
+  }, [service, sessionLogId, position, workoutDetails]);
 
   const setStartingWeight = useCallback(async (weight: number) => {
     if (!currentExercise) return;

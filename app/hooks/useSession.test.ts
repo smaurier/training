@@ -81,4 +81,29 @@ describe('advancePosition', () => {
     const pos: SessionPosition = { exerciseIdx: 0, blockIdx: 0, setIdx: 0 };
     expect(advancePosition(pos, exercises)).toEqual({ exerciseIdx: 1, blockIdx: 0, setIdx: 0 });
   });
+
+  it('advances to next block within same exercise', () => {
+    const exercise: WorkoutExerciseDetail = {
+      ...makeExercise('A', 80, 1),
+      blocks: [
+        makeExercise('A', 80, 1).blocks[0],
+        { id: 2, name: 'Back-off', order_index: 1, is_work_block: 0, sets: [{ id: 10, block_id: 2, reps_min: 10, reps_max: 10, weight: 60, weight_type: 'fixed' as const, rest_duration: 60, order_index: 0, duration_seconds: null }] },
+      ],
+    };
+    const pos: SessionPosition = { exerciseIdx: 0, blockIdx: 0, setIdx: 0 };
+    expect(advancePosition(pos, [exercise])).toEqual({ exerciseIdx: 0, blockIdx: 1, setIdx: 0 });
+  });
+
+  it('returns null for empty exercises array', () => {
+    const pos: SessionPosition = { exerciseIdx: 0, blockIdx: 0, setIdx: 0 };
+    expect(advancePosition(pos, [])).toBeNull();
+  });
+});
+
+describe('computeNextLabel edge cases', () => {
+  it('returns empty string when exerciseIdx is out of bounds', () => {
+    const exercises = [makeExercise('A')];
+    const next: SessionPosition = { exerciseIdx: 5, blockIdx: 0, setIdx: 0 };
+    expect(computeNextLabel(next, exercises, true)).toBe('Exercice suivant : ');
+  });
 });

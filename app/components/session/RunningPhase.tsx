@@ -106,7 +106,8 @@ export function RunningPhase({ exercise, block, set, progressLabel, timer, onVal
     ? `${set.reps_min} rép`
     : `${set.reps_min}–${set.reps_max} rép`;
   const weightLabel = set.weight_type === 'bodyweight' ? 'PC' : set.weight_type === 'bar' ? 'barre' : `${set.weight ?? '—'} kg`;
-  const restSets = block.sets.slice(block.sets.findIndex(s => s.id === set.id) + 1);
+  const currentSetIndex = block.sets.findIndex(s => s.id === set.id);
+  const restSets = currentSetIndex >= 0 ? block.sets.slice(currentSetIndex + 1) : [];
 
   return (
     <ScrollView
@@ -170,7 +171,7 @@ export function RunningPhase({ exercise, block, set, progressLabel, timer, onVal
         <>
           {/* Durée cible */}
           <View style={[styles.targetCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-            <Text style={[styles.targetText, { color: colors.text }]}>{formatTime(set.duration_seconds!)}</Text>
+            <Text style={[styles.targetText, { color: colors.text }]}>{formatTime(set.duration_seconds ?? 0)}</Text>
           </View>
 
           {/* Décompte */}
@@ -271,7 +272,7 @@ export function RunningPhase({ exercise, block, set, progressLabel, timer, onVal
           <Text style={[styles.restLabel, { color: colors.textSecondary }]}>SÉRIES RESTANTES</Text>
           {restSets.map((s, i) => (
             <Text key={s.id} style={[styles.restSet, { color: colors.textSecondary }]}>
-              {i + block.sets.findIndex(bs => bs.id === set.id) + 2} · {s.weight != null ? `${s.weight} kg` : 'PC'} × {s.reps_min === s.reps_max ? s.reps_min : `${s.reps_min}–${s.reps_max}`}
+              {i + currentSetIndex + 2} ·{s.weight != null ? `${s.weight} kg` : 'PC'} × {s.reps_min === s.reps_max ? s.reps_min : `${s.reps_min}–${s.reps_max}`}
             </Text>
           ))}
         </View>

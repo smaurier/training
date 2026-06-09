@@ -1,6 +1,6 @@
 // app/app/session/[workoutId].tsx
 import { useEffect, useCallback, useMemo } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { useWorkoutExercises } from '@/hooks/useWorkoutExercises';
 import { useSession } from '@/hooks/useSession';
@@ -58,11 +58,17 @@ export default function SessionScreen() {
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <View style={[styles.container, { backgroundColor: colors.background }]}>
-        {session.phase === 'checkin' && (
+        {session.error && (
+          <View style={styles.errorContainer}>
+            <Text style={[styles.errorText, { color: colors.text }]}>{session.error}</Text>
+          </View>
+        )}
+
+        {!session.error && session.phase === 'checkin' && (
           <CheckInPhase onStart={session.startSession} />
         )}
 
-        {session.phase === 'exercise_transition' && session.currentExercise && (
+        {!session.error && session.phase === 'exercise_transition' && session.currentExercise && (
           <ExerciseTransitionPhase
             exercise={session.currentExercise}
             exerciseNumber={session.position.exerciseIdx + 1}
@@ -71,7 +77,7 @@ export default function SessionScreen() {
           />
         )}
 
-        {session.phase === 'running' && session.currentSet && session.currentBlock && session.currentExercise && (
+        {!session.error && session.phase === 'running' && session.currentSet && session.currentBlock && session.currentExercise && (
           needsStartingWeight ? (
             <ExerciseStartingWeightPhase
               exercise={session.currentExercise}
@@ -91,7 +97,7 @@ export default function SessionScreen() {
           )
         )}
 
-        {session.phase === 'rest' && (
+        {!session.error && session.phase === 'rest' && (
           <RestPhase
             durationSeconds={session.restDuration}
             timer={timer}
@@ -100,7 +106,7 @@ export default function SessionScreen() {
           />
         )}
 
-        {session.phase === 'summary' && (
+        {!session.error && session.phase === 'summary' && (
           <SummaryPhase
             progressions={session.progressions}
             totalSets={session.totalSetsLogged}
@@ -115,4 +121,6 @@ export default function SessionScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
+  errorContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 32 },
+  errorText: { fontSize: 16, textAlign: 'center' },
 });
