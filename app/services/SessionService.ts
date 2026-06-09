@@ -25,6 +25,13 @@ export interface SetActual {
   distanceMeters?: number | null;
 }
 
+export interface LastSetLog {
+  repsDone: number;
+  weightDone: number;
+  durationSeconds: number | null;
+  distanceMeters: number | null;
+}
+
 export interface ProgressionResult {
   exerciseId: number;
   exerciseName: string;
@@ -120,6 +127,18 @@ export class SessionService {
         });
       }
     }
+  }
+
+  async getLastSetLog(setId: number): Promise<LastSetLog | null> {
+    const logs = await this.setLogRepo.findBySetId(setId);
+    if (logs.length === 0) return null;
+    const last = logs[0];
+    return {
+      repsDone: last.reps_done,
+      weightDone: last.weight_done,
+      durationSeconds: last.duration_seconds,
+      distanceMeters: last.distance_meters,
+    };
   }
 
   async calculateProgressions(sessionLogId: number): Promise<ProgressionResult[]> {

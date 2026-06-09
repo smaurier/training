@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import type { WorkoutExerciseDetail, BlockWithSets } from '@/services/WorkoutExerciseService';
 import type { Set as TrainingSet } from '@/db/types';
-import type { SetActual } from '@/services/SessionService';
+import type { SetActual, LastSetLog } from '@/services/SessionService';
 import type { UseTimerResult } from '@/hooks/useTimer';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
@@ -19,6 +19,23 @@ interface RunningPhaseProps {
   timer: UseTimerResult;
   onValidate: (actual: SetActual) => Promise<void>;
   onSkip: () => void;
+  lastSetLog?: LastSetLog | null;
+}
+
+function formatLastLog(log: LastSetLog, isCardio: boolean, isDuration: boolean): string {
+  if (isCardio) {
+    const parts: string[] = [];
+    if (log.durationSeconds) parts.push(`${Math.round(log.durationSeconds / 60)} min`);
+    if (log.distanceMeters) parts.push(`${(log.distanceMeters / 1000).toFixed(1)} km`);
+    return `Dernière fois : ${parts.length > 0 ? parts.join(' · ') : '—'}`;
+  }
+  if (isDuration) {
+    const m = Math.floor((log.durationSeconds ?? 0) / 60);
+    const s = (log.durationSeconds ?? 0) % 60;
+    return `Dernière fois : ${m}:${String(s).padStart(2, '0')}`;
+  }
+  const weightStr = log.weightDone > 0 ? ` × ${log.weightDone}kg` : '';
+  return `Dernière fois : ${log.repsDone} rép${weightStr}`;
 }
 
 function formatTime(seconds: number): string {
@@ -27,7 +44,7 @@ function formatTime(seconds: number): string {
   return `${m}:${s.toString().padStart(2, '0')}`;
 }
 
-export function RunningPhase({ exercise, block, set, progressLabel, timer, onValidate, onSkip }: RunningPhaseProps) {
+export function RunningPhase({ exercise, block, set, progressLabel, timer, onValidate, onSkip, lastSetLog }: RunningPhaseProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
 
@@ -40,12 +57,12 @@ export function RunningPhase({ exercise, block, set, progressLabel, timer, onVal
   const [loading, setLoading] = useState(false);
   const [countdown, setCountdown] = useState(set.duration_seconds ?? 0);
   const [timerDone, setTimerDone] = useState(false);
+  const [timerStarted, setTimerStarted] = useState(false);
   const [cardioMinutes, setCardioMinutes] = useState('');
   const [cardioDistance, setCardioDistance] = useState('');
 
-  // Safe: component remounts per set (key={set.id} on ScrollView)
   useEffect(() => {
-    if (!isDuration) return;
+    if (!isDuration || !timerStarted) return;
     const interval = setInterval(() => {
       setCountdown(c => {
         if (c <= 1) {
@@ -58,7 +75,7 @@ export function RunningPhase({ exercise, block, set, progressLabel, timer, onVal
       });
     }, 1000);
     return () => clearInterval(interval);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [timerStarted]); // isDuration stable for component lifetime
 
   async function handleValidate() {
     if (loading) return;
@@ -123,6 +140,11 @@ export function RunningPhase({ exercise, block, set, progressLabel, timer, onVal
         <View style={styles.blockBadge}>
           <Text style={[styles.blockBadgeText, { color: colors.primary }]}>{block.name.toUpperCase()}</Text>
         </View>
+        {lastSetLog && (
+          <Text style={[styles.lastLog, { color: colors.textSecondary }]}>
+            {formatLastLog(lastSetLog, isCardio, isDuration)}
+          </Text>
+        )}
       </View>
 
       {isCardio ? (
@@ -174,25 +196,37 @@ export function RunningPhase({ exercise, block, set, progressLabel, timer, onVal
             <Text style={[styles.targetText, { color: colors.text }]}>{formatTime(set.duration_seconds ?? 0)}</Text>
           </View>
 
-          {/* Décompte */}
-          <View style={[styles.timerContainer, { backgroundColor: timerDone ? '#16a34a15' : colors.surface, borderColor: timerDone ? '#16a34a' : colors.primary }]}>
-            <Text style={[styles.timerText, { color: timerDone ? '#16a34a' : colors.primary }]}>
-              {formatTime(countdown)}
-            </Text>
-            <Text style={[styles.timerLabel, { color: colors.textSecondary }]}>
-              {timerDone ? 'TERMINÉ ✓' : 'EN COURS…'}
-            </Text>
-          </View>
+          {/* Décompte — affiché seulement après lancement */}
+          {timerStarted && (
+            <View style={[styles.timerContainer, { backgroundColor: timerDone ? '#16a34a15' : colors.surface, borderColor: timerDone ? '#16a34a' : colors.primary }]}>
+              <Text style={[styles.timerText, { color: timerDone ? '#16a34a' : colors.primary }]}>
+                {formatTime(countdown)}
+              </Text>
+              <Text style={[styles.timerLabel, { color: colors.textSecondary }]}>
+                {timerDone ? 'TERMINÉ ✓' : 'EN COURS…'}
+              </Text>
+            </View>
+          )}
 
           {/* Bouton durée */}
-          <PressableA11y
-            accessibilityLabel="C'est fait — valider cet exercice"
-            onPress={handleDurationValidate}
-            style={[styles.validateBtn, { backgroundColor: timerDone ? '#16a34a' : colors.primary }]}
-          >
-            <Ionicons name="checkmark" size={20} color="#fff" />
-            <Text style={styles.validateBtnText}>{loading ? 'Validation…' : "C'est fait"}</Text>
-          </PressableA11y>
+          {!timerStarted ? (
+            <PressableA11y
+              accessibilityLabel="Lancer le décompte"
+              onPress={() => setTimerStarted(true)}
+              style={[styles.validateBtn, { backgroundColor: colors.primary }]}
+            >
+              <Text style={styles.validateBtnText}>Lancer ▶</Text>
+            </PressableA11y>
+          ) : (
+            <PressableA11y
+              accessibilityLabel="C'est fait — valider cet exercice"
+              onPress={handleDurationValidate}
+              style={[styles.validateBtn, { backgroundColor: timerDone ? '#16a34a' : colors.primary }]}
+            >
+              <Ionicons name="checkmark" size={20} color="#fff" />
+              <Text style={styles.validateBtnText}>{loading ? 'Validation…' : "C'est fait"}</Text>
+            </PressableA11y>
+          )}
         </>
       ) : (
         <>
@@ -309,6 +343,7 @@ const styles = StyleSheet.create({
   input: { borderWidth: 1, borderRadius: Radius.sm, padding: 10, fontSize: 18, fontWeight: '600', textAlign: 'center' },
   validateBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 14, borderRadius: Radius.sm },
   validateBtnText: { color: '#fff', fontSize: 17, fontWeight: '600' },
+  lastLog: { fontSize: 12, marginTop: 4 },
   restSection: { gap: 4 },
   restLabel: { fontSize: 10, fontWeight: '600', letterSpacing: 0.5 },
   restSet: { fontSize: 13, lineHeight: 20 },

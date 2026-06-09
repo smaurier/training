@@ -93,6 +93,7 @@ export default function SessionScreen() {
               timer={timer}
               onValidate={session.validateSet}
               onSkip={session.skipSet}
+              lastSetLog={session.lastSetLog}
             />
           )
         )}

@@ -1,5 +1,5 @@
-import { useState, useRef, useCallback } from 'react';
-import { SessionService, CheckIn, SetActual, ProgressionResult } from '../services/SessionService';
+import { useState, useRef, useCallback, useEffect } from 'react';
+import { SessionService, CheckIn, SetActual, ProgressionResult, LastSetLog } from '../services/SessionService';
 import { SQLiteSessionLogRepository } from '../repositories/SQLiteSessionLogRepository';
 import { SQLiteSetLogRepository } from '../repositories/SQLiteSetLogRepository';
 import { SQLitePersonalRecordRepository } from '../repositories/SQLitePersonalRecordRepository';
@@ -39,6 +39,7 @@ export interface UseSessionResult {
   progressions: ProgressionResult[];
   sessionStartedAt: number | null;
   totalSetsLogged: number;
+  lastSetLog: LastSetLog | null;
   error: string | null;
 }
 
@@ -102,6 +103,7 @@ export function useSession(workoutId: number, workoutDetails: WorkoutExerciseDet
   const [restDuration, setRestDuration] = useState(90);
   const [pendingPhase, setPendingPhase] = useState<'running' | 'exercise_transition'>('running');
   const [nextLabel, setNextLabel] = useState('');
+  const [lastSetLog, setLastSetLog] = useState<LastSetLog | null>(null);
 
   const currentExercise = workoutDetails[position.exerciseIdx] ?? null;
   const currentBlock = currentExercise?.blocks[position.blockIdx] ?? null;
@@ -109,6 +111,17 @@ export function useSession(workoutId: number, workoutDetails: WorkoutExerciseDet
   const progressLabel = currentExercise
     ? `${position.exerciseIdx + 1} / ${workoutDetails.length} exercices`
     : '';
+
+  useEffect(() => {
+    if (!currentSet) { setLastSetLog(null); return; }
+    let cancelled = false;
+    service.getLastSetLog(currentSet.id).then(log => {
+      if (!cancelled) setLastSetLog(log);
+    }).catch(() => {
+      if (!cancelled) setLastSetLog(null);
+    });
+    return () => { cancelled = true; };
+  }, [service, currentSet?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const startSession = useCallback(async (checkin: CheckIn) => {
     if (workoutDetails.length === 0) {
@@ -203,6 +216,6 @@ export function useSession(workoutId: number, workoutDetails: WorkoutExerciseDet
     currentExercise, currentBlock, currentSet, progressLabel,
     startSession, validateSet, skipSet, setStartingWeight,
     confirmTransition, confirmRest, restDuration, nextLabel,
-    progressions, sessionStartedAt, totalSetsLogged, error,
+    progressions, sessionStartedAt, totalSetsLogged, lastSetLog, error,
   };
 }
