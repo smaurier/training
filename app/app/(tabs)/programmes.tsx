@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { usePrograms } from '@/hooks/usePrograms';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import { ProgramCard } from '@/components/programmes/ProgramCard';
+import { AddProgrammeBottomSheet } from '@/components/programmes/AddProgrammeBottomSheet';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
@@ -23,6 +24,7 @@ export default function ProgrammesScreen() {
   const colors = Colors[colorScheme ?? 'light'];
 
   const [workoutCounts, setWorkoutCounts] = useState<Record<number, number>>({});
+  const [bottomSheetOpen, setBottomSheetOpen] = useState(false);
 
   useEffect(() => {
     if (programs.length === 0) return;
@@ -113,11 +115,17 @@ export default function ProgrammesScreen() {
       />
       <PressableA11y
         style={[styles.fab, { backgroundColor: colors.primary }]}
-        onPress={() => router.push('/add-programme')}
+        onPress={() => setBottomSheetOpen(true)}
         accessibilityLabel="Créer un programme"
       >
         <Ionicons name="add" size={28} color={FAB_ICON_COLOR} />
       </PressableA11y>
+      <AddProgrammeBottomSheet
+        isVisible={bottomSheetOpen}
+        onClose={() => setBottomSheetOpen(false)}
+        onCreateBlank={() => router.push('/add-programme')}
+        onImportTemplate={() => router.push('/import-template')}
+      />
     </View>
   );
 }
