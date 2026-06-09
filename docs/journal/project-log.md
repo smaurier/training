@@ -4,6 +4,39 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 
 ---
 
+## Session 23 — 2026-06-09 — Weight ratio back-off
+
+### Réalisé
+
+**Migration v6** (`db/schema.ts`) : `ALTER TABLE sets ADD COLUMN weight_ratio REAL`. Commit `797eae8`.
+
+**Seeds + types** (`db/seeds.ts`, `ISetRepository.ts`, `InMemorySetRepository.ts`) :
+- `SetSpec` et `f()` helper acceptent `weight_ratio?: number | null`
+- Seul Back-off PPL : "Développé couché barre" → `f(12, 15, 60, null, 0.8)`
+- INSERT et UPDATE SQL mis à jour
+- `CreateSetDto` : `weight_ratio` optionnel (pas breaking pour les callers existants)
+- Commit `9887dfe`
+
+**`resolveWeights` pure function** (`services/weightRatio.ts`) : TDD, 6 tests.
+- Trouve le poids du bloc "Travail" (premier set), applique `Math.round(travailWeight × ratio / 2) × 2`
+- Si Travail null → pas de résolution. Si `weight` déjà défini → pas d'écrasement.
+- Commit `58007dc`
+
+**Câblage** (`app/session/[workoutId].tsx`) : `useMemo(() => exercises.map(resolveWeights), [exercises])` avant `useSession`. Commit `2d1549b`.
+
+273/273 tests passent.
+
+### Décisions techniques
+- Résolution en mémoire uniquement — DB jamais modifiée à la résolution
+- `weight_ratio` optionnel dans `CreateSetDto` → zéro changement dans WorkoutExerciseService
+- Un seul Back-off seedé (Développé couché barre) — les autres composés sans Back-off n'ont pas ce bloc
+
+### Prochaine étape
+- Templates de programmes (bibliothèque PPL/Full Body/Upper-Lower importable)
+- Puis onboarding guidé (priorité haute backlog)
+
+---
+
 ## Session 22 — 2026-06-09 — Timer circulaire SVG
 
 ### Réalisé
