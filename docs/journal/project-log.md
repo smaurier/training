@@ -4,6 +4,39 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 
 ---
 
+## Session 19 — 2026-06-09 — Bloc B UX Pipeline : RestPhase + ExerciseTransitionPhase + descriptions
+
+### Réalisé
+
+**Pipeline séance explicite** : `checkin → exercise_transition → running → rest → summary`
+
+- **Migration v5** (`db/schema.ts`) : `ALTER TABLE exercises ADD COLUMN description TEXT` — version DB passe à 6.
+- **Types** (`db/types.ts`, `services/WorkoutExerciseService.ts`) : `description: string | null` exposé dans `Exercise` et `WorkoutExerciseDetail`.
+- **Seeds — 44 descriptions** (`db/seeds.ts`) : 36 EXTRA_EXERCISES upsert avec description + 8 BASE_EXERCISES patchés par nom. Descriptions françaises détaillées pour tous les exercices PPL (technique, points clés).
+- **computeNextLabel** (`hooks/useSession.ts`) : helper pur exporté, testé TDD. Retourne `"Exercice suivant : <nom>"` si changement d'exercice, sinon `"Série N/T — Xkg"`.
+- **useSession — nouvelles phases** (`hooks/useSession.ts`) : `SessionPhase` étendu à 5 valeurs. `startSession` → `exercise_transition`. `validateSet` capture `restDuration` avant avance position, calcule `pendingPhase` et `nextLabel`, passe en `rest`. `confirmRest` → `pendingPhase`. `confirmTransition` → `running`.
+- **RestPhase** (`components/session/RestPhase.tsx`) : timer + barre de progression, bouton "Passer →" / "C'est parti →" (fond vert à zéro), vibration à expiration. Pas d'auto-avance.
+- **ExerciseTransitionPhase** (`components/session/ExerciseTransitionPhase.tsx`) : bande couleur 4px type exercice, nom exercice 28px, résumé bloc Travail, description si disponible, bouton "C'est parti →".
+- **Session screen** (`app/session/[workoutId].tsx`) : `useEffect` phase-based pour timer rest, rendu des 5 phases, suppression ancien `useRef`/`useEffect` position-based.
+
+### Décisions techniques
+- `restDuration` capturé avant `setPosition(next)` dans `validateSet` — évite lecture du mauvais set après avance.
+- `pendingPhase: 'running' | 'exercise_transition'` — routage réactif dans `confirmRest`, sans logic conditionnelle dans le composant.
+- `isDone` dans RestPhase : `remaining === 0 && !isRunning` — distingue timer fini de timer non démarré.
+- `skipSet` inchangé — bypass direct sans passer par rest ni exercise_transition (intentionnel, urgence).
+- Couleurs type hardcodées `#16a34a` / `#ea580c` — pattern établi dans WorkoutExerciseCard, pas de nouveau token Colors.
+
+### Process
+- Brainstorm Session 18 Phase 2 → spec (`docs/superpowers/specs/2026-06-09-bloc-b-ux-pipeline.md`) → plan (`docs/superpowers/plans/2026-06-09-bloc-b-ux-pipeline.md`) → subagent-driven development (8 tâches, spec review + code quality review par tâche).
+- 249/250 tests — 1 échec `ProgramService.test.ts` (is_active) pré-existant, non lié au Bloc B.
+
+### Prochaine étape
+- Tester en conditions réelles (séances Push + Pull + Legs cette semaine)
+- Vérifier le flow complet : checkin → transition → série → repos → transition → ...
+- Vérifier descriptions exercices à l'écran (ScrollView, lisibilité)
+
+---
+
 ## Session 18 — 2026-06-09 — Double progression + seeds idempotentes + bugs critiques
 
 ### Réalisé
