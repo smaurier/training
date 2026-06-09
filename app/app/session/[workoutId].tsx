@@ -47,6 +47,7 @@ export default function SessionScreen() {
         )}
         {session.phase === 'running' && session.currentSet && session.currentBlock && session.currentExercise && (
           <RunningPhase
+            key={session.currentSet.id}
             exercise={session.currentExercise}
             block={session.currentBlock}
             set={session.currentSet}

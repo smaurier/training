@@ -35,7 +35,7 @@ export function RunningPhase({ exercise, block, set, progressLabel, timer, onVal
   const isDuration = !isCardio && (set.duration_seconds ?? 0) > 0;
 
   const [reps, setReps] = useState(String(set.reps_max));
-  const [weight, setWeight] = useState(set.weight != null ? String(set.weight) : '0');
+  const [weight, setWeight] = useState(set.weight != null ? String(set.weight) : '');
   const [rpe, setRpe] = useState('');
   const [loading, setLoading] = useState(false);
   const [countdown, setCountdown] = useState(set.duration_seconds ?? 0);
@@ -59,9 +59,6 @@ export function RunningPhase({ exercise, block, set, progressLabel, timer, onVal
     }, 1000);
     return () => clearInterval(interval);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Reset inputs when set changes
-  const setKey = set.id;
 
   async function handleValidate() {
     if (loading) return;
@@ -105,20 +102,6 @@ export function RunningPhase({ exercise, block, set, progressLabel, timer, onVal
     }
   }
 
-  async function handleToutReussi() {
-    if (loading) return;
-    setLoading(true);
-    try {
-      await onValidate({
-        repsDone: set.reps_max,
-        weightDone: set.weight ?? 0,
-        rpe: null,
-      });
-    } finally {
-      setLoading(false);
-    }
-  }
-
   const setLabel = set.reps_min === set.reps_max
     ? `${set.reps_min} rép`
     : `${set.reps_min}–${set.reps_max} rép`;
@@ -127,7 +110,6 @@ export function RunningPhase({ exercise, block, set, progressLabel, timer, onVal
 
   return (
     <ScrollView
-      key={setKey}
       contentContainerStyle={[styles.container, { backgroundColor: colors.background }]}
       keyboardShouldPersistTaps="handled"
     >
@@ -251,6 +233,8 @@ export function RunningPhase({ exercise, block, set, progressLabel, timer, onVal
                 value={weight}
                 onChangeText={setWeight}
                 keyboardType="decimal-pad"
+                placeholder={set.weight === null ? 'Poids de départ' : '—'}
+                placeholderTextColor={colors.textSecondary}
                 accessibilityLabel="Poids utilisé"
                 editable={set.weight_type === 'fixed'}
               />
@@ -269,15 +253,6 @@ export function RunningPhase({ exercise, block, set, progressLabel, timer, onVal
               />
             </View>
           </View>
-
-          {/* Boutons */}
-          <PressableA11y
-            accessibilityLabel="Tout réussi — valider avec les valeurs cibles"
-            onPress={handleToutReussi}
-            style={[styles.toutReussiBtn, { backgroundColor: '#ca8a04' }]}
-          >
-            <Text style={styles.toutReussiBtnText}>⚡ Tout réussi</Text>
-          </PressableA11y>
 
           <PressableA11y
             accessibilityLabel="Valider la série avec les valeurs saisies"
@@ -333,8 +308,6 @@ const styles = StyleSheet.create({
   input: { borderWidth: 1, borderRadius: Radius.sm, padding: 10, fontSize: 18, fontWeight: '600', textAlign: 'center' },
   validateBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 14, borderRadius: Radius.sm },
   validateBtnText: { color: '#fff', fontSize: 17, fontWeight: '600' },
-  toutReussiBtn: { borderRadius: Radius.sm, paddingVertical: 14, alignItems: 'center' },
-  toutReussiBtnText: { color: '#fff', fontSize: 17, fontWeight: '700' },
   restSection: { gap: 4 },
   restLabel: { fontSize: 10, fontWeight: '600', letterSpacing: 0.5 },
   restSet: { fontSize: 13, lineHeight: 20 },
