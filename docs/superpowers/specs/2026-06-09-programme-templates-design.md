@@ -270,13 +270,13 @@ export const TEMPLATES: TemplateDefinition[] = [ /* 5 templates */ ];
 // app/services/TemplateService.ts
 
 export async function importTemplate(
-  db: SQLiteDatabase,
   templateId: string,
   programName: string,
   programRepo: IProgramRepository,
   workoutRepo: IWorkoutRepository,
   blockRepo: IBlockRepository,
   setRepo: ISetRepository,
+  exerciseRepo: IExerciseRepository,
 ): Promise<number>; // returns new program ID
 
 // Pure function — pas de DB, utilise les programmes déjà chargés
@@ -287,7 +287,7 @@ export function isTemplateImported(
 ```
 
 **importTemplate flow :**
-1. `SELECT id, name FROM exercises` → `Map<string, number>` (nom → id)
+1. `exerciseRepo.findAll()` → `Map<string, number>` nom→id
 2. Vérifie que tous les exercices du template sont présents (throw si manquant)
 3. `programRepo.save({ name: programName, is_active: 0, template_id: templateId, description: null, created_at: ... })`
 4. Pour chaque workout : `workoutRepo.save(...)` → pour chaque block : `blockRepo.save(...)` → pour chaque set : `setRepo.save(...)`
