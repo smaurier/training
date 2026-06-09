@@ -23,6 +23,7 @@ async function seedExercise(exerciseRepo: InMemoryExerciseRepository) {
     type: 'musculation',
     muscle_groups: '["pectoraux"]',
     technical_notes: null,
+    description: null,
     is_custom: 0,
     progression_step: 2,
     progression_threshold: 1,

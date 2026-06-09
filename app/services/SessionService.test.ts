@@ -168,6 +168,7 @@ describe('SessionService.calculateProgressions', () => {
       type: 'musculation',
       muscle_groups: '[]',
       technical_notes: null,
+      description: null,
       is_custom: 0,
       progression_step: 2.5,
       progression_threshold: progressionThreshold,
@@ -254,7 +255,7 @@ describe('SessionService.calculateProgressions', () => {
   it('ignore les blocs non-travail pour le calcul', async () => {
     const ctx = makeService();
     const service = ctx.build();
-    const exercise = await ctx.exerciseRepo.save({ name: 'Bench', type: 'musculation', muscle_groups: '[]', technical_notes: null, is_custom: 0, progression_step: 2, progression_threshold: 1 });
+    const exercise = await ctx.exerciseRepo.save({ name: 'Bench', type: 'musculation', muscle_groups: '[]', technical_notes: null, description: null, is_custom: 0, progression_step: 2, progression_threshold: 1 });
     const workout = await ctx.workoutRepo.save({ program_id: 1, name: 'Push', order_index: 0 });
     const we = await ctx.weRepo.save({ workout_id: workout.id, exercise_id: exercise.id, order_index: 0 });
     // Bloc d'échauffement (is_work_block=0)

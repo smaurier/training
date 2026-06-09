@@ -144,4 +144,7 @@ export const MIGRATIONS: string[] = [
   // v4 — cardio logging : durée et distance sur set_logs
   `ALTER TABLE set_logs ADD COLUMN duration_seconds INTEGER;`,
   `ALTER TABLE set_logs ADD COLUMN distance_meters REAL;`,
+
+  // v5 — descriptions exercices
+  `ALTER TABLE exercises ADD COLUMN description TEXT;`,
 ];

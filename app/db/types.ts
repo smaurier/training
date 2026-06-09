@@ -7,6 +7,7 @@ export interface Exercise {
   type: ExerciseType;
   muscle_groups: string; // JSON array
   technical_notes: string | null;
+  description: string | null;
   is_custom: 0 | 1;
   progression_step: number;
   progression_threshold: number;

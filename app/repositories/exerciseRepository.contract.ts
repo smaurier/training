@@ -5,6 +5,7 @@ const squat: CreateExerciseDto = {
   type: 'musculation',
   muscle_groups: '["quadriceps","fessiers"]',
   technical_notes: null,
+  description: null,
   is_custom: 0,
   progression_step: 2.5,
   progression_threshold: 1,

@@ -20,6 +20,7 @@ const baseExerciseDto = {
   type: 'musculation' as const,
   muscle_groups: '[]',
   technical_notes: null,
+  description: null,
   is_custom: 0 as const,
   progression_step: 2.5,
   progression_threshold: 1,

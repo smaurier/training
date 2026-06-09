@@ -27,6 +27,7 @@ export class ExerciseService {
       type: input.type,
       muscle_groups: JSON.stringify(input.muscle_groups),
       technical_notes: input.technical_notes ?? null,
+      description: null,
       is_custom: input.is_custom ?? 0,
       progression_step: input.progression_step,
       progression_threshold: input.progression_threshold,
