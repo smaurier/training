@@ -31,6 +31,7 @@ function makeExercise(name: string, weight: number | null = 80, sets = 3): Worko
           rest_duration: 90,
           order_index: i,
           duration_seconds: null,
+          weight_ratio: null,
         })),
       },
     ],
@@ -87,7 +88,7 @@ describe('advancePosition', () => {
       ...makeExercise('A', 80, 1),
       blocks: [
         makeExercise('A', 80, 1).blocks[0],
-        { id: 2, name: 'Back-off', order_index: 1, is_work_block: 0, sets: [{ id: 10, block_id: 2, reps_min: 10, reps_max: 10, weight: 60, weight_type: 'fixed' as const, rest_duration: 60, order_index: 0, duration_seconds: null }] },
+        { id: 2, name: 'Back-off', order_index: 1, is_work_block: 0, sets: [{ id: 10, block_id: 2, reps_min: 10, reps_max: 10, weight: 60, weight_type: 'fixed' as const, rest_duration: 60, order_index: 0, duration_seconds: null, weight_ratio: null }] },
       ],
     };
     const pos: SessionPosition = { exerciseIdx: 0, blockIdx: 0, setIdx: 0 };

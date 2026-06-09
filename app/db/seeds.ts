@@ -426,6 +426,7 @@ type SetSpec = {
   weight_type: WeightType;
   rest: number;
   duration_seconds?: number | null;
+  weight_ratio?: number | null;
 };
 
 type BlockSpec = {
@@ -446,8 +447,8 @@ type WorkoutSpec = {
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-function f(reps_min: number, reps_max: number, rest: number, weight: number | null = null): SetSpec {
-  return { reps_min, reps_max, weight, weight_type: 'fixed', rest };
+function f(reps_min: number, reps_max: number, rest: number, weight: number | null = null, weight_ratio: number | null = null): SetSpec {
+  return { reps_min, reps_max, weight, weight_type: 'fixed', rest, weight_ratio };
 }
 function bw(reps_min: number, reps_max: number, rest: number): SetSpec {
   return { reps_min, reps_max, weight: null, weight_type: 'bodyweight', rest };
@@ -510,7 +511,7 @@ const PPL: { name: string; description: string; workouts: WorkoutSpec[] } = {
             {
               name: 'Back-off',
               is_work: true,
-              sets: [f(12, 15, 60)],
+              sets: [f(12, 15, 60, null, 0.8)],
             },
           ],
         },
@@ -758,19 +759,19 @@ export async function seedProgram(db: SQLiteDatabase): Promise<void> {
             const preserveWeight = (hasLogs?.count ?? 0) > 0;
             if (preserveWeight) {
               await db.runAsync(
-                'UPDATE sets SET reps_min = ?, reps_max = ?, weight_type = ?, rest_duration = ?, duration_seconds = ? WHERE id = ?',
-                [s.reps_min, s.reps_max, s.weight_type, s.rest, s.duration_seconds ?? null, existingSet.id]
+                'UPDATE sets SET reps_min = ?, reps_max = ?, weight_type = ?, rest_duration = ?, duration_seconds = ?, weight_ratio = ? WHERE id = ?',
+                [s.reps_min, s.reps_max, s.weight_type, s.rest, s.duration_seconds ?? null, s.weight_ratio ?? null, existingSet.id]
               );
             } else {
               await db.runAsync(
-                'UPDATE sets SET reps_min = ?, reps_max = ?, weight = ?, weight_type = ?, rest_duration = ?, duration_seconds = ? WHERE id = ?',
-                [s.reps_min, s.reps_max, s.weight, s.weight_type, s.rest, s.duration_seconds ?? null, existingSet.id]
+                'UPDATE sets SET reps_min = ?, reps_max = ?, weight = ?, weight_type = ?, rest_duration = ?, duration_seconds = ?, weight_ratio = ? WHERE id = ?',
+                [s.reps_min, s.reps_max, s.weight, s.weight_type, s.rest, s.duration_seconds ?? null, s.weight_ratio ?? null, existingSet.id]
               );
             }
           } else {
             await db.runAsync(
-              'INSERT INTO sets (block_id, reps_min, reps_max, weight, weight_type, rest_duration, order_index, duration_seconds) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-              [blockId, s.reps_min, s.reps_max, s.weight, s.weight_type, s.rest, si, s.duration_seconds ?? null]
+              'INSERT INTO sets (block_id, reps_min, reps_max, weight, weight_type, rest_duration, order_index, duration_seconds, weight_ratio) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+              [blockId, s.reps_min, s.reps_max, s.weight, s.weight_type, s.rest, si, s.duration_seconds ?? null, s.weight_ratio ?? null]
             );
           }
         }
