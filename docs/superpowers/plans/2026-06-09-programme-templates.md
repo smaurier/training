@@ -616,7 +616,13 @@ git -C C:\Users\sylva\projects\training-app commit -m "feat(services): TemplateS
 **Files:**
 - Create: `app/data/templates.ts`
 
-- [ ] **Step 1: Créer `app/data/templates.ts`**
+- [ ] **Step 1: Créer le répertoire `app/data/`**
+
+```bash
+mkdir C:\Users\sylva\projects\training-app\app\data
+```
+
+- [ ] **Step 2: Créer `app/data/templates.ts`**
 
 ```ts
 import type { WeightType } from '../db/types';
@@ -869,7 +875,7 @@ export const TEMPLATES: TemplateDefinition[] = [
 ];
 ```
 
-- [ ] **Step 2: Typecheck**
+- [ ] **Step 3: Typecheck**
 
 ```bash
 cd C:\Users\sylva\projects\training-app\app && npx tsc --noEmit 2>&1
@@ -877,7 +883,7 @@ cd C:\Users\sylva\projects\training-app\app && npx tsc --noEmit 2>&1
 
 Expected: 0 erreurs.
 
-- [ ] **Step 3: Tests**
+- [ ] **Step 4: Tests**
 
 ```bash
 cd C:\Users\sylva\projects\training-app\app && npx jest --no-coverage 2>&1 | tail -5
@@ -885,7 +891,7 @@ cd C:\Users\sylva\projects\training-app\app && npx jest --no-coverage 2>&1 | tai
 
 Expected: `273 passed, 273 total`
 
-- [ ] **Step 4: Commit**
+- [ ] **Step 5: Commit**
 
 ```bash
 git -C C:\Users\sylva\projects\training-app add app/data/templates.ts
