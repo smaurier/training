@@ -1,4 +1,4 @@
-import type { SessionLog, SetLog, Workout } from '../db/types';
+import type { SessionLog, SetLog, Workout, Set as DBSet } from '../db/types';
 import { ISessionLogRepository } from '../repositories/ISessionLogRepository';
 import { ISetLogRepository } from '../repositories/ISetLogRepository';
 import { IPersonalRecordRepository } from '../repositories/IPersonalRecordRepository';
@@ -138,7 +138,7 @@ export class SessionService {
       const travailBlocks = blocks.filter(b => b.is_work_block === 1 && b.name === 'Travail');
       if (travailBlocks.length === 0) continue;
 
-      const travailSets: import('../db/types').Set[] = [];
+      const travailSets: DBSet[] = [];
       for (const block of travailBlocks) {
         const sets = await this.setRepo.findByBlockId(block.id);
         travailSets.push(...sets);
@@ -154,9 +154,10 @@ export class SessionService {
         continue;
       }
 
+      const travailSetMap = new Map(travailSets.map(s => [s.id, s]));
       const currentSetResults: SetResult[] = currentLogs.map(log => ({
         reps_done: log.reps_done,
-        reps_min: travailSets.find(s => s.id === log.set_id)?.reps_min ?? log.reps_done,
+        reps_min: travailSetMap.get(log.set_id)?.reps_min ?? log.reps_done,
       }));
 
       if (isSessionFullSuccess(currentSetResults) && oldWeight !== null) {
@@ -201,7 +202,7 @@ export class SessionService {
   private async checkPreviousSignificantFailure(
     currentSessionLogId: number,
     workoutId: number,
-    travailSets: import('../db/types').Set[]
+    travailSets: DBSet[]
   ): Promise<boolean> {
     const pastSessions = (await this.sessionLogRepo.findByWorkoutId(workoutId))
       .filter(s => s.id !== currentSessionLogId && s.ended_at !== null)
@@ -215,9 +216,10 @@ export class SessionService {
 
     if (prevTravailLogs.length === 0) return false;
 
+    const setsMap = new Map(travailSets.map(s => [s.id, s]));
     const prevSetResults: SetResult[] = prevTravailLogs.map(log => ({
       reps_done: log.reps_done,
-      reps_min: travailSets.find(s => s.id === log.set_id)?.reps_min ?? log.reps_done,
+      reps_min: setsMap.get(log.set_id)?.reps_min ?? log.reps_done,
     }));
 
     return isSessionSignificantFailure(prevSetResults);
