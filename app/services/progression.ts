@@ -53,3 +53,20 @@ export function calculateProgression(
     progressed: false,
   };
 }
+
+export function applyProgression(weight: number): number {
+  return Math.ceil((weight * 1.025) / 2) * 2;
+}
+
+export function applyDeload(weight: number): number {
+  return Math.floor((weight * 0.9) / 2) * 2;
+}
+
+export function isSessionFullSuccess(workSets: SetResult[]): boolean {
+  if (workSets.length === 0) return false;
+  return workSets.every(s => s.reps_done >= s.reps_min);
+}
+
+export function isSessionSignificantFailure(workSets: SetResult[]): boolean {
+  return workSets.some(s => s.reps_done <= s.reps_min - 2);
+}
