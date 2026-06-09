@@ -583,10 +583,7 @@ const PPL: { name: string; description: string; workouts: WorkoutSpec[] } = {
 // ─── Seed ────────────────────────────────────────────────────────────────────
 
 export async function seedProgram(db: SQLiteDatabase): Promise<void> {
-  // Supprimer les anciens programmes (CASCADE → workouts → workout_exercises → blocks → sets → session_logs)
-  await db.runAsync('DELETE FROM programs');
-
-  // Ajouter les exercices manquants
+  // Ajouter les exercices manquants (upsert by name)
   for (const ex of EXTRA_EXERCISES) {
     const row = await db.getFirstAsync<{ id: number }>('SELECT id FROM exercises WHERE name = ?', [ex.name]);
     if (!row) {
@@ -597,53 +594,121 @@ export async function seedProgram(db: SQLiteDatabase): Promise<void> {
     }
   }
 
-  // Construire la map nom → id
   const allEx = await db.getAllAsync<{ id: number; name: string }>('SELECT id, name FROM exercises');
   const exMap = new Map(allEx.map(e => [e.name, e.id]));
-
   const getExId = (name: string): number => {
     const id = exMap.get(name);
     if (id === undefined) throw new Error(`Exercise not found in DB: ${name}`);
     return id;
   };
 
-  // Programme
-  const { lastInsertRowId: programId } = await db.runAsync(
-    'INSERT INTO programs (name, description, is_active) VALUES (?, ?, 1)',
-    [PPL.name, PPL.description]
+  // Programme — get or create by name
+  let programId: number;
+  const existingProgram = await db.getFirstAsync<{ id: number }>(
+    'SELECT id FROM programs WHERE name = ?', [PPL.name]
   );
+  if (existingProgram) {
+    programId = existingProgram.id;
+  } else {
+    const { lastInsertRowId } = await db.runAsync(
+      'INSERT INTO programs (name, description, is_active) VALUES (?, ?, 1)',
+      [PPL.name, PPL.description]
+    );
+    programId = lastInsertRowId;
+  }
 
-  // Séances
   for (let wi = 0; wi < PPL.workouts.length; wi++) {
     const workout = PPL.workouts[wi];
-    const { lastInsertRowId: workoutId } = await db.runAsync(
-      'INSERT INTO workouts (program_id, name, order_index) VALUES (?, ?, ?)',
-      [programId, workout.name, wi]
-    );
 
-    // Exercices dans la séance
+    // Workout — get or create by (program_id, name)
+    let workoutId: number;
+    const existingWorkout = await db.getFirstAsync<{ id: number }>(
+      'SELECT id FROM workouts WHERE program_id = ? AND name = ?', [programId, workout.name]
+    );
+    if (existingWorkout) {
+      workoutId = existingWorkout.id;
+      await db.runAsync('UPDATE workouts SET order_index = ? WHERE id = ?', [wi, workoutId]);
+    } else {
+      const { lastInsertRowId } = await db.runAsync(
+        'INSERT INTO workouts (program_id, name, order_index) VALUES (?, ?, ?)',
+        [programId, workout.name, wi]
+      );
+      workoutId = lastInsertRowId;
+    }
+
     for (let ei = 0; ei < workout.exercises.length; ei++) {
       const we = workout.exercises[ei];
-      const { lastInsertRowId: weId } = await db.runAsync(
-        'INSERT INTO workout_exercises (workout_id, exercise_id, order_index) VALUES (?, ?, ?)',
-        [workoutId, getExId(we.exercise), ei]
-      );
+      const exId = getExId(we.exercise);
 
-      // Blocs
+      // WorkoutExercise — get or create by (workout_id, exercise_id)
+      let weId: number;
+      const existingWe = await db.getFirstAsync<{ id: number }>(
+        'SELECT id FROM workout_exercises WHERE workout_id = ? AND exercise_id = ?', [workoutId, exId]
+      );
+      if (existingWe) {
+        weId = existingWe.id;
+        await db.runAsync('UPDATE workout_exercises SET order_index = ? WHERE id = ?', [ei, weId]);
+      } else {
+        const { lastInsertRowId } = await db.runAsync(
+          'INSERT INTO workout_exercises (workout_id, exercise_id, order_index) VALUES (?, ?, ?)',
+          [workoutId, exId, ei]
+        );
+        weId = lastInsertRowId;
+      }
+
       for (let bi = 0; bi < we.blocks.length; bi++) {
         const block = we.blocks[bi];
-        const { lastInsertRowId: blockId } = await db.runAsync(
-          'INSERT INTO blocks (workout_exercise_id, name, order_index, is_work_block) VALUES (?, ?, ?, ?)',
-          [weId, block.name, bi, block.is_work ? 1 : 0]
-        );
 
-        // Séries
+        // Block — get or create by (workout_exercise_id, name)
+        let blockId: number;
+        const existingBlock = await db.getFirstAsync<{ id: number }>(
+          'SELECT id FROM blocks WHERE workout_exercise_id = ? AND name = ?', [weId, block.name]
+        );
+        if (existingBlock) {
+          blockId = existingBlock.id;
+          await db.runAsync(
+            'UPDATE blocks SET order_index = ?, is_work_block = ? WHERE id = ?',
+            [bi, block.is_work ? 1 : 0, blockId]
+          );
+        } else {
+          const { lastInsertRowId } = await db.runAsync(
+            'INSERT INTO blocks (workout_exercise_id, name, order_index, is_work_block) VALUES (?, ?, ?, ?)',
+            [weId, block.name, bi, block.is_work ? 1 : 0]
+          );
+          blockId = lastInsertRowId;
+        }
+
         for (let si = 0; si < block.sets.length; si++) {
           const s = block.sets[si];
-          await db.runAsync(
-            'INSERT INTO sets (block_id, reps_min, reps_max, weight, weight_type, rest_duration, order_index, duration_seconds) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-            [blockId, s.reps_min, s.reps_max, s.weight, s.weight_type, s.rest, si, s.duration_seconds ?? null]
+
+          // Set — get or create by (block_id, order_index)
+          // If has set_logs → preserve weight (only update reps_min, reps_max, rest_duration, duration_seconds)
+          // If no set_logs → update everything including weight
+          const existingSet = await db.getFirstAsync<{ id: number }>(
+            'SELECT id FROM sets WHERE block_id = ? AND order_index = ?', [blockId, si]
           );
+          if (existingSet) {
+            const hasLogs = await db.getFirstAsync<{ count: number }>(
+              'SELECT COUNT(*) as count FROM set_logs WHERE set_id = ?', [existingSet.id]
+            );
+            const preserveWeight = (hasLogs?.count ?? 0) > 0;
+            if (preserveWeight) {
+              await db.runAsync(
+                'UPDATE sets SET reps_min = ?, reps_max = ?, weight_type = ?, rest_duration = ?, duration_seconds = ? WHERE id = ?',
+                [s.reps_min, s.reps_max, s.weight_type, s.rest, s.duration_seconds ?? null, existingSet.id]
+              );
+            } else {
+              await db.runAsync(
+                'UPDATE sets SET reps_min = ?, reps_max = ?, weight = ?, weight_type = ?, rest_duration = ?, duration_seconds = ? WHERE id = ?',
+                [s.reps_min, s.reps_max, s.weight, s.weight_type, s.rest, s.duration_seconds ?? null, existingSet.id]
+              );
+            }
+          } else {
+            await db.runAsync(
+              'INSERT INTO sets (block_id, reps_min, reps_max, weight, weight_type, rest_duration, order_index, duration_seconds) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+              [blockId, s.reps_min, s.reps_max, s.weight, s.weight_type, s.rest, si, s.duration_seconds ?? null]
+            );
+          }
         }
       }
     }
