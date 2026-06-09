@@ -12,7 +12,7 @@ import type { WorkoutExerciseDetail, BlockWithSets } from '../services/WorkoutEx
 import type { Set as TrainingSet } from '../db/types';
 import { getDb } from '../db';
 
-export type SessionPhase = 'checkin' | 'running' | 'summary';
+export type SessionPhase = 'checkin' | 'exercise_transition' | 'running' | 'rest' | 'summary';
 
 export interface SessionPosition {
   exerciseIdx: number;
@@ -32,6 +32,10 @@ export interface UseSessionResult {
   validateSet: (actual: SetActual) => Promise<void>;
   skipSet: () => void;
   setStartingWeight: (weight: number) => Promise<void>;
+  confirmTransition: () => void;
+  confirmRest: () => void;
+  restDuration: number;
+  nextLabel: string;
   progressions: ProgressionResult[];
   sessionStartedAt: number | null;
   totalSetsLogged: number;
@@ -95,6 +99,9 @@ export function useSession(workoutId: number, workoutDetails: WorkoutExerciseDet
   const [sessionStartedAt, setSessionStartedAt] = useState<number | null>(null);
   const [totalSetsLogged, setTotalSetsLogged] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [restDuration, setRestDuration] = useState(90);
+  const [pendingPhase, setPendingPhase] = useState<'running' | 'exercise_transition'>('running');
+  const [nextLabel, setNextLabel] = useState('');
 
   const currentExercise = workoutDetails[position.exerciseIdx] ?? null;
   const currentBlock = currentExercise?.blocks[position.blockIdx] ?? null;
@@ -108,7 +115,7 @@ export function useSession(workoutId: number, workoutDetails: WorkoutExerciseDet
       const log = await service.startSession(workoutId, checkin);
       setSessionLogId(log.id);
       setSessionStartedAt(Date.now());
-      setPhase('running');
+      setPhase('exercise_transition');
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Erreur démarrage séance');
     }
@@ -120,7 +127,9 @@ export function useSession(workoutId: number, workoutDetails: WorkoutExerciseDet
       await service.logSet(sessionLogId, currentSet.id, currentExercise.exercise.id, actual);
       setTotalSetsLogged(n => n + 1);
 
+      const completedRestDuration = currentSet.rest_duration;
       const next = advancePosition(position, workoutDetails);
+
       if (next === null) {
         await service.completeSession(sessionLogId);
         try {
@@ -130,13 +139,27 @@ export function useSession(workoutId: number, workoutDetails: WorkoutExerciseDet
           setProgressions([]);
         }
         setPhase('summary');
-      } else {
-        setPosition(next);
+        return;
       }
+
+      const exerciseChanges = next.exerciseIdx !== position.exerciseIdx;
+      setRestDuration(completedRestDuration);
+      setPendingPhase(exerciseChanges ? 'exercise_transition' : 'running');
+      setNextLabel(computeNextLabel(next, workoutDetails, exerciseChanges));
+      setPosition(next);
+      setPhase('rest');
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Erreur validation série');
     }
   }, [service, sessionLogId, currentSet, currentExercise, position, workoutDetails]);
+
+  const confirmRest = useCallback(() => {
+    setPhase(pendingPhase);
+  }, [pendingPhase]);
+
+  const confirmTransition = useCallback(() => {
+    setPhase('running');
+  }, []);
 
   const skipSet = useCallback(() => {
     const next = advancePosition(position, workoutDetails);
@@ -160,6 +183,7 @@ export function useSession(workoutId: number, workoutDetails: WorkoutExerciseDet
     phase, sessionLogId, position,
     currentExercise, currentBlock, currentSet, progressLabel,
     startSession, validateSet, skipSet, setStartingWeight,
+    confirmTransition, confirmRest, restDuration, nextLabel,
     progressions, sessionStartedAt, totalSetsLogged, error,
   };
 }
