@@ -4,6 +4,39 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 
 ---
 
+## Session 18 — 2026-06-09 — Double progression + seeds idempotentes + bugs critiques
+
+### Réalisé
+
+**Bloc A — Bugs critiques**
+- **Seeds idempotentes** (`db/seeds.ts`) : remplace DELETE+INSERT par upsert-by-name à chaque niveau (program → workout → workout_exercise → block → set). Si un set a des `set_logs` → poids préservé. Plus jamais de perte de progression au redémarrage.
+- **Timer reset entre exercices** (`session/[workoutId].tsx`) : `key={session.currentSet.id}` sur `<RunningPhase>` → remount forcé à chaque nouvelle série → timer et inputs repartent à zéro.
+- **Pre-fill inputs + suppression "Tout réussi"** (`RunningPhase.tsx`) : weight init `''` au lieu de `'0'`, placeholder "Poids de départ" si weight null, `handleToutReussi` supprimé, seul bouton "Valider" reste.
+
+**Bloc C — Système de progression**
+- **Double progression** (`progression.ts`) : 4 nouvelles fonctions pures testées TDD — `applyProgression` (+2.5% arrondi 2kg sup), `applyDeload` (-10% arrondi 2kg inf), `isSessionFullSuccess`, `isSessionSignificantFailure`.
+- **Algorithme SessionService** (`SessionService.ts`) : `calculateProgressions` remplacé — succès complet → progression immédiate, 2 échecs significatifs consécutifs → déload, manque d'1 rep → hold.
+- **setStartingWeight** (`SessionService.ts`) : met à jour tous les sets du bloc "Travail" d'un exercice avec le poids de départ.
+- **ExerciseStartingWeightPhase** (nouveau composant) : s'intercale avant le premier set Travail si tous les poids sont null — demande le poids de départ, confirme, reload les exercises.
+- **PPL reps fixes** (`db/seeds.ts`) : Développé couché, Tractions, Rowing barre, Squat barre → cibles fixes à 8 reps (place à reps 4-6/6-8).
+
+### Décisions techniques
+- Double progression : progression dès le premier succès complet (pas de seuil N sessions). Déload après 2 échecs significatifs consécutifs (manque ≥ 2 reps sur au moins 1 set).
+- Formules arrondies au 2kg : `Math.ceil(w * 1.025 / 2) * 2` et `Math.floor(w * 0.9 / 2) * 2`.
+- Seeds : clé upsert par niveau — exercice=name, workout=(program_id+name), block=(we_id+name), set=(block_id+order_index).
+- ExerciseStartingWeightPhase ne touche que les blocs `name='Travail'` (pas Back-off ni Échauffement).
+- `SetResult` type exporté depuis `progression.ts` — partagé entre progression.ts et SessionService.
+
+### Process
+- Brainstorm → spec (`docs/superpowers/specs/2026-06-09-progression-system-design.md`) → plan (`docs/superpowers/plans/2026-06-09-progression-system.md`) → subagent-driven development (7 tâches, spec review + code quality review par tâche).
+
+### Prochaine étape
+- Tester en conditions réelles (séances Push + Pull + Legs cette semaine)
+- Vérifier le flow ExerciseStartingWeightPhase au premier exercice
+- Bloc B (reporté) : ExerciseTransitionPhase, RestPhase redesign, ExerciseTransitionPhase
+
+---
+
 ## Session 17 — 2026-05-31 — Programme PPL complet + mode durée + cardio
 
 ### Réalisé
