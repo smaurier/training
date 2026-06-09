@@ -4,6 +4,31 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 
 ---
 
+## Session 21 — 2026-06-09 — CI + backlog audit
+
+### Réalisé
+
+**Backlog audit** : 3 items signalés critiques étaient déjà implémentés dans les sessions précédentes :
+- Timer reset entre exercices → déjà fixé par `key={session.currentSet.id}` dans `[workoutId].tsx`
+- Inputs non effacées après validation → même fix
+- Seeds écrasant les poids → déjà protégé lignes 748-775 de `seeds.ts` (`COUNT(*) set_logs` avant UPDATE)
+- "Tout réussi" / inputs pré-remplis → déjà implémenté
+
+**CI GitHub Actions** (`.github/workflows/ci.yml`) :
+- Push sur `main` → typecheck + Jest (267 tests) sur `ubuntu-latest` Node 20
+- Pas de cache, pas de PR trigger — projet solo, overhead non justifié
+- Commit `62f0172`
+
+### Décisions techniques
+- CI minimal (option A) — un seul job, pas de cache, trigger push main uniquement
+- `working-directory: app` dans chaque step (le code est dans le sous-dossier `app/`)
+
+### Prochaine étape
+- Timer circulaire SVG (RestPhase + mode durée) — react-native-svg déjà installé
+- Puis `weight_ratio` back-off, puis templates
+
+---
+
 ## Session 20 — 2026-06-09 — Cycle rotatif : home screen chips + MCP config
 
 ### Réalisé
