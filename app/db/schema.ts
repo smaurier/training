@@ -147,4 +147,7 @@ export const MIGRATIONS: string[] = [
 
   // v5 — descriptions exercices
   `ALTER TABLE exercises ADD COLUMN description TEXT;`,
+
+  // v6 — weight_ratio pour blocs Back-off
+  `ALTER TABLE sets ADD COLUMN weight_ratio REAL;`,
 ];

@@ -54,6 +54,7 @@ export interface Set {
   rest_duration: number;
   order_index: number;
   duration_seconds: number | null;
+  weight_ratio: number | null;
 }
 
 export interface SessionLog {
