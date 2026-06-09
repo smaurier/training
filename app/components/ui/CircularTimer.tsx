@@ -3,10 +3,10 @@ import { useColorScheme } from '@/components/useColorScheme';
 import Colors from '@/constants/Colors';
 
 interface CircularTimerProps {
-  progress: number;   // 0–1 : 1 = plein, 0 = vide
-  remaining: number;  // secondes affichées au centre
-  label?: string;     // texte sous la valeur (ex: "REPOS", "EN COURS…")
-  size?: number;      // diamètre px, défaut 160
+  progress: number;
+  remaining: number;
+  label?: string;
+  size?: number;
 }
 
 function arcColor(progress: number): string {
@@ -17,8 +17,9 @@ function arcColor(progress: number): string {
 }
 
 function formatTime(seconds: number): string {
-  const m = Math.floor(seconds / 60);
-  const s = seconds % 60;
+  const n = Math.max(0, Math.round(seconds));
+  const m = Math.floor(n / 60);
+  const s = n % 60;
   return `${m}:${s.toString().padStart(2, '0')}`;
 }
 
@@ -45,7 +46,6 @@ export function CircularTimer({ progress, remaining, label, size = 160 }: Circul
       importantForAccessibility="no"
     >
       <G rotation="-90" origin={`${cx}, ${cy}`}>
-        {/* Track gris */}
         <Circle
           cx={cx}
           cy={cy}
@@ -54,7 +54,6 @@ export function CircularTimer({ progress, remaining, label, size = 160 }: Circul
           strokeWidth={strokeWidth}
           fill="none"
         />
-        {/* Arc coloré */}
         <Circle
           cx={cx}
           cy={cy}
@@ -67,7 +66,6 @@ export function CircularTimer({ progress, remaining, label, size = 160 }: Circul
           fill="none"
         />
       </G>
-      {/* Valeur numérique */}
       <SvgText
         x={cx}
         y={label ? cy - size * 0.04 : cy + size * 0.06}
@@ -78,14 +76,13 @@ export function CircularTimer({ progress, remaining, label, size = 160 }: Circul
       >
         {formatTime(remaining)}
       </SvgText>
-      {/* Label optionnel */}
       {label ? (
         <SvgText
           x={cx}
           y={cy + size * 0.12}
           textAnchor="middle"
           fill={isDone ? '#16a34a' : colors.textSecondary}
-          fontSize={11}
+          fontSize={Math.round(size * 0.07)}
           fontWeight="600"
         >
           {label.toUpperCase()}
