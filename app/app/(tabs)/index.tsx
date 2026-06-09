@@ -1,4 +1,5 @@
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
+import type { StyleProp, ViewStyle } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { useCallback } from 'react';
 import { Ionicons } from '@expo/vector-icons';
@@ -31,8 +32,8 @@ export default function HomeScreen() {
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.hero}>
-        <Ionicons name="barbell-outline" size={52} color={colors.primary} />
-        <Text style={[styles.title, { color: colors.text }]}>Prêt à s'entraîner ?</Text>
+        <Ionicons name="barbell-outline" size={52} color={colors.primary} importantForAccessibility="no" accessibilityElementsHidden={true} />
+        <Text style={[styles.title, { color: colors.text }]} accessibilityRole="header">Prêt à s'entraîner ?</Text>
       </View>
 
       {loading ? (
@@ -74,10 +75,10 @@ export default function HomeScreen() {
             showsHorizontalScrollIndicator={false}
             style={styles.chipsScroll}
             contentContainerStyle={styles.chipsRow}
+            accessibilityRole="radiogroup"
+            accessibilityLabel="Séances du programme"
           >
             <View
-              accessibilityRole="radiogroup"
-              accessibilityLabel="Séances du programme"
               style={styles.chipsInner}
             >
               {workouts.map((w: Workout) => {
@@ -93,9 +94,9 @@ export default function HomeScreen() {
                     style={[
                       styles.chip,
                       { borderColor: colors.border },
-                      ...(isSelected ? [{ backgroundColor: colors.primary, borderColor: colors.primary }] : []),
-                      ...(!isSelected && isSug ? [{ borderColor: colors.primary, opacity: 0.7 }] : []),
-                    ]}
+                      isSelected && { backgroundColor: colors.primary, borderColor: colors.primary },
+                      !isSelected && isSug && { borderColor: colors.primary, opacity: 0.7 },
+                    ] as StyleProp<ViewStyle>}
                   >
                     <Text style={[
                       styles.chipText,
@@ -116,7 +117,7 @@ export default function HomeScreen() {
             onPress={() => router.push({ pathname: '/session/[workoutId]' as any, params: { workoutId: String(selectedWorkout.id) } })}
             style={[styles.startBtn, { backgroundColor: colors.primary }]}
           >
-            <Ionicons name="play" size={18} color="#fff" />
+            <Ionicons name="play" size={18} color="#fff" importantForAccessibility="no" accessibilityElementsHidden={true} />
             <Text style={styles.startBtnText}>Démarrer</Text>
           </PressableA11y>
         </View>

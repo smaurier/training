@@ -1,9 +1,10 @@
-import { Pressable, PressableProps, StyleSheet, ViewStyle } from 'react-native';
+import { Pressable, PressableProps, StyleSheet } from 'react-native';
+import type { StyleProp, ViewStyle } from 'react-native';
 
 interface PressableA11yProps extends Omit<PressableProps, 'accessibilityLabel' | 'style'> {
   accessibilityLabel: string;
   accessibilityRole?: PressableProps['accessibilityRole'];
-  style?: ViewStyle | ViewStyle[];
+  style?: StyleProp<ViewStyle>;
 }
 
 export function PressableA11y({
