@@ -4,6 +4,43 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 
 ---
 
+## Session 20 — 2026-06-09 — Cycle rotatif : home screen chips + MCP config
+
+### Réalisé
+
+**Cycle rotatif — carte home interactive** : remplace la carte statique "PROCHAINE SÉANCE" par une carte avec chips de sélection par workout.
+
+- **`findLatestDatesPerWorkout`** (`ISessionLogRepository`, `InMemorySessionLogRepository`, `SQLiteSessionLogRepository`, `sessionLogRepository.contract.ts`) : nouvelle méthode `SELECT workout_id, MAX(started_at) GROUP BY workout_id`. 4 tests contrat. Type SQLite corrigé `string | null` pour `MAX()` nullable.
+- **`useHomeWorkout`** (`hooks/useHomeWorkout.ts` + `useHomeWorkout.test.ts`) : hook encapsulant chargement programme actif + workouts triés + suggestion `getNextWorkout` + `lastDates`. `selectWorkout(w)` local sans persistance. Guard race condition via `refreshIdRef` (latest-wins). 6 tests `@testing-library/react-native` (loading, no program, sorted workouts, selectWorkout, lastDates, error path).
+- **`(tabs)/index.tsx`** : réécriture complète. Chips horizontal ScrollView, label "PROCHAINE SÉANCE" / "SÉANCE CHOISIE", `formatRelativeDate` (calendar midnight diff), `useFocusEffect` dans l'écran. A11y : `accessibilityRole="radio"` + `accessibilityState.selected` sur chips, `minHeight: 44`, icônes décoratives masquées, titre `accessibilityRole="header"`.
+- **`PressableA11y`** : `style` élargi à `StyleProp<ViewStyle>`, `accessibilityRole` prop explicite.
+
+### Décisions techniques
+- `useFocusEffect` dans l'écran (pas dans le hook) — cohérent avec tous les autres onglets.
+- Pas de persistance de la sélection manuelle : retour à la suggestion du cycle au focus-out. Intentionnel.
+- `borderStyle: 'dashed'` non utilisé — Android unreliable. Chip suggérée non sélectionnée : `borderColor: colors.primary + opacity: 0.7`.
+- `accessibilityRole="radiogroup"` invalide en RN (web ARIA only) — supprimé. Chips avec `radio` + `selected` suffisent.
+- `refreshIdRef` pattern (latest-wins token) vs `cancelled` flag — plus robuste sur appels concurrents.
+- `formatRelativeDate` : midnight calendar comparison (`setHours(0,0,0,0)`) vs elapsed ms — évite "Aujourd'hui" pour séance d'hier à 23h.
+
+### Fin de session précédente (Session 19 suite)
+- **Task #26** : fix timer durée auto-start + affichage `lastSetLog` dans RunningPhase. Commit `2c98e5d`.
+
+### MCP config
+- `caveman-shrink` standalone supprimé (manquait upstream arg).
+- Ajout `github` MCP (caveman-shrink → @modelcontextprotocol/server-github).
+- Ajout `sqlite` MCP (caveman-shrink → @modelcontextprotocol/server-sqlite → `dev.db`).
+
+### Process
+- Subagent-driven development : 3 tâches, spec review + code quality review par tâche + final review.
+- 267/267 tests, typecheck clean, pushé sur `main`.
+
+### Prochaine étape
+- Tester en conditions réelles : vérifier chips, dates, suggestion cycle après vraies séances
+- Vérifier sur Android : `opacity: 0.7` chip suggérée lisible
+
+---
+
 ## Session 19 — 2026-06-09 — Bloc B UX Pipeline : RestPhase + ExerciseTransitionPhase + descriptions
 
 ### Réalisé
