@@ -458,6 +458,20 @@ const EXTRA_EXERCISES: ExerciseDefinition[] = [
     technical_notes: 'Amplitude complète : talon bas puis pointe haute. Pause en haut et en bas. Poids sur l\'avant du pied.',
     description: 'Machine mollets debout ou avec barre. Extension plantaire en position debout. Isole les mollets (gastrocnémiens et soléaires).',
   },
+  {
+    name: 'Curl marteau haltères',
+    type: 'musculation',
+    muscle_groups: '["biceps","brachio-radial","avant-bras"]',
+    technical_notes: 'Prise neutre (marteau). Coudes fixes contre les flancs. Montée jusqu\'à la contraction complète.',
+    description: 'Haltères en prise neutre, pouce vers le haut. Travaille le biceps brachial, le brachio-radial et les avant-bras. Complément classique du curl supination.',
+  },
+  {
+    name: 'Extensions quadriceps',
+    type: 'musculation',
+    muscle_groups: '["quadriceps"]',
+    technical_notes: 'Dos plat contre le dossier. Extension complète, pause en haut. Descente contrôlée.',
+    description: 'Machine à extension de jambes. Isolation du quadriceps. Souvent utilisé en finition ou pour la définition musculaire.',
+  },
 ];
 
 const BASE_EXERCISE_DESCRIPTIONS: Record<string, string> = {
