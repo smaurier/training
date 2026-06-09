@@ -31,7 +31,7 @@ export function ExerciseStartingWeightPhase({
     }
   }
 
-  const isValid = weight.trim().length > 0 && !isNaN(parseFloat(weight));
+  const isValid = weight.trim().length > 0 && !isNaN(parseFloat(weight.replace(',', '.')));
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>

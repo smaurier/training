@@ -50,7 +50,11 @@ export default function SessionScreen() {
 
   const handleStartingWeightConfirm = useCallback(async (weight: number) => {
     await session.setStartingWeight(weight);
-    await refresh();
+    try {
+      await refresh();
+    } catch {
+      // refresh() failed but weight was already set; next navigation will reload
+    }
   }, [session, refresh]);
 
   const handleBack = useCallback(() => router.back(), [router]);
