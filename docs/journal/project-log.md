@@ -4,6 +4,45 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 
 ---
 
+## Session 24 — 2026-06-09 — Templates de programmes
+
+### Réalisé
+
+**Feature complète** : bibliothèque de 5 programmes importables depuis l'onglet Programmes.
+
+**Migration v7** (`db/schema.ts`) : `ALTER TABLE programs ADD COLUMN template_id TEXT`. `Program.template_id: string | null` dans `types.ts`. `CreateProgramDto` : `template_id?` optionnel (non breaking). SQLite + InMemory repos mis à jour. Commit `c11fa30`.
+
+**Nouveaux exercices** (`db/seeds.ts`) : 12 exercices ajoutés — Soulevé de terre jambes tendues, Tirage poitrine, Skull crusher, Oiseau haltères, Élévations frontales, Écarté couché haltères, Tractions lestées, Curl biceps barre, Élévations latérales, Mollets debout, Curl marteau haltères, Extensions quadriceps. Commits `08aef0b` → `1e17169`.
+
+**Templates** (`data/templates.ts`) : 5 définitions TypeScript — 5×5 Stronglifts, Full Body 3j, Upper/Lower 4j, Bro Split 5j, Arnold Split 6j. Types : `TemplateDefinition`, `WorkoutTemplate`, `ExerciseTemplate`. Helpers `s()` / `repeat()` / `work()`. Commit `b384b68`.
+
+**TemplateService** (`services/TemplateService.ts`) : TDD, 7 tests. `importTemplate(template, name, ...repos): Promise<number>` + `isTemplateImported(programs, templateId): boolean`. Validation exercices avant insertion, structure workout → workoutExercise → block → set. Commit `4380a99`.
+
+**UI** :
+- `@gorhom/bottom-sheet` + `GestureHandlerRootView` dans `_layout.tsx`. Commit `e40119d`.
+- `AddProgrammeBottomSheet` : 2 choix (créer vide / importer). Commit `ab3ba87`.
+- `import-template.tsx` : liste templates sélectionnables, input nom personnalisable, warning si doublon, bouton Importer. A11y : radiogroup, opacity disabled. Commits `0faa40a`, `af95ca9`.
+- `programmes.tsx` : FAB → BottomSheet. Commit `1172cf6`.
+
+280/280 tests passent.
+
+### Décisions techniques
+- Templates = objets TypeScript purs (pas de DB), lookup par nom d'exercice au moment de l'import
+- `template_id` nullable dans `programs` — NULL = programme perso, non-null = importé
+- Doublon non bloquant — warning + suggestion de nommer différemment
+- Programme importé inactif par défaut (`is_active: 0`)
+- `isTemplateImported` pure function (pas async) — programmes déjà en mémoire via `usePrograms()`
+
+### Problèmes rencontrés
+- "Soulevé de terre" déjà dans seeds (BASE_EXERCISES) → doublon détecté par review, retiré
+- 8 exercices manquants au moment de la review des templates (noms différents dans seeds) → ajoutés itérativement
+- Ordre des tâches plan : Task 4 (templates defs) doit précéder Task 5 (TemplateService) pour éviter erreur tsc sur module manquant
+
+### Prochaine étape
+- Onboarding guidé (priorité haute backlog)
+
+---
+
 ## Session 23 — 2026-06-09 — Weight ratio back-off
 
 ### Réalisé
