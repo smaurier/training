@@ -76,6 +76,10 @@ function RootLayoutNav() {
             options={{ presentation: 'modal', title: 'Programme' }}
           />
           <Stack.Screen
+            name="import-template"
+            options={{ presentation: 'modal', title: 'Importer un template' }}
+          />
+          <Stack.Screen
             name="programme/[id]"
             options={{ title: 'Programme' }}
           />
