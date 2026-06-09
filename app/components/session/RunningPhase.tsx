@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, ScrollView, Vibration } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { PressableA11y } from '@/components/ui/PressableA11y';
+import { CircularTimer } from '@/components/ui/CircularTimer';
 import type { WorkoutExerciseDetail, BlockWithSets } from '@/services/WorkoutExerciseService';
 import type { Set as TrainingSet } from '@/db/types';
 import type { SetActual, LastSetLog } from '@/services/SessionService';
@@ -196,15 +197,17 @@ export function RunningPhase({ exercise, block, set, progressLabel, timer, onVal
             <Text style={[styles.targetText, { color: colors.text }]}>{formatTime(set.duration_seconds ?? 0)}</Text>
           </View>
 
-          {/* Décompte — affiché seulement après lancement */}
           {timerStarted && (
-            <View style={[styles.timerContainer, { backgroundColor: timerDone ? '#16a34a15' : colors.surface, borderColor: timerDone ? '#16a34a' : colors.primary }]}>
-              <Text style={[styles.timerText, { color: timerDone ? '#16a34a' : colors.primary }]}>
-                {formatTime(countdown)}
-              </Text>
-              <Text style={[styles.timerLabel, { color: colors.textSecondary }]}>
-                {timerDone ? 'TERMINÉ ✓' : 'EN COURS…'}
-              </Text>
+            <View
+              accessible={true}
+              accessibilityLabel={`Temps restant : ${countdown} secondes${timerDone ? ', terminé' : ''}`}
+            >
+              <CircularTimer
+                progress={countdown / (set.duration_seconds ?? 1)}
+                remaining={countdown}
+                label={timerDone ? 'TERMINÉ ✓' : 'EN COURS…'}
+                size={160}
+              />
             </View>
           )}
 
