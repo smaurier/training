@@ -386,6 +386,57 @@ const EXTRA_EXERCISES: ExerciseDefinition[] = [
     technical_notes: 'À quatre pattes, genoux écartés au-delà de la largeur des hanches, pieds vers l\'extérieur. Reculer doucement les fesses. TRÈS léger — pas de douleur articulaire. Début de travail grand écart latéral.',
     description: 'En quadrupédie, écarter les genoux au maximum en gardant les pieds dans l\'axe des genoux. S\'asseoir progressivement vers l\'arrière. Ouverture profonde des hanches.',
   },
+
+  // ── Exercices templates ────────────────────────────────────────────────────
+  {
+    name: 'Soulevé de terre',
+    type: 'musculation',
+    muscle_groups: '["dos","jambes","lombaires"]',
+    technical_notes: 'Dos plat, barre contre les tibias. Pousser le sol, ne pas tirer. Hanches et épaules montent ensemble.',
+    description: 'Barre au sol, prise en pronation ou alternée. Pied à largeur de hanches. Garder la barre proche du corps sur toute la montée. Mouvement fondateur de la force.',
+  },
+  {
+    name: 'Soulevé de terre jambes tendues',
+    type: 'musculation',
+    muscle_groups: '["ischio-jambiers","lombaires","fessiers"]',
+    technical_notes: 'Jambes quasi tendues, dos plat. Descente contrôlée jusqu\'au milieu du tibia. Étirement des ischio-jambiers.',
+    description: 'Barre ou haltères, descente avec le buste en gardant le dos plat. Idéal pour les ischio-jambiers et la chaîne postérieure. Ne pas arrondir le bas du dos.',
+  },
+  {
+    name: 'Tirage poitrine',
+    type: 'musculation',
+    muscle_groups: '["dos","biceps","deltoïdes postérieurs"]',
+    technical_notes: 'Prise large, tirer vers le haut de la poitrine. Coudes vers le bas et en arrière.',
+    description: 'Machine ou poulie haute. Tirer la barre vers le sternum en serrant les omoplates. Dos légèrement arqué. Éviter de tirer derrière la nuque.',
+  },
+  {
+    name: 'Skull crusher',
+    type: 'musculation',
+    muscle_groups: '["triceps"]',
+    technical_notes: 'Coudes fixes, barre descend vers le front ou derrière la tête. Étirement profond des triceps.',
+    description: 'Allongé sur un banc, barre EZ ou barre droite. Descente lente vers le front en gardant les coudes fixes. Extension explosive. Excellent pour la masse des triceps.',
+  },
+  {
+    name: 'Oiseau haltères',
+    type: 'musculation',
+    muscle_groups: '["deltoïdes postérieurs","trapèzes","rhomboïdes"]',
+    technical_notes: 'Buste penché à 45° ou 90°. Coudes légèrement fléchis, mouvement en arc. Cibler les deltoïdes postérieurs.',
+    description: 'Assis penché en avant ou debout incliné. Élever les haltères latéralement en ciblant l\'arrière des épaules. Mouvement lent et contrôlé.',
+  },
+  {
+    name: 'Élévations frontales',
+    type: 'musculation',
+    muscle_groups: '["deltoïdes antérieurs"]',
+    technical_notes: 'Monter jusqu\'à hauteur des épaules ou légèrement au-dessus. Coudes quasi tendus. Pas d\'élan.',
+    description: 'Haltères ou barre, bras tendus devant soi. Isolation de la partie antérieure de l\'épaule. Complémentaire aux élévations latérales.',
+  },
+  {
+    name: 'Écarté couché haltères',
+    type: 'musculation',
+    muscle_groups: '["pectoraux","deltoïdes antérieurs"]',
+    technical_notes: 'Coudes légèrement fléchis. Descente en arc large jusqu\'à étirement des pectoraux. Remonter en contractant.',
+    description: 'Allongé sur un banc plat, haltères en main. Ouvrir les bras en arc pour étirer les pectoraux. Remonter sans verrouiller les coudes. Excellent pour l\'étirement et la contraction des pecs.',
+  },
 ];
 
 const BASE_EXERCISE_DESCRIPTIONS: Record<string, string> = {
