@@ -12,7 +12,11 @@ import type { Workout } from '@/db/types';
 
 function formatRelativeDate(isoDate: string | null | undefined): string {
   if (!isoDate) return 'Jamais faite';
-  const diffDays = Math.floor((Date.now() - new Date(isoDate).getTime()) / 86_400_000);
+  const todayMidnight = new Date();
+  todayMidnight.setHours(0, 0, 0, 0);
+  const sessionMidnight = new Date(isoDate);
+  sessionMidnight.setHours(0, 0, 0, 0);
+  const diffDays = Math.round((todayMidnight.getTime() - sessionMidnight.getTime()) / 86_400_000);
   if (diffDays === 0) return "Aujourd'hui";
   if (diffDays === 1) return 'Hier';
   return `il y a ${diffDays} jours`;
@@ -75,8 +79,6 @@ export default function HomeScreen() {
             showsHorizontalScrollIndicator={false}
             style={styles.chipsScroll}
             contentContainerStyle={styles.chipsRow}
-            accessibilityRole="radiogroup"
-            accessibilityLabel="Séances du programme"
           >
             <View
               style={styles.chipsInner}

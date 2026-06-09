@@ -40,7 +40,7 @@ export class SQLiteSessionLogRepository implements ISessionLogRepository {
     for (const id of workoutIds) result.set(id, null);
     if (workoutIds.length === 0) return result;
     const placeholders = workoutIds.map(() => '?').join(',');
-    const rows = await this.db.getAllAsync<{ workout_id: number; last_started: string }>(
+    const rows = await this.db.getAllAsync<{ workout_id: number; last_started: string | null }>(
       `SELECT workout_id, MAX(started_at) AS last_started FROM session_logs WHERE workout_id IN (${placeholders}) GROUP BY workout_id`,
       workoutIds
     );
