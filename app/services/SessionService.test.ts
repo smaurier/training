@@ -95,6 +95,21 @@ describe('SessionService.logSet', () => {
     const setLog = await service.logSet(session.id, 10, 5, { repsDone: 8, weightDone: 60, rpe: null });
     expect(setLog.rpe).toBeNull();
   });
+
+  it('stocke durationSeconds et distanceMeters pour les sets cardio', async () => {
+    const ctx = makeService();
+    const service = ctx.build();
+    const session = await service.startSession(1, { checkin_energy: 3, checkin_fatigue: 1, checkin_sleep: 2 });
+    const setLog = await service.logSet(session.id, 10, 5, {
+      repsDone: 1,
+      weightDone: 0,
+      rpe: null,
+      durationSeconds: 1800,
+      distanceMeters: 5000,
+    });
+    expect(setLog.duration_seconds).toBe(1800);
+    expect(setLog.distance_meters).toBe(5000);
+  });
 });
 
 describe('SessionService.completeSession', () => {
@@ -158,6 +173,23 @@ describe('SessionService.getNextWorkout', () => {
     await ctx.sessionLogRepo.save({ workout_id: otherWorkout.id, started_at: '2026-01-05T10:00:00.000Z', checkin_energy: null, checkin_fatigue: null, checkin_sleep: null, notes: null });
     const next = await service.getNextWorkout(1);
     expect(next?.name).toBe('Push');
+  });
+});
+
+describe('SessionService.setStartingWeight', () => {
+  it("ne modifie rien si l'exercice n'a pas de bloc Travail", async () => {
+    const ctx = makeService();
+    const service = ctx.build();
+    const exercise = await ctx.exerciseRepo.save({ name: 'Footing', type: 'cardio', muscle_groups: '[]', technical_notes: null, description: null, is_custom: 0, progression_step: 0, progression_threshold: 1 });
+    const workout = await ctx.workoutRepo.save({ program_id: 1, name: 'Cardio', order_index: 0 });
+    const we = await ctx.weRepo.save({ workout_id: workout.id, exercise_id: exercise.id, order_index: 0 });
+    const cardioBlock = await ctx.blockRepo.save({ workout_exercise_id: we.id, name: 'Cardio', order_index: 0, is_work_block: 0 });
+    const set = await ctx.setRepo.save({ block_id: cardioBlock.id, reps_min: 1, reps_max: 1, weight: null, weight_type: 'fixed', rest_duration: 0, order_index: 0 });
+
+    await service.setStartingWeight(we.id, 50);
+
+    const unchanged = await ctx.setRepo.findById(set.id);
+    expect(unchanged?.weight).toBeNull();
   });
 });
 
@@ -250,6 +282,23 @@ describe('SessionService.calculateProgressions', () => {
     expect(progressions[0].newWeight).toBe(72);
     const updatedSet = await ctx.setRepo.findById(set.id);
     expect(updatedSet?.weight).toBe(72);
+  });
+
+  it('ignore les exercices sans bloc Travail (cardio/durée)', async () => {
+    const ctx = makeService();
+    const service = ctx.build();
+    const exercise = await ctx.exerciseRepo.save({ name: 'Footing', type: 'cardio', muscle_groups: '[]', technical_notes: null, description: null, is_custom: 0, progression_step: 0, progression_threshold: 1 });
+    const workout = await ctx.workoutRepo.save({ program_id: 1, name: 'Cardio', order_index: 0 });
+    const we = await ctx.weRepo.save({ workout_id: workout.id, exercise_id: exercise.id, order_index: 0 });
+    const cardioBlock = await ctx.blockRepo.save({ workout_exercise_id: we.id, name: 'Cardio', order_index: 0, is_work_block: 0 });
+    const set = await ctx.setRepo.save({ block_id: cardioBlock.id, reps_min: 1, reps_max: 1, weight: null, weight_type: 'fixed', rest_duration: 0, order_index: 0 });
+
+    const session = await service.startSession(workout.id, { checkin_energy: 3, checkin_fatigue: 1, checkin_sleep: 3 });
+    await service.logSet(session.id, set.id, exercise.id, { repsDone: 1, weightDone: 0, rpe: null, durationSeconds: 1800, distanceMeters: 5000 });
+    await service.completeSession(session.id);
+
+    const progressions = await service.calculateProgressions(session.id);
+    expect(progressions).toHaveLength(0);
   });
 
   it('ignore les blocs non-travail pour le calcul', async () => {

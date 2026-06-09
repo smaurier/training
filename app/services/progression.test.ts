@@ -169,4 +169,8 @@ describe('isSessionSignificantFailure', () => {
       { reps_done: 8, reps_min: 8 },
     ])).toBe(false);
   });
+
+  it('false si liste vide', () => {
+    expect(isSessionSignificantFailure([])).toBe(false);
+  });
 });
