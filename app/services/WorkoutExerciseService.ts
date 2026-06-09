@@ -19,7 +19,7 @@ export interface WorkoutExerciseDetail {
   id: number;
   workout_id: number;
   order_index: number;
-  exercise: Pick<Exercise, 'id' | 'name' | 'type' | 'technical_notes' | 'muscle_groups'>;
+  exercise: Pick<Exercise, 'id' | 'name' | 'type' | 'technical_notes' | 'muscle_groups' | 'description'>;
   blocks: BlockWithSets[];
 }
 
@@ -174,6 +174,7 @@ export class WorkoutExerciseService {
         type: exercise.type,
         technical_notes: exercise.technical_notes,
         muscle_groups: exercise.muscle_groups,
+        description: exercise.description,
       },
       blocks: blocksWithSets,
     };
