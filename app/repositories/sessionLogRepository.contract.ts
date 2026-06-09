@@ -95,4 +95,34 @@ export function runSessionLogRepositoryContractTests(createRepo: () => ISessionL
       expect(all[2].started_at).toBe('2026-01-01T10:00:00.000Z');
     });
   });
+
+  describe('findLatestDatesPerWorkout', () => {
+    it('retourne null pour chaque workout sans sessions', async () => {
+      const map = await repo.findLatestDatesPerWorkout([1, 2]);
+      expect(map.get(1)).toBeNull();
+      expect(map.get(2)).toBeNull();
+    });
+
+    it('retourne la date started_at la plus récente par workout', async () => {
+      await repo.save({ ...dto1, workout_id: 1, started_at: '2026-01-01T10:00:00.000Z' });
+      await repo.save({ ...dto1, workout_id: 1, started_at: '2026-01-10T10:00:00.000Z' });
+      await repo.save({ ...dto1, workout_id: 2, started_at: '2026-01-05T10:00:00.000Z' });
+      const map = await repo.findLatestDatesPerWorkout([1, 2]);
+      expect(map.get(1)).toBe('2026-01-10T10:00:00.000Z');
+      expect(map.get(2)).toBe('2026-01-05T10:00:00.000Z');
+    });
+
+    it('retourne une Map vide si workoutIds est vide', async () => {
+      await repo.save(dto1);
+      const map = await repo.findLatestDatesPerWorkout([]);
+      expect(map.size).toBe(0);
+    });
+
+    it('met null pour un workout sans sessions parmi des workouts avec sessions', async () => {
+      await repo.save({ ...dto1, workout_id: 1, started_at: '2026-01-01T10:00:00.000Z' });
+      const map = await repo.findLatestDatesPerWorkout([1, 2]);
+      expect(map.get(1)).toBe('2026-01-01T10:00:00.000Z');
+      expect(map.get(2)).toBeNull();
+    });
+  });
 }

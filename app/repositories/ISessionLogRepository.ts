@@ -7,6 +7,7 @@ export interface ISessionLogRepository {
   findById(id: number): Promise<SessionLog | null>;
   findByWorkoutId(workoutId: number): Promise<SessionLog[]>;
   findLatestByWorkoutIds(workoutIds: number[]): Promise<SessionLog | null>;
+  findLatestDatesPerWorkout(workoutIds: number[]): Promise<Map<number, string | null>>;
   complete(id: number, endedAt: string): Promise<void>;
   findAll(): Promise<SessionLog[]>;
 }

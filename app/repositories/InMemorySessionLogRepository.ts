@@ -27,6 +27,17 @@ export class InMemorySessionLogRepository implements ISessionLogRepository {
     return matching[0] ?? null;
   }
 
+  async findLatestDatesPerWorkout(workoutIds: number[]): Promise<Map<number, string | null>> {
+    const result = new Map<number, string | null>();
+    for (const id of workoutIds) {
+      const logs = this.items
+        .filter(l => l.workout_id === id)
+        .sort((a, b) => b.started_at.localeCompare(a.started_at));
+      result.set(id, logs[0]?.started_at ?? null);
+    }
+    return result;
+  }
+
   async complete(id: number, endedAt: string): Promise<void> {
     const item = this.items.find(i => i.id === id);
     if (item) item.ended_at = endedAt;

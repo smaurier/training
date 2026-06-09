@@ -35,6 +35,19 @@ export class SQLiteSessionLogRepository implements ISessionLogRepository {
     );
   }
 
+  async findLatestDatesPerWorkout(workoutIds: number[]): Promise<Map<number, string | null>> {
+    const result = new Map<number, string | null>();
+    for (const id of workoutIds) result.set(id, null);
+    if (workoutIds.length === 0) return result;
+    const placeholders = workoutIds.map(() => '?').join(',');
+    const rows = await this.db.getAllAsync<{ workout_id: number; last_started: string }>(
+      `SELECT workout_id, MAX(started_at) AS last_started FROM session_logs WHERE workout_id IN (${placeholders}) GROUP BY workout_id`,
+      workoutIds
+    );
+    for (const row of rows) result.set(row.workout_id, row.last_started);
+    return result;
+  }
+
   async complete(id: number, endedAt: string): Promise<void> {
     await this.db.runAsync('UPDATE session_logs SET ended_at = ? WHERE id = ?', [endedAt, id]);
   }
