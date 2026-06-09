@@ -450,7 +450,7 @@ const PPL: { name: string; description: string; workouts: WorkoutSpec[] } = {
             {
               name: 'Travail',
               is_work: true,
-              sets: [f(4, 6, 120), f(6, 8, 120), f(6, 8, 120), f(6, 8, 120)],
+              sets: [f(8, 8, 120), f(8, 8, 120), f(8, 8, 120), f(8, 8, 120)],
             },
             {
               name: 'Back-off',
@@ -497,8 +497,8 @@ const PPL: { name: string; description: string; workouts: WorkoutSpec[] } = {
         { exercise: 'Hip hinge léger',       blocks: [mobilityBlock([mob(10)])] },
 
         // Musculation
-        { exercise: 'Tractions',           blocks: [workBlock([bw(6, 10, 120), bw(6, 10, 120), bw(6, 10, 120), bw(6, 10, 120)])] },
-        { exercise: 'Rowing barre',        blocks: [workBlock([f(6, 8, 90), f(6, 8, 90), f(6, 8, 90), f(6, 8, 90)])] },
+        { exercise: 'Tractions',           blocks: [workBlock([bw(8, 8, 90), bw(8, 8, 90), bw(8, 8, 90), bw(8, 8, 90)])] },
+        { exercise: 'Rowing barre',        blocks: [workBlock([f(8, 8, 90), f(8, 8, 90), f(8, 8, 90), f(8, 8, 90)])] },
         { exercise: 'Face pull',           blocks: [workBlock([f(15, 15, 60), f(15, 15, 60), f(15, 15, 60)])] },
         { exercise: 'Curl barre EZ',       blocks: [workBlock([f(10, 12, 60), f(10, 12, 60), f(10, 12, 60)])] },
         { exercise: 'Tirage poulie basse', blocks: [workBlock([f(10, 12, 60), f(10, 12, 60), f(10, 12, 60)])] },
@@ -536,7 +536,7 @@ const PPL: { name: string; description: string; workouts: WorkoutSpec[] } = {
         { exercise: 'Cossack squat',            blocks: [mobilityBlock([bw(8, 8, 0)])] },
 
         // Musculation
-        { exercise: 'Squat barre',       blocks: [workBlock([f(6, 8, 120), f(6, 8, 120), f(6, 8, 120), f(6, 8, 120)])] },
+        { exercise: 'Squat barre',       blocks: [workBlock([f(8, 8, 120), f(8, 8, 120), f(8, 8, 120), f(8, 8, 120)])] },
         { exercise: 'Romanian Deadlift', blocks: [workBlock([f(8, 8, 90), f(8, 8, 90), f(8, 8, 90)])] },
         { exercise: 'Fentes bulgares',   blocks: [workBlock([f(10, 10, 60), f(10, 10, 60), f(10, 10, 60)])] },
         { exercise: 'Leg curl poulie',   blocks: [workBlock([f(12, 12, 60), f(12, 12, 60), f(12, 12, 60)])] },
