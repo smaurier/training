@@ -73,36 +73,38 @@ export default function ImportTemplateModal() {
         <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>
           Choisir un programme
         </Text>
-        {TEMPLATES.map(template => {
-          const isSelected = selected?.id === template.id;
-          return (
-            <PressableA11y
-              key={template.id}
-              style={[
-                styles.card,
-                { backgroundColor: colors.surface, borderColor: isSelected ? colors.primary : colors.border },
-                isSelected && styles.cardSelected,
-              ]}
-              onPress={() => handleSelect(template)}
-              accessibilityLabel={`Template ${template.name}, ${template.level}, ${template.frequency}`}
-              accessibilityRole="radio"
-              accessibilityState={{ selected: isSelected }}
-            >
-              <View style={styles.cardRow}>
-                <Text style={[styles.cardName, { color: colors.text }]}>{template.name}</Text>
-                <Text style={[styles.cardFreq, { color: colors.textSecondary }]}>{template.frequency}</Text>
-              </View>
-              <View style={styles.cardRow}>
-                <Text style={[styles.cardLevel, { color: colors.textSecondary }]}>
-                  {LEVEL_LABELS[template.level]}
-                </Text>
-                <Text style={[styles.cardDesc, { color: colors.textSecondary }]} numberOfLines={1}>
-                  {template.workouts.length} séance{template.workouts.length > 1 ? 's' : ''}
-                </Text>
-              </View>
-            </PressableA11y>
-          );
-        })}
+        <View accessibilityRole="radiogroup" accessibilityLabel="Choisir un template">
+          {TEMPLATES.map(template => {
+            const isSelected = selected?.id === template.id;
+            return (
+              <PressableA11y
+                key={template.id}
+                style={[
+                  styles.card,
+                  { backgroundColor: colors.surface, borderColor: isSelected ? colors.primary : colors.border },
+                  isSelected && styles.cardSelected,
+                ]}
+                onPress={() => handleSelect(template)}
+                accessibilityLabel={`Template ${template.name}, ${template.level}, ${template.frequency}`}
+                accessibilityRole="radio"
+                accessibilityState={{ selected: isSelected }}
+              >
+                <View style={styles.cardRow}>
+                  <Text style={[styles.cardName, { color: colors.text }]}>{template.name}</Text>
+                  <Text style={[styles.cardFreq, { color: colors.textSecondary }]}>{template.frequency}</Text>
+                </View>
+                <View style={styles.cardRow}>
+                  <Text style={[styles.cardLevel, { color: colors.textSecondary }]}>
+                    {LEVEL_LABELS[template.level]}
+                  </Text>
+                  <Text style={[styles.cardDesc, { color: colors.textSecondary }]} numberOfLines={1}>
+                    {template.workouts.length} séance{template.workouts.length > 1 ? 's' : ''}
+                  </Text>
+                </View>
+              </PressableA11y>
+            );
+          })}
+        </View>
 
         {selected !== null && (
           <View style={styles.importSection}>
@@ -124,6 +126,8 @@ export default function ImportTemplateModal() {
               placeholderTextColor={colors.textSecondary}
               accessibilityLabel="Nom du programme"
               returnKeyType="done"
+              editable={true}
+              selectTextOnFocus={true}
             />
           </View>
         )}
@@ -133,7 +137,7 @@ export default function ImportTemplateModal() {
         <PressableA11y
           style={[
             styles.submitBtn,
-            { backgroundColor: canImport ? colors.primary : colors.surfaceElevated },
+            { backgroundColor: canImport ? colors.primary : colors.surfaceElevated, opacity: canImport ? 1 : 0.5 },
           ]}
           onPress={handleImport}
           disabled={!canImport}
