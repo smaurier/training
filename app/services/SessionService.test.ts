@@ -179,7 +179,7 @@ describe('SessionService.calculateProgressions', () => {
     return { exercise, workout, we, block, set };
   }
 
-  it('applique la progression si tous les sets de travail sont atteints (seuil 1)', async () => {
+  it('applique la progression si tous les sets de travail sont atteints', async () => {
     const ctx = makeService();
     const service = ctx.build();
     const { exercise, workout, set } = await seedWorkoutWithExercise(ctx, 1);
@@ -191,18 +191,19 @@ describe('SessionService.calculateProgressions', () => {
     expect(progressions).toHaveLength(1);
     expect(progressions[0].achieved).toBe(true);
     expect(progressions[0].oldWeight).toBe(80);
-    expect(progressions[0].newWeight).toBe(82.5);
+    expect(progressions[0].newWeight).toBe(82);
 
     const updatedSet = await ctx.setRepo.findById(set.id);
-    expect(updatedSet?.weight).toBe(82.5);
+    expect(updatedSet?.weight).toBe(82);
   });
 
-  it("ne progresse pas si reps_done < reps_max", async () => {
+  it("ne progresse pas si manque d'1 rep (hold)", async () => {
     const ctx = makeService();
     const service = ctx.build();
     const { exercise, workout, set } = await seedWorkoutWithExercise(ctx, 1);
     const session = await service.startSession(workout.id, { checkin_energy: 3, checkin_fatigue: 1, checkin_sleep: 3 });
-    await service.logSet(session.id, set.id, exercise.id, { repsDone: 6, weightDone: 80, rpe: 9 });
+    // reps_min = 6, reps_done = 5 → manque d'1 rep → hold
+    await service.logSet(session.id, set.id, exercise.id, { repsDone: 5, weightDone: 80, rpe: 9 });
     await service.completeSession(session.id);
 
     const progressions = await service.calculateProgressions(session.id);
@@ -211,42 +212,43 @@ describe('SessionService.calculateProgressions', () => {
     expect(updatedSet?.weight).toBe(80);
   });
 
-  it('ne progresse pas si seuil 2 non atteint (1 seule session réussie)', async () => {
+  it('ne décharge pas si échec significatif isolé (première fois)', async () => {
     const ctx = makeService();
     const service = ctx.build();
-    const { exercise, workout, set } = await seedWorkoutWithExercise(ctx, 2);
+    const { exercise, workout, set } = await seedWorkoutWithExercise(ctx, 1);
     const session = await service.startSession(workout.id, { checkin_energy: 3, checkin_fatigue: 1, checkin_sleep: 3 });
-    await service.logSet(session.id, set.id, exercise.id, { repsDone: 8, weightDone: 80, rpe: 7 });
+    // reps_min = 6, reps_done = 4 → échec significatif (≤ reps_min - 2)
+    await service.logSet(session.id, set.id, exercise.id, { repsDone: 4, weightDone: 80, rpe: 9 });
     await service.completeSession(session.id);
 
     const progressions = await service.calculateProgressions(session.id);
+    // Pas de session précédente en échec → pas de décharge
     expect(progressions[0].achieved).toBe(false);
-    expect(progressions[0].consecutiveSuccesses).toBe(1);
-    expect(progressions[0].threshold).toBe(2);
     const updatedSet = await ctx.setRepo.findById(set.id);
     expect(updatedSet?.weight).toBe(80);
   });
 
-  it('progresse si seuil 2 atteint (2 sessions réussies consécutives)', async () => {
+  it('applique le décharge si deux échecs significatifs consécutifs', async () => {
     const ctx = makeService();
     const service = ctx.build();
-    const { exercise, workout, set } = await seedWorkoutWithExercise(ctx, 2);
+    const { exercise, workout, set } = await seedWorkoutWithExercise(ctx, 1);
 
-    // Session 1 réussie (passée)
+    // Session 1 : échec significatif (reps_done = 4, reps_min = 6 → ≤ reps_min - 2)
     const session1 = await service.startSession(workout.id, { checkin_energy: 3, checkin_fatigue: 1, checkin_sleep: 3 });
-    await service.logSet(session1.id, set.id, exercise.id, { repsDone: 8, weightDone: 80, rpe: 7 });
+    await service.logSet(session1.id, set.id, exercise.id, { repsDone: 4, weightDone: 80, rpe: 9 });
     await service.completeSession(session1.id);
 
-    // Session 2 réussie (courante)
+    // Session 2 : échec significatif à nouveau → décharge attendue
     const session2 = await service.startSession(workout.id, { checkin_energy: 3, checkin_fatigue: 1, checkin_sleep: 3 });
-    await service.logSet(session2.id, set.id, exercise.id, { repsDone: 8, weightDone: 80, rpe: 7 });
+    await service.logSet(session2.id, set.id, exercise.id, { repsDone: 4, weightDone: 80, rpe: 9 });
     await service.completeSession(session2.id);
 
     const progressions = await service.calculateProgressions(session2.id);
-    expect(progressions[0].achieved).toBe(true);
-    expect(progressions[0].consecutiveSuccesses).toBe(2);
+    // applyDeload(80) = Math.floor(80 * 0.9 / 2) * 2 = 72
+    expect(progressions[0].achieved).toBe(false);
+    expect(progressions[0].newWeight).toBe(72);
     const updatedSet = await ctx.setRepo.findById(set.id);
-    expect(updatedSet?.weight).toBe(82.5);
+    expect(updatedSet?.weight).toBe(72);
   });
 
   it('ignore les blocs non-travail pour le calcul', async () => {
