@@ -31,6 +31,7 @@ export interface UseSessionResult {
   startSession: (checkin: CheckIn) => Promise<void>;
   validateSet: (actual: SetActual) => Promise<void>;
   skipSet: () => void;
+  setStartingWeight: (weight: number) => Promise<void>;
   progressions: ProgressionResult[];
   sessionStartedAt: number | null;
   totalSetsLogged: number;
@@ -130,10 +131,19 @@ export function useSession(workoutId: number, workoutDetails: WorkoutExerciseDet
     }
   }, [position, workoutDetails]);
 
+  const setStartingWeight = useCallback(async (weight: number) => {
+    if (!currentExercise) return;
+    try {
+      await service.setStartingWeight(currentExercise.id, weight);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Erreur poids de départ');
+    }
+  }, [service, currentExercise]);
+
   return {
     phase, sessionLogId, position,
     currentExercise, currentBlock, currentSet, progressLabel,
-    startSession, validateSet, skipSet,
+    startSession, validateSet, skipSet, setStartingWeight,
     progressions, sessionStartedAt, totalSetsLogged, error,
   };
 }
