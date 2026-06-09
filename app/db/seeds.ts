@@ -430,6 +430,34 @@ const EXTRA_EXERCISES: ExerciseDefinition[] = [
     technical_notes: 'Coudes légèrement fléchis. Descente en arc large jusqu\'à étirement des pectoraux. Remonter en contractant.',
     description: 'Allongé sur un banc plat, haltères en main. Ouvrir les bras en arc pour étirer les pectoraux. Remonter sans verrouiller les coudes. Excellent pour l\'étirement et la contraction des pecs.',
   },
+  {
+    name: 'Tractions lestées',
+    type: 'musculation',
+    muscle_groups: '["dos","biceps","deltoïdes postérieurs"]',
+    technical_notes: 'Même technique que les tractions, avec une ceinture lestée ou gilet lesté. Progression naturelle quand les tractions bodyweight sont maîtrisées.',
+    description: 'Tractions avec charge additionnelle. Prise pronation ou supination. Bras tendus en bas, menton au-dessus de la barre. Idéal pour l\'hypertrophie du dos.',
+  },
+  {
+    name: 'Curl biceps barre',
+    type: 'musculation',
+    muscle_groups: '["biceps","avant-bras"]',
+    technical_notes: 'Coudes fixes contre les flancs. Prise supination, barre remontée jusqu\'à la contraction complète. Pas d\'élan du dos.',
+    description: 'Curl avec barre droite ou barre EZ. Permet des charges plus lourdes que les haltères. Mouvement de base pour la masse des biceps.',
+  },
+  {
+    name: 'Élévations latérales',
+    type: 'musculation',
+    muscle_groups: '["deltoïdes","trapèzes"]',
+    technical_notes: 'Coudes légèrement fléchis. Monter jusqu\'à hauteur des épaules. Contrôle en descente. Éviter l\'élan.',
+    description: 'Haltères ou câbles. Élévation latérale des bras pour isoler les deltoïdes latéraux. Base pour la largeur des épaules.',
+  },
+  {
+    name: 'Mollets debout',
+    type: 'musculation',
+    muscle_groups: '["mollets","soléaires"]',
+    technical_notes: 'Amplitude complète : talon bas puis pointe haute. Pause en haut et en bas. Poids sur l\'avant du pied.',
+    description: 'Machine mollets debout ou avec barre. Extension plantaire en position debout. Isole les mollets (gastrocnémiens et soléaires).',
+  },
 ];
 
 const BASE_EXERCISE_DESCRIPTIONS: Record<string, string> = {
