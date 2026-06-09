@@ -118,67 +118,85 @@ const BASE_EXERCISES = [
 ];
 
 // Exercices supplémentaires : PPL + mobilité/étirements
-const EXTRA_EXERCISES = [
+type ExerciseDefinition = {
+  name: string;
+  type: string;
+  muscle_groups: string;
+  technical_notes: string | null;
+  description?: string;
+};
+
+const EXTRA_EXERCISES: ExerciseDefinition[] = [
   // ── Musculation PPL ────────────────────────────────────────────────────────
   {
     name: 'Crunch poulie haute',
     type: 'musculation',
     muscle_groups: '["abdominaux"]',
     technical_notes: 'Corde à la poulie haute. Enrouler le bassin vers le bas, ne pas tirer uniquement avec les bras.',
+    description: 'Agenouillé face à la poulie, mains derrière la tête ou tenant la corde. Fléchir le buste en contractant les abdos, pas en tirant avec les bras.',
   },
   {
     name: 'Face pull',
     type: 'musculation',
     muscle_groups: '["deltoïdes postérieurs","trapèzes","rotateurs externes"]',
     technical_notes: 'Corde à la poulie haute, coudes hauts et en arrière. Tirer vers le visage. Compense le travail de poussée.',
+    description: 'Poulie haute, prise en pronation ou neutre. Tirer vers le visage en ouvrant les coudes à 90°. Finir avec les mains derrière les oreilles. Ideal pour la santé des épaules.',
   },
   {
     name: 'Curl barre EZ',
     type: 'musculation',
     muscle_groups: '["biceps","brachial"]',
     technical_notes: 'Prise semi-supinée sur la barre EZ. Coudes fixes contre le buste. Amplitude complète.',
+    description: 'Coudes fixes le long du corps. Montée jusqu\'à contraction maximale du biceps, descente lente et complète. La barre EZ réduit la pression sur les poignets.',
   },
   {
     name: 'Tirage poulie basse',
     type: 'musculation',
     muscle_groups: '["grand dorsal","rhomboïdes","biceps"]',
     technical_notes: 'Assis face à la poulie basse. Tirer vers le nombril, coudes proches du corps. Contraction maximale en fin de mouvement.',
+    description: 'Assis face à la poulie, légère inclinaison du buste. Tirer vers le ventre en serrant les omoplates. Retour contrôlé en gardant le dos droit.',
   },
   {
     name: 'Relevés de jambes suspendu',
     type: 'musculation',
     muscle_groups: '["abdominaux","fléchisseurs de hanche"]',
     technical_notes: 'Suspendu à une barre. Lever les jambes en basculant le bassin vers le haut. Contrôler la descente.',
+    description: 'Suspendu à la barre, jambes tendues ou genoux fléchis selon niveau. Monter les hanches en contractant les abdos, pas en se balançant. Descente lente.',
   },
   {
     name: 'Romanian Deadlift',
     type: 'musculation',
     muscle_groups: '["ischio-jambiers","fessiers","érecteurs du rachis"]',
     technical_notes: 'Dos neutre impératif. Barre proche des jambes, descendre jusqu\'à tension maximale des ischios. Genoux légèrement fléchis.',
+    description: 'Barre proche du corps, jambes quasi-tendues (légère flexion). Descente en poussant les hanches vers l\'arrière, sentir l\'étirement des ischiojambiers. Remonter en contractant les fessiers.',
   },
   {
     name: 'Fentes bulgares',
     type: 'musculation',
     muscle_groups: '["quadriceps","fessiers","ischio-jambiers"]',
     technical_notes: 'Pied arrière posé sur un banc. Descente verticale du genou avant. Excellent pour l\'équilibre et le gainage unilatéral.',
+    description: 'Pied arrière sur un banc, pied avant loin devant. Descendre en gardant le buste droit jusqu\'à ce que le genou arrière frôle le sol. Pousser sur le talon avant pour remonter.',
   },
   {
     name: 'Leg curl poulie',
     type: 'musculation',
     muscle_groups: '["ischio-jambiers"]',
     technical_notes: 'Debout ou à genoux face à la poulie basse. Flexion du genou, contraction maximale. Descente lente.',
+    description: 'Allongé face vers le bas, chevilles fixées à la poulie. Fléchir les genoux jusqu\'à 90-130°, contracter les ischiojambiers en haut. Descente lente et complète.',
   },
   {
     name: 'Mollets debout sur step',
     type: 'musculation',
     muscle_groups: '["gastrocnémiens","soléaires"]',
     technical_notes: 'Amplitude maximale : descente complète, montée explosive. Descente 3 secondes. Dernière série : 10 demi-reps en bas.',
+    description: 'Pied avant du step, talons dans le vide. Descente complète en bas pour étirer, montée sur la pointe des pieds en contractant les mollets. Pause d\'une seconde en haut.',
   },
   {
     name: 'Pin Press',
     type: 'musculation',
     muscle_groups: '["triceps","pectoraux","deltoïdes antérieurs"]',
     technical_notes: 'Barre posée sur les sécurités avant chaque répétition. Renforce la phase initiale de poussée du développé couché.',
+    description: 'Press depuis les taquets à hauteur de poitrine, départ arrêté (pas d\'élan). Force pure sur la phase concentrique. Coudes sous la barre, gainage maximal.',
   },
 
   // ── Mobilité — avant séance ────────────────────────────────────────────────
@@ -187,42 +205,49 @@ const EXTRA_EXERCISES = [
     type: 'etirement',
     muscle_groups: '["deltoïdes","coiffe des rotateurs"]',
     technical_notes: 'Grands cercles lents vers l\'avant puis vers l\'arrière. Amplitude maximale.',
+    description: 'Bras tendus, grands cercles lents vers l\'avant puis vers l\'arrière. Ampleur maximale à chaque rotation. Déverrouille l\'articulation gléno-humérale.',
   },
   {
     name: 'Rotations thoraciques',
     type: 'etirement',
     muscle_groups: '["érecteurs du rachis","obliques"]',
     technical_notes: 'Assis ou à quatre pattes. Rotation du torse en ouvrant le coude vers le plafond. Reps = par côté.',
+    description: 'En quadrupédie ou assis. Placer une main derrière la tête, ouvrir le coude vers le plafond en faisant pivoter le thorax. Garder les hanches stables.',
   },
   {
     name: 'Band pull-aparts',
     type: 'etirement',
     muscle_groups: '["deltoïdes postérieurs","rhomboïdes","trapèzes"]',
     technical_notes: 'Bras tendus devant soi, élastique horizontal. Écarter les bras jusqu\'à toucher la poitrine. Coudes légèrement fléchis.',
+    description: 'Bras tendus devant soi, élastique tenu en pronation. Ouvrir les bras jusqu\'à toucher la poitrine avec l\'élastique, serrer les omoplates. Retour lent.',
   },
   {
     name: 'Suspension passive',
     type: 'etirement',
     muscle_groups: '["érecteurs du rachis","grand dorsal","épaules"]',
     technical_notes: 'Suspendu à une barre, relâcher complètement le dos. Décompresse la colonne vertébrale.',
+    description: 'Suspendu à la barre, corps détendu, épaules qui montent vers les oreilles. Laisser le poids du corps décompresser la colonne et les épaules. Respirer profondément.',
   },
   {
     name: 'Cat-cow',
     type: 'etirement',
     muscle_groups: '["érecteurs du rachis","abdominaux"]',
     technical_notes: 'À quatre pattes. Alterner arrondi du dos (cat) et creux du dos (cow). Synchroniser avec la respiration.',
+    description: 'En quadrupédie. Inspiration : creuser le dos, lever la tête et le coccyx (cow). Expiration : arrondir le dos, rentrer le menton et le bassin (cat). Mouvements fluides et synchronisés avec la respiration.',
   },
   {
     name: 'Hip hinge léger',
     type: 'etirement',
     muscle_groups: '["ischio-jambiers","fessiers","érecteurs du rachis"]',
     technical_notes: 'Debout, mains sur les hanches. Charnière au niveau des hanches, dos plat. Activation de la chaîne postérieure.',
+    description: 'Pieds à largeur d\'épaules, léger fléchissement des genoux. Pousser les hanches vers l\'arrière en gardant le dos plat, sentir l\'activation des ischiojambiers. Retour debout en poussant les hanches vers l\'avant.',
   },
   {
     name: 'Rotations poignets',
     type: 'etirement',
     muscle_groups: '["poignets","avant-bras"]',
     technical_notes: 'Bras tendus devant soi. Grands cercles lents dans les deux sens. Reps = par côté.',
+    description: 'Bras tendus devant soi, faire des cercles avec les poignets dans les deux sens. Amplitude maximale. Prépare les articulations pour les mouvements de pressing.',
   },
 
   // ── Étirements — après séance ──────────────────────────────────────────────
@@ -231,118 +256,148 @@ const EXTRA_EXERCISES = [
     type: 'etirement',
     muscle_groups: '["pectoraux","deltoïdes antérieurs"]',
     technical_notes: 'Bras à 90° contre un mur. Rotation lente du corps vers l\'opposé. Durée par côté.',
+    description: 'Bras à 90°, main et avant-bras contre le mur. Faire pivoter le corps vers l\'opposé jusqu\'à ressentir l\'étirement au niveau du pectoral et de l\'épaule. Maintenir sans forcer.',
   },
   {
     name: 'Child pose',
     type: 'etirement',
     muscle_groups: '["grand dorsal","érecteurs du rachis","épaules"]',
     technical_notes: 'À genoux, bras tendus devant soi, front au sol. Respiration profonde.',
+    description: 'Agenouillé, fesses vers les talons, bras tendus devant soi ou le long du corps. Relâcher complètement le dos et les épaules. Respiration abdominale profonde.',
   },
   {
     name: 'Couch stretch',
     type: 'etirement',
     muscle_groups: '["fléchisseurs de hanche","quadriceps"]',
     technical_notes: 'Pied arrière contre un mur, genou au sol. Avancer les hanches. Critique pour les coureurs. Durée par côté.',
+    description: 'Un genou au sol contre un mur, l\'autre pied devant. Redresser le buste pour intensifier l\'étirement du hip flexor et du quad. Tenir en respirant.',
   },
   {
     name: 'Respiration diaphragmatique',
     type: 'etirement',
     muscle_groups: '["diaphragme"]',
     technical_notes: 'Allongé sur le dos. Inspiration 4 sec, rétention 4 sec, expiration 6 sec. Durée totale.',
+    description: 'Allongé sur le dos, une main sur le ventre. Inspirer 4 secondes en gonflant le ventre, expirer 6 secondes en le rentrant. Active le système parasympathique, récupération active.',
   },
   {
     name: 'Étirement dorsaux',
     type: 'etirement',
     muscle_groups: '["grand dorsal","rhomboïdes"]',
     technical_notes: 'Bras croisés, traction vers la poitrine ou étirement latéral suspendu.',
+    description: 'Assis, saisir une barre ou l\'encadrement d\'une porte. Pousser les hanches vers l\'arrière en arrondissant le dos pour étirer les grands dorsaux.',
   },
   {
     name: 'Child pose latéral',
     type: 'etirement',
     muscle_groups: '["grand dorsal","intercostaux","obliques"]',
     technical_notes: 'Child pose avec bras décalés vers le côté. Tire la chaîne latérale. Durée par côté.',
+    description: 'Depuis child pose, marcher les mains vers un côté pour cibler le grand dorsal et les obliques. Maintenir en respirant.',
   },
   {
     name: 'Figure 4 stretch',
     type: 'etirement',
     muscle_groups: '["piriforme","fessiers","rotateurs externes de hanche"]',
     technical_notes: 'Allongé sur le dos, cheville posée sur le genou opposé. Tirer la cuisse vers la poitrine. Durée par côté.',
+    description: 'Allongé sur le dos, cheville sur le genou opposé. Tirer la jambe inférieure vers la poitrine pour étirer le piriforme et le fessier.',
   },
   {
     name: 'Deep squat hold',
     type: 'etirement',
     muscle_groups: '["hanches","chevilles","fessiers","adducteurs"]',
     technical_notes: 'Position squat profond maintenue, talons au sol si possible. Coudes contre les genoux pour ouvrir les hanches.',
+    description: 'Descendre en squat profond, talons au sol, bras tendus entre les genoux pour garder l\'équilibre. Relâcher progressivement les hanches, hanches, et chevilles.',
   },
   {
     name: 'Leg swings avant/arrière',
     type: 'etirement',
     muscle_groups: '["fléchisseurs de hanche","ischio-jambiers"]',
     technical_notes: 'Debout, appui sur un mur. Balancer la jambe en pendule avant/arrière. Amplitude progressive. Reps = par jambe.',
+    description: 'Debout sur un pied, balancer l\'autre jambe d\'avant en arrière avec amplitude croissante. Tenir un support si besoin. Déverrouille la hanche en flexion/extension.',
   },
   {
     name: 'Leg swings latéraux',
     type: 'etirement',
     muscle_groups: '["abducteurs","adducteurs","fléchisseurs de hanche"]',
     technical_notes: 'Debout, appui sur un mur. Balancer la jambe latéralement. Amplitude progressive. Reps = par jambe.',
+    description: 'Debout sur un pied, balancer l\'autre jambe latéralement avec amplitude croissante. Déverrouille l\'abduction/adduction de hanche.',
   },
   {
     name: 'Cossack squat',
     type: 'etirement',
     muscle_groups: '["adducteurs","hanches","chevilles","quadriceps"]',
     technical_notes: 'Squat latéral alterné. Jambe tendue d\'un côté, genou fléchi de l\'autre. Excellent pour la mobilité de hanche.',
+    description: 'Pieds très écartés (2x largeur épaules). Fléchir sur un côté en gardant l\'autre jambe tendue, pied à plat. Alterner les côtés en passant par le centre.',
   },
   {
     name: 'Étirement mollets',
     type: 'etirement',
     muscle_groups: '["gastrocnémiens","soléaires"]',
     technical_notes: 'Contre un mur ou sur un step. Jambe tendue pour gastrocnémien, légèrement fléchie pour soléaire. Durée par côté.',
+    description: 'Debout face à un mur, pied avant plié, pied arrière tendu talon au sol. Avancer le buste vers le mur pour intensifier. Maintenir en respirant. Effectuer les deux pieds.',
   },
   {
     name: 'Butterfly stretch',
     type: 'etirement',
     muscle_groups: '["adducteurs","fléchisseurs de hanche"]',
     technical_notes: 'Assis, plantes de pieds jointes, genoux vers le sol. Pencher légèrement le buste vers l\'avant.',
+    description: 'Assis, plantes des pieds collées, genoux ouverts vers le sol. Se pencher légèrement en avant, pousser doucement les genoux vers le bas avec les coudes.',
   },
   {
     name: 'Pigeon pose',
     type: 'etirement',
     muscle_groups: '["piriforme","fessiers","fléchisseurs de hanche"]',
     technical_notes: 'Jambe avant à 90°, jambe arrière tendue. Étirement profond des hanches. Essentiel pour les coureurs. Durée par côté.',
+    description: 'Depuis une planche, amener le genou avant vers la main homolatérale, jambe arrière tendue. S\'abaisser vers le sol pour étirer le piriforme et le fessier. Maintenir en respirant profondément.',
   },
   {
     name: 'Étirement épaule cross-body',
     type: 'etirement',
     muscle_groups: '["deltoïdes postérieurs","rhomboïdes"]',
     technical_notes: 'Bras croisé devant la poitrine, maintenu par le bras opposé. Durée par côté.',
+    description: 'Bras tendu passé devant le buste, l\'autre bras le tire vers l\'épaule opposée. Maintenir sans hausser l\'épaule. Relâcher les trapèzes.',
   },
 
-  // ── Footing — récupération et mobilité ────────────────────────────────────
+  // ── Footing + mobilité multi-plan ─────────────────────────────────────────
   {
     name: 'Footing',
     type: 'cardio',
     muscle_groups: '["cardio","membres inférieurs"]',
     technical_notes: 'Course continue. Durée variable (20–40 min). Valider quand le footing est terminé.',
+    description: 'Cadence cible 170-180 pas/min pour réduire l\'impact. Atterrissage sous le centre de gravité, pas en talon. Respiration rythmée 2-2 (2 pas inspire, 2 pas expire) ou 3-2 selon l\'intensité.',
   },
   {
     name: "World's Greatest Stretch",
     type: 'etirement',
     muscle_groups: '["fléchisseurs de hanche","ischio-jambiers","thoracique","épaules"]',
     technical_notes: 'Fente avant avec main au sol, rotation du buste en levant le bras vers le plafond. Mobilité multi-plan. Reps = par côté.',
+    description: 'Fente avant, main homolatérale au sol. Amener le coude vers le sol puis ouvrir le bras vers le plafond en rotation thoracique. Alterner les côtés. Mobilise hanche, thorax et épaule en un seul mouvement.',
   },
   {
     name: 'Pancake stretch',
     type: 'etirement',
     muscle_groups: '["adducteurs","ischio-jambiers","érecteurs du rachis"]',
     technical_notes: 'Assis au sol, jambes écartées au maximum. Incliner doucement le buste vers l\'avant, dos droit. Début de travail grand écart latéral. Progressif, sans forcer.',
+    description: 'Assis au sol, jambes tendues très écartées. Se pencher vers l\'avant en gardant le dos plat, tenter de poser la poitrine au sol. Progresser sans forcer.',
   },
   {
     name: 'Frog stretch',
     type: 'etirement',
     muscle_groups: '["adducteurs","hanches","fléchisseurs de hanche"]',
     technical_notes: 'À quatre pattes, genoux écartés au-delà de la largeur des hanches, pieds vers l\'extérieur. Reculer doucement les fesses. TRÈS léger — pas de douleur articulaire. Début de travail grand écart latéral.',
+    description: 'En quadrupédie, écarter les genoux au maximum en gardant les pieds dans l\'axe des genoux. S\'asseoir progressivement vers l\'arrière. Ouverture profonde des hanches.',
   },
 ];
+
+const BASE_EXERCISE_DESCRIPTIONS: Record<string, string> = {
+  'Développé couché barre': 'Barre dans l\'axe des mamelons, omoplates rétractées et déprimées contre le banc. Descente contrôlée jusqu\'au contact léger sur le thorax. Pousser en arc en gardant les coudes à 45-75° du tronc.',
+  'Développé incliné haltères': 'Banc incliné 30-45°. Haltères en pronation, descente jusqu\'aux épaules, coudes légèrement en dessous de la ligne des épaules. Pousser en convergeant vers le haut.',
+  'Élévations latérales haltères': 'Légère flexion des coudes, monter les bras jusqu\'à hauteur d\'épaules en rotation interne (pouces vers le bas). Descente lente et contrôlée. Éviter le balancement du buste.',
+  'Dips': 'Buste légèrement penché vers l\'avant pour cibler les pectoraux. Descente jusqu\'à ce que les épaules soient sous les coudes. Pousser fort en haut sans verrouiller les coudes.',
+  'Extension triceps poulie haute': 'Coudes fixes le long des oreilles, seuls les avant-bras bougent. Extension complète en bas, montée contrôlée. Éviter de décoller les coudes.',
+  'Tractions': 'Prise en pronation, largeur épaules ou légèrement plus large. Initier le mouvement avec les dorsaux en déprimant les omoplates. Monter jusqu\'au menton au-dessus de la barre, descente complète pour étirer les grands dorsaux.',
+  'Rowing barre': 'Buste à 45° ou horizontal, dos plat. Tirer la barre vers le nombril en serrant les omoplates à l\'arrivée. Descente complète et contrôlée. Coudes proches du corps.',
+  'Squat barre': 'Barre sur les trapèzes (low bar ou high bar), pieds à largeur épaules légèrement ouverts. Descente en poussant les genoux dans l\'axe des orteils, buste droit. Profondeur minimum parallèle. Sortie explosive.',
+};
 
 export async function seedExercises(db: SQLiteDatabase): Promise<void> {
   const existing = await db.getFirstAsync<{ count: number }>(
@@ -588,10 +643,19 @@ export async function seedProgram(db: SQLiteDatabase): Promise<void> {
     const row = await db.getFirstAsync<{ id: number }>('SELECT id FROM exercises WHERE name = ?', [ex.name]);
     if (!row) {
       await db.runAsync(
-        'INSERT INTO exercises (name, type, muscle_groups, technical_notes, is_custom) VALUES (?, ?, ?, ?, 0)',
-        [ex.name, ex.type, ex.muscle_groups, ex.technical_notes]
+        'INSERT INTO exercises (name, type, muscle_groups, technical_notes, description, is_custom) VALUES (?, ?, ?, ?, ?, 0)',
+        [ex.name, ex.type, ex.muscle_groups, ex.technical_notes, ex.description ?? null]
+      );
+    } else {
+      await db.runAsync(
+        'UPDATE exercises SET description = ? WHERE id = ?',
+        [ex.description ?? null, row.id]
       );
     }
+  }
+
+  for (const [name, desc] of Object.entries(BASE_EXERCISE_DESCRIPTIONS)) {
+    await db.runAsync('UPDATE exercises SET description = ? WHERE name = ?', [desc, name]);
   }
 
   const allEx = await db.getAllAsync<{ id: number; name: string }>('SELECT id, name FROM exercises');
