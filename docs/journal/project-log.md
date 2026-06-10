@@ -43,6 +43,48 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 
 ---
 
+## Session 25 — 2026-06-10 — Contrôles séance + Cycle rotatif + ESLint
+
+### Réalisé
+
+**T1 — ESLint** : `eslint-config-expo` installé, `eslint.config.js` (flat config ESLint 9), script `lint` dans `package.json`, step Lint dans CI (après typecheck, avant test). 22 violations pré-existantes corrigées (imports dupliqués, HTML entities non-échappées, hooks patterns). Commit `841e2e6`.
+
+**F2 — Annuler dernière série** :
+- `deleteBySetAndSession(setId, sessionLogId): Promise<void>` ajouté à `ISetLogRepository`, `InMemorySetLogRepository`, `SQLiteSetLogRepository` + 3 contrats TDD. Commit `493a035`.
+- `SessionService.deleteSetLog` wrapper. `HistoryEntry` interface, `positionHistory: useRef<HistoryEntry[]>`, `historySize: useState(0)`. `validateSet` pousse dans l'historique avant advance. `undoLastSet()` : peek-before-async pattern (pop uniquement si DELETE réussit), restaure position + phase `running`, décrémente `totalSetsLogged`. `canUndo = historySize > 0`. Commits `4033656`, `5773fb7`.
+- `RunningPhase` : bouton ↩ `arrow-undo-outline` dans header (row layout), `disabled + opacity 0.3` si `!canUndo`, `accessibilityState={{ disabled: !canUndo }}`. Commit `ef43d75`.
+
+**F1 — Passer l'exercice entier** :
+- `skipExercise()` dans `useSession` : clear `positionHistory`, advance `exerciseIdx+1 % length`, `exercise_transition` ou `summary` si dernier. Commit `45020d7`.
+- `RunningPhase` : bouton "Passer l'exercice →" + `@gorhom/bottom-sheet` local (ref `skipExerciseSheetRef`, 30%, backdrop sans double-close). BottomSheet : nom exercice, "Passer toutes les séries restantes ?", bouton destructif rouge + Annuler. Commit `2a35927`.
+- `[workoutId].tsx` : props `onSkipExercise`, `onUndo`, `canUndo` câblés. `Date.now()` déplacé de JSX vers `useEffect` + `summaryDurationSeconds` state. Commit inclus dans `2a35927`.
+
+**U10 — Cycle rotatif** :
+- `getLastCompletedWorkoutId(workoutIds): Promise<number | null>` dans `SQLiteSessionLogRepository` : `WHERE ended_at IS NOT NULL ORDER BY ended_at DESC LIMIT 1`. Commit `5dd3504`.
+- `WorkoutCard` : prop `isNext?: boolean`, badge pill "→ Prochain" (`colors.primary`, fontSize 11), `accessibilityLabel` inclut "prochaine séance" si `isNext`. Commit `dafa2e2`.
+- `programme/[id].tsx` : `nextWorkoutId` state, `useEffect([workouts])` avec cancel guard, modulo `(lastIdx + 1) % workouts.length`, fallback `workouts[0]` si aucun historique ou workout supprimé. Commits `dafa2e2`, `bf2f07c`.
+
+283/283 tests passent.
+
+### Décisions techniques
+- Undo : DELETE au lieu d'UPSERT — log propre supprimé, re-validate = INSERT normal
+- Peek-before-async pour `undoLastSet` : on ne pop qu'après succès DB, élimine tout besoin de rollback
+- `positionHistory` = `useRef` (mutation synchrone, pas de re-render) + `historySize` = `useState` (réactivité pour `canUndo`)
+- `skipExercise` clear positionHistory — pas d'undo cross-exercise boundary
+- Cycle rotatif = badge sur écran programme (pas widget home), `ended_at IS NOT NULL` = séances complètes seulement
+- ESLint flat config (SDK 54 + ESLint 9 imposent le format)
+
+### Problèmes rencontrés
+- Implémentation initiale `undoLastSet` : pop avant async → bug TOCTOU → corrigé peek pattern
+- `eslint-disable-next-line react-hooks/purity` : règle inexistante, commentaire supprimé
+- Backdrop BottomSheet : double-close Android supprimé (retrait `onPress` sur `BottomSheetBackdrop`)
+- Cancel guards manquants sur `useEffect` async dans `programme/[id].tsx` → ajoutés
+
+### Prochaine étape
+- Onboarding guidé (priorité haute backlog)
+
+---
+
 ## Session 23 — 2026-06-09 — Weight ratio back-off
 
 ### Réalisé
