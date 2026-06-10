@@ -96,6 +96,10 @@ export class SessionService {
     return setLog;
   }
 
+  async deleteSetLog(setId: number, sessionLogId: number): Promise<void> {
+    await this.setLogRepo.deleteBySetAndSession(setId, sessionLogId);
+  }
+
   async completeSession(sessionLogId: number): Promise<void> {
     await this.sessionLogRepo.complete(sessionLogId, new Date().toISOString());
   }

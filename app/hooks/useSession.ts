@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { SessionService, CheckIn, SetActual, ProgressionResult, LastSetLog } from '../services/SessionService';
 import { SQLiteSessionLogRepository } from '../repositories/SQLiteSessionLogRepository';
 import { SQLiteSetLogRepository } from '../repositories/SQLiteSetLogRepository';
@@ -20,6 +20,11 @@ export interface SessionPosition {
   setIdx: number;
 }
 
+interface HistoryEntry {
+  position: SessionPosition;
+  setId: number;
+}
+
 export interface UseSessionResult {
   phase: SessionPhase;
   sessionLogId: number | null;
@@ -31,6 +36,9 @@ export interface UseSessionResult {
   startSession: (checkin: CheckIn) => Promise<void>;
   validateSet: (actual: SetActual) => Promise<void>;
   skipSet: () => Promise<void>;
+  skipExercise: () => Promise<void>;
+  undoLastSet: () => Promise<void>;
+  canUndo: boolean;
   setStartingWeight: (weight: number) => Promise<void>;
   confirmTransition: () => void;
   confirmRest: () => void;
@@ -103,6 +111,9 @@ export function useSession(workoutId: number, workoutDetails: WorkoutExerciseDet
   const [nextLabel, setNextLabel] = useState('');
   const [lastSetLog, setLastSetLog] = useState<LastSetLog | null>(null);
 
+  const positionHistory = useRef<HistoryEntry[]>([]);
+  const [historySize, setHistorySize] = useState(0);
+
   const currentExercise = workoutDetails[position.exerciseIdx] ?? null;
   const currentBlock = currentExercise?.blocks[position.blockIdx] ?? null;
   const currentSet = currentBlock?.sets[position.setIdx] ?? null;
@@ -140,6 +151,8 @@ export function useSession(workoutId: number, workoutDetails: WorkoutExerciseDet
     if (!sessionLogId || !currentSet || !currentExercise) return;
     try {
       await service.logSet(sessionLogId, currentSet.id, currentExercise.exercise.id, actual);
+      positionHistory.current.push({ position: { ...position }, setId: currentSet.id });
+      setHistorySize(n => n + 1);
       setTotalSetsLogged(n => n + 1);
 
       const completedRestDuration = currentSet.rest_duration;
@@ -200,6 +213,28 @@ export function useSession(workoutId: number, workoutDetails: WorkoutExerciseDet
     }
   }, [service, sessionLogId, position, workoutDetails]);
 
+  const undoLastSet = useCallback(async () => {
+    if (!sessionLogId || positionHistory.current.length === 0) return;
+    const entry = positionHistory.current.pop()!;
+    setHistorySize(n => n - 1);
+    try {
+      await service.deleteSetLog(entry.setId, sessionLogId);
+      setTotalSetsLogged(n => n - 1);
+      setPosition(entry.position);
+      setPhase('running');
+    } catch (e) {
+      positionHistory.current.push(entry);
+      setHistorySize(n => n + 1);
+      setError(e instanceof Error ? e.message : 'Erreur annulation série');
+    }
+  }, [service, sessionLogId]);
+
+  const canUndo = historySize > 0;
+
+  const skipExercise = useCallback(async () => {
+    // implemented in next task
+  }, []);
+
   const setStartingWeight = useCallback(async (weight: number) => {
     if (!currentExercise) return;
     try {
@@ -212,7 +247,8 @@ export function useSession(workoutId: number, workoutDetails: WorkoutExerciseDet
   return {
     phase, sessionLogId, position,
     currentExercise, currentBlock, currentSet, progressLabel,
-    startSession, validateSet, skipSet, setStartingWeight,
+    startSession, validateSet, skipSet, skipExercise, undoLastSet, canUndo,
+    setStartingWeight,
     confirmTransition, confirmRest, restDuration, nextLabel,
     progressions, sessionStartedAt, totalSetsLogged, lastSetLog, error,
   };
