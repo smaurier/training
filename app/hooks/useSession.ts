@@ -215,16 +215,15 @@ export function useSession(workoutId: number, workoutDetails: WorkoutExerciseDet
 
   const undoLastSet = useCallback(async () => {
     if (!sessionLogId || positionHistory.current.length === 0) return;
-    const entry = positionHistory.current.pop()!;
-    setHistorySize(n => n - 1);
+    const entry = positionHistory.current[positionHistory.current.length - 1]!;
     try {
       await service.deleteSetLog(entry.setId, sessionLogId);
+      positionHistory.current.pop();
+      setHistorySize(n => n - 1);
       setTotalSetsLogged(n => n - 1);
       setPosition(entry.position);
       setPhase('running');
     } catch (e) {
-      positionHistory.current.push(entry);
-      setHistorySize(n => n + 1);
       setError(e instanceof Error ? e.message : 'Erreur annulation série');
     }
   }, [service, sessionLogId]);
