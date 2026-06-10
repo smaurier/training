@@ -84,12 +84,11 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
   const [countdown, setCountdown] = useState(set.duration_seconds ?? 0);
   const [timerDone, setTimerDone] = useState(false);
   const [timerStarted, setTimerStarted] = useState(false);
-  const [timerPaused, setTimerPaused] = useState(false);
   const [cardioMinutes, setCardioMinutes] = useState('');
   const [cardioDistance, setCardioDistance] = useState('');
 
   useEffect(() => {
-    if (!isDuration || !timerStarted || timerPaused) return;
+    if (!isDuration || !timerStarted) return;
     const interval = setInterval(() => {
       setCountdown(c => {
         if (c <= 1) {
@@ -102,7 +101,7 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
       });
     }, 1000);
     return () => clearInterval(interval);
-  }, [isDuration, timerStarted, timerPaused]);
+  }, [isDuration, timerStarted]);
 
   async function handleValidate() {
     if (loading) return;
@@ -123,8 +122,7 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
 
   function handleTimerPress() {
     if (timerDone) { handleDurationValidate(); return; }
-    if (!timerStarted) { setTimerStarted(true); return; }
-    setTimerPaused(p => !p);
+    if (!timerStarted) { setTimerStarted(true); }
   }
 
   async function handleDurationValidate() {
@@ -165,8 +163,8 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
       : set.weight != null
         ? `${convert(set.weight)} ${unitLabel}`
         : `— ${unitLabel}`;
-  const timerLabel = timerDone ? 'TERMINÉ ✓' : timerPaused ? 'PAUSE ⏸' : timerStarted ? 'EN COURS…' : 'APPUYER ▶';
-  const timerA11yLabel = timerDone ? "C'est fait — valider" : timerPaused ? 'Reprendre le décompte' : timerStarted ? 'Mettre en pause' : 'Lancer le décompte';
+  const timerLabel = timerDone ? 'TERMINÉ ✓' : timerStarted ? 'EN COURS…' : 'APPUYER ▶';
+  const timerA11yLabel = timerDone ? "C'est fait — valider" : timerStarted ? `Temps restant : ${countdown} secondes` : 'Lancer le décompte';
 
   const currentSetIndex = block.sets.findIndex(s => s.id === set.id);
   const restSets = currentSetIndex >= 0 ? block.sets.slice(currentSetIndex + 1) : [];
