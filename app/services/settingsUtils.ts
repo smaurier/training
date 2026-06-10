@@ -1,0 +1,27 @@
+export type ThemePreference = 'system' | 'light' | 'dark';
+export type UnitsPreference = 'system' | 'kg' | 'lbs';
+
+const LBS_REGIONS = ['US', 'LR', 'MM'];
+
+export function resolveTheme(
+  preference: ThemePreference,
+  osScheme: 'light' | 'dark'
+): 'light' | 'dark' {
+  return preference === 'system' ? osScheme : preference;
+}
+
+export function resolveUnits(
+  preference: UnitsPreference,
+  regionCode: string
+): 'kg' | 'lbs' {
+  if (preference === 'kg') return 'kg';
+  if (preference === 'lbs') return 'lbs';
+  return LBS_REGIONS.includes(regionCode) ? 'lbs' : 'kg';
+}
+
+export function convertWeight(kg: number, unit: 'kg' | 'lbs'): string {
+  if (unit === 'lbs') {
+    return String(Math.round(kg * 2.20462 * 10) / 10);
+  }
+  return String(Math.round(kg * 10) / 10);
+}
