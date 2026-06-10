@@ -178,6 +178,23 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
             <View style={styles.blockBadge}>
               <Text style={[styles.blockBadgeText, { color: colors.primary }]}>{block.name.toUpperCase()}</Text>
             </View>
+            <View
+              style={styles.seriesDots}
+              accessible
+              accessibilityLabel={`Série ${currentSetIndex + 1} sur ${block.sets.length}`}
+            >
+              {block.sets.map((_, i) => (
+                <View
+                  key={i}
+                  style={[
+                    styles.dot,
+                    i < currentSetIndex && { backgroundColor: '#16a34a' },
+                    i === currentSetIndex && { backgroundColor: colors.primary, width: 10, height: 10, borderRadius: 5 },
+                    i > currentSetIndex && { borderColor: colors.border, borderWidth: 1.5 },
+                  ]}
+                />
+              ))}
+            </View>
             {lastSetLog && (
               <Text style={[styles.lastLog, { color: colors.textSecondary }]}>
                 {formatLastLog(lastSetLog, isCardio, isDuration, convert, unitLabel)}
@@ -416,6 +433,8 @@ const styles = StyleSheet.create({
   progressLabel: { fontSize: 13 },
   blockBadge: { alignSelf: 'flex-start', marginTop: 4 },
   blockBadgeText: { fontSize: 11, fontWeight: '700', letterSpacing: 0.5 },
+  seriesDots: { flexDirection: 'row', gap: 6, alignItems: 'center', marginTop: 6 },
+  dot: { width: 8, height: 8, borderRadius: 4 },
   targetCard: { padding: 16, borderRadius: Radius.sm, borderWidth: 1, alignItems: 'center' },
   targetText: { fontSize: 20, fontWeight: '600' },
   inputRow: { flexDirection: 'row', gap: 10 },
