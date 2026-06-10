@@ -5,6 +5,17 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.5.0] — 2026-06-10
+
+02fb2e6 refactor(session): remove pause from CircularTimer — tap start or validate only
+cfdaad3 feat(session): CircularTimer interactif — tap start/pause/resume/valider, size 220
+82a7b62 feat(session): pack polish — exerciseName hierarchy, dumbbell hint, CircularTimer centered, RestPhase REPOS header + next label
+035a7f5 feat(session): series progress dots in RunningPhase header
+f3b03cd fix(session): wording 'Charge de départ' — titre clair + sous-titre explicite
+92a8430 feat(home): fade scroll indicator on workout chips
+
+---
+
 ## [1.4.2] — 2026-06-10
 
 8c175d8 refactor(session): remove legacy timerContainer from RunningPhase — rest timer lives in RestPhase only
