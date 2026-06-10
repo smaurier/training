@@ -28,6 +28,7 @@ export default function SessionScreen() {
   const timer = useTimer(120);
 
   const needsStartingWeight = useMemo(() => {
+    if (session.startingWeightDone) return false;
     if (session.phase !== 'running') return false;
     if (!session.currentExercise) return false;
     const firstTravailBlockIdx = session.currentExercise.blocks.findIndex(
@@ -38,7 +39,7 @@ export default function SessionScreen() {
     const travailSets = session.currentExercise.blocks[firstTravailBlockIdx].sets;
     if (travailSets.every(s => s.weight_type === 'bodyweight')) return false;
     return travailSets.every(s => s.weight === null);
-  }, [session.phase, session.currentExercise, session.position]);
+  }, [session.startingWeightDone, session.phase, session.currentExercise, session.position]);
 
   useEffect(() => {
     if (session.phase === 'rest') {

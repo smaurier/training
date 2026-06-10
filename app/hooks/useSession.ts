@@ -40,6 +40,7 @@ export interface UseSessionResult {
   undoLastSet: () => Promise<void>;
   canUndo: boolean;
   setStartingWeight: (weight: number) => Promise<void>;
+  startingWeightDone: boolean;
   confirmTransition: () => void;
   confirmRest: () => void;
   restDuration: number;
@@ -113,6 +114,7 @@ export function useSession(workoutId: number, workoutDetails: WorkoutExerciseDet
 
   const positionHistory = useRef<HistoryEntry[]>([]);
   const [historySize, setHistorySize] = useState(0);
+  const [startingWeightDone, setStartingWeightDone] = useState(false);
 
   const currentExercise = workoutDetails[position.exerciseIdx] ?? null;
   const currentBlock = currentExercise?.blocks[position.blockIdx] ?? null;
@@ -171,6 +173,7 @@ export function useSession(workoutId: number, workoutDetails: WorkoutExerciseDet
       }
 
       const exerciseChanges = next.exerciseIdx !== position.exerciseIdx;
+      if (exerciseChanges) setStartingWeightDone(false);
 
       if (completedRestDuration === 0) {
         setPosition(next);
@@ -254,6 +257,7 @@ export function useSession(workoutId: number, workoutDetails: WorkoutExerciseDet
     if (!currentExercise) return;
     try {
       await service.setStartingWeight(currentExercise.id, weight);
+      setStartingWeightDone(true);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Erreur poids de départ');
     }
@@ -263,7 +267,7 @@ export function useSession(workoutId: number, workoutDetails: WorkoutExerciseDet
     phase, sessionLogId, position,
     currentExercise, currentBlock, currentSet, progressLabel,
     startSession, validateSet, skipSet, skipExercise, undoLastSet, canUndo,
-    setStartingWeight,
+    setStartingWeight, startingWeightDone,
     confirmTransition, confirmRest, restDuration, nextLabel,
     progressions, sessionStartedAt, totalSetsLogged, lastSetLog, error,
   };
