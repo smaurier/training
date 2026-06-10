@@ -5,6 +5,26 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.4.0] — 2026-06-10
+
+f5f69eb docs(journal): session 25 — thème + réglages + unités (14 commits, 304 tests)
+ec78aa4 fix(settings): lbsToKg util, formatLastLog unit-aware, ExerciseHistorySection useUnits
+fbabd65 feat(settings): SummaryPhase + progression affichent poids dans unité choisie
+446fad7 feat(settings): RunningPhase affiche poids dans unité choisie
+21a369e feat(settings): écran Réglages — segmented controls thème + unités
+8aabe84 feat(settings): useUnits hook
+287c353 feat(settings): useColorScheme lit ThemeContext (fallback OS)
+264a0f5 feat(settings): _layout charge theme+units depuis DB, wrap ThemeContext+UnitsContext
+bee51f7 feat(settings): UnitsContext + UnitsContextProvider, install expo-localization
+5e52639 feat(settings): ThemeContext + ThemeContextProvider
+717f94a feat(settings): fonctions pures resolveTheme, resolveUnits, convertWeight
+8c58dc9 feat(settings): SQLiteSettingsRepository
+ea37a0a feat(settings): ISettingsRepository + InMemory + contrat TDD
+8ec831d docs(spec): réglages thème + unités — ThemeContext, UnitsContext, ISettingsRepository
+a3cf3e5 fix(seeds): preserve weight when user set starting weight but quit before logging
+
+---
+
 ## [1.3.0] — 2026-06-10
 
 a509d61 docs(journal): session 25 — F1 passer exercice, F2 undo série, U10 cycle rotatif, T1 ESLint
