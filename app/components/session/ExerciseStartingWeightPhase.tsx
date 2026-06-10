@@ -19,13 +19,17 @@ export function ExerciseStartingWeightPhase({
   const colors = Colors[colorScheme ?? 'light'];
   const [weight, setWeight] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function handleConfirm() {
     const w = parseFloat(weight.replace(',', '.'));
     if (isNaN(w) || w <= 0) return;
     setLoading(true);
+    setError(null);
     try {
       await onConfirm(w);
+    } catch {
+      setError('Erreur lors de la sauvegarde. Réessaie.');
     } finally {
       setLoading(false);
     }
@@ -77,6 +81,9 @@ export function ExerciseStartingWeightPhase({
           {loading ? 'Enregistrement…' : 'Confirmer →'}
         </Text>
       </PressableA11y>
+      {error && (
+        <Text style={[styles.errorText, { color: '#dc2626' }]}>{error}</Text>
+      )}
     </View>
   );
 }
@@ -118,5 +125,10 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: '600',
+  },
+  errorText: {
+    fontSize: 14,
+    textAlign: 'center',
+    marginTop: -8,
   },
 });
