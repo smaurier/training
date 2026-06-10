@@ -41,12 +41,14 @@ export default function SessionScreen() {
     return travailSets.every(s => s.weight === null);
   }, [session.startingWeightDone, session.phase, session.currentExercise, session.position]);
 
+  const { reset: timerReset, start: timerStart } = timer;
+
   useEffect(() => {
     if (session.phase === 'rest') {
-      timer.reset(session.restDuration);
-      timer.start();
+      timerReset(session.restDuration);
+      timerStart();
     }
-  }, [session.phase, session.restDuration, timer]);
+  }, [session.phase, session.restDuration, timerReset, timerStart]);
 
   const handleStartingWeightConfirm = useCallback(async (weight: number) => {
     await session.setStartingWeight(weight);
