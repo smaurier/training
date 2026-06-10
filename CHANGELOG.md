@@ -5,6 +5,13 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.4.1] — 2026-06-10
+
+3717334 fix(session): starting-weight confirm now reliably navigates to RunningPhase
+5f8d471 fix(session): skip starting-weight screen for bodyweight exercises
+
+---
+
 ## [1.4.0] — 2026-06-10
 
 f5f69eb docs(journal): session 25 — thème + réglages + unités (14 commits, 304 tests)
