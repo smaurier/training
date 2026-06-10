@@ -4,6 +4,7 @@ import { View, Text, TextInput, StyleSheet, ScrollView, Vibration } from 'react-
 import { Ionicons } from '@expo/vector-icons';
 import BottomSheet, {
   BottomSheetBackdrop,
+  BottomSheetScrollView,
   BottomSheetView,
   type BottomSheetBackdropProps,
 } from '@gorhom/bottom-sheet';
@@ -59,7 +60,9 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
   const { convert, label: unitLabel, resolved: unitResolved } = useUnits();
 
   const skipExerciseSheetRef = useRef<BottomSheet>(null);
+  const descriptionSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ['30%'], []);
+  const descriptionSnapPoints = useMemo(() => ['50%', '90%'], []);
 
   const renderBackdrop = useCallback(
     (props: BottomSheetBackdropProps) => (
@@ -209,15 +212,26 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
               </Text>
             )}
           </View>
-          <PressableA11y
-            onPress={onUndo}
-            accessibilityLabel="Annuler la dernière série"
-            accessibilityState={{ disabled: !canUndo }}
-            style={[styles.undoBtn, !canUndo && styles.undoBtnDisabled]}
-            disabled={!canUndo}
-          >
-            <Ionicons name="arrow-undo-outline" size={22} color={canUndo ? colors.text : colors.textSecondary} />
-          </PressableA11y>
+          <View style={styles.headerActions}>
+            {!!exercise.exercise.description && (
+              <PressableA11y
+                onPress={() => descriptionSheetRef.current?.expand()}
+                accessibilityLabel="Voir la description de l'exercice"
+                style={styles.actionBtn}
+              >
+                <Ionicons name="help-circle-outline" size={22} color={colors.textSecondary} />
+              </PressableA11y>
+            )}
+            <PressableA11y
+              onPress={onUndo}
+              accessibilityLabel="Annuler la dernière série"
+              accessibilityState={{ disabled: !canUndo }}
+              style={[styles.actionBtn, !canUndo && styles.undoBtnDisabled]}
+              disabled={!canUndo}
+            >
+              <Ionicons name="arrow-undo-outline" size={22} color={canUndo ? colors.text : colors.textSecondary} />
+            </PressableA11y>
+          </View>
         </View>
       </View>
 
@@ -419,6 +433,27 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
           </PressableA11y>
         </BottomSheetView>
       </BottomSheet>
+
+      <BottomSheet
+        ref={descriptionSheetRef}
+        index={-1}
+        snapPoints={descriptionSnapPoints}
+        enablePanDownToClose
+        backdropComponent={renderBackdrop}
+        backgroundStyle={{ backgroundColor: colors.surface }}
+        handleIndicatorStyle={{ backgroundColor: colors.border }}
+      >
+        <BottomSheetView style={styles.sheetContainer}>
+          <Text style={[styles.sheetTitle, { color: colors.text }]} numberOfLines={1}>
+            {exercise.exercise.name}
+          </Text>
+        </BottomSheetView>
+        <BottomSheetScrollView contentContainerStyle={styles.descriptionScrollContent}>
+          <Text style={[styles.descriptionText, { color: colors.text }]}>
+            {exercise.exercise.description}
+          </Text>
+        </BottomSheetScrollView>
+      </BottomSheet>
     </>
   );
 }
@@ -428,7 +463,8 @@ const styles = StyleSheet.create({
   header: { gap: 2 },
   headerRow: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' },
   headerTextGroup: { flex: 1, gap: 2, marginTop: 16 },
-  undoBtn: { padding: 8, marginTop: 16 },
+  headerActions: { gap: 4, marginTop: 16 },
+  actionBtn: { padding: 8 },
   undoBtnDisabled: { opacity: 0.3 },
   exerciseName: { fontSize: 26, fontWeight: '700' },
   progressLabel: { fontSize: 13 },
@@ -461,4 +497,6 @@ const styles = StyleSheet.create({
   sheetBtnText: { color: '#fff', fontSize: 16, fontWeight: '600' },
   sheetCancelBtn: { alignItems: 'center', justifyContent: 'center', paddingVertical: 14, borderRadius: 10, borderWidth: 1 },
   sheetCancelText: { fontSize: 16, fontWeight: '500' },
+  descriptionScrollContent: { paddingHorizontal: 24, paddingBottom: 40 },
+  descriptionText: { fontSize: 15, lineHeight: 24 },
 });
