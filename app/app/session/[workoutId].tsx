@@ -113,7 +113,6 @@ export default function SessionScreen() {
           <SummaryPhase
             progressions={session.progressions}
             totalSets={session.totalSetsLogged}
-            // eslint-disable-next-line react-hooks/purity
             durationSeconds={session.sessionStartedAt ? Math.round((Date.now() - session.sessionStartedAt) / 1000) : 0}
             onClose={handleBack}
           />
