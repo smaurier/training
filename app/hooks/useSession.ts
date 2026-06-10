@@ -231,8 +231,24 @@ export function useSession(workoutId: number, workoutDetails: WorkoutExerciseDet
   const canUndo = historySize > 0;
 
   const skipExercise = useCallback(async () => {
-    // implemented in next task
-  }, []);
+    if (!sessionLogId) return;
+    positionHistory.current = [];
+    setHistorySize(0);
+    const nextExerciseIdx = position.exerciseIdx + 1;
+    if (nextExerciseIdx >= workoutDetails.length) {
+      await service.completeSession(sessionLogId);
+      try {
+        const progs = await service.calculateProgressions(sessionLogId);
+        setProgressions(progs);
+      } catch {
+        setProgressions([]);
+      }
+      setPhase('summary');
+    } else {
+      setPosition({ exerciseIdx: nextExerciseIdx, blockIdx: 0, setIdx: 0 });
+      setPhase('exercise_transition');
+    }
+  }, [service, sessionLogId, position.exerciseIdx, workoutDetails.length]);
 
   const setStartingWeight = useCallback(async (weight: number) => {
     if (!currentExercise) return;
