@@ -13,4 +13,5 @@ export interface ISetLogRepository {
   findByExerciseId(exerciseId: number): Promise<SetLog[]>;
   findFromDate(from: string): Promise<SetLog[]>;
   findDistinctExerciseIds(): Promise<number[]>;
+  deleteBySetAndSession(setId: number, sessionLogId: number): Promise<void>;
 }

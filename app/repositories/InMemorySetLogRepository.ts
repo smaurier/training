@@ -47,4 +47,10 @@ export class InMemorySetLogRepository implements ISetLogRepository {
   async findDistinctExerciseIds(): Promise<number[]> {
     return [...new Set(this.items.map(i => i.exercise_id))];
   }
+
+  async deleteBySetAndSession(setId: number, sessionLogId: number): Promise<void> {
+    this.items = this.items.filter(
+      i => !(i.set_id === setId && i.session_log_id === sessionLogId)
+    );
+  }
 }

@@ -63,4 +63,11 @@ export class SQLiteSetLogRepository implements ISetLogRepository {
     );
     return rows.map(r => r.exercise_id);
   }
+
+  async deleteBySetAndSession(setId: number, sessionLogId: number): Promise<void> {
+    await this.db.runAsync(
+      'DELETE FROM set_logs WHERE set_id = ? AND session_log_id = ?',
+      [setId, sessionLogId]
+    );
+  }
 }
