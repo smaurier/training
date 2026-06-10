@@ -38,8 +38,11 @@ export function ExerciseStartingWeightPhase({
       <Text style={[styles.exerciseName, { color: colors.text }]}>
         {exercise.exercise.name}
       </Text>
-      <Text style={[styles.label, { color: colors.textSecondary }]}>
-        Premier log — ton poids de départ (kg)
+      <Text style={[styles.title, { color: colors.text }]} accessibilityRole="header">
+        Charge de départ
+      </Text>
+      <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+        Quel poids vas-tu utiliser pour commencer ?
       </Text>
       <TextInput
         style={[
@@ -53,9 +56,9 @@ export function ExerciseStartingWeightPhase({
         value={weight}
         onChangeText={setWeight}
         keyboardType="decimal-pad"
-        placeholder="ex: 60"
+        placeholder="ex: 40"
         placeholderTextColor={colors.textSecondary}
-        accessibilityLabel="Poids de départ en kilogrammes"
+        accessibilityLabel="Charge de départ en kilogrammes"
         autoFocus
       />
       <PressableA11y
@@ -86,11 +89,16 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   exerciseName: {
+    fontSize: 18,
+    fontWeight: '500',
+  },
+  title: {
     fontSize: 28,
     fontWeight: '700',
   },
-  label: {
+  subtitle: {
     fontSize: 16,
+    marginTop: -8,
   },
   input: {
     height: 64,
