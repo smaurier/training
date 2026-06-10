@@ -11,6 +11,7 @@ import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
 import { Workout } from '@/db/types';
 import { SQLiteWorkoutExerciseRepository } from '@/repositories/SQLiteWorkoutExerciseRepository';
+import { SQLiteSessionLogRepository } from '@/repositories/SQLiteSessionLogRepository';
 import { getDb } from '@/db';
 
 const FAB_ICON_COLOR = '#fff' as const;
@@ -35,6 +36,24 @@ export default function ProgrammeDetailScreen() {
     const repo = new SQLiteWorkoutExerciseRepository(getDb());
     Promise.all(workouts.map(w => repo.findByWorkoutId(w.id).then(es => [w.id, es.length] as [number, number])))
       .then(entries => setExerciseCounts(Object.fromEntries(entries)))
+      .catch(() => {});
+  }, [workouts]);
+
+  const [nextWorkoutId, setNextWorkoutId] = useState<number | null>(null);
+  useEffect(() => {
+    if (workouts.length === 0) { setNextWorkoutId(null); return; }
+    const repo = new SQLiteSessionLogRepository(getDb());
+    const workoutIds = workouts.map(w => w.id);
+    repo.getLastCompletedWorkoutId(workoutIds)
+      .then(lastId => {
+        if (lastId === null) {
+          setNextWorkoutId(workouts[0].id);
+        } else {
+          const lastIdx = workouts.findIndex(w => w.id === lastId);
+          const nextIdx = lastIdx === -1 ? 0 : (lastIdx + 1) % workouts.length;
+          setNextWorkoutId(workouts[nextIdx].id);
+        }
+      })
       .catch(() => {});
   }, [workouts]);
 
@@ -128,6 +147,7 @@ export default function ProgrammeDetailScreen() {
               exerciseCount={exerciseCounts[item.id] ?? 0}
               isFirst={index === 0}
               isLast={index === workouts.length - 1}
+              isNext={item.id === nextWorkoutId}
               onPress={() => router.push({ pathname: '/workout/[id]', params: { id: String(item.id) } })}
               onLongPress={() => handleLongPress(item)}
               onMoveUp={() => reorder(item.id, 'up')}

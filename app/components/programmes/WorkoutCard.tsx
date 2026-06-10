@@ -11,13 +11,14 @@ interface WorkoutCardProps {
   exerciseCount: number;
   isFirst: boolean;
   isLast: boolean;
+  isNext?: boolean;
   onPress: () => void;
   onLongPress: () => void;
   onMoveUp: () => void;
   onMoveDown: () => void;
 }
 
-export function WorkoutCard({ workout, exerciseCount, isFirst, isLast, onPress, onLongPress, onMoveUp, onMoveDown }: WorkoutCardProps) {
+export function WorkoutCard({ workout, exerciseCount, isFirst, isLast, isNext, onPress, onLongPress, onMoveUp, onMoveDown }: WorkoutCardProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
 
@@ -36,6 +37,11 @@ export function WorkoutCard({ workout, exerciseCount, isFirst, isLast, onPress, 
         <Text style={[styles.meta, { color: colors.textSecondary }]}>
           {exerciseCount} exercice{exerciseCount !== 1 ? 's' : ''}
         </Text>
+        {isNext && (
+          <View style={[styles.nextBadge, { backgroundColor: colors.primary }]}>
+            <Text style={styles.nextBadgeText}>→ Prochain</Text>
+          </View>
+        )}
       </PressableA11y>
       <View style={styles.reorderCol}>
         {!isFirst && (
@@ -81,6 +87,18 @@ const styles = StyleSheet.create({
   },
   meta: {
     fontSize: 12,
+  },
+  nextBadge: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 10,
+    marginTop: 4,
+  },
+  nextBadgeText: {
+    color: '#fff',
+    fontSize: 11,
+    fontWeight: '600',
   },
   reorderCol: {
     paddingRight: 8,
