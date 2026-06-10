@@ -25,3 +25,7 @@ export function convertWeight(kg: number, unit: 'kg' | 'lbs'): string {
   }
   return String(Math.round(kg * 10) / 10);
 }
+
+export function lbsToKg(lbs: number): number {
+  return lbs / 2.20462;
+}

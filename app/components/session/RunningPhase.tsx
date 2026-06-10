@@ -17,6 +17,7 @@ import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
 import { useUnits } from '@/hooks/useUnits';
+import { lbsToKg } from '@/services/settingsUtils';
 
 interface RunningPhaseProps {
   exercise: WorkoutExerciseDetail;
@@ -32,7 +33,7 @@ interface RunningPhaseProps {
   lastSetLog?: LastSetLog | null;
 }
 
-function formatLastLog(log: LastSetLog, isCardio: boolean, isDuration: boolean): string {
+function formatLastLog(log: LastSetLog, isCardio: boolean, isDuration: boolean, convert: (kg: number) => string, unitLabel: string): string {
   if (isCardio) {
     const parts: string[] = [];
     if (log.durationSeconds) parts.push(`${Math.round(log.durationSeconds / 60)} min`);
@@ -44,7 +45,7 @@ function formatLastLog(log: LastSetLog, isCardio: boolean, isDuration: boolean):
     const s = (log.durationSeconds ?? 0) % 60;
     return `Dernière fois : ${m}:${String(s).padStart(2, '0')}`;
   }
-  const weightStr = log.weightDone > 0 ? ` × ${log.weightDone}kg` : '';
+  const weightStr = log.weightDone > 0 ? ` × ${convert(log.weightDone)} ${unitLabel}` : '';
   return `Dernière fois : ${log.repsDone} rép${weightStr}`;
 }
 
@@ -107,7 +108,7 @@ export function RunningPhase({ exercise, block, set, progressLabel, timer, onVal
     setLoading(true);
     try {
       const weightKg = unitResolved === 'lbs'
-        ? (parseFloat(weight) || 0) / 2.20462
+        ? lbsToKg(parseFloat(weight) || 0)
         : parseFloat(weight) || 0;
       await onValidate({
         repsDone: parseInt(reps, 10) || 0,
@@ -179,7 +180,7 @@ export function RunningPhase({ exercise, block, set, progressLabel, timer, onVal
             </View>
             {lastSetLog && (
               <Text style={[styles.lastLog, { color: colors.textSecondary }]}>
-                {formatLastLog(lastSetLog, isCardio, isDuration)}
+                {formatLastLog(lastSetLog, isCardio, isDuration, convert, unitLabel)}
               </Text>
             )}
           </View>

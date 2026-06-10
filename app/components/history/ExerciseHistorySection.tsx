@@ -3,6 +3,7 @@ import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import type { ExerciseHistory } from '@/services/HistoryService';
 import { Radius } from '@/constants/Radius';
+import { useUnits } from '@/hooks/useUnits';
 
 interface ExerciseHistorySectionProps {
   exercise: ExerciseHistory;
@@ -11,6 +12,7 @@ interface ExerciseHistorySectionProps {
 export function ExerciseHistorySection({ exercise }: ExerciseHistorySectionProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
+  const { convert, label: unitLabel } = useUnits();
 
   return (
     <View style={styles.container}>
@@ -23,8 +25,8 @@ export function ExerciseHistorySection({ exercise }: ExerciseHistorySectionProps
       <View style={styles.chips}>
         {exercise.sets.map((set, i) => {
           const label = set.rpe != null
-            ? `${set.weightDone} kg × ${set.repsDone} · RPE ${set.rpe}`
-            : `${set.weightDone} kg × ${set.repsDone}`;
+            ? `${convert(set.weightDone)} ${unitLabel} × ${set.repsDone} · RPE ${set.rpe}`
+            : `${convert(set.weightDone)} ${unitLabel} × ${set.repsDone}`;
           return (
             <View
               key={`${exercise.exerciseId}-${i}`}

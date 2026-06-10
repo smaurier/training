@@ -1,4 +1,4 @@
-import { resolveTheme, resolveUnits, convertWeight } from './settingsUtils';
+import { resolveTheme, resolveUnits, convertWeight, lbsToKg } from './settingsUtils';
 
 describe('resolveTheme', () => {
   it('system + OS dark → dark', () => {
@@ -51,5 +51,14 @@ describe('convertWeight', () => {
   });
   it('0 → "0"', () => {
     expect(convertWeight(0, 'kg')).toBe('0');
+  });
+});
+
+describe('lbsToKg', () => {
+  it('converts 220.5 lbs → 100 kg (rounded)', () => {
+    expect(Math.round(lbsToKg(220.5) * 10) / 10).toBe(100);
+  });
+  it('0 → 0', () => {
+    expect(lbsToKg(0)).toBe(0);
   });
 });
