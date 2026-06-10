@@ -66,7 +66,6 @@ export function RunningPhase({ exercise, block, set, progressLabel, timer, onVal
         {...props}
         disappearsOnIndex={-1}
         appearsOnIndex={0}
-        onPress={() => skipExerciseSheetRef.current?.close()}
       />
     ),
     [],
@@ -176,6 +175,7 @@ export function RunningPhase({ exercise, block, set, progressLabel, timer, onVal
           <PressableA11y
             onPress={onUndo}
             accessibilityLabel="Annuler la dernière série"
+            accessibilityState={{ disabled: !canUndo }}
             style={[styles.undoBtn, !canUndo && styles.undoBtnDisabled]}
             disabled={!canUndo}
           >
@@ -373,7 +373,6 @@ export function RunningPhase({ exercise, block, set, progressLabel, timer, onVal
         index={-1}
         snapPoints={snapPoints}
         enablePanDownToClose
-        onClose={() => {}}
         backdropComponent={renderBackdrop}
         backgroundStyle={{ backgroundColor: colors.surface }}
         handleIndicatorStyle={{ backgroundColor: colors.border }}
