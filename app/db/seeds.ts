@@ -835,14 +835,14 @@ export async function seedProgram(db: SQLiteDatabase): Promise<void> {
           // Set — get or create by (block_id, order_index)
           // If has set_logs → preserve weight (only update reps_min, reps_max, rest_duration, duration_seconds)
           // If no set_logs → update everything including weight
-          const existingSet = await db.getFirstAsync<{ id: number }>(
-            'SELECT id FROM sets WHERE block_id = ? AND order_index = ?', [blockId, si]
+          const existingSet = await db.getFirstAsync<{ id: number; weight: number | null }>(
+            'SELECT id, weight FROM sets WHERE block_id = ? AND order_index = ?', [blockId, si]
           );
           if (existingSet) {
             const hasLogs = await db.getFirstAsync<{ count: number }>(
               'SELECT COUNT(*) as count FROM set_logs WHERE set_id = ?', [existingSet.id]
             );
-            const preserveWeight = (hasLogs?.count ?? 0) > 0;
+            const preserveWeight = (hasLogs?.count ?? 0) > 0 || existingSet.weight !== null;
             if (preserveWeight) {
               await db.runAsync(
                 'UPDATE sets SET reps_min = ?, reps_max = ?, weight_type = ?, rest_duration = ?, duration_seconds = ?, weight_ratio = ? WHERE id = ?',
