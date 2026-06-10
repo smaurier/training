@@ -592,7 +592,7 @@ const PPL: { name: string; description: string; workouts: WorkoutSpec[] } = {
             {
               name: 'Travail',
               is_work: true,
-              sets: [f(8, 8, 120), f(8, 8, 120), f(8, 8, 120), f(8, 8, 120)],
+              sets: [f(8, 8, 120, 60), f(8, 8, 120, 60), f(8, 8, 120, 60), f(8, 8, 120, 60)],
             },
             {
               name: 'Back-off',
@@ -601,11 +601,11 @@ const PPL: { name: string; description: string; workouts: WorkoutSpec[] } = {
             },
           ],
         },
-        { exercise: 'Développé incliné haltères',    blocks: [workBlock([f(8, 10, 60), f(8, 10, 60), f(8, 10, 60)])] },
-        { exercise: 'Élévations latérales haltères', blocks: [workBlock([f(15, 15, 60), f(15, 15, 60), f(15, 15, 60)])] },
+        { exercise: 'Développé incliné haltères',    blocks: [workBlock([f(8, 10, 60, 16), f(8, 10, 60, 16), f(8, 10, 60, 16)])] },
+        { exercise: 'Élévations latérales haltères', blocks: [workBlock([f(15, 15, 60, 8), f(15, 15, 60, 8), f(15, 15, 60, 8)])] },
         { exercise: 'Dips',                          blocks: [workBlock([bw(8, 12, 60), bw(8, 12, 60), bw(8, 12, 60)])] },
-        { exercise: 'Extension triceps poulie haute', blocks: [workBlock([f(10, 12, 60), f(10, 12, 60), f(10, 12, 60)])] },
-        { exercise: 'Crunch poulie haute',           blocks: [workBlock([f(12, 15, 45), f(12, 15, 45), f(12, 15, 45)])] },
+        { exercise: 'Extension triceps poulie haute', blocks: [workBlock([f(10, 12, 60, 20), f(10, 12, 60, 20), f(10, 12, 60, 20)])] },
+        { exercise: 'Crunch poulie haute',           blocks: [workBlock([f(12, 15, 45, 25), f(12, 15, 45, 25), f(12, 15, 45, 25)])] },
 
         // Étirements (5–10 min)
         { exercise: 'Étirement pectoraux au mur', blocks: [stretchBlock([mob(60)])] },
@@ -640,10 +640,10 @@ const PPL: { name: string; description: string; workouts: WorkoutSpec[] } = {
 
         // Musculation
         { exercise: 'Tractions',           blocks: [workBlock([bw(8, 8, 90), bw(8, 8, 90), bw(8, 8, 90), bw(8, 8, 90)])] },
-        { exercise: 'Rowing barre',        blocks: [workBlock([f(8, 8, 90), f(8, 8, 90), f(8, 8, 90), f(8, 8, 90)])] },
-        { exercise: 'Face pull',           blocks: [workBlock([f(15, 15, 60), f(15, 15, 60), f(15, 15, 60)])] },
-        { exercise: 'Curl barre EZ',       blocks: [workBlock([f(10, 12, 60), f(10, 12, 60), f(10, 12, 60)])] },
-        { exercise: 'Tirage poulie basse', blocks: [workBlock([f(10, 12, 60), f(10, 12, 60), f(10, 12, 60)])] },
+        { exercise: 'Rowing barre',        blocks: [workBlock([f(8, 8, 90, 50), f(8, 8, 90, 50), f(8, 8, 90, 50), f(8, 8, 90, 50)])] },
+        { exercise: 'Face pull',           blocks: [workBlock([f(15, 15, 60, 20), f(15, 15, 60, 20), f(15, 15, 60, 20)])] },
+        { exercise: 'Curl barre EZ',       blocks: [workBlock([f(10, 12, 60, 20), f(10, 12, 60, 20), f(10, 12, 60, 20)])] },
+        { exercise: 'Tirage poulie basse', blocks: [workBlock([f(10, 12, 60, 30), f(10, 12, 60, 30), f(10, 12, 60, 30)])] },
         { exercise: 'Relevés de jambes suspendu', blocks: [workBlock([bw(12, 15, 45), bw(12, 15, 45), bw(12, 15, 45)])] },
 
         // Étirements (5–10 min)
@@ -678,10 +678,10 @@ const PPL: { name: string; description: string; workouts: WorkoutSpec[] } = {
         { exercise: 'Cossack squat',            blocks: [mobilityBlock([bw(8, 8, 0)])] },
 
         // Musculation
-        { exercise: 'Squat barre',       blocks: [workBlock([f(8, 8, 120), f(8, 8, 120), f(8, 8, 120), f(8, 8, 120)])] },
-        { exercise: 'Romanian Deadlift', blocks: [workBlock([f(8, 8, 90), f(8, 8, 90), f(8, 8, 90)])] },
-        { exercise: 'Fentes bulgares',   blocks: [workBlock([f(10, 10, 60), f(10, 10, 60), f(10, 10, 60)])] },
-        { exercise: 'Leg curl poulie',   blocks: [workBlock([f(12, 12, 60), f(12, 12, 60), f(12, 12, 60)])] },
+        { exercise: 'Squat barre',       blocks: [workBlock([f(8, 8, 120, 60), f(8, 8, 120, 60), f(8, 8, 120, 60), f(8, 8, 120, 60)])] },
+        { exercise: 'Romanian Deadlift', blocks: [workBlock([f(8, 8, 90, 50), f(8, 8, 90, 50), f(8, 8, 90, 50)])] },
+        { exercise: 'Fentes bulgares',   blocks: [workBlock([f(10, 10, 60, 14), f(10, 10, 60, 14), f(10, 10, 60, 14)])] },
+        { exercise: 'Leg curl poulie',   blocks: [workBlock([f(12, 12, 60, 30), f(12, 12, 60, 30), f(12, 12, 60, 30)])] },
         { exercise: 'Mollets debout sur step', blocks: [workBlock([bw(15, 20, 45), bw(15, 20, 45), bw(15, 20, 45), bw(15, 20, 45)])] },
 
         // Étirements très léger (5 min)
@@ -704,11 +704,11 @@ const PPL: { name: string; description: string; workouts: WorkoutSpec[] } = {
         { exercise: 'Rotations poignets', blocks: [mobilityBlock([mob(10)])] },
 
         // Musculation
-        { exercise: 'Pin Press',                     blocks: [workBlock([f(5, 5, 120), f(5, 5, 120), f(5, 5, 120), f(5, 5, 120)])] },
+        { exercise: 'Pin Press',                     blocks: [workBlock([f(5, 5, 120, 40), f(5, 5, 120, 40), f(5, 5, 120, 40), f(5, 5, 120, 40)])] },
         { exercise: 'Tractions',                     blocks: [workBlock([bw(6, 10, 90), bw(6, 10, 90), bw(6, 10, 90)])] },
-        { exercise: 'Curl barre EZ',                 blocks: [workBlock([f(10, 12, 60), f(10, 12, 60), f(10, 12, 60), f(10, 12, 60)])] },
-        { exercise: 'Extension triceps poulie haute', blocks: [workBlock([f(10, 12, 60), f(10, 12, 60), f(10, 12, 60), f(10, 12, 60)])] },
-        { exercise: 'Élévations latérales haltères', blocks: [workBlock([f(15, 15, 60), f(15, 15, 60), f(15, 15, 60), f(15, 15, 60)])] },
+        { exercise: 'Curl barre EZ',                 blocks: [workBlock([f(10, 12, 60, 20), f(10, 12, 60, 20), f(10, 12, 60, 20), f(10, 12, 60, 20)])] },
+        { exercise: 'Extension triceps poulie haute', blocks: [workBlock([f(10, 12, 60, 20), f(10, 12, 60, 20), f(10, 12, 60, 20), f(10, 12, 60, 20)])] },
+        { exercise: 'Élévations latérales haltères', blocks: [workBlock([f(15, 15, 60, 8), f(15, 15, 60, 8), f(15, 15, 60, 8), f(15, 15, 60, 8)])] },
         { exercise: 'Mollets debout sur step',       blocks: [workBlock([bw(20, 20, 30), bw(20, 20, 30), bw(20, 20, 30)])] },
 
         // Étirements bridge running (8 min)
