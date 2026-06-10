@@ -1,5 +1,5 @@
 // app/app/session/[workoutId].tsx
-import { useEffect, useCallback, useMemo } from 'react';
+import { useEffect, useCallback, useMemo, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { useWorkoutExercises } from '@/hooks/useWorkoutExercises';
@@ -56,6 +56,13 @@ export default function SessionScreen() {
 
   const handleBack = useCallback(() => router.back(), [router]);
 
+  const [summaryDurationSeconds, setSummaryDurationSeconds] = useState(0);
+  useEffect(() => {
+    if (session.phase === 'summary' && session.sessionStartedAt) {
+      setSummaryDurationSeconds(Math.round((Date.now() - session.sessionStartedAt) / 1000));
+    }
+  }, [session.phase, session.sessionStartedAt]);
+
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
@@ -95,6 +102,9 @@ export default function SessionScreen() {
               timer={timer}
               onValidate={session.validateSet}
               onSkip={session.skipSet}
+              onSkipExercise={session.skipExercise}
+              onUndo={session.undoLastSet}
+              canUndo={session.canUndo}
               lastSetLog={session.lastSetLog}
             />
           )
@@ -113,7 +123,7 @@ export default function SessionScreen() {
           <SummaryPhase
             progressions={session.progressions}
             totalSets={session.totalSetsLogged}
-            durationSeconds={session.sessionStartedAt ? Math.round((Date.now() - session.sessionStartedAt) / 1000) : 0}
+            durationSeconds={summaryDurationSeconds}
             onClose={handleBack}
           />
         )}

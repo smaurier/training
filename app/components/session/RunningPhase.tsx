@@ -1,7 +1,12 @@
 // app/components/session/RunningPhase.tsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { View, Text, TextInput, StyleSheet, ScrollView, Vibration } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import BottomSheet, {
+  BottomSheetBackdrop,
+  BottomSheetView,
+  type BottomSheetBackdropProps,
+} from '@gorhom/bottom-sheet';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import { CircularTimer } from '@/components/ui/CircularTimer';
 import type { WorkoutExerciseDetail, BlockWithSets } from '@/services/WorkoutExerciseService';
@@ -20,6 +25,9 @@ interface RunningPhaseProps {
   timer: UseTimerResult;
   onValidate: (actual: SetActual) => Promise<void>;
   onSkip: () => void;
+  onSkipExercise: () => void;
+  onUndo: () => void;
+  canUndo: boolean;
   lastSetLog?: LastSetLog | null;
 }
 
@@ -45,9 +53,24 @@ function formatTime(seconds: number): string {
   return `${m}:${s.toString().padStart(2, '0')}`;
 }
 
-export function RunningPhase({ exercise, block, set, progressLabel, timer, onValidate, onSkip, lastSetLog }: RunningPhaseProps) {
+export function RunningPhase({ exercise, block, set, progressLabel, timer, onValidate, onSkip, onSkipExercise, onUndo, canUndo, lastSetLog }: RunningPhaseProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
+
+  const skipExerciseSheetRef = useRef<BottomSheet>(null);
+  const snapPoints = useMemo(() => ['30%'], []);
+
+  const renderBackdrop = useCallback(
+    (props: BottomSheetBackdropProps) => (
+      <BottomSheetBackdrop
+        {...props}
+        disappearsOnIndex={-1}
+        appearsOnIndex={0}
+        onPress={() => skipExerciseSheetRef.current?.close()}
+      />
+    ),
+    [],
+  );
 
   const isCardio = exercise.exercise.type === 'cardio';
   const isDuration = !isCardio && (set.duration_seconds ?? 0) > 0;
@@ -128,24 +151,37 @@ export function RunningPhase({ exercise, block, set, progressLabel, timer, onVal
   const restSets = currentSetIndex >= 0 ? block.sets.slice(currentSetIndex + 1) : [];
 
   return (
-    <ScrollView
-      contentContainerStyle={[styles.container, { backgroundColor: colors.background }]}
-      keyboardShouldPersistTaps="handled"
-    >
+    <>
+      <ScrollView
+        contentContainerStyle={[styles.container, { backgroundColor: colors.background }]}
+        keyboardShouldPersistTaps="handled"
+      >
       {/* Header */}
       <View style={styles.header}>
-        <Text style={[styles.exerciseName, { color: colors.text }]} numberOfLines={1}>
-          {exercise.exercise.name}
-        </Text>
-        <Text style={[styles.progressLabel, { color: colors.textSecondary }]}>{progressLabel}</Text>
-        <View style={styles.blockBadge}>
-          <Text style={[styles.blockBadgeText, { color: colors.primary }]}>{block.name.toUpperCase()}</Text>
+        <View style={styles.headerRow}>
+          <View style={styles.headerTextGroup}>
+            <Text style={[styles.exerciseName, { color: colors.text }]} numberOfLines={1}>
+              {exercise.exercise.name}
+            </Text>
+            <Text style={[styles.progressLabel, { color: colors.textSecondary }]}>{progressLabel}</Text>
+            <View style={styles.blockBadge}>
+              <Text style={[styles.blockBadgeText, { color: colors.primary }]}>{block.name.toUpperCase()}</Text>
+            </View>
+            {lastSetLog && (
+              <Text style={[styles.lastLog, { color: colors.textSecondary }]}>
+                {formatLastLog(lastSetLog, isCardio, isDuration)}
+              </Text>
+            )}
+          </View>
+          <PressableA11y
+            onPress={onUndo}
+            accessibilityLabel="Annuler la dernière série"
+            style={[styles.undoBtn, !canUndo && styles.undoBtnDisabled]}
+            disabled={!canUndo}
+          >
+            <Ionicons name="arrow-undo-outline" size={22} color={canUndo ? colors.text : colors.textSecondary} />
+          </PressableA11y>
         </View>
-        {lastSetLog && (
-          <Text style={[styles.lastLog, { color: colors.textSecondary }]}>
-            {formatLastLog(lastSetLog, isCardio, isDuration)}
-          </Text>
-        )}
       </View>
 
       {isCardio ? (
@@ -322,13 +358,63 @@ export function RunningPhase({ exercise, block, set, progressLabel, timer, onVal
       >
         <Text style={[styles.skipText, { color: colors.textSecondary }]}>Passer →</Text>
       </PressableA11y>
+
+      <PressableA11y
+        accessibilityLabel="Passer toutes les séries restantes de cet exercice"
+        onPress={() => skipExerciseSheetRef.current?.expand()}
+        style={styles.skipBtn}
+      >
+        <Text style={[styles.skipExerciseText, { color: colors.textSecondary }]}>Passer l&apos;exercice →</Text>
+      </PressableA11y>
     </ScrollView>
+
+      <BottomSheet
+        ref={skipExerciseSheetRef}
+        index={-1}
+        snapPoints={snapPoints}
+        enablePanDownToClose
+        onClose={() => {}}
+        backdropComponent={renderBackdrop}
+        backgroundStyle={{ backgroundColor: colors.surface }}
+        handleIndicatorStyle={{ backgroundColor: colors.border }}
+      >
+        <BottomSheetView style={styles.sheetContainer}>
+          <Text style={[styles.sheetTitle, { color: colors.text }]} numberOfLines={1}>
+            {exercise.exercise.name}
+          </Text>
+          <Text style={[styles.sheetMessage, { color: colors.textSecondary }]}>
+            Passer toutes les séries restantes ?
+          </Text>
+          <PressableA11y
+            accessibilityLabel="Confirmer — passer l'exercice entier"
+            onPress={() => {
+              skipExerciseSheetRef.current?.close();
+              onSkipExercise();
+            }}
+            style={[styles.sheetDestructiveBtn, { backgroundColor: '#dc2626' }]}
+          >
+            <Text style={styles.sheetBtnText}>Passer l&apos;exercice</Text>
+          </PressableA11y>
+          <PressableA11y
+            accessibilityLabel="Annuler"
+            onPress={() => skipExerciseSheetRef.current?.close()}
+            style={[styles.sheetCancelBtn, { borderColor: colors.border }]}
+          >
+            <Text style={[styles.sheetCancelText, { color: colors.text }]}>Annuler</Text>
+          </PressableA11y>
+        </BottomSheetView>
+      </BottomSheet>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flexGrow: 1, padding: 20, gap: 14 },
-  header: { gap: 2, marginTop: 16 },
+  header: { gap: 2 },
+  headerRow: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' },
+  headerTextGroup: { flex: 1, gap: 2, marginTop: 16 },
+  undoBtn: { padding: 8, marginTop: 16 },
+  undoBtnDisabled: { opacity: 0.3 },
   exerciseName: { fontSize: 22, fontWeight: '700' },
   progressLabel: { fontSize: 13 },
   blockBadge: { alignSelf: 'flex-start', marginTop: 4 },
@@ -352,4 +438,12 @@ const styles = StyleSheet.create({
   restSet: { fontSize: 13, lineHeight: 20 },
   skipBtn: { alignItems: 'center', paddingVertical: 8 },
   skipText: { fontSize: 14 },
+  skipExerciseText: { fontSize: 13 },
+  sheetContainer: { paddingHorizontal: 24, paddingVertical: 8, gap: 12 },
+  sheetTitle: { fontSize: 17, fontWeight: '600' },
+  sheetMessage: { fontSize: 15 },
+  sheetDestructiveBtn: { alignItems: 'center', justifyContent: 'center', paddingVertical: 14, borderRadius: 10 },
+  sheetBtnText: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  sheetCancelBtn: { alignItems: 'center', justifyContent: 'center', paddingVertical: 14, borderRadius: 10, borderWidth: 1 },
+  sheetCancelText: { fontSize: 16, fontWeight: '500' },
 });
