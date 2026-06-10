@@ -84,11 +84,12 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
   const [countdown, setCountdown] = useState(set.duration_seconds ?? 0);
   const [timerDone, setTimerDone] = useState(false);
   const [timerStarted, setTimerStarted] = useState(false);
+  const [timerPaused, setTimerPaused] = useState(false);
   const [cardioMinutes, setCardioMinutes] = useState('');
   const [cardioDistance, setCardioDistance] = useState('');
 
   useEffect(() => {
-    if (!isDuration || !timerStarted) return;
+    if (!isDuration || !timerStarted || timerPaused) return;
     const interval = setInterval(() => {
       setCountdown(c => {
         if (c <= 1) {
@@ -101,7 +102,7 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
       });
     }, 1000);
     return () => clearInterval(interval);
-  }, [isDuration, timerStarted]);
+  }, [isDuration, timerStarted, timerPaused]);
 
   async function handleValidate() {
     if (loading) return;
@@ -118,6 +119,12 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
     } finally {
       setLoading(false);
     }
+  }
+
+  function handleTimerPress() {
+    if (timerDone) { handleDurationValidate(); return; }
+    if (!timerStarted) { setTimerStarted(true); return; }
+    setTimerPaused(p => !p);
   }
 
   async function handleDurationValidate() {
@@ -158,6 +165,9 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
       : set.weight != null
         ? `${convert(set.weight)} ${unitLabel}`
         : `— ${unitLabel}`;
+  const timerLabel = timerDone ? 'TERMINÉ ✓' : timerPaused ? 'PAUSE ⏸' : timerStarted ? 'EN COURS…' : 'APPUYER ▶';
+  const timerA11yLabel = timerDone ? "C'est fait — valider" : timerPaused ? 'Reprendre le décompte' : timerStarted ? 'Mettre en pause' : 'Lancer le décompte';
+
   const currentSetIndex = block.sets.findIndex(s => s.id === set.id);
   const restSets = currentSetIndex >= 0 ? block.sets.slice(currentSetIndex + 1) : [];
 
@@ -262,31 +272,20 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
             <Text style={[styles.targetText, { color: colors.text }]}>{formatTime(set.duration_seconds ?? 0)}</Text>
           </View>
 
-          {timerStarted && (
-            <View
-              style={styles.circularTimerWrapper}
-              accessible={true}
-              accessibilityLabel={`Temps restant : ${countdown} secondes${timerDone ? ', terminé' : ''}`}
-            >
-              <CircularTimer
-                progress={countdown / (set.duration_seconds ?? 1)}
-                remaining={countdown}
-                label={timerDone ? 'TERMINÉ ✓' : 'EN COURS…'}
-                size={160}
-              />
-            </View>
-          )}
+          <PressableA11y
+            style={styles.circularTimerWrapper}
+            accessibilityLabel={timerA11yLabel}
+            onPress={handleTimerPress}
+          >
+            <CircularTimer
+              progress={countdown / (set.duration_seconds ?? 1)}
+              remaining={countdown}
+              label={timerLabel}
+              size={220}
+            />
+          </PressableA11y>
 
-          {/* Bouton durée */}
-          {!timerStarted ? (
-            <PressableA11y
-              accessibilityLabel="Lancer le décompte"
-              onPress={() => setTimerStarted(true)}
-              style={[styles.validateBtn, { backgroundColor: colors.primary }]}
-            >
-              <Text style={styles.validateBtnText}>Lancer ▶</Text>
-            </PressableA11y>
-          ) : (
+          {timerStarted && (
             <PressableA11y
               accessibilityLabel="C'est fait — valider cet exercice"
               onPress={handleDurationValidate}
