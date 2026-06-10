@@ -16,6 +16,7 @@ import type { UseTimerResult } from '@/hooks/useTimer';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
+import { useUnits } from '@/hooks/useUnits';
 
 interface RunningPhaseProps {
   exercise: WorkoutExerciseDetail;
@@ -56,6 +57,7 @@ function formatTime(seconds: number): string {
 export function RunningPhase({ exercise, block, set, progressLabel, timer, onValidate, onSkip, onSkipExercise, onUndo, canUndo, lastSetLog }: RunningPhaseProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
+  const { convert, label: unitLabel, resolved: unitResolved } = useUnits();
 
   const skipExerciseSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ['30%'], []);
@@ -75,7 +77,7 @@ export function RunningPhase({ exercise, block, set, progressLabel, timer, onVal
   const isDuration = !isCardio && (set.duration_seconds ?? 0) > 0;
 
   const [reps, setReps] = useState(String(set.reps_max));
-  const [weight, setWeight] = useState(set.weight != null ? String(set.weight) : '');
+  const [weight, setWeight] = useState(set.weight != null ? convert(set.weight) : '');
   const [rpe, setRpe] = useState('');
   const [loading, setLoading] = useState(false);
   const [countdown, setCountdown] = useState(set.duration_seconds ?? 0);
@@ -104,9 +106,12 @@ export function RunningPhase({ exercise, block, set, progressLabel, timer, onVal
     if (loading) return;
     setLoading(true);
     try {
+      const weightKg = unitResolved === 'lbs'
+        ? (parseFloat(weight) || 0) / 2.20462
+        : parseFloat(weight) || 0;
       await onValidate({
         repsDone: parseInt(reps, 10) || 0,
-        weightDone: parseFloat(weight) || 0,
+        weightDone: weightKg,
         rpe: rpe.trim() ? parseInt(rpe, 10) : null,
       });
     } finally {
@@ -145,7 +150,13 @@ export function RunningPhase({ exercise, block, set, progressLabel, timer, onVal
   const setLabel = set.reps_min === set.reps_max
     ? `${set.reps_min} rép`
     : `${set.reps_min}–${set.reps_max} rép`;
-  const weightLabel = set.weight_type === 'bodyweight' ? 'PC' : set.weight_type === 'bar' ? 'barre' : `${set.weight ?? '—'} kg`;
+  const weightLabel = set.weight_type === 'bodyweight'
+    ? 'PC'
+    : set.weight_type === 'bar'
+      ? 'barre'
+      : set.weight != null
+        ? `${convert(set.weight)} ${unitLabel}`
+        : `— ${unitLabel}`;
   const currentSetIndex = block.sets.findIndex(s => s.id === set.id);
   const restSets = currentSetIndex >= 0 ? block.sets.slice(currentSetIndex + 1) : [];
 
@@ -301,7 +312,7 @@ export function RunningPhase({ exercise, block, set, progressLabel, timer, onVal
               />
             </View>
             <View style={[styles.inputGroup, set.weight_type !== 'fixed' && styles.inputGroupDisabled]}>
-              <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>Poids (kg)</Text>
+              <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>Poids ({unitLabel})</Text>
               <TextInput
                 style={[styles.input, { color: colors.text, borderColor: colors.border, backgroundColor: colors.surface }]}
                 value={weight}
@@ -345,7 +356,7 @@ export function RunningPhase({ exercise, block, set, progressLabel, timer, onVal
           <Text style={[styles.restLabel, { color: colors.textSecondary }]}>SÉRIES RESTANTES</Text>
           {restSets.map((s, i) => (
             <Text key={s.id} style={[styles.restSet, { color: colors.textSecondary }]}>
-              {i + currentSetIndex + 2} ·{s.weight != null ? `${s.weight} kg` : 'PC'} × {s.reps_min === s.reps_max ? s.reps_min : `${s.reps_min}–${s.reps_max}`}
+              {i + currentSetIndex + 2} ·{s.weight != null ? `${convert(s.weight)} ${unitLabel}` : 'PC'} × {s.reps_min === s.reps_max ? s.reps_min : `${s.reps_min}–${s.reps_max}`}
             </Text>
           ))}
         </View>
