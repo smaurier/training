@@ -382,19 +382,11 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
       )}
 
       <PressableA11y
-        accessibilityLabel="Passer cette série"
-        onPress={onSkip}
-        style={styles.skipBtn}
-      >
-        <Text style={[styles.skipText, { color: colors.textSecondary }]}>Passer →</Text>
-      </PressableA11y>
-
-      <PressableA11y
-        accessibilityLabel="Passer toutes les séries restantes de cet exercice"
+        accessibilityLabel="Passer — ouvrir les options"
         onPress={() => skipExerciseSheetRef.current?.expand()}
         style={styles.skipBtn}
       >
-        <Text style={[styles.skipExerciseText, { color: colors.textSecondary }]}>Passer l&apos;exercice →</Text>
+        <Text style={[styles.skipText, { color: colors.textSecondary }]}>Passer →</Text>
       </PressableA11y>
     </ScrollView>
 
@@ -411,18 +403,25 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
           <Text style={[styles.sheetTitle, { color: colors.text }]} numberOfLines={1}>
             {exercise.exercise.name}
           </Text>
-          <Text style={[styles.sheetMessage, { color: colors.textSecondary }]}>
-            Passer toutes les séries restantes ?
-          </Text>
           <PressableA11y
-            accessibilityLabel="Confirmer — passer l'exercice entier"
+            accessibilityLabel="Passer cette série uniquement"
+            onPress={() => {
+              skipExerciseSheetRef.current?.close();
+              onSkip();
+            }}
+            style={[styles.sheetCancelBtn, { borderColor: colors.border }]}
+          >
+            <Text style={[styles.sheetCancelText, { color: colors.text }]}>Passer cette série</Text>
+          </PressableA11y>
+          <PressableA11y
+            accessibilityLabel="Passer l'exercice entier — toutes les séries restantes"
             onPress={() => {
               skipExerciseSheetRef.current?.close();
               onSkipExercise();
             }}
             style={[styles.sheetDestructiveBtn, { backgroundColor: '#dc2626' }]}
           >
-            <Text style={styles.sheetBtnText}>Passer l&apos;exercice</Text>
+            <Text style={styles.sheetBtnText}>Passer l&apos;exercice entier</Text>
           </PressableA11y>
           <PressableA11y
             accessibilityLabel="Annuler"
@@ -489,7 +488,6 @@ const styles = StyleSheet.create({
   restSet: { fontSize: 13, lineHeight: 20 },
   skipBtn: { alignItems: 'center', paddingVertical: 8 },
   skipText: { fontSize: 14 },
-  skipExerciseText: { fontSize: 13 },
   sheetContainer: { paddingHorizontal: 24, paddingVertical: 8, gap: 12 },
   sheetTitle: { fontSize: 17, fontWeight: '600' },
   sheetMessage: { fontSize: 15 },
