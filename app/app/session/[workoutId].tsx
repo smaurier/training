@@ -55,6 +55,7 @@ export default function SessionScreen() {
     } catch {
       // refresh() failed but weight was already set; next navigation will reload
     }
+    session.markStartingWeightDone();
   }, [session, refresh]);
 
   const handleBack = useCallback(() => router.back(), [router]);

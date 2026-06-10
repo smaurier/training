@@ -108,3 +108,12 @@ describe('computeNextLabel edge cases', () => {
     expect(computeNextLabel(next, exercises, true)).toBe('Exercice suivant : ');
   });
 });
+
+describe('UseSessionResult interface includes markStartingWeightDone', () => {
+  it('markStartingWeightDone exists as key in UseSessionResult type', () => {
+    // Test de type compilé : si UseSessionResult n'a pas markStartingWeightDone,
+    // l'assignation suivante échoue à la compilation TypeScript
+    const key: keyof import('./useSession').UseSessionResult = 'markStartingWeightDone';
+    expect(key).toBe('markStartingWeightDone');
+  });
+});
