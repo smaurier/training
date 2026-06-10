@@ -7,13 +7,13 @@
     "@expo/vector-icons": "^15.0.3",
     "@gorhom/bottom-sheet": "^5.2.14",
     "@types/jest": "29.5.14",
-    "expo": "^54.0.0",
+    "expo": "~54.0.35",
     "expo-asset": "~12.0.13",
     "expo-constants": "~18.0.13",
-    "expo-font": "~14.0.11",
+    "expo-font": "~14.0.12",
     "expo-linear-gradient": "~15.0.8",
     "expo-linking": "~8.0.12",
-    "expo-router": "~6.0.23",
+    "expo-router": "~6.0.24",
     "expo-splash-screen": "~31.0.13",
     "expo-sqlite": "~16.0.10",
     "expo-status-bar": "~3.0.9",
@@ -37,6 +37,7 @@
     "@testing-library/react-native": "^13.3.3",
     "@types/react": "~19.1.10",
     "@types/react-test-renderer": "^19.1.0",
+    "eslint-config-expo": "^56.0.4",
     "metro": "^0.83.1",
     "typescript": "~5.9.2"
   },
@@ -47,7 +48,8 @@
     "web": "expo start --web",
     "test": "jest",
     "test:watch": "jest --watch",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --ext .ts,.tsx --max-warnings 0"
   },
   "jest": {
     "preset": "jest-expo",

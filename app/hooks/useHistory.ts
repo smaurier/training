@@ -58,7 +58,7 @@ function groupByMonth(sessions: SessionSummary[]): HistorySection[] {
 
 export function useHistory(): UseHistoryReturn {
   const serviceRef = useRef<HistoryService | null>(null);
-  if (!serviceRef.current) serviceRef.current = makeService();
+  if (serviceRef.current == null) serviceRef.current = makeService();
   const service = serviceRef.current;
 
   const [sections, setSections] = useState<HistorySection[]>([]);

@@ -1,7 +1,6 @@
 import { SectionList, View, Text, ScrollView, ActivityIndicator, StyleSheet } from 'react-native';
 import { PressableA11y } from '@/components/ui/PressableA11y';
-import { useRouter } from 'expo-router';
-import { useFocusEffect } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
 import { useHistory } from '@/hooks/useHistory';
 import { useProgression } from '@/hooks/useProgression';

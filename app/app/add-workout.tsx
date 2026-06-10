@@ -1,5 +1,5 @@
 import {
-  View, Text, TextInput,
+  Text, TextInput,
   StyleSheet, ScrollView, Alert, ActivityIndicator
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';

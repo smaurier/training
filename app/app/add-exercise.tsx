@@ -119,7 +119,7 @@ export default function AddExerciseModal() {
       >
         {submitting
           ? <ActivityIndicator color="#fff" />
-          : <Text style={styles.submitText}>Créer l'exercice</Text>
+          : <Text style={styles.submitText}>Créer l&apos;exercice</Text>
         }
       </PressableA11y>
     </ScrollView>

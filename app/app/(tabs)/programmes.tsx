@@ -1,6 +1,5 @@
 import { FlatList, View, Text, ActivityIndicator, StyleSheet, Alert } from 'react-native';
-import { useRouter } from 'expo-router';
-import { useFocusEffect } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { useCallback, useRef, useState, useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { usePrograms } from '@/hooks/usePrograms';

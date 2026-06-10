@@ -28,7 +28,7 @@ function makeService(): ProgressionService {
 
 export function useProgression(): UseProgressionReturn {
   const serviceRef = useRef<ProgressionService | null>(null);
-  if (!serviceRef.current) serviceRef.current = makeService();
+  if (serviceRef.current == null) serviceRef.current = makeService();
   const service = serviceRef.current;
 
   const [stats, setStats] = useState<DashboardStats | null>(null);

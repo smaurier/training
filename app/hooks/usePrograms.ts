@@ -21,7 +21,7 @@ function makeService(): ProgramService {
 
 export function usePrograms(): UseProgramsResult {
   const serviceRef = useRef<ProgramService | null>(null);
-  if (!serviceRef.current) serviceRef.current = makeService();
+  if (serviceRef.current == null) serviceRef.current = makeService();
   const service = serviceRef.current;
 
   const [programs, setPrograms] = useState<Program[]>([]);

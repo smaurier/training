@@ -19,7 +19,7 @@ function makeService(): ExerciseService {
 
 export function useExercises(): UseExercisesResult {
   const serviceRef = useRef<ExerciseService | null>(null);
-  if (!serviceRef.current) {
+  if (serviceRef.current == null) {
     serviceRef.current = makeService();
   }
   const service = serviceRef.current;

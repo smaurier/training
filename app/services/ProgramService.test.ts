@@ -1,4 +1,4 @@
-import { ProgramService, CreateProgramInput, UpdateProgramInput } from './ProgramService';
+import { ProgramService } from './ProgramService';
 import { InMemoryProgramRepository } from '../repositories/InMemoryProgramRepository';
 
 function makeService() {

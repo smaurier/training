@@ -14,7 +14,7 @@ export default function NotFoundScreen() {
       <View style={[styles.container, { backgroundColor: colors.background }]}>
         <Text style={[styles.title, { color: colors.text }]}>Page introuvable</Text>
         <Link href="/" style={[styles.link, { borderColor: colors.border }]}>
-          <Text style={[styles.linkText, { color: colors.primary }]}>Retour à l'accueil</Text>
+          <Text style={[styles.linkText, { color: colors.primary }]}>Retour à l&apos;accueil</Text>
         </Link>
       </View>
     </>

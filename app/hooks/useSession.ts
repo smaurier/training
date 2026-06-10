@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { SessionService, CheckIn, SetActual, ProgressionResult, LastSetLog } from '../services/SessionService';
 import { SQLiteSessionLogRepository } from '../repositories/SQLiteSessionLogRepository';
 import { SQLiteSetLogRepository } from '../repositories/SQLiteSetLogRepository';
@@ -89,9 +89,7 @@ function makeService(): SessionService {
 }
 
 export function useSession(workoutId: number, workoutDetails: WorkoutExerciseDetail[]): UseSessionResult {
-  const serviceRef = useRef<SessionService | null>(null);
-  if (!serviceRef.current) serviceRef.current = makeService();
-  const service = serviceRef.current;
+  const service = useMemo(() => makeService(), []);
 
   const [phase, setPhase] = useState<SessionPhase>('checkin');
   const [sessionLogId, setSessionLogId] = useState<number | null>(null);

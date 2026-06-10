@@ -43,7 +43,7 @@ export default function SessionScreen() {
       timer.reset(session.restDuration);
       timer.start();
     }
-  }, [session.phase, session.restDuration]);
+  }, [session.phase, session.restDuration, timer]);
 
   const handleStartingWeightConfirm = useCallback(async (weight: number) => {
     await session.setStartingWeight(weight);
@@ -113,6 +113,7 @@ export default function SessionScreen() {
           <SummaryPhase
             progressions={session.progressions}
             totalSets={session.totalSetsLogged}
+            // eslint-disable-next-line react-hooks/purity
             durationSeconds={session.sessionStartedAt ? Math.round((Date.now() - session.sessionStartedAt) / 1000) : 0}
             onClose={handleBack}
           />

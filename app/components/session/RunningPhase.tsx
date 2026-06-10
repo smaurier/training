@@ -76,7 +76,7 @@ export function RunningPhase({ exercise, block, set, progressLabel, timer, onVal
       });
     }, 1000);
     return () => clearInterval(interval);
-  }, [timerStarted]); // isDuration stable for component lifetime
+  }, [isDuration, timerStarted]);
 
   async function handleValidate() {
     if (loading) return;

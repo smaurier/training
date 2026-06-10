@@ -39,7 +39,7 @@ function makeService(): WorkoutExerciseService {
 
 export function useWorkoutExercises(workoutId: number): UseWorkoutExercisesResult {
   const serviceRef = useRef<WorkoutExerciseService | null>(null);
-  if (!serviceRef.current) serviceRef.current = makeService();
+  if (serviceRef.current == null) serviceRef.current = makeService();
   const service = serviceRef.current;
 
   const [exercises, setExercises] = useState<WorkoutExerciseDetail[]>([]);

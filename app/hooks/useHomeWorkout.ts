@@ -41,7 +41,7 @@ function makeSessionService(): SessionService {
 
 export function useHomeWorkout(): HomeWorkoutState {
   const serviceRef = useRef<SessionService | null>(null);
-  if (!serviceRef.current) serviceRef.current = makeSessionService();
+  if (serviceRef.current == null) serviceRef.current = makeSessionService();
 
   // Fix 1: refresh ID ref for unmount guard / stale-call discard
   const refreshIdRef = useRef(0);

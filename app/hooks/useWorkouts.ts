@@ -21,7 +21,7 @@ function makeService(): WorkoutService {
 
 export function useWorkouts(programId: number): UseWorkoutsResult {
   const serviceRef = useRef<WorkoutService | null>(null);
-  if (!serviceRef.current) serviceRef.current = makeService();
+  if (serviceRef.current == null) serviceRef.current = makeService();
   const service = serviceRef.current;
 
   const [workouts, setWorkouts] = useState<Workout[]>([]);

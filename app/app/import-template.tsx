@@ -114,7 +114,7 @@ export default function ImportTemplateModal() {
             {alreadyImported && (
               <View style={[styles.warning, { borderColor: WARNING_COLOR }]}>
                 <Text style={[styles.warningText, { color: WARNING_COLOR }]}>
-                  Ce template a déjà été importé. Tu peux donner un nom différent pour mieux t'y retrouver.
+                  Ce template a déjà été importé. Tu peux donner un nom différent pour mieux t&apos;y retrouver.
                 </Text>
               </View>
             )}

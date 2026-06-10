@@ -1,4 +1,4 @@
-import { WorkoutService, CreateWorkoutInput, UpdateWorkoutInput } from './WorkoutService';
+import { WorkoutService } from './WorkoutService';
 import { InMemoryWorkoutRepository } from '../repositories/InMemoryWorkoutRepository';
 
 function makeService() {

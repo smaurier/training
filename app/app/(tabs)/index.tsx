@@ -37,7 +37,7 @@ export default function HomeScreen() {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.hero}>
         <Ionicons name="barbell-outline" size={52} color={colors.primary} importantForAccessibility="no" accessibilityElementsHidden={true} />
-        <Text style={[styles.title, { color: colors.text }]} accessibilityRole="header">Prêt à s'entraîner ?</Text>
+        <Text style={[styles.title, { color: colors.text }]} accessibilityRole="header">Prêt à s&apos;entraîner ?</Text>
       </View>
 
       {loading ? (
@@ -115,7 +115,6 @@ export default function HomeScreen() {
 
           <PressableA11y
             accessibilityLabel={`Démarrer ${selectedWorkout.name}`}
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             onPress={() => router.push({ pathname: '/session/[workoutId]' as any, params: { workoutId: String(selectedWorkout.id) } })}
             style={[styles.startBtn, { backgroundColor: colors.primary }]}
           >

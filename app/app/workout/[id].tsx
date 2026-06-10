@@ -116,7 +116,6 @@ export default function WorkoutDetailScreen() {
         <PressableA11y
           accessibilityLabel="Ajouter un exercice"
           style={[styles.fab, { backgroundColor: colors.primary }]}
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           onPress={() => router.push({ pathname: '/add-workout-exercise' as any, params: { workoutId: String(workoutId) } })}
         >
           <Ionicons name="add" size={28} color={FAB_ICON_COLOR} />
@@ -124,7 +123,6 @@ export default function WorkoutDetailScreen() {
         {exercises.length > 0 && (
           <PressableA11y
             accessibilityLabel="Démarrer la séance"
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             onPress={() => router.push({ pathname: '/session/[workoutId]' as any, params: { workoutId: String(workoutId) } })}
             style={[styles.startBtn, { backgroundColor: '#16a34a' }]}
           >

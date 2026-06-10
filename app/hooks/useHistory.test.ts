@@ -43,7 +43,7 @@ describe('useHistory', () => {
 
     let hookResult!: ReturnType<typeof useHistory>;
     // Capture initial render state before async resolves
-    const renders: Array<{ isLoading: boolean; sections: unknown }> = [];
+    const renders: { isLoading: boolean; sections: unknown }[] = [];
 
     function TestComponent() {
       hookResult = useHistory();

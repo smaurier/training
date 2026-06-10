@@ -1,5 +1,4 @@
-import type { WorkoutExercise, Exercise, Block } from '../db/types';
-import type { Set as TrainingSet } from '../db/types';
+import type { WorkoutExercise, Exercise, Block, Set as TrainingSet } from '../db/types';
 import { IWorkoutExerciseRepository } from '../repositories/IWorkoutExerciseRepository';
 import { IBlockRepository, UpdateBlockDto } from '../repositories/IBlockRepository';
 import { ISetRepository, UpdateSetDto } from '../repositories/ISetRepository';
