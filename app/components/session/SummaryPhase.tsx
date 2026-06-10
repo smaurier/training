@@ -5,6 +5,7 @@ import type { ProgressionResult } from '@/services/SessionService';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
+import { useUnits } from '@/hooks/useUnits';
 
 interface SummaryPhaseProps {
   progressions: ProgressionResult[];
@@ -22,6 +23,7 @@ function formatDuration(seconds: number): string {
 export function SummaryPhase({ progressions, totalSets, durationSeconds, onClose }: SummaryPhaseProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
+  const { convert, label: unitLabel } = useUnits();
 
   const progressionCount = progressions.filter(p => p.achieved).length;
 
@@ -53,10 +55,10 @@ export function SummaryPhase({ progressions, totalSets, durationSeconds, onClose
               {p.achieved ? (
                 <View style={styles.progressionValues}>
                   <Text style={[styles.progressionOld, { color: colors.textSecondary }]}>
-                    {p.oldWeight != null ? `${p.oldWeight} kg` : '—'}
+                    {p.oldWeight != null ? `${convert(p.oldWeight)} ${unitLabel}` : '—'}
                   </Text>
                   <Ionicons name="arrow-forward" size={12} color="#16a34a" />
-                  <Text style={styles.progressionNew}>{p.newWeight != null ? `${p.newWeight} kg` : '—'}</Text>
+                  <Text style={styles.progressionNew}>{p.newWeight != null ? `${convert(p.newWeight)} ${unitLabel}` : '—'}</Text>
                 </View>
               ) : (
                 <Text style={[styles.progressionPending, { color: colors.textSecondary }]}>

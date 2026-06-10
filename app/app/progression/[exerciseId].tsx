@@ -11,6 +11,7 @@ import { SQLiteExerciseRepository } from '@/repositories/SQLiteExerciseRepositor
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
+import { useUnits } from '@/hooks/useUnits';
 import { getDb } from '@/db';
 
 function formatDate(iso: string): string {
@@ -21,6 +22,7 @@ export default function ExerciseProgressionScreen() {
   const { exerciseId, exerciseName } = useLocalSearchParams<{ exerciseId: string; exerciseName: string }>();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
+  const { convert, label: unitLabel } = useUnits();
 
   const [history, setHistory] = useState<Session1RM[]>([]);
   const [bestPR, setBestPR] = useState<PersonalRecord | null>(null);
@@ -112,10 +114,10 @@ export default function ExerciseProgressionScreen() {
         <View style={[styles.section, { backgroundColor: colors.surface }]}>
           <Text style={[styles.sectionLabel, { color: colors.textSecondary }]}>MEILLEUR PR</Text>
           <Text style={[styles.prValue, { color: colors.text }]}>
-            {bestPR.weight} kg × {bestPR.reps} reps
+            {convert(bestPR.weight)} {unitLabel} × {bestPR.reps} reps
           </Text>
           <Text style={[styles.prMeta, { color: colors.textSecondary }]}>
-            1RM Epley : {bestPR.estimated_1rm} kg · {formatDate(bestPR.achieved_at)}
+            1RM Epley : {convert(bestPR.estimated_1rm)} {unitLabel} · {formatDate(bestPR.achieved_at)}
           </Text>
         </View>
       )}
@@ -129,7 +131,7 @@ export default function ExerciseProgressionScreen() {
               style={[styles.prRow, i > 0 && { borderTopWidth: 1, borderTopColor: colors.border }]}
             >
               <Text style={[styles.prRowValue, { color: colors.text }]}>
-                {pr.weight} kg × {pr.reps} reps
+                {convert(pr.weight)} {unitLabel} × {pr.reps} reps
               </Text>
               <Text style={[styles.prRowDate, { color: colors.textSecondary }]}>
                 {formatDate(pr.achieved_at)}
