@@ -3,9 +3,27 @@ import { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, ViewStyle } from 'react-native';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import { CheckIn } from '@/services/SessionService';
+import type { WorkoutExerciseDetail } from '@/services/WorkoutExerciseService';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
+
+function estimateDurationSeconds(exercises: WorkoutExerciseDetail[]): number {
+  let total = exercises.length * 30; // transition per exercise
+  for (const ex of exercises) {
+    for (const block of ex.blocks) {
+      for (const set of block.sets) {
+        total += 45 + set.rest_duration; // ~45s effort + rest
+      }
+    }
+  }
+  return total;
+}
+
+function formatDuration(seconds: number): string {
+  const rounded = Math.max(5, Math.ceil(seconds / 300) * 5);
+  return `~${rounded} min`;
+}
 
 interface CheckInRowConfig {
   label: string;
@@ -20,11 +38,17 @@ const CHECKIN_ROWS: CheckInRowConfig[] = [
 
 interface CheckInPhaseProps {
   onStart: (checkin: CheckIn) => Promise<void>;
+  exercises: WorkoutExerciseDetail[];
 }
 
-export function CheckInPhase({ onStart }: CheckInPhaseProps) {
+export function CheckInPhase({ onStart, exercises }: CheckInPhaseProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
+
+  const estimatedDuration = formatDuration(estimateDurationSeconds(exercises));
+  const PREVIEW_MAX = 4;
+  const previewNames = exercises.slice(0, PREVIEW_MAX).map(e => e.exercise.name);
+  const overflow = exercises.length - PREVIEW_MAX;
 
   const [energy, setEnergy] = useState<1 | 2 | 3 | null>(null);
   const [fatigue, setFatigue] = useState<1 | 2 | 3 | null>(null);
@@ -52,6 +76,29 @@ export function CheckInPhase({ onStart }: CheckInPhaseProps) {
         <Text style={[styles.title, { color: colors.text }]}>Comment tu te sens ?</Text>
         <Text style={[styles.subtitle, { color: colors.textSecondary }]}>3 questions avant de commencer</Text>
       </View>
+
+      {exercises.length > 0 && (
+        <View style={[styles.previewCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          <View style={styles.previewMeta}>
+            <Text style={[styles.previewStat, { color: colors.text }]}>
+              {exercises.length} exercice{exercises.length > 1 ? 's' : ''}
+            </Text>
+            <Text style={[styles.previewDuration, { color: colors.primary }]}>{estimatedDuration}</Text>
+          </View>
+          <View style={styles.previewList}>
+            {previewNames.map((name, i) => (
+              <Text key={i} style={[styles.previewItem, { color: colors.textSecondary }]} numberOfLines={1}>
+                · {name}
+              </Text>
+            ))}
+            {overflow > 0 && (
+              <Text style={[styles.previewItem, { color: colors.textSecondary }]}>
+                + {overflow} de plus
+              </Text>
+            )}
+          </View>
+        </View>
+      )}
 
       {CHECKIN_ROWS.map((row, i) => (
         <View key={row.label} style={styles.row}>
@@ -116,4 +163,10 @@ const styles = StyleSheet.create({
   segmentTextSelected: { fontWeight: '700' },
   startBtn: { marginTop: 8, paddingVertical: 16, borderRadius: Radius.sm, alignItems: 'center' },
   startBtnText: { color: '#fff', fontSize: 17, fontWeight: '600' },
+  previewCard: { borderWidth: 1, borderRadius: Radius.sm, padding: 16, gap: 10 },
+  previewMeta: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  previewStat: { fontSize: 14, fontWeight: '600' },
+  previewDuration: { fontSize: 14, fontWeight: '700' },
+  previewList: { gap: 3 },
+  previewItem: { fontSize: 13 },
 });

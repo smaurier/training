@@ -80,7 +80,7 @@ export default function SessionScreen() {
         )}
 
         {!session.error && session.phase === 'checkin' && (
-          <CheckInPhase onStart={session.startSession} />
+          <CheckInPhase onStart={session.startSession} exercises={resolvedExercises} />
         )}
 
         {!session.error && session.phase === 'exercise_transition' && session.currentExercise && (
