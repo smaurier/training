@@ -4,6 +4,43 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 
 ---
 
+## Session 25 — 2026-06-10 — Thème + Réglages + Unités
+
+### Réalisé
+
+**Feature complète** : système de réglages thème (Système/Clair/Sombre) + unités (Système/kg/lbs) avec persistance DB, contextes React, et affichage cohérent partout.
+
+**Seeds fix** : edge case idempotence — `preserveWeight` ne prenait pas en compte le cas où l'utilisateur avait saisi un poids de départ mais n'avait pas encore loggé de série. Fix : `preserveWeight = (hasLogs?.count ?? 0) > 0 || existingSet.weight !== null`. Commit `a3cf3e5`.
+
+**Repository layer** : `ISettingsRepository` + `InMemorySettingsRepository` + `SQLiteSettingsRepository` + contrat TDD (4 tests). Pattern identique aux autres repos. Commits `ea37a0a`, `8c58dc9`.
+
+**Fonctions pures** : `resolveTheme`, `resolveUnits`, `convertWeight`, `lbsToKg` dans `app/services/settingsUtils.ts`. 17 tests. `resolveUnits` : US/LR/MM → lbs, tout le reste → kg. Commits `717f94a`, `ec78aa4`.
+
+**Contextes React** : `ThemeContextProvider` + `UnitsContextProvider` dans `app/contexts/`. Props `initialPreference` + `repo`. `ThemeContext` : `preference`, `resolved`, `setTheme`. `UnitsContext` : `preference`, `resolved`, `setUnit`, `convert`, `label`. Commits `5e52639`, `bee51f7`.
+
+**_layout.tsx** : chargement settings depuis DB via `Promise.all` après `initDatabase()`. `settingsRepo` singleton au niveau module. `RootLayoutNav` lit `ThemeContext` directement pour `ThemeProvider`. `useColorScheme` modifié pour lire `ThemeContext` (fallback OS). Commits `264a0f5`, `287c353`.
+
+**useUnits hook** : `app/hooks/useUnits.ts` — throw si hors provider. Commit `8aabe84`.
+
+**Écran Réglages** : `SegmentedControl<T>` générique réutilisable, 2 sections APPARENCE + UNITÉS, hints "Actuellement : X" quand préférence = 'system'. Commit `21a369e`.
+
+**Touchpoints poids** : `RunningPhase` (cible, input label, restSets, `handleValidate` lbs→kg, `formatLastLog`), `SummaryPhase` (oldWeight/newWeight), `progression/[exerciseId]` (bestPR weight + 1RM, historique), `ExerciseHistorySection` (chips). Commits `446fad7`, `fbabd65`, `ec78aa4`.
+
+304/304 tests passent.
+
+### Décisions techniques
+
+- **Stockage toujours en kg** : l'input poids en séance est affiché dans l'unité choisie, mais `weightDone` stocké en kg après conversion `lbsToKg()`. Jamais de données en lbs en DB.
+- **Edge case unit-switch mid-session hors scope** : si l'utilisateur change d'unité pendant une séance active, le champ poids n'est pas reconverti. Acte délibéré — documenté dans la spec.
+- **expo-localization** : installé via `npx expo install expo-localization` (SDK-compatible v17.0.9). Régions lbs : US, LR, MM.
+- **`label === resolved` dans UnitsContext** : redondance connue, conservée pour clarté des call sites.
+
+### PostToolUse hook créé (session précédente)
+
+Hook `~/.claude/settings.json` qui s'active sur `git commit` : injecte un rappel de mettre à jour le backlog V2 dans le contexte du modèle. Opérationnel.
+
+---
+
 ## Session 24 — 2026-06-09 — Templates de programmes
 
 ### Réalisé
