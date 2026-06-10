@@ -75,7 +75,7 @@ export function RunningPhase({ exercise, block, set, progressLabel, timer, onVal
   );
 
   const isCardio = exercise.exercise.type === 'cardio';
-  const isDuration = !isCardio && (set.duration_seconds ?? 0) > 0;
+  const isDuration = exercise.exercise.type !== 'etirement' && !isCardio && (set.duration_seconds ?? 0) > 0;
 
   const [reps, setReps] = useState(String(set.reps_max));
   const [weight, setWeight] = useState(
