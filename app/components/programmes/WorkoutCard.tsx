@@ -28,7 +28,7 @@ export function WorkoutCard({ workout, exerciseCount, isFirst, isLast, isNext, o
         style={styles.main}
         onPress={onPress}
         onLongPress={onLongPress}
-        accessibilityLabel={`Séance ${workout.name}`}
+        accessibilityLabel={`Séance ${workout.name}${isNext ? ' — prochaine séance' : ''}`}
         accessibilityHint="Appuie pour configurer les exercices, maintiens pour modifier ou supprimer"
       >
         <Text style={[styles.name, { color: colors.text }]} numberOfLines={1}>

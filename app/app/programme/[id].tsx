@@ -33,19 +33,23 @@ export default function ProgrammeDetailScreen() {
   const [exerciseCounts, setExerciseCounts] = useState<Record<number, number>>({});
   useEffect(() => {
     if (workouts.length === 0) return;
+    let cancelled = false;
     const repo = new SQLiteWorkoutExerciseRepository(getDb());
     Promise.all(workouts.map(w => repo.findByWorkoutId(w.id).then(es => [w.id, es.length] as [number, number])))
-      .then(entries => setExerciseCounts(Object.fromEntries(entries)))
+      .then(entries => { if (!cancelled) setExerciseCounts(Object.fromEntries(entries)); })
       .catch(() => {});
+    return () => { cancelled = true; };
   }, [workouts]);
 
   const [nextWorkoutId, setNextWorkoutId] = useState<number | null>(null);
   useEffect(() => {
     if (workouts.length === 0) { setNextWorkoutId(null); return; }
+    let cancelled = false;
     const repo = new SQLiteSessionLogRepository(getDb());
     const workoutIds = workouts.map(w => w.id);
     repo.getLastCompletedWorkoutId(workoutIds)
       .then(lastId => {
+        if (cancelled) return;
         if (lastId === null) {
           setNextWorkoutId(workouts[0].id);
         } else {
@@ -55,6 +59,7 @@ export default function ProgrammeDetailScreen() {
         }
       })
       .catch(() => {});
+    return () => { cancelled = true; };
   }, [workouts]);
 
   const isFirstFocus = useRef(true);
