@@ -35,7 +35,9 @@ export default function SessionScreen() {
     );
     if (firstTravailBlockIdx === -1) return false;
     if (session.position.blockIdx !== firstTravailBlockIdx || session.position.setIdx !== 0) return false;
-    return session.currentExercise.blocks[firstTravailBlockIdx].sets.every(s => s.weight === null);
+    const travailSets = session.currentExercise.blocks[firstTravailBlockIdx].sets;
+    if (travailSets.every(s => s.weight_type === 'bodyweight')) return false;
+    return travailSets.every(s => s.weight === null);
   }, [session.phase, session.currentExercise, session.position]);
 
   useEffect(() => {
