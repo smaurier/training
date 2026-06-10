@@ -57,4 +57,14 @@ export class SQLiteSessionLogRepository implements ISessionLogRepository {
       'SELECT * FROM session_logs ORDER BY started_at DESC'
     );
   }
+
+  async getLastCompletedWorkoutId(workoutIds: number[]): Promise<number | null> {
+    if (workoutIds.length === 0) return null;
+    const placeholders = workoutIds.map(() => '?').join(',');
+    const row = await this.db.getFirstAsync<{ workout_id: number }>(
+      `SELECT workout_id FROM session_logs WHERE workout_id IN (${placeholders}) AND ended_at IS NOT NULL ORDER BY ended_at DESC LIMIT 1`,
+      workoutIds
+    );
+    return row?.workout_id ?? null;
+  }
 }
