@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import type { StyleProp, ViewStyle } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { useCallback } from 'react';
 import { Ionicons } from '@expo/vector-icons';
@@ -74,44 +75,51 @@ export default function HomeScreen() {
             {formatRelativeDate(lastDates.get(selectedWorkout.id))}
           </Text>
 
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.chipsScroll}
-            contentContainerStyle={styles.chipsRow}
-          >
-            <View
-              style={styles.chipsInner}
+          <View style={styles.chipsWrapper}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.chipsScroll}
+              contentContainerStyle={styles.chipsRow}
             >
-              {workouts.map((w: Workout) => {
-                const isSelected = w.id === selectedWorkout.id;
-                const isSug = w.id === suggestedWorkout?.id;
-                return (
-                  <PressableA11y
-                    key={w.id}
-                    accessibilityRole="radio"
-                    accessibilityState={{ selected: isSelected }}
-                    accessibilityLabel={`${w.name}${isSug && !isSelected ? ' — suggéré par le cycle' : ''}`}
-                    onPress={() => selectWorkout(w)}
-                    style={[
-                      styles.chip,
-                      { borderColor: colors.border },
-                      isSelected && { backgroundColor: colors.primary, borderColor: colors.primary },
-                      !isSelected && isSug && { borderColor: colors.primary, opacity: 0.7 },
-                    ] as StyleProp<ViewStyle>}
-                  >
-                    <Text style={[
-                      styles.chipText,
-                      { color: colors.textSecondary },
-                      isSelected && styles.chipTextSelected,
-                    ]}>
-                      {w.name}
-                    </Text>
-                  </PressableA11y>
-                );
-              })}
-            </View>
-          </ScrollView>
+              <View style={styles.chipsInner}>
+                {workouts.map((w: Workout) => {
+                  const isSelected = w.id === selectedWorkout.id;
+                  const isSug = w.id === suggestedWorkout?.id;
+                  return (
+                    <PressableA11y
+                      key={w.id}
+                      accessibilityRole="radio"
+                      accessibilityState={{ selected: isSelected }}
+                      accessibilityLabel={`${w.name}${isSug && !isSelected ? ' — suggéré par le cycle' : ''}`}
+                      onPress={() => selectWorkout(w)}
+                      style={[
+                        styles.chip,
+                        { borderColor: colors.border },
+                        isSelected && { backgroundColor: colors.primary, borderColor: colors.primary },
+                        !isSelected && isSug && { borderColor: colors.primary, opacity: 0.7 },
+                      ] as StyleProp<ViewStyle>}
+                    >
+                      <Text style={[
+                        styles.chipText,
+                        { color: colors.textSecondary },
+                        isSelected && styles.chipTextSelected,
+                      ]}>
+                        {w.name}
+                      </Text>
+                    </PressableA11y>
+                  );
+                })}
+              </View>
+            </ScrollView>
+            <LinearGradient
+              colors={[`${colors.surface}00`, colors.surface]}
+              start={{ x: 0, y: 0.5 }}
+              end={{ x: 1, y: 0.5 }}
+              style={styles.chipsFade}
+              pointerEvents="none"
+            />
+          </View>
 
           <PressableA11y
             accessibilityLabel={`Démarrer ${selectedWorkout.name}`}
@@ -135,9 +143,11 @@ const styles = StyleSheet.create({
   cardLabel: { fontSize: 11, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.5 },
   workoutName: { fontSize: 20, fontWeight: '700' },
   lastDate: { fontSize: 12 },
+  chipsWrapper: { position: 'relative' },
   chipsScroll: { marginHorizontal: -4 },
   chipsRow: { paddingHorizontal: 4 },
-  chipsInner: { flexDirection: 'row', gap: 8, paddingVertical: 2 },
+  chipsInner: { flexDirection: 'row', gap: 8, paddingVertical: 2, alignSelf: 'flex-start' },
+  chipsFade: { position: 'absolute', right: -4, top: 0, bottom: 0, width: 48 },
   chip: {
     paddingHorizontal: 14,
     minHeight: 44,
