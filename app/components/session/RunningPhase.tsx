@@ -12,7 +12,6 @@ import { CircularTimer } from '@/components/ui/CircularTimer';
 import type { WorkoutExerciseDetail, BlockWithSets } from '@/services/WorkoutExerciseService';
 import type { Set as TrainingSet } from '@/db/types';
 import type { SetActual, LastSetLog } from '@/services/SessionService';
-import type { UseTimerResult } from '@/hooks/useTimer';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
@@ -24,7 +23,6 @@ interface RunningPhaseProps {
   block: BlockWithSets;
   set: TrainingSet;
   progressLabel: string;
-  timer: UseTimerResult;
   onValidate: (actual: SetActual) => Promise<void>;
   onSkip: () => void;
   onSkipExercise: () => void;
@@ -55,7 +53,7 @@ function formatTime(seconds: number): string {
   return `${m}:${s.toString().padStart(2, '0')}`;
 }
 
-export function RunningPhase({ exercise, block, set, progressLabel, timer, onValidate, onSkip, onSkipExercise, onUndo, canUndo, lastSetLog }: RunningPhaseProps) {
+export function RunningPhase({ exercise, block, set, progressLabel, onValidate, onSkip, onSkipExercise, onUndo, canUndo, lastSetLog }: RunningPhaseProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const { convert, label: unitLabel, resolved: unitResolved } = useUnits();
@@ -288,20 +286,6 @@ export function RunningPhase({ exercise, block, set, progressLabel, timer, onVal
             <Text style={[styles.targetText, { color: colors.text }]}>{weightLabel} × {setLabel}</Text>
           </View>
 
-          {/* Timer repos */}
-          <PressableA11y
-            accessibilityLabel={timer.isRunning ? 'Pause du chrono' : 'Reprendre le chrono'}
-            onPress={timer.isRunning ? timer.pause : timer.start}
-            style={[styles.timerContainer, { backgroundColor: timer.isRunning ? colors.primary + '15' : colors.surface, borderColor: timer.isRunning ? colors.primary : colors.border }]}
-          >
-            <Text style={[styles.timerText, { color: timer.isRunning ? colors.primary : colors.textSecondary }]}>
-              {formatTime(timer.remaining)}
-            </Text>
-            <Text style={[styles.timerLabel, { color: colors.textSecondary }]}>
-              {timer.isRunning ? 'PAUSE — tap pour stopper' : 'CHRONO — tap pour lancer'}
-            </Text>
-          </PressableA11y>
-
           {/* Saisie */}
           <View style={styles.inputRow}>
             <View style={styles.inputGroup}>
@@ -434,9 +418,6 @@ const styles = StyleSheet.create({
   blockBadgeText: { fontSize: 11, fontWeight: '700', letterSpacing: 0.5 },
   targetCard: { padding: 16, borderRadius: Radius.sm, borderWidth: 1, alignItems: 'center' },
   targetText: { fontSize: 20, fontWeight: '600' },
-  timerContainer: { borderRadius: Radius.sm, borderWidth: 1.5, padding: 20, alignItems: 'center', gap: 4 },
-  timerText: { fontSize: 52, fontWeight: '700', letterSpacing: -1 },
-  timerLabel: { fontSize: 11, fontWeight: '500', letterSpacing: 0.3 },
   inputRow: { flexDirection: 'row', gap: 10 },
   inputGroup: { flex: 1, gap: 4 },
   inputGroupDisabled: { opacity: 0.4 },

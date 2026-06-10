@@ -105,7 +105,6 @@ export default function SessionScreen() {
               block={session.currentBlock}
               set={session.currentSet}
               progressLabel={session.progressLabel}
-              timer={timer}
               onValidate={session.validateSet}
               onSkip={session.skipSet}
               onSkipExercise={session.skipExercise}
