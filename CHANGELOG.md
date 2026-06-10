@@ -5,6 +5,15 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.4.2] — 2026-06-10
+
+8c175d8 refactor(session): remove legacy timerContainer from RunningPhase — rest timer lives in RestPhase only
+946c2a0 fix(session): destructure stable timer.reset/start in useEffect deps — rest countdown now works
+58abaab fix(session): etirement exercises use reps UI regardless of duration_seconds
+3816a2b fix(session): markStartingWeightDone called after refresh — weight now visible in RunningPhase
+
+---
+
 ## [1.4.1] — 2026-06-10
 
 3717334 fix(session): starting-weight confirm now reliably navigates to RunningPhase
