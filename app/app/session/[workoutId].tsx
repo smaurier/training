@@ -129,6 +129,7 @@ export default function SessionScreen() {
             progressions={session.progressions}
             totalSets={session.totalSetsLogged}
             durationSeconds={summaryDurationSeconds}
+            totalVolumeKg={session.totalVolume}
             onClose={handleBack}
           />
         )}

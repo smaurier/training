@@ -49,6 +49,7 @@ export interface UseSessionResult {
   progressions: ProgressionResult[];
   sessionStartedAt: number | null;
   totalSetsLogged: number;
+  totalVolume: number;
   lastSetLog: LastSetLog | null;
   error: string | null;
 }
@@ -107,6 +108,7 @@ export function useSession(workoutId: number, workoutDetails: WorkoutExerciseDet
   const [progressions, setProgressions] = useState<ProgressionResult[]>([]);
   const [sessionStartedAt, setSessionStartedAt] = useState<number | null>(null);
   const [totalSetsLogged, setTotalSetsLogged] = useState(0);
+  const [totalVolume, setTotalVolume] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [restDuration, setRestDuration] = useState(90);
   const [pendingPhase, setPendingPhase] = useState<'running' | 'exercise_transition'>('running');
@@ -157,6 +159,7 @@ export function useSession(workoutId: number, workoutDetails: WorkoutExerciseDet
       positionHistory.current.push({ position: { ...position }, setId: currentSet.id });
       setHistorySize(n => n + 1);
       setTotalSetsLogged(n => n + 1);
+      setTotalVolume(n => n + (actual.weightDone ?? 0) * (actual.repsDone ?? 0));
 
       const completedRestDuration = currentSet.rest_duration;
       const next = advancePosition(position, workoutDetails);
@@ -273,6 +276,6 @@ export function useSession(workoutId: number, workoutDetails: WorkoutExerciseDet
     startSession, validateSet, skipSet, skipExercise, undoLastSet, canUndo,
     setStartingWeight, startingWeightDone, markStartingWeightDone,
     confirmTransition, confirmRest, restDuration, nextLabel,
-    progressions, sessionStartedAt, totalSetsLogged, lastSetLog, error,
+    progressions, sessionStartedAt, totalSetsLogged, totalVolume, lastSetLog, error,
   };
 }

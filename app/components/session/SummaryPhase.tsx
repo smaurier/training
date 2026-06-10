@@ -11,6 +11,7 @@ interface SummaryPhaseProps {
   progressions: ProgressionResult[];
   totalSets: number;
   durationSeconds: number;
+  totalVolumeKg?: number;
   onClose: () => void;
 }
 
@@ -20,7 +21,7 @@ function formatDuration(seconds: number): string {
   return m > 0 ? `${m} min ${s > 0 ? `${s} s` : ''}`.trim() : `${s} s`;
 }
 
-export function SummaryPhase({ progressions, totalSets, durationSeconds, onClose }: SummaryPhaseProps) {
+export function SummaryPhase({ progressions, totalSets, durationSeconds, totalVolumeKg, onClose }: SummaryPhaseProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const { convert, label: unitLabel } = useUnits();
@@ -45,6 +46,15 @@ export function SummaryPhase({ progressions, totalSets, durationSeconds, onClose
           <Text style={[styles.statLabel, { color: colors.textSecondary }]}>PROGRESSIONS</Text>
         </View>
       </View>
+
+      {totalVolumeKg != null && totalVolumeKg > 0 && (
+        <View style={[styles.volumeCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          <Text style={[styles.statLabel, { color: colors.textSecondary }]}>VOLUME TOTAL</Text>
+          <Text style={[styles.volumeValue, { color: colors.text }]}>
+            {Math.round(parseFloat(convert(totalVolumeKg))).toLocaleString()} {unitLabel}
+          </Text>
+        </View>
+      )}
 
       {progressions.length > 0 && (
         <View style={[styles.progressionSection, { backgroundColor: colors.surface, borderColor: colors.border }]}>
@@ -91,6 +101,8 @@ const styles = StyleSheet.create({
   statCard: { flex: 1, borderWidth: 1, borderRadius: Radius.sm, padding: 16, alignItems: 'center', gap: 4 },
   statValue: { fontSize: 24, fontWeight: '700' },
   statLabel: { fontSize: 10, fontWeight: '600', letterSpacing: 0.5 },
+  volumeCard: { borderWidth: 1, borderRadius: Radius.sm, padding: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  volumeValue: { fontSize: 22, fontWeight: '700' },
   progressionSection: { borderWidth: 1, borderRadius: Radius.sm, padding: 16, gap: 12 },
   sectionTitle: { fontSize: 15, fontWeight: '600' },
   progressionRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 8, borderBottomWidth: 1 },
