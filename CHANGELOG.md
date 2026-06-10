@@ -5,6 +5,25 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.3.0] — 2026-06-10
+
+a509d61 docs(journal): session 25 — F1 passer exercice, F2 undo série, U10 cycle rotatif, T1 ESLint
+bf2f07c fix(ui): programme — cancel async on cleanup, a11y label for isNext badge
+dafa2e2 feat(ui): U10 — badge cycle rotatif 'Prochain' sur WorkoutCard
+5dd3504 feat(repo): U10 — getLastCompletedWorkoutId
+ef43d75 fix(a11y): RunningPhase — remove backdrop onPress double-close, add accessibilityState to undo button
+2a35927 feat(ui): F1+F2 — bouton ↩ undo, passer exercice + BottomSheet confirmation
+45020d7 feat(session): F1 — skipExercise (passer exercice entier)
+5773fb7 fix(session): undoLastSet — peek before async, pop after success
+4033656 feat(session): F2 — positionHistory, undoLastSet, canUndo
+493a035 feat(repo): add deleteBySetAndSession to SetLogRepository
+65cf96e fix(lint): remove non-functional react-hooks/purity disable comment
+841e2e6 feat(tooling): add ESLint with eslint-config-expo + CI step
+4635119 docs(spec): session controls + cycle rotatif + ESLint — F1/F2/U10/T1
+0ee67c1 docs(journal): session 24 — templates de programmes (5 templates, TemplateService, UI import)
+
+---
+
 ## [1.2.0] — 2026-06-09
 
 1172cf6 feat(programmes): FAB -> BottomSheet — Créer vide / Importer template
