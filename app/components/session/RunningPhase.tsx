@@ -264,6 +264,7 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
 
           {timerStarted && (
             <View
+              style={styles.circularTimerWrapper}
               accessible={true}
               accessibilityLabel={`Temps restant : ${countdown} secondes${timerDone ? ', terminé' : ''}`}
             >
@@ -327,6 +328,9 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
                 accessibilityLabel="Poids utilisé"
                 editable={set.weight_type === 'fixed'}
               />
+              {set.weight_type === 'fixed' && (
+                <Text style={[styles.inputHint, { color: colors.textSecondary }]}>par haltère</Text>
+              )}
             </View>
             <View style={styles.inputGroup}>
               <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>RPE (1–10)</Text>
@@ -429,8 +433,9 @@ const styles = StyleSheet.create({
   headerTextGroup: { flex: 1, gap: 2, marginTop: 16 },
   undoBtn: { padding: 8, marginTop: 16 },
   undoBtnDisabled: { opacity: 0.3 },
-  exerciseName: { fontSize: 22, fontWeight: '700' },
+  exerciseName: { fontSize: 26, fontWeight: '700' },
   progressLabel: { fontSize: 13 },
+  circularTimerWrapper: { alignItems: 'center' },
   blockBadge: { alignSelf: 'flex-start', marginTop: 4 },
   blockBadgeText: { fontSize: 11, fontWeight: '700', letterSpacing: 0.5 },
   seriesDots: { flexDirection: 'row', gap: 6, alignItems: 'center', marginTop: 6 },

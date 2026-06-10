@@ -22,6 +22,13 @@ export function RestPhase({ durationSeconds, timer, nextLabel, onContinue }: Res
 
   return (
     <View style={[styles.container, { backgroundColor: isDone ? '#16a34a15' : colors.background }]}>
+      <Text
+        style={[styles.phaseLabel, { color: isDone ? '#16a34a' : colors.primary }]}
+        accessibilityRole="header"
+      >
+        {isDone ? "C'EST PARTI !" : 'REPOS'}
+      </Text>
+
       <View
         accessible={true}
         accessibilityLabel={`Temps de repos restant : ${timer.remaining} secondes`}
@@ -34,7 +41,10 @@ export function RestPhase({ durationSeconds, timer, nextLabel, onContinue }: Res
         />
       </View>
 
-      <Text style={[styles.nextLabel, { color: colors.textSecondary }]}>{nextLabel}</Text>
+      <View style={styles.nextSection}>
+        <Text style={[styles.nextSectionLabel, { color: colors.textSecondary }]}>PROCHAINE</Text>
+        <Text style={[styles.nextLabel, { color: colors.text }]}>{nextLabel}</Text>
+      </View>
 
       <PressableA11y
         accessibilityLabel={isDone ? "C'est parti, continuer la séance" : 'Passer le repos'}
@@ -68,10 +78,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 20,
   },
-  nextLabel: {
-    fontSize: 15,
+  phaseLabel: {
+    fontSize: 32,
+    fontWeight: '800',
+    letterSpacing: 1,
     textAlign: 'center',
-    marginTop: 8,
+  },
+  nextSection: { alignItems: 'center', gap: 4 },
+  nextSectionLabel: { fontSize: 10, fontWeight: '700', letterSpacing: 1 },
+  nextLabel: {
+    fontSize: 17,
+    fontWeight: '600',
+    textAlign: 'center',
   },
   continueBtn: {
     width: '100%',
