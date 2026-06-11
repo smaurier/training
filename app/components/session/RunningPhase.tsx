@@ -18,6 +18,7 @@ import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
 import { useUnits } from '@/hooks/useUnits';
 import { lbsToKg } from '@/services/settingsUtils';
+import { computeRepsFeedback } from '@/services/repsFeedback';
 
 const RPE_OPTIONS = [
   { label: 'Facile', value: '3' },
@@ -177,6 +178,13 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
 
   const currentSetIndex = block.sets.findIndex(s => s.id === set.id);
   const restSets = currentSetIndex >= 0 ? block.sets.slice(currentSetIndex + 1) : [];
+
+  const repsFeedback = computeRepsFeedback(
+    reps,
+    set.reps_min,
+    set.reps_max,
+    set.weight_type === 'bodyweight',
+  );
 
   return (
     <>
@@ -384,6 +392,14 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
             <Ionicons name="checkmark" size={20} color="#fff" />
             <Text style={styles.validateBtnText}>{loading ? 'Validation…' : 'Valider'}</Text>
           </PressableA11y>
+          {repsFeedback !== null && (
+            <Text
+              style={[styles.repsFeedback, { color: colors.textSecondary }]}
+              accessibilityLiveRegion="polite"
+            >
+              {repsFeedback}
+            </Text>
+          )}
         </>
       )}
 
@@ -500,6 +516,7 @@ const styles = StyleSheet.create({
   input: { borderWidth: 1, borderRadius: Radius.sm, padding: 10, fontSize: 18, fontWeight: '600', textAlign: 'center' },
   validateBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 14, borderRadius: Radius.sm },
   validateBtnText: { color: '#fff', fontSize: 17, fontWeight: '600' },
+  repsFeedback: { fontSize: 13, textAlign: 'center', lineHeight: 18 },
   lastLog: { fontSize: 12, marginTop: 4 },
   restSection: { gap: 4 },
   restLabel: { fontSize: 10, fontWeight: '600', letterSpacing: 0.5 },
