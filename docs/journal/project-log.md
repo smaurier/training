@@ -4,6 +4,22 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 
 ---
 
+## S29 — 2026-06-11 — Quick Wins Séance
+
+### Livré
+- **F1 Célébration PR** : `SessionService.logSet` retourne `{ setLog, isPR }`. Badge overlay 3s dans `[workoutId].tsx`, survit la transition RunningPhase→RestPhase. `AccessibilityInfo.announceForAccessibility`. `handleValidate` wrapper retourne `Promise<void>`, dép array `[session.validateSet, session.currentExercise]`.
+- **F2 Feedback reps** : `computeRepsFeedback` pure function (8 tests TDD). Hint inline si écart > 25% cible, `accessibilityLiveRegion="polite"`, sous bouton Valider.
+- **F3 RPE redesign** : TextInput remplacé par 3 chips Facile/Normal/Difficile (mapped 3/6/9). `accessibilityRole="radio"`, toggle deselect.
+- **F4 Stepper poids** : bouton barbell dans header (non-bodyweight uniquement) → BottomSheet stepper ±2.5 kg (±5 lbs). `adjustedWeight` en kg interne, `convert()` pour affichage. Guard `adjusting` contre double-tap async. Message confirmation 2s. Appliqué aux séries suivantes via `session.setStartingWeight`.
+
+### Décisions
+- `validateSet` retourne `Promise<boolean>` (isPR) — timeout badge géré dans `[workoutId].tsx`, pas dans `useSession` (séparation responsabilités UI/métier)
+- Threshold feedback reps ±25% proportionnel — adapté à toutes plages (5×1.25=6.25, 15×1.25=18.75)
+- `adjustedWeight` en kg interne, `convert()` pour affichage — cohérent avec le reste de l'app
+- RPE field ne bloque plus UX : chips optionnels remplacent TextInput
+
+---
+
 ## Session 28 — 2026-06-11 — Bugs terrain + Export JSON
 
 ### Réalisé

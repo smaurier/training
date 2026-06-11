@@ -37,7 +37,8 @@
       "expo-sqlite",
       "expo-web-browser",
       "expo-asset",
-      "expo-font"
+      "expo-font",
+      "expo-localization"
     ],
     "experiments": {
       "typedRoutes": true
