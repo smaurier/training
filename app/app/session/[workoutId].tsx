@@ -88,7 +88,7 @@ export default function SessionScreen() {
       AccessibilityInfo.announceForAccessibility('Nouveau record personnel !');
       prBadgeTimeout.current = setTimeout(() => setPrBadge(null), 3000);
     }
-  }, [session]);
+  }, [session.validateSet, session.currentExercise]);
 
   return (
     <>
