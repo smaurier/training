@@ -1,6 +1,6 @@
 // app/app/session/[workoutId].tsx
-import { useEffect, useCallback, useMemo, useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { useEffect, useCallback, useMemo, useState, useRef } from 'react';
+import { View, Text, StyleSheet, AccessibilityInfo } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { useWorkoutExercises } from '@/hooks/useWorkoutExercises';
 import { useSession } from '@/hooks/useSession';
@@ -14,6 +14,7 @@ import { ExerciseTransitionPhase } from '@/components/session/ExerciseTransition
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { resolveWeights } from '@/services/weightRatio';
+import type { SetActual } from '@/services/SessionService';
 
 export default function SessionScreen() {
   const { workoutId: param } = useLocalSearchParams<{ workoutId: string }>();
@@ -69,6 +70,26 @@ export default function SessionScreen() {
     }
   }, [session.phase, session.sessionStartedAt]);
 
+  const [prBadge, setPrBadge] = useState<string | null>(null);
+  const prBadgeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (prBadgeTimeout.current) clearTimeout(prBadgeTimeout.current);
+    };
+  }, []);
+
+  const handleValidate = useCallback(async (actual: SetActual) => {
+    const isPR = await session.validateSet(actual);
+    if (isPR && session.currentExercise) {
+      const name = session.currentExercise.exercise.name;
+      if (prBadgeTimeout.current) clearTimeout(prBadgeTimeout.current);
+      setPrBadge(name);
+      AccessibilityInfo.announceForAccessibility('Nouveau record personnel !');
+      prBadgeTimeout.current = setTimeout(() => setPrBadge(null), 3000);
+    }
+  }, [session]);
+
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
@@ -105,7 +126,7 @@ export default function SessionScreen() {
               block={session.currentBlock}
               set={session.currentSet}
               progressLabel={session.progressLabel}
-              onValidate={session.validateSet}
+              onValidate={handleValidate}
               onSkip={session.skipSet}
               onSkipExercise={session.skipExercise}
               onUndo={session.undoLastSet}
@@ -134,6 +155,13 @@ export default function SessionScreen() {
           />
         )}
       </View>
+      {prBadge !== null && (
+        <View style={styles.prBadge} pointerEvents="none">
+          <Text style={styles.prBadgeIcon}>🏆</Text>
+          <Text style={styles.prBadgeTitle}>Nouveau PR !</Text>
+          <Text style={styles.prBadgeSub} numberOfLines={1}>{prBadge}</Text>
+        </View>
+      )}
     </>
   );
 }
@@ -142,4 +170,24 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   errorContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 32 },
   errorText: { fontSize: 16, textAlign: 'center' },
+  prBadge: {
+    position: 'absolute',
+    top: 64,
+    alignSelf: 'center',
+    backgroundColor: '#ca8a04',
+    borderRadius: 14,
+    paddingHorizontal: 24,
+    paddingVertical: 14,
+    zIndex: 100,
+    alignItems: 'center',
+    gap: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 6,
+  },
+  prBadgeIcon: { fontSize: 24 },
+  prBadgeTitle: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  prBadgeSub: { color: '#fef3c7', fontSize: 13, maxWidth: 200 },
 });
