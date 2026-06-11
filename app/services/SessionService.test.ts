@@ -53,7 +53,7 @@ describe('SessionService.logSet', () => {
     const ctx = makeService();
     const service = ctx.build();
     const session = await service.startSession(1, { checkin_energy: 3, checkin_fatigue: 1, checkin_sleep: 2 });
-    const setLog = await service.logSet(session.id, 10, 5, { repsDone: 7, weightDone: 80, rpe: 8 });
+    const { setLog } = await service.logSet(session.id, 10, 5, { repsDone: 7, weightDone: 80, rpe: 8 });
     expect(setLog.id).toBeGreaterThan(0);
     expect(setLog.session_log_id).toBe(session.id);
     expect(setLog.set_id).toBe(10);
@@ -92,7 +92,7 @@ describe('SessionService.logSet', () => {
     const ctx = makeService();
     const service = ctx.build();
     const session = await service.startSession(1, { checkin_energy: 3, checkin_fatigue: 1, checkin_sleep: 2 });
-    const setLog = await service.logSet(session.id, 10, 5, { repsDone: 8, weightDone: 60, rpe: null });
+    const { setLog } = await service.logSet(session.id, 10, 5, { repsDone: 8, weightDone: 60, rpe: null });
     expect(setLog.rpe).toBeNull();
   });
 
@@ -100,7 +100,7 @@ describe('SessionService.logSet', () => {
     const ctx = makeService();
     const service = ctx.build();
     const session = await service.startSession(1, { checkin_energy: 3, checkin_fatigue: 1, checkin_sleep: 2 });
-    const setLog = await service.logSet(session.id, 10, 5, {
+    const { setLog } = await service.logSet(session.id, 10, 5, {
       repsDone: 1,
       weightDone: 0,
       rpe: null,
@@ -109,6 +109,41 @@ describe('SessionService.logSet', () => {
     });
     expect(setLog.duration_seconds).toBe(1800);
     expect(setLog.distance_meters).toBe(5000);
+  });
+
+  it('retourne isPR: true si premier log avec poids > 0', async () => {
+    const ctx = makeService();
+    const service = ctx.build();
+    const session = await service.startSession(1, { checkin_energy: null, checkin_fatigue: null, checkin_sleep: null });
+    const result = await service.logSet(session.id, 10, 5, { repsDone: 5, weightDone: 80, rpe: null });
+    expect(result.isPR).toBe(true);
+  });
+
+  it('retourne isPR: true si 1RM dépasse le meilleur existant', async () => {
+    const ctx = makeService();
+    const service = ctx.build();
+    await ctx.prRepo.save({ exercise_id: 5, weight: 80, reps: 5, estimated_1rm: 93.3, achieved_at: '2026-01-01T00:00:00.000Z', session_log_id: null });
+    const session = await service.startSession(1, { checkin_energy: null, checkin_fatigue: null, checkin_sleep: null });
+    // 100 * (1 + 5/30) ≈ 116.67 > 93.3
+    const result = await service.logSet(session.id, 10, 5, { repsDone: 5, weightDone: 100, rpe: null });
+    expect(result.isPR).toBe(true);
+  });
+
+  it('retourne isPR: false si 1RM inférieur au meilleur existant', async () => {
+    const ctx = makeService();
+    const service = ctx.build();
+    await ctx.prRepo.save({ exercise_id: 5, weight: 120, reps: 1, estimated_1rm: 124, achieved_at: '2026-01-01T00:00:00.000Z', session_log_id: null });
+    const session = await service.startSession(1, { checkin_energy: null, checkin_fatigue: null, checkin_sleep: null });
+    const result = await service.logSet(session.id, 10, 5, { repsDone: 5, weightDone: 80, rpe: null });
+    expect(result.isPR).toBe(false);
+  });
+
+  it('retourne isPR: false si weightDone = 0', async () => {
+    const ctx = makeService();
+    const service = ctx.build();
+    const session = await service.startSession(1, { checkin_energy: null, checkin_fatigue: null, checkin_sleep: null });
+    const result = await service.logSet(session.id, 10, 5, { repsDone: 10, weightDone: 0, rpe: null });
+    expect(result.isPR).toBe(false);
   });
 });
 

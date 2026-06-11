@@ -65,7 +65,7 @@ export class SessionService {
     });
   }
 
-  async logSet(sessionLogId: number, setId: number, exerciseId: number, actual: SetActual): Promise<SetLog> {
+  async logSet(sessionLogId: number, setId: number, exerciseId: number, actual: SetActual): Promise<{ setLog: SetLog; isPR: boolean }> {
     const setLog = await this.setLogRepo.save({
       session_log_id: sessionLogId,
       set_id: setId,
@@ -78,6 +78,7 @@ export class SessionService {
       completed_at: new Date().toISOString(),
     });
 
+    let isPR = false;
     if (actual.weightDone > 0 && actual.repsDone > 0) {
       const estimated1RM = actual.weightDone * (1 + actual.repsDone / 30);
       const currentBest = await this.prRepo.findBestByExerciseId(exerciseId);
@@ -90,10 +91,11 @@ export class SessionService {
           achieved_at: new Date().toISOString(),
           session_log_id: sessionLogId,
         });
+        isPR = true;
       }
     }
 
-    return setLog;
+    return { setLog, isPR };
   }
 
   async deleteSetLog(setId: number, sessionLogId: number): Promise<void> {
