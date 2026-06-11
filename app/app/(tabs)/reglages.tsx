@@ -6,8 +6,7 @@ import { ThemeContext } from '@/contexts/ThemeContext';
 import { useUnits } from '@/hooks/useUnits';
 import Colors from '@/constants/Colors';
 import { Radius } from '@/constants/Radius';
-import type { ThemePreference } from '@/services/settingsUtils';
-import type { UnitsPreference } from '@/services/settingsUtils';
+import type { ThemePreference, UnitsPreference } from '@/services/settingsUtils';
 
 const THEME_OPTIONS: { value: ThemePreference; label: string }[] = [
   { value: 'system', label: 'Système' },

@@ -17,8 +17,7 @@ import { initDatabase, getDb } from '@/db';
 import { SQLiteSettingsRepository } from '@/repositories/SQLiteSettingsRepository';
 import { ThemeContext, ThemeContextProvider } from '@/contexts/ThemeContext';
 import { UnitsContextProvider } from '@/contexts/UnitsContext';
-import type { ThemePreference } from '@/services/settingsUtils';
-import type { UnitsPreference } from '@/services/settingsUtils';
+import type { ThemePreference, UnitsPreference } from '@/services/settingsUtils';
 
 export {
   ErrorBoundary,
