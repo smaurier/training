@@ -34,7 +34,7 @@ export interface UseSessionResult {
   currentSet: TrainingSet | null;
   progressLabel: string;
   startSession: (checkin: CheckIn) => Promise<void>;
-  validateSet: (actual: SetActual) => Promise<void>;
+  validateSet: (actual: SetActual) => Promise<boolean>;
   skipSet: () => Promise<void>;
   skipExercise: () => Promise<void>;
   undoLastSet: () => Promise<void>;
@@ -152,10 +152,10 @@ export function useSession(workoutId: number, workoutDetails: WorkoutExerciseDet
     }
   }, [service, workoutId, workoutDetails]);
 
-  const validateSet = useCallback(async (actual: SetActual) => {
-    if (!sessionLogId || !currentSet || !currentExercise) return;
+  const validateSet = useCallback(async (actual: SetActual): Promise<boolean> => {
+    if (!sessionLogId || !currentSet || !currentExercise) return false;
     try {
-      await service.logSet(sessionLogId, currentSet.id, currentExercise.exercise.id, actual);
+      const { isPR } = await service.logSet(sessionLogId, currentSet.id, currentExercise.exercise.id, actual);
       positionHistory.current.push({ position: { ...position }, setId: currentSet.id });
       setHistorySize(n => n + 1);
       setTotalSetsLogged(n => n + 1);
@@ -173,7 +173,7 @@ export function useSession(workoutId: number, workoutDetails: WorkoutExerciseDet
           setProgressions([]);
         }
         setPhase('summary');
-        return;
+        return isPR;
       }
 
       const exerciseChanges = next.exerciseIdx !== position.exerciseIdx;
@@ -182,7 +182,7 @@ export function useSession(workoutId: number, workoutDetails: WorkoutExerciseDet
       if (completedRestDuration === 0) {
         setPosition(next);
         setPhase(exerciseChanges ? 'exercise_transition' : 'running');
-        return;
+        return isPR;
       }
 
       setRestDuration(completedRestDuration);
@@ -190,8 +190,10 @@ export function useSession(workoutId: number, workoutDetails: WorkoutExerciseDet
       setNextLabel(computeNextLabel(next, workoutDetails, exerciseChanges));
       setPosition(next);
       setPhase('rest');
+      return isPR;
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Erreur validation série');
+      return false;
     }
   }, [service, sessionLogId, currentSet, currentExercise, position, workoutDetails]);
 
