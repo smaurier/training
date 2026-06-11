@@ -19,6 +19,12 @@ import { Radius } from '@/constants/Radius';
 import { useUnits } from '@/hooks/useUnits';
 import { lbsToKg } from '@/services/settingsUtils';
 
+const RPE_OPTIONS = [
+  { label: 'Facile', value: '3' },
+  { label: 'Normal', value: '6' },
+  { label: 'Difficile', value: '9' },
+] as const;
+
 interface RunningPhaseProps {
   exercise: WorkoutExerciseDetail;
   block: BlockWithSets;
@@ -343,18 +349,30 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
                 <Text style={[styles.inputHint, { color: colors.textSecondary }]}>par haltère</Text>
               )}
             </View>
-            <View style={styles.inputGroup}>
-              <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>RPE (1–10)</Text>
-              <Text style={[styles.inputHint, { color: colors.textSecondary }]}>Effort perçu — optionnel</Text>
-              <TextInput
-                style={[styles.input, { color: colors.text, borderColor: colors.border, backgroundColor: colors.surface }]}
-                value={rpe}
-                onChangeText={setRpe}
-                keyboardType="numeric"
-                placeholder="—"
-                placeholderTextColor={colors.textSecondary}
-                accessibilityLabel="RPE effort perçu de 1 à 10, optionnel"
-              />
+            <View style={styles.rpeSection}>
+              <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>RESSENTI (OPTIONNEL)</Text>
+              <View style={styles.rpeRow}>
+                {RPE_OPTIONS.map(opt => (
+                  <PressableA11y
+                    key={opt.value}
+                    accessibilityLabel={`Ressenti : ${opt.label}`}
+                    accessibilityRole="radio"
+                    accessibilityState={{ checked: rpe === opt.value }}
+                    onPress={() => setRpe(rpe === opt.value ? '' : opt.value)}
+                    style={[
+                      styles.rpeChip,
+                      {
+                        borderColor: colors.border,
+                        backgroundColor: rpe === opt.value ? colors.primary : colors.surface,
+                      },
+                    ]}
+                  >
+                    <Text style={[styles.rpeChipText, { color: rpe === opt.value ? '#fff' : colors.text }]}>
+                      {opt.label}
+                    </Text>
+                  </PressableA11y>
+                ))}
+              </View>
             </View>
           </View>
 
@@ -497,4 +515,16 @@ const styles = StyleSheet.create({
   sheetCancelText: { fontSize: 16, fontWeight: '500' },
   descriptionScrollContent: { paddingHorizontal: 24, paddingBottom: 40 },
   descriptionText: { fontSize: 15, lineHeight: 24 },
+  rpeSection: { gap: 6 },
+  rpeRow: { flexDirection: 'row', gap: 8 },
+  rpeChip: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    borderRadius: Radius.sm,
+    borderWidth: 1,
+    minHeight: 44,
+  },
+  rpeChipText: { fontSize: 14, fontWeight: '500' },
 });
