@@ -5,6 +5,22 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.5.1] — 2026-06-11
+
+8ebeb5b feat(ui): section DONNÉES dans Réglages — bouton export JSON avec share sheet
+aa23278 feat(export): ExportService — full JSON dump via share sheet (TDD, 3 tests)
+969d942 fix(session): ExerciseStartingWeightPhase — inline error message on confirm failure
+5a9daf9 fix(seeds): seed conservative starter weights for all PPL fixed-weight exercises
+fb99261 docs(plan): bugs terrain + export JSON — plan 2026-06-11
+d6b070a docs(spec): bugs terrain + export JSON — design 2026-06-11
+3b21896 feat(summary): volume total séance — SummaryPhase + useSession
+82f4bf2 feat(session): aperçu séance + durée estimée dans CheckInPhase
+e60e271 feat(session): refonte flow skip — un seul 'Passer →' → BottomSheet série / exercice entier
+3e920eb chore: fix eslint-config-expo duplicate — move to devDependencies only (v10→v56)
+0e2ccb6 feat(session): bouton '?' + BottomSheet description exercice dans RunningPhase
+
+---
+
 ## [1.5.0] — 2026-06-10
 
 02fb2e6 refactor(session): remove pause from CircularTimer — tap start or validate only
