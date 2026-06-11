@@ -4,6 +4,81 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 
 ---
 
+## Session 28 — 2026-06-11 — Bugs terrain + Export JSON
+
+### Réalisé
+
+**B1 — Inputs non effacés (stale)** : `key={session.currentSet.id}` déjà en place sur `<RunningPhase>` depuis S25 → remount à chaque nouveau set → states re-initialisés depuis les props. Bug résolu par le key prop. Aucun code modifié.
+
+**B2 — Poids de départ null → "—kg"** : poids conservateurs seedés dans tous les exercices PPL à poids libre — Développé couché barre 60kg, Squat 60kg, Rowing barre 50kg, Romanian Deadlift 50kg, Pin Press 40kg, Tirage poulie basse 30kg, Leg curl poulie 30kg, Fentes bulgares 14kg, Développé incliné haltères 16kg, Extension triceps 20kg, Curl barre EZ 20kg, Face pull 20kg, Crunch poulie haute 25kg, Élévations latérales 8kg. Protection `preserveWeight` garantit que les utilisateurs avec des logs ou poids existants ne sont pas impactés. Commit `5a9daf9`.
+
+**B3 — Robustesse confirm starting-weight** : `ExerciseStartingWeightPhase` avait déjà `loading` state + "Enregistrement…". Ajout `error: string | null` state + message rouge inline sous bouton si `onConfirm` throw. `setError(null)` au début de chaque tentative. Commit `969d942`.
+
+**Export JSON complet** :
+- `ExportService` (`app/services/ExportService.ts`) : `db.getAllAsync` sur 9 tables en `Promise.all`, JSON formaté avec `exportedAt`/`appVersion`/`schema: 7`/`data`. Écrit dans `FileSystem.cacheDirectory` via `expo-file-system/legacy`, déclenche share sheet via `expo-sharing`. 3 tests TDD (shape JSON, shareAsync appelé, throw si sharing indisponible). Commit `aa23278`.
+- UI : section DONNÉES dans `reglages.tsx`, bouton `PressableA11y` avec spinner `ActivityIndicator` pendant export, erreur inline si échec. Commit `8ebeb5b`.
+
+315/315 tests passent.
+
+### Décisions techniques
+
+- **`expo-file-system/legacy`** : `expo-file-system` v19 (SDK 54) a migré vers une nouvelle API (`File`/`Paths`). L'API legacy (`cacheDirectory`, `writeAsStringAsync`, `EncodingType`) est accessible via le sous-chemin `/legacy`. Import adapté pour éviter les erreurs TypeScript.
+- **Queries SQL directes dans ExportService** : dump `SELECT * FROM table` — pas de logique métier, pas besoin de passer par les repos. Pattern différent de `SessionService` (qui injecte des repos) mais justifié pour un export one-shot.
+- **Import JSON round-trip hors scope** : export livré, import gardé au backlog (gestion conflits IDs + migrations schema = session dédiée).
+- **Fix lint pré-existant** : imports dupliqués `settingsUtils` dans `_layout.tsx` et `reglages.tsx` combinés en un seul import.
+
+### Prochaine étape
+
+Onboarding guidé (priorité haute, supervision utilisateur requise pour les choix de design).
+
+---
+
+## Session 27 — 2026-06-10 — 4 bugs session corrigés (TDD)
+
+### Réalisé
+
+**Fix 🔴 Poids non répercuté après ExerciseStartingWeightPhase** : `setStartingWeightDone(true)` se déclenchait dans `setStartingWeight()` AVANT `refresh()` → RunningPhase s'ouvrait avec `set.weight = null`. Fix : `setStartingWeightDone(true)` retiré de `setStartingWeight`, nouvelle méthode `markStartingWeightDone()` exposée dans `UseSessionResult`, appelée dans `[workoutId].tsx` après `await refresh()`. Commit `3816a2b`.
+
+**Fix 🔴 Timer RestPhase (CircularTimer) ne comptait pas** : `useEffect` dans `[workoutId].tsx` avait `timer` entier dans les deps. L'objet `timer` change de référence à chaque tick 500ms (state `remaining` + `isRunning`) → `reset + start` appelés en boucle → timer figé. Fix : destructurer les fonctions stables `const { reset: timerReset, start: timerStart } = timer` et les utiliser dans les deps. Nouveau fichier `useTimer.test.ts` avec 3 tests (countdown, stop at zero, stable refs). Commit timer-fix.
+
+**Fix exercices étirement affichent timer au lieu de reps** : `isDuration = !isCardio && duration_seconds > 0` → cat cow, rotation thoracique avec `duration_seconds > 0` en DB déclenchaient l'UI countdown. Fix : `exercise.exercise.type !== 'etirement'` ajouté en tête de `isDuration`. Nouveau fichier `isDuration.test.ts` (4 tests). Commit `58abaab`.
+
+**Suppression ancien chronomètre repos (timerContainer)** : bloc JSX `timerContainer` (grande horloge 52px "CHRONO — tap pour lancer") supprimé de la branche reps de `RunningPhase`. Prop `timer: UseTimerResult` retiré de `RunningPhaseProps`, import retiré, styles orphelins supprimés. `timer={timer}` retiré de `<RunningPhase>` dans `[workoutId].tsx` (conservé sur `<RestPhase>`). Commit `8c175d8`.
+
+**TDD appliqué à la lettre** : plan écrit en premier (`docs/superpowers/plans/2026-06-10-session-bugs.md`), tests écrits avant implémentation pour chaque tâche, RED vérifié avant GREEN.
+
+### Décisions techniques
+
+- **markStartingWeightDone séparé de setStartingWeight** : sépare la responsabilité DB (setStartingWeight) du signal de navigation (markStartingWeightDone). Permet au caller de contrôler l'ordre exact.
+- **Stable refs dans useEffect** : pattern à réutiliser partout — ne jamais mettre un objet avec état dans les deps d'un useEffect, toujours destructurer les fonctions stables.
+- **isDuration guard etirement** : les exercices étirement peuvent avoir duration_seconds > 0 dans la DB (héritage de la programmation), mais l'UI doit toujours afficher reps. Guard explicite plus robuste qu'un nettoyage DB.
+
+### Prochaine étape
+
+Backlog terrain (voir `docs/backlog/` ou memory backlog) : CircularTimer interactif, description exercice en séance, wording "charge de départ", progression visuelle séries.
+
+---
+
+## Session 26 — 2026-06-10 — Bugs terrain + Backlog enrichi
+
+### Réalisé
+
+**Séance de test terrain** : utilisateur a testé l'appli en conditions réelles. Remontée d'environ 15 bugs/UX à noter.
+
+**Fix 🔴 Tractions bodyweight — écran poids de départ incorrect** : `ExerciseStartingWeightPhase` se déclenchait pour les exercices `weight_type = 'bodyweight'`. Fix : `needsStartingWeight` retourne `false` si tous les sets du bloc Travail sont bodyweight. RunningPhase initialise le champ poids à `"0"` (lest additionnel) au lieu de `''`. Commit `5f8d471`.
+
+**Fix 🔴 Bouton Confirmer bloqué (global)** : après `setStartingWeight`, `needsStartingWeight` ne repassait pas à `false` à cause d'un timing React — `refresh()` n'avait pas encore mis à jour `workoutDetails` avant le recalcul du useMemo. Fix : flag `startingWeightDone` dans `useSession`, mis à `true` immédiatement après `setStartingWeight()`. `needsStartingWeight` bail-out sur ce flag. Reset au changement d'exercice. Commits `3717334`.
+
+**Backlog enrichi** : ~15 items ajoutés au backlog terrain.
+
+### Décisions techniques
+
+- **startingWeightDone flag** : contournement d'un timing React. Fix définitif livré en session 27.
+- **isDuration pour étirements** : fix livré en session 27.
+- **Ordre de fix prioritaire** : (1) poids non répercuté post-confirm, (2) timer RestPhase useEffect deps, (3) ancien chrono + isDuration étirements — tous livrés session 27.
+
+---
+
 ## Session 25 — 2026-06-10 — Thème + Réglages + Unités
 
 ### Réalisé
