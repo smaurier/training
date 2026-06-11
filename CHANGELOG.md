@@ -5,6 +5,23 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.6.0] — 2026-06-11
+
+013bb2e fix(session): guard Confirmer poids contre double-tap async
+f4ceed5 feat(session): stepper poids — modifier charge séries suivantes depuis RunningPhase
+f352a98 feat(session): feedback reps — hint inline si écart > 25% cible
+7049cd8 feat(session): RPE — remplace TextInput libre par chips Facile/Normal/Difficile
+bf2f151 fix(session): handleValidate dep array — [session.validateSet, session.currentExercise]
+6052e7c feat(session): badge PR flash — overlay 3s non-bloquant après validation série
+dce8995 feat(session): useSession.validateSet retourne isPR
+3a60656 feat(session): SessionService.logSet retourne isPR — détection PR en temps réel
+af6c8ed feat(session): computeRepsFeedback — feedback proportionnel écart reps
+3667583 docs(plan): quick wins séance — plan implémentation 8 tâches TDD
+92d0700 docs(spec): quick wins séance — PR badge, feedback reps, RPE chips, redéfinir poids
+b151412 docs: journal S28 + nettoyage plans livrés
+
+---
+
 ## [1.5.1] — 2026-06-11
 
 8ebeb5b feat(ui): section DONNÉES dans Réglages — bouton export JSON avec share sheet
