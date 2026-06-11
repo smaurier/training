@@ -102,6 +102,7 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
   const adjustWeightSnapPoints = useMemo(() => ['45%'], []);
   const [adjustedWeight, setAdjustedWeight] = useState(set.weight ?? 0);
   const [adjustSuccess, setAdjustSuccess] = useState(false);
+  const [adjusting, setAdjusting] = useState(false);
   const weightStep = unitResolved === 'lbs' ? lbsToKg(5) : 2.5;
 
   useEffect(() => {
@@ -551,13 +552,19 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
           <PressableA11y
             accessibilityLabel="Confirmer le nouveau poids"
             onPress={async () => {
-              if (!onAdjustWeight) return;
-              await onAdjustWeight(adjustedWeight);
-              adjustWeightSheetRef.current?.close();
-              setAdjustSuccess(true);
-              setTimeout(() => setAdjustSuccess(false), 2000);
+              if (!onAdjustWeight || adjusting) return;
+              setAdjusting(true);
+              try {
+                await onAdjustWeight(adjustedWeight);
+                adjustWeightSheetRef.current?.close();
+                setAdjustSuccess(true);
+                setTimeout(() => setAdjustSuccess(false), 2000);
+              } finally {
+                setAdjusting(false);
+              }
             }}
-            style={[styles.validateBtn, { backgroundColor: colors.primary }]}
+            style={[styles.validateBtn, { backgroundColor: colors.primary, opacity: adjusting ? 0.5 : 1 }]}
+            disabled={adjusting}
           >
             <Text style={styles.validateBtnText}>Confirmer</Text>
           </PressableA11y>
