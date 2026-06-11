@@ -99,6 +99,7 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
   const [cardioDistance, setCardioDistance] = useState('');
 
   const adjustWeightSheetRef = useRef<BottomSheet>(null);
+  const adjustSuccessTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const adjustWeightSnapPoints = useMemo(() => ['45%'], []);
   const [adjustedWeight, setAdjustedWeight] = useState(set.weight ?? 0);
   const [adjustSuccess, setAdjustSuccess] = useState(false);
@@ -120,6 +121,12 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
     }, 1000);
     return () => clearInterval(interval);
   }, [isDuration, timerStarted]);
+
+  useEffect(() => {
+    return () => {
+      if (adjustSuccessTimeout.current) clearTimeout(adjustSuccessTimeout.current);
+    };
+  }, []);
 
   async function handleValidate() {
     if (loading) return;
@@ -558,7 +565,8 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
                 await onAdjustWeight(adjustedWeight);
                 adjustWeightSheetRef.current?.close();
                 setAdjustSuccess(true);
-                setTimeout(() => setAdjustSuccess(false), 2000);
+                if (adjustSuccessTimeout.current) clearTimeout(adjustSuccessTimeout.current);
+                adjustSuccessTimeout.current = setTimeout(() => setAdjustSuccess(false), 2000);
               } finally {
                 setAdjusting(false);
               }
@@ -622,7 +630,7 @@ const styles = StyleSheet.create({
   sheetCancelText: { fontSize: 16, fontWeight: '500' },
   descriptionScrollContent: { paddingHorizontal: 24, paddingBottom: 40 },
   descriptionText: { fontSize: 15, lineHeight: 24 },
-  rpeSection: { gap: 6 },
+  rpeSection: { flex: 1, gap: 6 },
   rpeRow: { flexDirection: 'row', gap: 8 },
   rpeChip: {
     flex: 1,

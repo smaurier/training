@@ -80,11 +80,11 @@ export default function SessionScreen() {
   }, []);
 
   const handleValidate = useCallback(async (actual: SetActual) => {
+    const exerciseName = session.currentExercise?.exercise.name ?? '';
     const isPR = await session.validateSet(actual);
-    if (isPR && session.currentExercise) {
-      const name = session.currentExercise.exercise.name;
+    if (isPR && exerciseName) {
       if (prBadgeTimeout.current) clearTimeout(prBadgeTimeout.current);
-      setPrBadge(name);
+      setPrBadge(exerciseName);
       AccessibilityInfo.announceForAccessibility('Nouveau record personnel !');
       prBadgeTimeout.current = setTimeout(() => setPrBadge(null), 3000);
     }
