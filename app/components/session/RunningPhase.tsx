@@ -37,6 +37,7 @@ interface RunningPhaseProps {
   onUndo: () => void;
   canUndo: boolean;
   lastSetLog?: LastSetLog | null;
+  onAdjustWeight?: (kg: number) => Promise<void>;
 }
 
 function formatLastLog(log: LastSetLog, isCardio: boolean, isDuration: boolean, convert: (kg: number) => string, unitLabel: string): string {
@@ -61,7 +62,7 @@ function formatTime(seconds: number): string {
   return `${m}:${s.toString().padStart(2, '0')}`;
 }
 
-export function RunningPhase({ exercise, block, set, progressLabel, onValidate, onSkip, onSkipExercise, onUndo, canUndo, lastSetLog }: RunningPhaseProps) {
+export function RunningPhase({ exercise, block, set, progressLabel, onValidate, onSkip, onSkipExercise, onUndo, canUndo, lastSetLog, onAdjustWeight }: RunningPhaseProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const { convert, label: unitLabel, resolved: unitResolved } = useUnits();
@@ -96,6 +97,12 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
   const [timerStarted, setTimerStarted] = useState(false);
   const [cardioMinutes, setCardioMinutes] = useState('');
   const [cardioDistance, setCardioDistance] = useState('');
+
+  const adjustWeightSheetRef = useRef<BottomSheet>(null);
+  const adjustWeightSnapPoints = useMemo(() => ['45%'], []);
+  const [adjustedWeight, setAdjustedWeight] = useState(set.weight ?? 0);
+  const [adjustSuccess, setAdjustSuccess] = useState(false);
+  const weightStep = unitResolved === 'lbs' ? lbsToKg(5) : 2.5;
 
   useEffect(() => {
     if (!isDuration || !timerStarted) return;
@@ -227,6 +234,18 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
             )}
           </View>
           <View style={styles.headerActions}>
+            {set.weight_type !== 'bodyweight' && onAdjustWeight && (
+              <PressableA11y
+                onPress={() => {
+                  setAdjustedWeight(set.weight ?? 0);
+                  adjustWeightSheetRef.current?.expand();
+                }}
+                accessibilityLabel="Modifier le poids de travail pour les séries suivantes"
+                style={styles.actionBtn}
+              >
+                <Ionicons name="barbell-outline" size={22} color={colors.textSecondary} />
+              </PressableA11y>
+            )}
             {!!exercise.exercise.description && (
               <PressableA11y
                 onPress={() => descriptionSheetRef.current?.expand()}
@@ -414,6 +433,11 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
           ))}
         </View>
       )}
+      {adjustSuccess && (
+        <Text style={[styles.adjustSuccessMsg, { color: colors.textSecondary }]}>
+          Poids mis à jour pour les séries suivantes.
+        </Text>
+      )}
 
       <PressableA11y
         accessibilityLabel="Passer — ouvrir les options"
@@ -487,6 +511,65 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
           </Text>
         </BottomSheetScrollView>
       </BottomSheet>
+
+      <BottomSheet
+        ref={adjustWeightSheetRef}
+        index={-1}
+        snapPoints={adjustWeightSnapPoints}
+        enablePanDownToClose
+        backdropComponent={renderBackdrop}
+        backgroundStyle={{ backgroundColor: colors.surface }}
+        handleIndicatorStyle={{ backgroundColor: colors.border }}
+      >
+        <BottomSheetView style={styles.sheetContainer}>
+          <Text style={[styles.sheetTitle, { color: colors.text }]}>Modifier le poids</Text>
+          <View style={styles.stepperRow}>
+            <PressableA11y
+              accessibilityLabel={`Diminuer de ${unitResolved === 'lbs' ? '5 lbs' : '2,5 kg'}`}
+              onPress={() => setAdjustedWeight(w => Math.max(0, parseFloat((w - weightStep).toFixed(2))))}
+              style={[styles.stepperBtn, { borderColor: colors.border, backgroundColor: colors.surface }]}
+            >
+              <Text style={[styles.stepperBtnText, { color: colors.text }]}>−</Text>
+            </PressableA11y>
+            <View
+              style={styles.stepperValue}
+              accessible
+              accessibilityValue={{ text: `${convert(adjustedWeight)} ${unitLabel}` }}
+            >
+              <Text style={[styles.stepperValueText, { color: colors.text }]}>
+                {convert(adjustedWeight)} {unitLabel}
+              </Text>
+            </View>
+            <PressableA11y
+              accessibilityLabel={`Augmenter de ${unitResolved === 'lbs' ? '5 lbs' : '2,5 kg'}`}
+              onPress={() => setAdjustedWeight(w => parseFloat((w + weightStep).toFixed(2)))}
+              style={[styles.stepperBtn, { borderColor: colors.border, backgroundColor: colors.surface }]}
+            >
+              <Text style={[styles.stepperBtnText, { color: colors.text }]}>+</Text>
+            </PressableA11y>
+          </View>
+          <PressableA11y
+            accessibilityLabel="Confirmer le nouveau poids"
+            onPress={async () => {
+              if (!onAdjustWeight) return;
+              await onAdjustWeight(adjustedWeight);
+              adjustWeightSheetRef.current?.close();
+              setAdjustSuccess(true);
+              setTimeout(() => setAdjustSuccess(false), 2000);
+            }}
+            style={[styles.validateBtn, { backgroundColor: colors.primary }]}
+          >
+            <Text style={styles.validateBtnText}>Confirmer</Text>
+          </PressableA11y>
+          <PressableA11y
+            accessibilityLabel="Annuler la modification de poids"
+            onPress={() => adjustWeightSheetRef.current?.close()}
+            style={[styles.sheetCancelBtn, { borderColor: colors.border }]}
+          >
+            <Text style={[styles.sheetCancelText, { color: colors.text }]}>Annuler</Text>
+          </PressableA11y>
+        </BottomSheetView>
+      </BottomSheet>
     </>
   );
 }
@@ -544,4 +627,17 @@ const styles = StyleSheet.create({
     minHeight: 44,
   },
   rpeChipText: { fontSize: 14, fontWeight: '500' },
+  stepperRow: { flexDirection: 'row', alignItems: 'center', gap: 12, justifyContent: 'center' },
+  stepperBtn: {
+    width: 52,
+    height: 52,
+    borderRadius: Radius.sm,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  stepperBtnText: { fontSize: 28, fontWeight: '400', lineHeight: 34 },
+  stepperValue: { flex: 1, alignItems: 'center' },
+  stepperValueText: { fontSize: 22, fontWeight: '600' },
+  adjustSuccessMsg: { fontSize: 13, textAlign: 'center' },
 });

@@ -132,6 +132,7 @@ export default function SessionScreen() {
               onUndo={session.undoLastSet}
               canUndo={session.canUndo}
               lastSetLog={session.lastSetLog}
+              onAdjustWeight={session.setStartingWeight}
             />
           )
         )}
