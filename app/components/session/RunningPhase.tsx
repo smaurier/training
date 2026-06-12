@@ -86,7 +86,7 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
   const isCardio = exercise.exercise.type === 'cardio';
   const isDuration = exercise.exercise.type !== 'etirement' && !isCardio && (set.duration_seconds ?? 0) > 0;
 
-  const [reps, setReps] = useState(String(set.reps_max));
+  const [reps, setReps] = useState(String(set.reps_min));
   const [weight, setWeight] = useState(
     set.weight_type === 'bodyweight' ? '0' : set.weight != null ? convert(set.weight) : ''
   );
@@ -178,9 +178,7 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
     }
   }
 
-  const setLabel = set.reps_min === set.reps_max
-    ? `${set.reps_min} rép`
-    : `${set.reps_min}–${set.reps_max} rép`;
+  const setLabel = `${set.reps_min} rép`;
   const weightLabel = set.weight_type === 'bodyweight'
     ? 'PC'
     : set.weight_type === 'bar'
@@ -435,7 +433,7 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
           <Text style={[styles.restLabel, { color: colors.textSecondary }]}>SÉRIES RESTANTES</Text>
           {restSets.map((s, i) => (
             <Text key={s.id} style={[styles.restSet, { color: colors.textSecondary }]}>
-              {i + currentSetIndex + 2} ·{s.weight != null ? `${convert(s.weight)} ${unitLabel}` : 'PC'} × {s.reps_min === s.reps_max ? s.reps_min : `${s.reps_min}–${s.reps_max}`}
+              {i + currentSetIndex + 2} ·{s.weight != null ? `${convert(s.weight)} ${unitLabel}` : 'PC'} × {s.reps_min}
             </Text>
           ))}
         </View>
