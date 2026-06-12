@@ -14,6 +14,7 @@ interface SummaryPhaseProps {
   durationSeconds: number;
   totalVolumeKg?: number;
   plateaus?: PlateauResult[];
+  suggestNextDeload?: boolean;
   onClose: () => void;
 }
 
@@ -23,7 +24,7 @@ function formatDuration(seconds: number): string {
   return m > 0 ? `${m} min ${s > 0 ? `${s} s` : ''}`.trim() : `${s} s`;
 }
 
-export function SummaryPhase({ progressions, totalSets, durationSeconds, totalVolumeKg, plateaus, onClose }: SummaryPhaseProps) {
+export function SummaryPhase({ progressions, totalSets, durationSeconds, totalVolumeKg, plateaus, suggestNextDeload, onClose }: SummaryPhaseProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const { convert, label: unitLabel } = useUnits();
@@ -99,6 +100,15 @@ export function SummaryPhase({ progressions, totalSets, durationSeconds, totalVo
         </View>
       )}
 
+      {suggestNextDeload && (
+        <View style={[styles.deloadHintSection, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Bientôt une semaine de décharge</Text>
+          <Text style={[styles.deloadHintBody, { color: colors.textSecondary }]}>
+            Tu t'entraînes depuis 4+ semaines. À la prochaine séance, pense à décharger — les poids seront réduits de 10% pour que tes muscles récupèrent.
+          </Text>
+        </View>
+      )}
+
       <PressableA11y
         accessibilityLabel="Retour au programme"
         onPress={onClose}
@@ -135,6 +145,8 @@ const styles = StyleSheet.create({
   plateauName: { flex: 1, fontSize: 14 },
   plateauWeight: { fontSize: 13 },
   plateauHint: { fontSize: 13, fontStyle: 'italic', marginTop: 2 },
+  deloadHintSection: { borderWidth: 1, borderRadius: Radius.sm, padding: 16, gap: 8 },
+  deloadHintBody: { fontSize: 13, lineHeight: 18 },
   closeBtn: { paddingVertical: 16, borderRadius: Radius.sm, alignItems: 'center', marginTop: 8 },
   closeBtnText: { color: '#fff', fontSize: 17, fontWeight: '600' },
 });
