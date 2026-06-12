@@ -4,6 +4,31 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 
 ---
 
+## S31 — 2026-06-12 — Double progression + suppression reps_max
+
+### Livré
+- **Migration v9** : table `sets` recréée sans `reps_max` (pattern SQLite). `reps_min` = cible canonique unique.
+- **progression.ts** : `applyProgression` (×1.025 fixe, bugué) supprimée. `calculateProgression` câblée dans `SessionService`.
+- **Règle métier** : tous les sets travail ≥ reps_min → `poids + progression_step`. Sinon hold. Step par défaut : 2.0 kg (DB DEFAULT).
+- **RPE chips** : collecte DB uniquement (`set_logs.rpe`), pas de gate progression. Pour détection plateau (#2) et décharge auto (#3).
+- **repsFeedback.ts** : signature 3 args (`repsStr, repsMin, isBodyweight`). Seuils : >repsMin×1.25 / <repsMin×0.75.
+- **UI** : `RunningPhase` (useState init reps_min, setLabel fixe, séries restantes simplifiées), `ExerciseTransitionPhase`, `BlockCard`, `EditSetModal` (champ repsMax supprimé, input repsMin pleine largeur).
+- 12 commits, 345/345 tests, 0 erreurs TypeScript.
+
+### Décisions
+- `reps_max` supprimé : objectif rond en séance, `reps_min` déjà utilisé dans toute la logique de progression
+- RPE gate session-par-session scientifiquement non validé — collecte seulement, exploité ultérieurement
+- `consecutive_successes` toujours 0 : tous les exercices ont `progression_threshold = 1` (DB DEFAULT) → progress à chaque succès
+
+### Architecture
+- `calculateProgression` lit `exercise.progression_step` directement — fin du 1.025 hardcodé
+- `isSessionFullSuccess` conservée (doublon de `isSessionAchieved`, suppression reportée à l'audit clean code)
+
+### Version
+v1.8.0 — bump recommandé (minor : algorithme de progression corrigé + suppression reps_max).
+
+---
+
 ## S30 — 2026-06-12 — Pause Séance
 
 ### Livré
