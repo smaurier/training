@@ -25,6 +25,15 @@ interface HistoryEntry {
   setId: number;
 }
 
+export interface InitialSession {
+  sessionLogId: number;
+  position: SessionPosition;
+  phase: SessionPhase;
+  startedAt: number;
+  setsLogged: number;
+  volume: number;
+}
+
 export interface UseSessionResult {
   phase: SessionPhase;
   sessionLogId: number | null;
@@ -52,6 +61,7 @@ export interface UseSessionResult {
   totalVolume: number;
   lastSetLog: LastSetLog | null;
   error: string | null;
+  pauseSession: () => Promise<void>;
 }
 
 export function advancePosition(
@@ -99,16 +109,22 @@ function makeService(): SessionService {
   );
 }
 
-export function useSession(workoutId: number, workoutDetails: WorkoutExerciseDetail[]): UseSessionResult {
+export function useSession(
+  workoutId: number,
+  workoutDetails: WorkoutExerciseDetail[],
+  initialSession?: InitialSession,
+): UseSessionResult {
   const service = useMemo(() => makeService(), []);
 
-  const [phase, setPhase] = useState<SessionPhase>('checkin');
-  const [sessionLogId, setSessionLogId] = useState<number | null>(null);
-  const [position, setPosition] = useState<SessionPosition>({ exerciseIdx: 0, blockIdx: 0, setIdx: 0 });
+  const [phase, setPhase] = useState<SessionPhase>(() => initialSession?.phase ?? 'checkin');
+  const [sessionLogId, setSessionLogId] = useState<number | null>(() => initialSession?.sessionLogId ?? null);
+  const [position, setPosition] = useState<SessionPosition>(() =>
+    initialSession?.position ?? { exerciseIdx: 0, blockIdx: 0, setIdx: 0 }
+  );
   const [progressions, setProgressions] = useState<ProgressionResult[]>([]);
-  const [sessionStartedAt, setSessionStartedAt] = useState<number | null>(null);
-  const [totalSetsLogged, setTotalSetsLogged] = useState(0);
-  const [totalVolume, setTotalVolume] = useState(0);
+  const [sessionStartedAt, setSessionStartedAt] = useState<number | null>(() => initialSession?.startedAt ?? null);
+  const [totalSetsLogged, setTotalSetsLogged] = useState(() => initialSession?.setsLogged ?? 0);
+  const [totalVolume, setTotalVolume] = useState(() => initialSession?.volume ?? 0);
   const [error, setError] = useState<string | null>(null);
   const [restDuration, setRestDuration] = useState(90);
   const [pendingPhase, setPendingPhase] = useState<'running' | 'exercise_transition'>('running');
@@ -272,12 +288,21 @@ export function useSession(workoutId: number, workoutDetails: WorkoutExerciseDet
     setStartingWeightDone(true);
   }, []);
 
+  const pauseSession = useCallback(async () => {
+    if (!sessionLogId) return;
+    try {
+      await service.pauseSession(sessionLogId, position, phase);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Erreur pause séance');
+    }
+  }, [service, sessionLogId, position, phase]);
+
   return {
     phase, sessionLogId, position,
     currentExercise, currentBlock, currentSet, progressLabel,
     startSession, validateSet, skipSet, skipExercise, undoLastSet, canUndo,
     setStartingWeight, startingWeightDone, markStartingWeightDone,
     confirmTransition, confirmRest, restDuration, nextLabel,
-    progressions, sessionStartedAt, totalSetsLogged, totalVolume, lastSetLog, error,
+    progressions, sessionStartedAt, totalSetsLogged, totalVolume, lastSetLog, error, pauseSession,
   };
 }

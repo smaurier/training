@@ -1,6 +1,16 @@
 import { computeNextLabel, advancePosition } from './useSession';
 import type { SessionPosition } from './useSession';
 import type { WorkoutExerciseDetail } from '../services/WorkoutExerciseService';
+import { renderHook } from '@testing-library/react-native';
+import { useSession } from './useSession';
+
+jest.mock('../db', () => ({
+  getDb: () => ({
+    runAsync: jest.fn().mockResolvedValue({ lastInsertRowId: 1 }),
+    getFirstAsync: jest.fn().mockResolvedValue(null),
+    getAllAsync: jest.fn().mockResolvedValue([]),
+  }),
+}));
 
 function makeExercise(name: string, weight: number | null = 80, sets = 3): WorkoutExerciseDetail {
   return {
@@ -115,5 +125,42 @@ describe('UseSessionResult interface includes markStartingWeightDone', () => {
     // l'assignation suivante échoue à la compilation TypeScript
     const key: keyof import('./useSession').UseSessionResult = 'markStartingWeightDone';
     expect(key).toBe('markStartingWeightDone');
+  });
+});
+
+describe('useSession avec initialSession', () => {
+  it('démarre en phase running (pas checkin) si initialSession fourni', () => {
+    const { result } = renderHook(() =>
+      useSession(1, [], {
+        sessionLogId: 42,
+        position: { exerciseIdx: 0, blockIdx: 0, setIdx: 1 },
+        phase: 'running',
+        startedAt: Date.now(),
+        setsLogged: 2,
+        volume: 320,
+      })
+    );
+    expect(result.current.phase).toBe('running');
+    expect(result.current.sessionLogId).toBe(42);
+  });
+
+  it('initialise totalSetsLogged et totalVolume depuis initialSession', () => {
+    const { result } = renderHook(() =>
+      useSession(1, [], {
+        sessionLogId: 42,
+        position: { exerciseIdx: 0, blockIdx: 0, setIdx: 1 },
+        phase: 'running',
+        startedAt: Date.now(),
+        setsLogged: 3,
+        volume: 480,
+      })
+    );
+    expect(result.current.totalSetsLogged).toBe(3);
+    expect(result.current.totalVolume).toBe(480);
+  });
+
+  it('expose pauseSession dans le résultat', () => {
+    const { result } = renderHook(() => useSession(1, []));
+    expect(typeof result.current.pauseSession).toBe('function');
   });
 });
