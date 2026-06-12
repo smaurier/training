@@ -54,10 +54,6 @@ export function calculateProgression(
   };
 }
 
-export function applyProgression(weight: number): number {
-  return Math.ceil((weight * 1.025) / 2) * 2;
-}
-
 export function applyDeload(weight: number): number {
   return Math.floor((weight * 0.9) / 2) * 2;
 }

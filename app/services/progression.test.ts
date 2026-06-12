@@ -1,6 +1,6 @@
 import {
   isSetAchieved, isSessionAchieved, calculateProgression,
-  applyProgression, applyDeload, isSessionFullSuccess, isSessionSignificantFailure,
+  applyDeload, isSessionFullSuccess, isSessionSignificantFailure,
 } from './progression';
 
 // --- isSetAchieved ---
@@ -92,22 +92,6 @@ describe('calculateProgression', () => {
     expect(result.new_weight).toBe(82);
     expect(result.progressed).toBe(true);
     expect(result.consecutive_successes).toBe(0); // reset après progression
-  });
-});
-
-// --- applyProgression ---
-
-describe('applyProgression', () => {
-  it('arrondit au 2kg supérieur — 60kg', () => {
-    expect(applyProgression(60)).toBe(62); // 60 * 1.025 = 61.5 → ceil to 62
-  });
-
-  it('arrondit au 2kg supérieur — 40kg', () => {
-    expect(applyProgression(40)).toBe(42); // 40 * 1.025 = 41 → ceil(41/2)*2 = 42
-  });
-
-  it('minimum +2kg quelle que soit la charge', () => {
-    expect(applyProgression(20)).toBe(22); // 20 * 1.025 = 20.5 → ceil(10.25)*2 = 22
   });
 });
 
