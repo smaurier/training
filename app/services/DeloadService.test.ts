@@ -1,4 +1,4 @@
-import { DeloadService } from './DeloadService';
+import { DeloadService, applyDeloadToExercises } from './DeloadService';
 import { InMemorySettingsRepository } from '../repositories/InMemorySettingsRepository';
 import { InMemorySessionLogRepository } from '../repositories/InMemorySessionLogRepository';
 
@@ -107,6 +107,14 @@ describe('DeloadService — recordDeload', () => {
     await service.recordDeload(now);
     expect(await settingsRepo.get('last_deload_at')).toBe(now);
   });
+
+  it('écrase la valeur précédente (idempotent)', async () => {
+    const { service, settingsRepo } = await makeService();
+    await service.recordDeload('2026-01-01T00:00:00.000Z');
+    const later = new Date().toISOString();
+    await service.recordDeload(later);
+    expect(await settingsRepo.get('last_deload_at')).toBe(later);
+  });
 });
 
 describe('DeloadService — getDeloadWeeks', () => {
@@ -118,5 +126,55 @@ describe('DeloadService — getDeloadWeeks', () => {
   it('retourne la valeur configurée', async () => {
     const { service } = await makeService({ deloadWeeks: '6' });
     expect(await service.getDeloadWeeks()).toBe(6);
+  });
+
+  it('retourne 4 si la valeur stockée est invalide', async () => {
+    const settingsRepo = new InMemorySettingsRepository();
+    const sessionLogRepo = new InMemorySessionLogRepository();
+    await settingsRepo.set('deload_weeks', 'abc');
+    const service = new DeloadService(settingsRepo, sessionLogRepo);
+    expect(await service.getDeloadWeeks()).toBe(4);
+  });
+});
+
+describe('applyDeloadToExercises', () => {
+  it('réduit le poids des séries fixed de 10% arrondi au multiple de 2', () => {
+    const exercises = [{
+      id: 1, workout_id: 1, order_index: 0,
+      exercise: { id: 10, name: 'Squat', type: 'musculation' as const, technical_notes: null, muscle_groups: '[]', description: null },
+      blocks: [{
+        id: 1, name: 'Travail', order_index: 0, is_work_block: 1 as const,
+        sets: [{ id: 1, block_id: 1, order_index: 0, reps_min: 5, rest_duration: 120, weight: 100, weight_type: 'fixed' as const, duration_seconds: null, weight_ratio: null }],
+      }],
+    }];
+    const result = applyDeloadToExercises(exercises);
+    // applyDeload(100) = Math.floor(100 * 0.9 / 2) * 2 = Math.floor(45) * 2 = 90
+    expect(result[0].blocks[0].sets[0].weight).toBe(90);
+  });
+
+  it('ne modifie pas les séries bodyweight', () => {
+    const exercises = [{
+      id: 1, workout_id: 1, order_index: 0,
+      exercise: { id: 10, name: 'Traction', type: 'musculation' as const, technical_notes: null, muscle_groups: '[]', description: null },
+      blocks: [{
+        id: 1, name: 'Travail', order_index: 0, is_work_block: 1 as const,
+        sets: [{ id: 1, block_id: 1, order_index: 0, reps_min: 8, rest_duration: 120, weight: 0, weight_type: 'bodyweight' as const, duration_seconds: null, weight_ratio: null }],
+      }],
+    }];
+    const result = applyDeloadToExercises(exercises);
+    expect(result[0].blocks[0].sets[0].weight).toBe(0);
+  });
+
+  it('passe les poids null inchangés', () => {
+    const exercises = [{
+      id: 1, workout_id: 1, order_index: 0,
+      exercise: { id: 10, name: 'Squat', type: 'musculation' as const, technical_notes: null, muscle_groups: '[]', description: null },
+      blocks: [{
+        id: 1, name: 'Travail', order_index: 0, is_work_block: 1 as const,
+        sets: [{ id: 1, block_id: 1, order_index: 0, reps_min: 5, rest_duration: 120, weight: null, weight_type: 'fixed' as const, duration_seconds: null, weight_ratio: null }],
+      }],
+    }];
+    const result = applyDeloadToExercises(exercises);
+    expect(result[0].blocks[0].sets[0].weight).toBeNull();
   });
 });

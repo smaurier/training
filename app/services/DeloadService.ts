@@ -3,6 +3,8 @@ import type { ISettingsRepository } from '../repositories/ISettingsRepository';
 import type { ISessionLogRepository } from '../repositories/ISessionLogRepository';
 import type { WorkoutExerciseDetail } from './WorkoutExerciseService';
 
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
 export class DeloadService {
   constructor(
     private settingsRepo: ISettingsRepository,
@@ -17,8 +19,9 @@ export class DeloadService {
 
   async shouldSuggestDeload(workoutId: number): Promise<boolean> {
     const deloadWeeks = await this.getDeloadWeeks();
-    const thresholdMs = deloadWeeks * 7 * 24 * 60 * 60 * 1000;
+    const thresholdMs = deloadWeeks * 7 * MS_PER_DAY;
 
+    // last_deload_at is global (not per-workout): one deload resets the counter for all workouts
     const lastDeloadAt = await this.settingsRepo.get('last_deload_at');
     if (lastDeloadAt) {
       return Date.now() - new Date(lastDeloadAt).getTime() >= thresholdMs;
@@ -29,7 +32,7 @@ export class DeloadService {
     if (completed.length === 0) return false;
 
     const earliest = completed.reduce((a, b) =>
-      a.started_at < b.started_at ? a : b
+      new Date(a.started_at).getTime() < new Date(b.started_at).getTime() ? a : b
     );
     return Date.now() - new Date(earliest.started_at).getTime() >= thresholdMs;
   }
