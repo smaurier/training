@@ -76,7 +76,7 @@ export default function ReglagesScreen() {
   useEffect(() => {
     const repo = new SQLiteSettingsRepository(getDb());
     repo.get('deload_weeks').then(v => {
-      if (v === '6' || v === '8') setDeloadWeeksStr(v);
+      if (v === '4' || v === '6' || v === '8') setDeloadWeeksStr(v);
     }).catch(console.error);
   }, []);
 

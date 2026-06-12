@@ -69,18 +69,21 @@ describe('DeloadService — shouldSuggestDeload', () => {
     expect(await service.shouldSuggestDeload(WORKOUT_ID)).toBe(true);
   });
 
-  it('utilise la séance la plus ancienne si aucune décharge enregistrée', async () => {
+  it('utilise la séance la plus ancienne TOUS workouts confondu si aucune décharge enregistrée', async () => {
     const { service, sessionLogRepo } = await makeService();
+    // workout 1: séance récente (5 jours)
     const s1 = await sessionLogRepo.save({
-      workout_id: WORKOUT_ID, started_at: daysAgo(30),
-      checkin_energy: null, checkin_fatigue: null, checkin_sleep: null, notes: null,
-    });
-    await sessionLogRepo.complete(s1.id, daysAgo(30));
-    const s2 = await sessionLogRepo.save({
       workout_id: WORKOUT_ID, started_at: daysAgo(5),
       checkin_energy: null, checkin_fatigue: null, checkin_sleep: null, notes: null,
     });
-    await sessionLogRepo.complete(s2.id, daysAgo(5));
+    await sessionLogRepo.complete(s1.id, daysAgo(5));
+    // workout 2: séance ancienne (30 jours)
+    const s2 = await sessionLogRepo.save({
+      workout_id: 2, started_at: daysAgo(30),
+      checkin_energy: null, checkin_fatigue: null, checkin_sleep: null, notes: null,
+    });
+    await sessionLogRepo.complete(s2.id, daysAgo(30));
+    // fallback global: oldest = 30 jours >= 28 → true
     expect(await service.shouldSuggestDeload(WORKOUT_ID)).toBe(true);
   });
 
@@ -163,6 +166,19 @@ describe('applyDeloadToExercises', () => {
     }];
     const result = applyDeloadToExercises(exercises);
     expect(result[0].blocks[0].sets[0].weight).toBe(0);
+  });
+
+  it('ne modifie pas les séries bar', () => {
+    const exercises = [{
+      id: 1, workout_id: 1, order_index: 0,
+      exercise: { id: 10, name: 'Développé couché barre', type: 'musculation' as const, technical_notes: null, muscle_groups: '[]', description: null },
+      blocks: [{
+        id: 1, name: 'Travail', order_index: 0, is_work_block: 1 as const,
+        sets: [{ id: 1, block_id: 1, order_index: 0, reps_min: 5, rest_duration: 120, weight: 20, weight_type: 'bar' as const, duration_seconds: null, weight_ratio: null }],
+      }],
+    }];
+    const result = applyDeloadToExercises(exercises);
+    expect(result[0].blocks[0].sets[0].weight).toBe(20);
   });
 
   it('passe les poids null inchangés', () => {

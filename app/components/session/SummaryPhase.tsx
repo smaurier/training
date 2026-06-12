@@ -104,7 +104,7 @@ export function SummaryPhase({ progressions, totalSets, durationSeconds, totalVo
         <View style={[styles.deloadHintSection, { backgroundColor: colors.surface, borderColor: colors.border }]}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>Bientôt une semaine de décharge</Text>
           <Text style={[styles.deloadHintBody, { color: colors.textSecondary }]}>
-            Tu t'entraînes depuis 4+ semaines. À la prochaine séance, pense à décharger — les poids seront réduits de 10% pour que tes muscles récupèrent.
+            Tu t'entraînes depuis plusieurs semaines. À la prochaine séance, pense à décharger — les poids seront réduits de 10% pour que tes muscles récupèrent.
           </Text>
         </View>
       )}

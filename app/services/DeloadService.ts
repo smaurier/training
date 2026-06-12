@@ -27,7 +27,7 @@ export class DeloadService {
       return Date.now() - new Date(lastDeloadAt).getTime() >= thresholdMs;
     }
 
-    const sessions = await this.sessionLogRepo.findByWorkoutId(workoutId);
+    const sessions = await this.sessionLogRepo.findAll();
     const completed = sessions.filter(s => s.status === 'completed');
     if (completed.length === 0) return false;
 
@@ -51,7 +51,7 @@ export function applyDeloadToExercises(
       ...block,
       sets: block.sets.map(set => ({
         ...set,
-        weight: set.weight !== null && set.weight_type !== 'bodyweight'
+        weight: set.weight !== null && set.weight_type === 'fixed'
           ? applyDeload(set.weight)
           : set.weight,
       })),
