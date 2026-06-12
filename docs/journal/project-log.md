@@ -4,6 +4,24 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 
 ---
 
+## S32 — 2026-06-12 — Détection plateau
+
+### Livré
+- **PlateauDetectionService** : service isolé TDD (6 tests). Détecte exercices stagnants au même poids × 3 séances complétées consécutives. Basé sur `set_logs.weight_done` via `findByExerciseId()`. Exclut bodyweight (weight_done=0) et séances abandonnées/pausées.
+- **SummaryPhase** : card plateau conditionnelle. Copy factuelle et bienveillante ("Même charge depuis 3 séances — Tu peux tenter d'augmenter"). Conforme philosophie UX anti-perf.
+- **[workoutId].tsx** : `useEffect` déclenché à `phase='summary'`, instancie `PlateauDetectionService`, passe `plateaus` à `SummaryPhase`.
+- 351/351 tests, 0 erreurs TypeScript. 0 migration DB.
+
+### Décisions
+- Seuil 3 fixe (Rippetoe, Barbell Medicine, NSCA)
+- `max(weight_done)` par séance = proxy poids travail (évite IBlockRepository)
+- Signal en SummaryPhase uniquement — CheckInPhase nécessiterait persistance état (YAGNI)
+
+### Version
+v1.8.0 → bump recommandé groupé avec S31 (double progression + détection plateau).
+
+---
+
 ## S31 — 2026-06-12 — Double progression + suppression reps_max
 
 ### Livré
@@ -1167,3 +1185,32 @@ progression/[exerciseId].tsx → ProgressionService direct (mount)
 1. Tests manuels sur device/émulateur (tests-manuels-mvp.md — toutes les sections)
 2. Polish final (animations, transitions, edge cases visuels)
 3. Si tout est bon : MVP terminé
+
+---
+
+## Session Philosophie — 2026-06-12 · Design doc "Entraînement sérieux, sans les mécaniques toxiques"
+
+### Ce qui a été fait
+- Brainstorm complet : 4 couches (architecture, nommage, onboarding, features), personnalité "ami bienveillant", positionnement affiné
+- Positionnement final : **"entraînement sérieux, sans les mécaniques toxiques"** — pas anti-perf au sens minimaliste, mais full tracking sans compétition/culpabilisation
+- Design doc créé : `docs/superpowers/specs/2026-06-12-philosophie-entrainement-sain.md`
+- Section Philosophie + filtre de décision 3 questions ajoutés dans `app/CLAUDE.md`
+- Backlog mis à jour : 4 features cohérentes (humeur après séance, présences ce mois, onboarding écran 0, micro-copy audit)
+
+### Décisions clés
+- Stats restent visibles et motivantes dans l'onglet Progression — pas secondaires
+- Accueil = action (zéro stats perf), Progression = récompense (courbes riches)
+- Flèche additive uniquement : célébrer la présence, ignorer l'absence
+- Filtre permanent dans CLAUDE.md — actif pour toute future feature
+- Anti-patterns nommés : Strava Effect, Noom Effect, Apple Rings Effect
+
+### Fondements scientifiques intégrés
+- Self-Determination Theory (Deci & Ryan) — autonomie + compétence
+- Renforcement positif (Fogg) — streaks additives uniquement
+- Adhérence long terme (Teixeira et al.) — ressenti post-séance = prédicteur
+- Effet de surjustification (Lepper) — pas de gamification compétitive
+
+### Prochaine session
+- Implémenter micro-copy audit (~1h) : "Tout réussi" → "Tout fait", "Objectif" → "Cible", badge PR, RestPhase
+- Onboarding écran 0 (s'insère dans le wizard priorité haute)
+- Humeur après séance (extension SummaryPhase)
