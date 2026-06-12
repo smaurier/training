@@ -2,6 +2,7 @@ import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import type { ProgressionResult } from '@/services/SessionService';
+import type { PlateauResult } from '@/services/PlateauDetectionService';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
@@ -12,6 +13,7 @@ interface SummaryPhaseProps {
   totalSets: number;
   durationSeconds: number;
   totalVolumeKg?: number;
+  plateaus?: PlateauResult[];
   onClose: () => void;
 }
 
@@ -21,7 +23,7 @@ function formatDuration(seconds: number): string {
   return m > 0 ? `${m} min ${s > 0 ? `${s} s` : ''}`.trim() : `${s} s`;
 }
 
-export function SummaryPhase({ progressions, totalSets, durationSeconds, totalVolumeKg, onClose }: SummaryPhaseProps) {
+export function SummaryPhase({ progressions, totalSets, durationSeconds, totalVolumeKg, plateaus, onClose }: SummaryPhaseProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const { convert, label: unitLabel } = useUnits();
@@ -80,6 +82,23 @@ export function SummaryPhase({ progressions, totalSets, durationSeconds, totalVo
         </View>
       )}
 
+      {plateaus && plateaus.length > 0 && (
+        <View style={[styles.plateauSection, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Même charge depuis 3 séances</Text>
+          {plateaus.map(p => (
+            <View key={p.exerciseId} style={[styles.plateauRow, { borderBottomColor: colors.border }]}>
+              <Text style={[styles.plateauName, { color: colors.text }]} numberOfLines={1}>{p.exerciseName}</Text>
+              <Text style={[styles.plateauWeight, { color: colors.textSecondary }]}>
+                {convert(p.currentWeight)} {unitLabel}
+              </Text>
+            </View>
+          ))}
+          <Text style={[styles.plateauHint, { color: colors.textSecondary }]}>
+            Tu peux tenter d'augmenter à la prochaine séance.
+          </Text>
+        </View>
+      )}
+
       <PressableA11y
         accessibilityLabel="Retour au programme"
         onPress={onClose}
@@ -111,6 +130,11 @@ const styles = StyleSheet.create({
   progressionOld: { fontSize: 13 },
   progressionNew: { fontSize: 13, fontWeight: '700', color: '#16a34a' },
   progressionPending: { fontSize: 12 },
+  plateauSection: { borderWidth: 1, borderRadius: Radius.sm, padding: 16, gap: 10 },
+  plateauRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 6, borderBottomWidth: 1 },
+  plateauName: { flex: 1, fontSize: 14 },
+  plateauWeight: { fontSize: 13 },
+  plateauHint: { fontSize: 13, fontStyle: 'italic', marginTop: 2 },
   closeBtn: { paddingVertical: 16, borderRadius: Radius.sm, alignItems: 'center', marginTop: 8 },
   closeBtnText: { color: '#fff', fontSize: 17, fontWeight: '600' },
 });
