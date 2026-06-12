@@ -104,7 +104,7 @@ export class DeloadService {
 |---|---|
 | `app/services/DeloadService.ts` | Créer |
 | `app/services/DeloadService.test.ts` | Créer (TDD) |
-| `app/components/session/CheckInPhase.tsx` | Prop `deloadSuggested?` + card décision |
+| `app/components/session/CheckInPhase.tsx` | Props `deloadSuggested?` + `onDeloadApplied?` (callback) + card décision |
 | `app/components/session/SummaryPhase.tsx` | Prop `suggestNextDeload?` + card anticipation |
 | `app/app/session/[workoutId].tsx` | State `isDeloadSession` + appels DeloadService |
 | `app/app/(tabs)/reglages.tsx` | Input `deload_weeks` (nombre de semaines) |
@@ -114,6 +114,8 @@ export class DeloadService {
 ### État de séance
 
 `isDeloadSession: boolean` ajouté au state local de `[workoutId].tsx` (comme `plateaus`). Pas besoin de persistance — déterminé à chaque CheckIn.
+
+`CheckInPhase` reçoit `onDeloadApplied?: () => void` — appelé si l'utilisateur clique "Appliquer". Le parent set `isDeloadSession = true` dans son state avant que la séance démarre via `onStart`. Signature `onStart` inchangée.
 
 ---
 
