@@ -181,7 +181,7 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
       new SQLiteWorkoutExerciseRepository(db),
       new SQLiteExerciseRepository(db),
     );
-    service.detectPlateaus(session.sessionLogId).then(setPlateaus);
+    service.detectPlateaus(session.sessionLogId).then(setPlateaus).catch(console.error);
   }, [session.phase, session.sessionLogId]);
 
   const [prBadge, setPrBadge] = useState<string | null>(null);
