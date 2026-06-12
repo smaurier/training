@@ -39,9 +39,11 @@ const CHECKIN_ROWS: CheckInRowConfig[] = [
 interface CheckInPhaseProps {
   onStart: (checkin: CheckIn) => Promise<void>;
   exercises: WorkoutExerciseDetail[];
+  deloadSuggested?: boolean;
+  onDeloadApplied?: () => void;
 }
 
-export function CheckInPhase({ onStart, exercises }: CheckInPhaseProps) {
+export function CheckInPhase({ onStart, exercises, deloadSuggested, onDeloadApplied }: CheckInPhaseProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
 
@@ -54,6 +56,8 @@ export function CheckInPhase({ onStart, exercises }: CheckInPhaseProps) {
   const [fatigue, setFatigue] = useState<1 | 2 | 3 | null>(null);
   const [sleep, setSleep] = useState<1 | 2 | 3 | null>(null);
   const [loading, setLoading] = useState(false);
+  const [deloadAccepted, setDeloadAccepted] = useState(false);
+  const [deloadDismissed, setDeloadDismissed] = useState(false);
 
   const canStart = energy !== null && fatigue !== null && sleep !== null;
 
@@ -97,6 +101,40 @@ export function CheckInPhase({ onStart, exercises }: CheckInPhaseProps) {
               </Text>
             )}
           </View>
+        </View>
+      )}
+
+      {deloadSuggested && !deloadDismissed && (
+        <View style={[styles.deloadCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          <Text style={[styles.deloadTitle, { color: colors.text }]}>
+            {deloadAccepted ? 'Décharge appliquée ✓' : 'Semaine de décharge suggérée'}
+          </Text>
+          {!deloadAccepted && (
+            <Text style={[styles.deloadBody, { color: colors.textSecondary }]}>
+              Après plusieurs semaines d'entraînement, une semaine à charge réduite (-10%) permet aux muscles et tendons de récupérer et de repartir plus forts.
+            </Text>
+          )}
+          {!deloadAccepted && (
+            <View style={styles.deloadButtons}>
+              <PressableA11y
+                accessibilityLabel="Appliquer la décharge — poids réduits de 10% pour cette séance"
+                onPress={() => {
+                  setDeloadAccepted(true);
+                  onDeloadApplied?.();
+                }}
+                style={[styles.deloadBtn, styles.deloadBtnPrimary, { backgroundColor: colors.primary }]}
+              >
+                <Text style={styles.deloadBtnPrimaryText}>Appliquer la décharge</Text>
+              </PressableA11y>
+              <PressableA11y
+                accessibilityLabel="Passer — continuer sans décharge"
+                onPress={() => setDeloadDismissed(true)}
+                style={[styles.deloadBtn, styles.deloadBtnSecondary, { borderColor: colors.border }]}
+              >
+                <Text style={[styles.deloadBtnSecondaryText, { color: colors.text }]}>Passer</Text>
+              </PressableA11y>
+            </View>
+          )}
         </View>
       )}
 
@@ -169,4 +207,13 @@ const styles = StyleSheet.create({
   previewDuration: { fontSize: 14, fontWeight: '700' },
   previewList: { gap: 3 },
   previewItem: { fontSize: 13 },
+  deloadCard: { borderWidth: 1, borderRadius: Radius.sm, padding: 16, gap: 12, marginBottom: 8 },
+  deloadTitle: { fontSize: 15, fontWeight: '600' },
+  deloadBody: { fontSize: 14, lineHeight: 20 },
+  deloadButtons: { flexDirection: 'column', gap: 8 },
+  deloadBtn: { paddingVertical: 12, borderRadius: Radius.sm, alignItems: 'center' },
+  deloadBtnPrimary: {},
+  deloadBtnPrimaryText: { color: '#fff', fontSize: 15, fontWeight: '600' },
+  deloadBtnSecondary: { borderWidth: 1 },
+  deloadBtnSecondaryText: { fontSize: 15 },
 });
