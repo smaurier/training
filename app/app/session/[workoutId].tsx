@@ -29,6 +29,8 @@ import { SQLiteSetRepository } from '@/repositories/SQLiteSetRepository';
 import { SQLiteExerciseRepository } from '@/repositories/SQLiteExerciseRepository';
 import { PlateauDetectionService } from '@/services/PlateauDetectionService';
 import type { PlateauResult } from '@/services/PlateauDetectionService';
+import { DeloadService, applyDeloadToExercises } from '@/services/DeloadService';
+import { SQLiteSettingsRepository } from '@/repositories/SQLiteSettingsRepository';
 import { getDb } from '@/db';
 import { shouldWarnAbandon } from '@/services/sessionUtils';
 import { Ionicons } from '@expo/vector-icons';
@@ -124,8 +126,16 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
   const colors = Colors[colorScheme ?? 'light'];
 
   const { exercises, refresh } = useWorkoutExercises(workoutId);
+
+  const [deloadSuggested, setDeloadSuggested] = useState(false);
+  const [isDeloadSession, setIsDeloadSession] = useState(false);
+
   const resolvedExercises = useMemo(() => exercises.map(resolveWeights), [exercises]);
-  const session = useSession(workoutId, resolvedExercises, initialSession);
+  const deloadedExercises = useMemo(
+    () => isDeloadSession ? applyDeloadToExercises(resolvedExercises) : resolvedExercises,
+    [isDeloadSession, resolvedExercises],
+  );
+  const session = useSession(workoutId, deloadedExercises, initialSession);
   const timer = useTimer(120);
 
   const needsStartingWeight = useMemo(() => {
@@ -170,6 +180,15 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
     }
   }, [session.phase, session.sessionStartedAt]);
 
+  useEffect(() => {
+    const db = getDb();
+    const service = new DeloadService(
+      new SQLiteSettingsRepository(db),
+      new SQLiteSessionLogRepository(db),
+    );
+    service.shouldSuggestDeload(workoutId).then(setDeloadSuggested).catch(console.error);
+  }, [workoutId]);
+
   const [plateaus, setPlateaus] = useState<PlateauResult[]>([]);
 
   useEffect(() => {
@@ -183,6 +202,16 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
     );
     service.detectPlateaus(session.sessionLogId).then(setPlateaus).catch(console.error);
   }, [session.phase, session.sessionLogId]);
+
+  useEffect(() => {
+    if (session.phase !== 'summary' || !session.sessionLogId || !isDeloadSession) return;
+    const db = getDb();
+    const service = new DeloadService(
+      new SQLiteSettingsRepository(db),
+      new SQLiteSessionLogRepository(db),
+    );
+    service.recordDeload(new Date().toISOString()).catch(console.error);
+  }, [session.phase, session.sessionLogId, isDeloadSession]);
 
   const [prBadge, setPrBadge] = useState<string | null>(null);
   const prBadgeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -251,7 +280,12 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
         )}
 
         {!session.error && session.phase === 'checkin' && (
-          <CheckInPhase onStart={session.startSession} exercises={resolvedExercises} />
+          <CheckInPhase
+            onStart={session.startSession}
+            exercises={resolvedExercises}
+            deloadSuggested={deloadSuggested}
+            onDeloadApplied={() => setIsDeloadSession(true)}
+          />
         )}
 
         {!session.error && session.phase === 'exercise_transition' && session.currentExercise && (
@@ -264,27 +298,34 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
         )}
 
         {!session.error && session.phase === 'running' && session.currentSet && session.currentBlock && session.currentExercise && (
-          needsStartingWeight ? (
-            <ExerciseStartingWeightPhase
-              exercise={session.currentExercise}
-              onConfirm={handleStartingWeightConfirm}
-            />
-          ) : (
-            <RunningPhase
-              key={session.currentSet.id}
-              exercise={session.currentExercise}
-              block={session.currentBlock}
-              set={session.currentSet}
-              progressLabel={session.progressLabel}
-              onValidate={handleValidate}
-              onSkip={session.skipSet}
-              onSkipExercise={session.skipExercise}
-              onUndo={session.undoLastSet}
-              canUndo={session.canUndo}
-              lastSetLog={session.lastSetLog}
-              onAdjustWeight={session.setStartingWeight}
-            />
-          )
+          <>
+            {isDeloadSession && (
+              <View style={[styles.deloadBanner, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
+                <Text style={[styles.deloadBannerText, { color: colors.textSecondary }]}>Séance décharge</Text>
+              </View>
+            )}
+            {needsStartingWeight ? (
+              <ExerciseStartingWeightPhase
+                exercise={session.currentExercise}
+                onConfirm={handleStartingWeightConfirm}
+              />
+            ) : (
+              <RunningPhase
+                key={session.currentSet.id}
+                exercise={session.currentExercise}
+                block={session.currentBlock}
+                set={session.currentSet}
+                progressLabel={session.progressLabel}
+                onValidate={handleValidate}
+                onSkip={session.skipSet}
+                onSkipExercise={session.skipExercise}
+                onUndo={session.undoLastSet}
+                canUndo={session.canUndo}
+                lastSetLog={session.lastSetLog}
+                onAdjustWeight={session.setStartingWeight}
+              />
+            )}
+          </>
         )}
 
         {!session.error && session.phase === 'rest' && (
@@ -303,6 +344,7 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
             durationSeconds={summaryDurationSeconds}
             totalVolumeKg={session.totalVolume}
             plateaus={plateaus}
+            suggestNextDeload={deloadSuggested && !isDeloadSession}
             onClose={handleBack}
           />
         )}
@@ -402,4 +444,11 @@ const styles = StyleSheet.create({
     alignItems: 'center', borderWidth: 1,
   },
   abandonBtnText: { fontSize: 15, fontWeight: '600' },
+  deloadBanner: {
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderBottomWidth: 1,
+    alignItems: 'center',
+  },
+  deloadBannerText: { fontSize: 12, fontWeight: '500', letterSpacing: 0.5 },
 });
