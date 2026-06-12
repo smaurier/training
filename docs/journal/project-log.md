@@ -4,6 +4,28 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 
 ---
 
+## S33 — 2026-06-12 — Décharge automatique
+
+### Livré
+- **DeloadService** : TDD (19 tests). `shouldSuggestDeload(workoutId)` — calendaire global (findAll sessions), seuil configurable (`deload_weeks`, défaut 4). `recordDeload(date)` persiste `last_deload_at` dans table `settings` KV existante. `applyDeloadToExercises()` — 10% réduction, arrondi ×2 kg, guard `weight_type === 'fixed'` seulement (bodyweight + bar exclus).
+- **CheckInPhase** : card décharge optionnelle (`deloadSuggested?` + `onDeloadApplied?`). Boutons "Appliquer la décharge" / "Passer" (per-séance). Explication médicale factuelle.
+- **SummaryPhase** : card anticipation (`suggestNextDeload?`) — "Tu t'entraînes depuis plusieurs semaines. À la prochaine séance, pense à décharger."
+- **[workoutId].tsx** : `isDeloadSession` state, `deloadedExercises` memo (`applyDeloadToExercises` si flag actif), `recordDeload` useEffect à phase `summary`. Bannière "Séance décharge" dans RunningPhase. `suggestNextDeload = deloadSuggested && !isDeloadSession`.
+- **Réglages** : section "Décharge automatique" — SegmentedControl 4/6/8 sem. persisté via `SQLiteSettingsRepository`.
+- 369/369 tests, 0 erreurs TypeScript. 0 migration DB (settings table déjà en v1).
+
+### Décisions
+- Trigger calendaire (vs plateau) : scientifiquement validé (Israetel, Helms), proactif, indépendant des performances
+- Global (pas per-workout) : `last_deload_at` + fallback `findAll()` — une décharge = récup systémique
+- `onStart` inchangé : `onDeloadApplied?` callback séparé → pas de breaking change CheckInPhase
+- "Passer" per-séance : la suggestion réapparaît jusqu'à décharge effective (corps ne récupère pas parce qu'on a cliqué Passer)
+- Limitation connue : si séance décharge interrompue par OS kill, `isDeloadSession` remet à false → `recordDeload` ne fire pas. YAGNI — edge case rare, conséquence faible (suggestion réapparaît).
+
+### Version
+v1.9.0 recommandé — bump avec `bash scripts/version-bump.sh minor`
+
+---
+
 ## S32 — 2026-06-12 — Détection plateau
 
 ### Livré
