@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from 'react-nat
 import type { StyleProp, ViewStyle } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter, useFocusEffect } from 'expo-router';
-import { useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import { useHomeWorkout } from '@/hooks/useHomeWorkout';
@@ -10,6 +10,18 @@ import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
 import type { Workout } from '@/db/types';
+import { ResumeSessionCard } from '@/components/session/ResumeSessionCard';
+import type { PausedSessionInfo } from '@/services/SessionService';
+import { SessionService } from '@/services/SessionService';
+import { SQLiteSessionLogRepository } from '@/repositories/SQLiteSessionLogRepository';
+import { SQLiteSetLogRepository } from '@/repositories/SQLiteSetLogRepository';
+import { SQLitePersonalRecordRepository } from '@/repositories/SQLitePersonalRecordRepository';
+import { SQLiteWorkoutRepository } from '@/repositories/SQLiteWorkoutRepository';
+import { SQLiteWorkoutExerciseRepository } from '@/repositories/SQLiteWorkoutExerciseRepository';
+import { SQLiteBlockRepository } from '@/repositories/SQLiteBlockRepository';
+import { SQLiteSetRepository } from '@/repositories/SQLiteSetRepository';
+import { SQLiteExerciseRepository } from '@/repositories/SQLiteExerciseRepository';
+import { getDb } from '@/db';
 
 function formatRelativeDate(isoDate: string | null | undefined): string {
   if (!isoDate) return 'Jamais faite';
@@ -25,6 +37,7 @@ function formatRelativeDate(isoDate: string | null | undefined): string {
 
 export default function HomeScreen() {
   const router = useRouter();
+  const [pausedSession, setPausedSession] = useState<PausedSessionInfo | null>(null);
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const {
@@ -32,7 +45,21 @@ export default function HomeScreen() {
     isSuggestion, loading, hasActiveProgram, selectWorkout, refresh,
   } = useHomeWorkout();
 
-  useFocusEffect(useCallback(() => { refresh(); }, [refresh]));
+  useFocusEffect(useCallback(() => {
+    refresh();
+    const db = getDb();
+    const service = new SessionService(
+      new SQLiteSessionLogRepository(db),
+      new SQLiteSetLogRepository(db),
+      new SQLitePersonalRecordRepository(db),
+      new SQLiteWorkoutRepository(db),
+      new SQLiteWorkoutExerciseRepository(db),
+      new SQLiteBlockRepository(db),
+      new SQLiteSetRepository(db),
+      new SQLiteExerciseRepository(db),
+    );
+    service.findAnyPausedSession().then(setPausedSession).catch(() => setPausedSession(null));
+  }, [refresh]));
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -40,6 +67,23 @@ export default function HomeScreen() {
         <Ionicons name="barbell-outline" size={52} color={colors.primary} importantForAccessibility="no" accessibilityElementsHidden={true} />
         <Text style={[styles.title, { color: colors.text }]} accessibilityRole="header">Prêt à s&apos;entraîner ?</Text>
       </View>
+
+      {pausedSession && (
+        <ResumeSessionCard
+          workoutName={pausedSession.workoutName}
+          serieLabel={
+            pausedSession.setsLogged === 0
+              ? 'Aucune série complétée'
+              : `${pausedSession.setsLogged} série${pausedSession.setsLogged > 1 ? 's' : ''} complétée${pausedSession.setsLogged > 1 ? 's' : ''}`
+          }
+          onPress={() =>
+            router.push({
+              pathname: '/session/[workoutId]' as any,
+              params: { workoutId: String(pausedSession.sessionLog.workout_id) },
+            })
+          }
+        />
+      )}
 
       {loading ? (
         <ActivityIndicator color={colors.primary} />
