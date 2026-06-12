@@ -62,7 +62,6 @@ export async function importTemplate(
           await setRepo.save({
             block_id: block.id,
             reps_min: st.reps_min,
-            reps_max: st.reps_max,
             weight: st.weight,
             weight_type: st.weight_type,
             rest_duration: st.rest,

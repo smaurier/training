@@ -25,8 +25,8 @@ const TEST_TEMPLATE: TemplateDefinition = {
               name: 'Travail',
               is_work: true,
               sets: [
-                { reps_min: 5, reps_max: 5, weight: null, weight_type: 'fixed', rest: 180 },
-                { reps_min: 5, reps_max: 5, weight: null, weight_type: 'fixed', rest: 180 },
+                { reps_min: 5, weight: null, weight_type: 'fixed', rest: 180 },
+                { reps_min: 5, weight: null, weight_type: 'fixed', rest: 180 },
               ],
             },
           ],
