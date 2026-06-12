@@ -160,4 +160,24 @@ export const MIGRATIONS: string[] = [
     CHECK(status IN ('active', 'paused', 'completed', 'abandoned'));
   ALTER TABLE session_logs ADD COLUMN paused_position TEXT;
   `,
+
+  // v9 — suppression reps_max : cibles fixes uniquement (reps_min = cible canonique)
+  `
+  CREATE TABLE sets_new (
+    id               INTEGER PRIMARY KEY AUTOINCREMENT,
+    block_id         INTEGER NOT NULL REFERENCES blocks(id) ON DELETE CASCADE,
+    reps_min         INTEGER NOT NULL,
+    weight           REAL,
+    weight_type      TEXT NOT NULL DEFAULT 'fixed' CHECK(weight_type IN ('fixed', 'bodyweight', 'bar')),
+    rest_duration    INTEGER NOT NULL DEFAULT 120,
+    order_index      INTEGER NOT NULL DEFAULT 0,
+    duration_seconds INTEGER,
+    weight_ratio     REAL
+  );
+  INSERT INTO sets_new
+    SELECT id, block_id, reps_min, weight, weight_type, rest_duration, order_index, duration_seconds, weight_ratio
+    FROM sets;
+  DROP TABLE sets;
+  ALTER TABLE sets_new RENAME TO sets;
+  `,
 ];

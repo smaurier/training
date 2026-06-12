@@ -49,7 +49,6 @@ export interface Set {
   id: number;
   block_id: number;
   reps_min: number;
-  reps_max: number;
   weight: number | null;
   weight_type: WeightType;
   rest_duration: number;
