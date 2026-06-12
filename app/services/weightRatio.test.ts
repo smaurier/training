@@ -7,7 +7,6 @@ function makeSet(overrides: Partial<TrainingSet>): TrainingSet {
     id: 1,
     block_id: 1,
     reps_min: 8,
-    reps_max: 8,
     weight: null,
     weight_ratio: null,
     weight_type: 'fixed',
