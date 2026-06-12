@@ -361,3 +361,87 @@ describe('SessionService.calculateProgressions', () => {
     expect(updatedWorkSet?.weight).toBe(80);
   });
 });
+
+describe('SessionService.pauseSession', () => {
+  it('met status=paused et sérialise la position', async () => {
+    const ctx = makeService();
+    const service = ctx.build();
+    const log = await service.startSession(1, { checkin_energy: 3, checkin_fatigue: 1, checkin_sleep: 2 });
+    await service.pauseSession(log.id, { exerciseIdx: 0, blockIdx: 1, setIdx: 2 }, 'running');
+    const updated = await ctx.sessionLogRepo.findById(log.id);
+    expect(updated!.status).toBe('paused');
+    const pos = JSON.parse(updated!.paused_position!);
+    expect(pos).toEqual({ exerciseIdx: 0, blockIdx: 1, setIdx: 2, phase: 'running' });
+  });
+});
+
+describe('SessionService.abandonSession', () => {
+  it('met status=abandoned et ended_at, ne calcule pas les progressions', async () => {
+    const ctx = makeService();
+    const service = ctx.build();
+    const log = await service.startSession(1, { checkin_energy: 3, checkin_fatigue: 1, checkin_sleep: 2 });
+    await service.abandonSession(log.id);
+    const updated = await ctx.sessionLogRepo.findById(log.id);
+    expect(updated!.status).toBe('abandoned');
+    expect(updated!.ended_at).not.toBeNull();
+  });
+
+  it('ne lance pas calculateProgressions (les sets_logs ne déclenchent pas de mise à jour poids)', async () => {
+    const ctx = makeService();
+    const service = ctx.build();
+    const log = await service.startSession(1, { checkin_energy: 3, checkin_fatigue: 1, checkin_sleep: 2 });
+    await expect(service.abandonSession(log.id)).resolves.toBeUndefined();
+  });
+});
+
+describe('SessionService.findAnyPausedSession', () => {
+  it('retourne null si aucune session en pause', async () => {
+    const ctx = makeService();
+    const service = ctx.build();
+    expect(await service.findAnyPausedSession()).toBeNull();
+  });
+
+  it('retourne la session en pause avec workoutName, setsLogged, volume', async () => {
+    const ctx = makeService();
+    const workout = await ctx.workoutRepo.save({ program_id: 1, name: 'PPL Push', order_index: 0 });
+    const service = ctx.build();
+    const log = await service.startSession(workout.id, { checkin_energy: 3, checkin_fatigue: 1, checkin_sleep: 2 });
+    await ctx.setLogRepo.save({ session_log_id: log.id, set_id: 1, exercise_id: 1, reps_done: 8, weight_done: 80, rpe: null, completed_at: new Date().toISOString() });
+    await service.pauseSession(log.id, { exerciseIdx: 0, blockIdx: 0, setIdx: 1 }, 'running');
+    const result = await service.findAnyPausedSession();
+    expect(result).not.toBeNull();
+    expect(result!.workoutName).toBe('PPL Push');
+    expect(result!.setsLogged).toBe(1);
+    expect(result!.volume).toBe(8 * 80);
+  });
+
+  it('ignore les sessions completed et abandoned', async () => {
+    const ctx = makeService();
+    const service = ctx.build();
+    const log = await service.startSession(1, { checkin_energy: 3, checkin_fatigue: 1, checkin_sleep: 2 });
+    await service.abandonSession(log.id);
+    expect(await service.findAnyPausedSession()).toBeNull();
+  });
+});
+
+describe('SessionService.startSession (garde session en pause)', () => {
+  it("throw si une session est déjà en pause pour ce workoutId", async () => {
+    const ctx = makeService();
+    const service = ctx.build();
+    const log = await service.startSession(1, { checkin_energy: 3, checkin_fatigue: 1, checkin_sleep: 2 });
+    await service.pauseSession(log.id, { exerciseIdx: 0, blockIdx: 0, setIdx: 0 }, 'running');
+    await expect(
+      service.startSession(1, { checkin_energy: 3, checkin_fatigue: 1, checkin_sleep: 2 })
+    ).rejects.toThrow('Une séance est déjà en pause');
+  });
+
+  it('permet de démarrer un autre workoutId même si une session est en pause', async () => {
+    const ctx = makeService();
+    const service = ctx.build();
+    const log = await service.startSession(1, { checkin_energy: 3, checkin_fatigue: 1, checkin_sleep: 2 });
+    await service.pauseSession(log.id, { exerciseIdx: 0, blockIdx: 0, setIdx: 0 }, 'running');
+    await expect(
+      service.startSession(2, { checkin_energy: 3, checkin_fatigue: 1, checkin_sleep: 2 })
+    ).resolves.toBeDefined();
+  });
+});

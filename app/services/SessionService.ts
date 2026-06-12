@@ -42,6 +42,13 @@ export interface ProgressionResult {
   threshold: number;
 }
 
+export interface PausedSessionInfo {
+  sessionLog: SessionLog;
+  workoutName: string;
+  setsLogged: number;
+  volume: number;
+}
+
 export class SessionService {
   constructor(
     private sessionLogRepo: ISessionLogRepository,
@@ -55,6 +62,10 @@ export class SessionService {
   ) {}
 
   async startSession(workoutId: number, checkin: CheckIn): Promise<SessionLog> {
+    const existing = await this.sessionLogRepo.findAnyPaused();
+    if (existing && existing.workout_id === workoutId) {
+      throw new Error('Une séance est déjà en pause');
+    }
     return this.sessionLogRepo.save({
       workout_id: workoutId,
       started_at: new Date().toISOString(),
@@ -104,6 +115,34 @@ export class SessionService {
 
   async completeSession(sessionLogId: number): Promise<void> {
     await this.sessionLogRepo.complete(sessionLogId, new Date().toISOString());
+  }
+
+  async pauseSession(
+    sessionLogId: number,
+    position: { exerciseIdx: number; blockIdx: number; setIdx: number },
+    phase: 'checkin' | 'exercise_transition' | 'running' | 'rest' | 'summary',
+  ): Promise<void> {
+    const positionJson = JSON.stringify({
+      exerciseIdx: position.exerciseIdx,
+      blockIdx: position.blockIdx,
+      setIdx: position.setIdx,
+      phase,
+    });
+    await this.sessionLogRepo.pause(sessionLogId, positionJson);
+  }
+
+  async abandonSession(sessionLogId: number): Promise<void> {
+    await this.sessionLogRepo.abandon(sessionLogId, new Date().toISOString());
+  }
+
+  async findAnyPausedSession(): Promise<PausedSessionInfo | null> {
+    const sessionLog = await this.sessionLogRepo.findAnyPaused();
+    if (!sessionLog) return null;
+    const workout = await this.workoutRepo.findById(sessionLog.workout_id);
+    const setLogs = await this.setLogRepo.findBySessionLogId(sessionLog.id);
+    const setsLogged = setLogs.length;
+    const volume = setLogs.reduce((sum, sl) => sum + sl.reps_done * sl.weight_done, 0);
+    return { sessionLog, workoutName: workout?.name ?? '', setsLogged, volume };
   }
 
   async getNextWorkout(programId: number): Promise<Workout | null> {
