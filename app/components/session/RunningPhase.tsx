@@ -197,7 +197,6 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
   const repsFeedback = computeRepsFeedback(
     reps,
     set.reps_min,
-    set.reps_max,
     set.weight_type === 'bodyweight',
   );
 
