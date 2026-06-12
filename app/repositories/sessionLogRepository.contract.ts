@@ -59,15 +59,25 @@ export function runSessionLogRepositoryContractTests(createRepo: () => ISessionL
     it('retourne null si aucun log', async () => {
       expect(await repo.findLatestByWorkoutIds([1, 2])).toBeNull();
     });
-    it('retourne le log le plus récent parmi plusieurs workouts', async () => {
-      await repo.save({ ...dto1, workout_id: 1, started_at: '2026-01-01T10:00:00.000Z' });
-      await repo.save({ ...dto1, workout_id: 2, started_at: '2026-01-03T10:00:00.000Z' });
+    it('retourne le log le plus récent parmi plusieurs workouts (completed seulement)', async () => {
+      const a = await repo.save({ ...dto1, workout_id: 1, started_at: '2026-01-01T10:00:00.000Z' });
+      const b = await repo.save({ ...dto1, workout_id: 2, started_at: '2026-01-03T10:00:00.000Z' });
+      await repo.complete(a.id, '2026-01-01T11:00:00.000Z');
+      await repo.complete(b.id, '2026-01-03T11:00:00.000Z');
       const latest = await repo.findLatestByWorkoutIds([1, 2]);
       expect(latest?.workout_id).toBe(2);
     });
     it('retourne null si workoutIds vide', async () => {
-      await repo.save(dto1);
+      const saved = await repo.save(dto1);
+      await repo.complete(saved.id, '2026-01-01T11:00:00.000Z');
       expect(await repo.findLatestByWorkoutIds([])).toBeNull();
+    });
+    it('ignore les sessions paused et abandoned', async () => {
+      const a = await repo.save({ ...dto1, workout_id: 1, started_at: '2026-01-01T10:00:00.000Z' });
+      const b = await repo.save({ ...dto1, workout_id: 2, started_at: '2026-01-03T10:00:00.000Z' });
+      await repo.pause(a.id, '{}');
+      await repo.abandon(b.id, '2026-01-03T11:00:00.000Z');
+      expect(await repo.findLatestByWorkoutIds([1, 2])).toBeNull();
     });
   });
 

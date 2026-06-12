@@ -269,7 +269,7 @@ export class SessionService {
     travailSets: DBSet[]
   ): Promise<boolean> {
     const pastSessions = (await this.sessionLogRepo.findByWorkoutId(workoutId))
-      .filter(s => s.id !== currentSessionLogId && s.ended_at !== null)
+      .filter(s => s.id !== currentSessionLogId && s.status === 'completed')
       .sort((a, b) => b.started_at.localeCompare(a.started_at));
 
     if (pastSessions.length === 0) return false;

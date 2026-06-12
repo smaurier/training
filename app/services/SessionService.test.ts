@@ -179,7 +179,8 @@ describe('SessionService.getNextWorkout', () => {
     const ctx = makeService();
     const service = ctx.build();
     const [w1] = await seedWorkouts(ctx);
-    await ctx.sessionLogRepo.save({ workout_id: w1.id, started_at: '2026-01-01T10:00:00.000Z', checkin_energy: null, checkin_fatigue: null, checkin_sleep: null, notes: null });
+    const log = await ctx.sessionLogRepo.save({ workout_id: w1.id, started_at: '2026-01-01T10:00:00.000Z', checkin_energy: null, checkin_fatigue: null, checkin_sleep: null, notes: null });
+    await ctx.sessionLogRepo.complete(log.id, '2026-01-01T11:00:00.000Z');
     const next = await service.getNextWorkout(1);
     expect(next?.name).toBe('Pull');
   });
@@ -188,7 +189,8 @@ describe('SessionService.getNextWorkout', () => {
     const ctx = makeService();
     const service = ctx.build();
     const [, , w3] = await seedWorkouts(ctx);
-    await ctx.sessionLogRepo.save({ workout_id: w3.id, started_at: '2026-01-01T10:00:00.000Z', checkin_energy: null, checkin_fatigue: null, checkin_sleep: null, notes: null });
+    const log = await ctx.sessionLogRepo.save({ workout_id: w3.id, started_at: '2026-01-01T10:00:00.000Z', checkin_energy: null, checkin_fatigue: null, checkin_sleep: null, notes: null });
+    await ctx.sessionLogRepo.complete(log.id, '2026-01-01T11:00:00.000Z');
     const next = await service.getNextWorkout(1);
     expect(next?.name).toBe('Push');
   });

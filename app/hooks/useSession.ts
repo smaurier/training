@@ -294,6 +294,7 @@ export function useSession(
       await service.pauseSession(sessionLogId, position, phase);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Erreur pause séance');
+      throw e;
     }
   }, [service, sessionLogId, position, phase]);
 

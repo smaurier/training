@@ -30,7 +30,7 @@ export class SQLiteSessionLogRepository implements ISessionLogRepository {
     if (workoutIds.length === 0) return null;
     const placeholders = workoutIds.map(() => '?').join(',');
     return this.db.getFirstAsync<SessionLog>(
-      `SELECT * FROM session_logs WHERE workout_id IN (${placeholders}) ORDER BY started_at DESC LIMIT 1`,
+      `SELECT * FROM session_logs WHERE workout_id IN (${placeholders}) AND status = 'completed' ORDER BY started_at DESC LIMIT 1`,
       workoutIds
     );
   }

@@ -55,7 +55,8 @@ async function checkPausedOnMount(workoutId: number): Promise<{
   const paused = await service.findAnyPausedSession();
   if (!paused) return {};
   if (!shouldWarnAbandon(paused.sessionLog.workout_id, workoutId)) {
-    const pos = JSON.parse(paused.sessionLog.paused_position!);
+    if (!paused.sessionLog.paused_position) return {};
+    const pos = JSON.parse(paused.sessionLog.paused_position);
     return {
       initialSession: {
         sessionLogId: paused.sessionLog.id,
@@ -188,12 +189,17 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
   }, [session.validateSet, session.currentExercise]);
 
   const handlePause = useCallback(async () => {
-    await session.pauseSession();
-    router.replace('/(tabs)');
+    try {
+      await session.pauseSession();
+      router.replace('/(tabs)');
+    } catch {
+      // error already shown via session.error
+    }
   }, [session.pauseSession, router]);
 
   const abandonSheetRef = useRef<BottomSheetModal>(null);
   const abandonSnapPoints = useMemo(() => ['30%'], []);
+  const abandoningRef = useRef(false);
 
   useEffect(() => {
     if (conflict) {
@@ -205,10 +211,15 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
     if (!conflict) return;
     const service = makeServiceForCheck();
     await service.abandonSession(conflict.sessionLog.id);
+    abandoningRef.current = true;
     abandonSheetRef.current?.dismiss();
   }, [conflict]);
 
   const handleAbandonCancel = useCallback(() => {
+    if (abandoningRef.current) {
+      abandoningRef.current = false;
+      return;
+    }
     abandonSheetRef.current?.dismiss();
     router.back();
   }, [router]);

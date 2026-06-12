@@ -24,7 +24,7 @@ export class InMemorySessionLogRepository implements ISessionLogRepository {
   async findLatestByWorkoutIds(workoutIds: number[]): Promise<SessionLog | null> {
     if (workoutIds.length === 0) return null;
     const matching = this.items
-      .filter(i => workoutIds.includes(i.workout_id))
+      .filter(i => workoutIds.includes(i.workout_id) && i.status === 'completed')
       .sort((a, b) => b.started_at.localeCompare(a.started_at));
     return matching[0] ?? null;
   }
