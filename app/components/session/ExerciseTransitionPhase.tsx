@@ -23,8 +23,7 @@ function getWorkSummary(exercise: WorkoutExerciseDetail): string {
   const travail = exercise.blocks.find(b => b.is_work_block === 1 && b.name === 'Travail');
   if (travail && travail.sets.length > 0) {
     const s = travail.sets[0];
-    const repsLabel =
-      s.reps_min === s.reps_max ? `${s.reps_min} reps` : `${s.reps_min}–${s.reps_max} reps`;
+    const repsLabel = `${s.reps_min} reps`;
     return `${travail.sets.length} série${travail.sets.length > 1 ? 's' : ''} × ${repsLabel} — ${s.rest_duration}s repos`;
   }
   const firstSet = exercise.blocks[0]?.sets[0];

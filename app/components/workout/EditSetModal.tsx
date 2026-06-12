@@ -21,7 +21,6 @@ export function EditSetModal({ set, onSave, onClose }: EditSetModalProps) {
   const colors = Colors[colorScheme ?? 'light'];
 
   const [repsMin, setRepsMin] = useState(String(set.reps_min));
-  const [repsMax, setRepsMax] = useState(String(set.reps_max));
   const [weight, setWeight] = useState(set.weight != null ? String(set.weight) : '');
   const [weightType, setWeightType] = useState<WeightType>(set.weight_type);
   const [rest, setRest] = useState(String(set.rest_duration));
@@ -37,7 +36,6 @@ export function EditSetModal({ set, onSave, onClose }: EditSetModalProps) {
   async function handleSave() {
     const dto: UpdateSetDto = {
       reps_min: parseInt(repsMin, 10) || set.reps_min,
-      reps_max: parseInt(repsMax, 10) || set.reps_max,
       weight: weightDisabled ? null : (weight.trim() ? parseFloat(weight) : null),
       weight_type: weightType,
       rest_duration: parseInt(rest, 10) || set.rest_duration,
@@ -52,23 +50,13 @@ export function EditSetModal({ set, onSave, onClose }: EditSetModalProps) {
         <View style={[styles.sheet, { backgroundColor: colors.surface }]}>
           <Text style={[styles.title, { color: colors.text }]}>Modifier la série</Text>
 
-          <View style={styles.repsRow}>
-            <TextInput
-              style={[styles.input, { color: colors.text, borderColor: colors.border, backgroundColor: colors.background }]}
-              value={repsMin}
-              onChangeText={setRepsMin}
-              keyboardType="numeric"
-              accessibilityLabel="Répétitions minimum"
-            />
-            <Text style={[styles.separator, { color: colors.textSecondary }]}>–</Text>
-            <TextInput
-              style={[styles.input, { color: colors.text, borderColor: colors.border, backgroundColor: colors.background }]}
-              value={repsMax}
-              onChangeText={setRepsMax}
-              keyboardType="numeric"
-              accessibilityLabel="Répétitions maximum"
-            />
-          </View>
+          <TextInput
+            style={[styles.inputFull, { color: colors.text, borderColor: colors.border, backgroundColor: colors.background }]}
+            value={repsMin}
+            onChangeText={setRepsMin}
+            keyboardType="numeric"
+            accessibilityLabel="Nombre de répétitions"
+          />
 
           <View style={styles.segmented}>
             {SEGMENTS.map(({ key, label }) => {
@@ -138,9 +126,6 @@ const styles = StyleSheet.create({
   overlay: { flex: 1, justifyContent: 'flex-end' },
   sheet: { borderTopLeftRadius: 16, borderTopRightRadius: 16, padding: 20, gap: 14 },
   title: { fontSize: 17, fontWeight: '600' },
-  repsRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  input: { flex: 1, borderWidth: 1, borderRadius: Radius.sm, padding: 10, fontSize: 16, textAlign: 'center' },
-  separator: { fontSize: 18 },
   segmented: { flexDirection: 'row', gap: 8 },
   segment: { flex: 1, alignItems: 'center', paddingVertical: 10, borderRadius: Radius.sm, borderWidth: 1 },
   inputFull: { borderWidth: 1, borderRadius: Radius.sm, padding: 10, fontSize: 16 },
