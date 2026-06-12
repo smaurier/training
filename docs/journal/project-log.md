@@ -4,6 +4,40 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 
 ---
 
+## S30 — 2026-06-12 — Pause Séance
+
+### Livré
+- **Migration v8** : `session_logs` + colonnes `status TEXT CHECK(active|paused|completed|abandoned)` + `paused_position TEXT`. Rétrocompat via DEFAULT 'active'.
+- **Repository layer** : `ISessionLogRepository` + `pause`, `abandon`, `findAnyPaused`. `complete` met désormais `status='completed'`. InMemory + SQLite + 6 tests contrats TDD.
+- **SessionService** : `pauseSession` (sérialise position+phase JSON), `abandonSession` (ended_at, pas de calcul progressions), `findAnyPausedSession` (retourne `{sessionLog, workoutName, setsLogged, volume}`). Guard `startSession` : throw si même workout déjà en pause. TDD 8 tests.
+- **sessionUtils** : `shouldWarnAbandon(pausedId, targetId)` pure function TDD.
+- **useSession** : `InitialSession` interface, param optionnel 3e arg, lazy initializers sur 6 `useState`, `pauseSession()` callback.
+- **ResumeSessionCard** : composant isolé `{workoutName, serieLabel, onPress}`, accessibilité complète. Tests RTL. `testMatch` += `*.test.tsx`.
+- **`[workoutId].tsx`** : split `SessionScreen` (outer, mount check async → spinner) + `SessionContent` (inner, reçoit `initialSession`/`conflict`). Bouton pause flottant (hors checkin/summary). BottomSheet abandon (avec flag `abandoningRef` pour éviter `router.back()` après confirm).
+- **`index.tsx`** : `ResumeSessionCard` sur focus si session pausée, navigue vers `/session/[workoutId]`.
+
+### Bugs corrigés (review finale)
+- `handleAbandonConfirm` → `dismiss()` déclenchait `onDismiss` → `router.back()` (fix: `abandoningRef`)
+- `checkPreviousSignificantFailure` incluait sessions abandonnées (fix: filtre `status='completed'`)
+- `handlePause` naviguait même si DB write échoué (fix: re-throw + try/catch)
+- `JSON.parse(paused_position!)` crash si null (fix: null guard)
+- `findLatestByWorkoutIds` comptait paused/abandoned dans rotation cycle (fix: `status='completed'` en SQL + InMemory)
+
+### Décisions
+- `abandonSession` ne calcule PAS `calculateProgressions` — interruption logistique ≠ échec entraînement
+- Pas de détection background automatique (V1)
+- `positionHistory` (undo) non restauré après reprise — `canUndo=false` au redémarrage, acceptable V1
+- Split SessionScreen/SessionContent : seule façon d'éviter le flash CheckIn sans `useEffect` de correction
+
+### Architecture
+- `SessionPhase`/`SessionPosition` restent dans `hooks/useSession.ts` — SessionService.ts utilise types inline pour éviter dépendance circulaire
+- 9 commits, 348/348 tests
+
+### Version
+v1.7.0 — prochain bump recommandé (minor : nouvelle feature complète).
+
+---
+
 ## S29 — 2026-06-11 — Quick Wins Séance
 
 ### Livré
