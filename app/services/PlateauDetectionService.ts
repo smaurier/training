@@ -63,7 +63,7 @@ export class PlateauDetectionService {
         exerciseId: exercise.id,
         exerciseName: exercise.name,
         currentWeight: referenceWeight,
-        sessionsCount: PLATEAU_THRESHOLD,
+        sessionsCount: maxWeightPerSession.size,
       });
     }
 

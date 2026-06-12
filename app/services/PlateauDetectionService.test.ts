@@ -67,6 +67,7 @@ describe('PlateauDetectionService', () => {
 
     const result = await service.detectPlateaus(id3);
     expect(result).toHaveLength(1);
+    expect(result[0].exerciseId).toBe(1);
     expect(result[0].exerciseName).toBe('Développé couché');
     expect(result[0].currentWeight).toBe(60);
     expect(result[0].sessionsCount).toBe(3);
