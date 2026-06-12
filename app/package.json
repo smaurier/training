@@ -58,7 +58,9 @@
     "preset": "jest-expo",
     "testMatch": [
       "**/__tests__/**/*.test.ts",
-      "**/*.test.ts"
+      "**/__tests__/**/*.test.tsx",
+      "**/*.test.ts",
+      "**/*.test.tsx"
     ],
     "transformIgnorePatterns": [
       "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|react-navigation|@react-navigation/.*)"
