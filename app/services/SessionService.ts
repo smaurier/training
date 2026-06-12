@@ -164,7 +164,6 @@ export class SessionService {
       for (const set of sets) {
         await this.setRepo.update(set.id, {
           reps_min: set.reps_min,
-          reps_max: set.reps_max,
           weight,
           weight_type: set.weight_type,
           rest_duration: set.rest_duration,
