@@ -8,9 +8,8 @@ import { IBlockRepository } from '../repositories/IBlockRepository';
 import { ISetRepository } from '../repositories/ISetRepository';
 import { IExerciseRepository } from '../repositories/IExerciseRepository';
 import {
-  applyProgression,
+  calculateProgression,
   applyDeload,
-  isSessionFullSuccess,
   isSessionSignificantFailure,
   SetResult,
 } from './progression';
@@ -224,18 +223,26 @@ export class SessionService {
         reps_min: travailSetMap.get(log.set_id)?.reps_min ?? log.reps_done,
       }));
 
-      if (isSessionFullSuccess(currentSetResults) && oldWeight !== null) {
-        const newWeight = applyProgression(oldWeight);
+      const progressionResult = calculateProgression(
+        {
+          current_weight: oldWeight ?? 0,
+          progression_step: exercise.progression_step,
+          progression_threshold: exercise.progression_threshold,
+          consecutive_successes: 0,
+        },
+        currentSetResults,
+      );
+
+      if (progressionResult.progressed && oldWeight !== null) {
         for (const set of travailSets) {
           await this.setRepo.update(set.id, {
             reps_min: set.reps_min,
-            reps_max: set.reps_max,
-            weight: newWeight,
+            weight: progressionResult.new_weight,
             weight_type: set.weight_type,
             rest_duration: set.rest_duration,
           });
         }
-        results.push({ exerciseId: exercise.id, exerciseName: exercise.name, oldWeight, newWeight, achieved: true, consecutiveSuccesses: 1, threshold: 1 });
+        results.push({ exerciseId: exercise.id, exerciseName: exercise.name, oldWeight, newWeight: progressionResult.new_weight, achieved: true, consecutiveSuccesses: 1, threshold: exercise.progression_threshold });
       } else if (isSessionSignificantFailure(currentSetResults) && oldWeight !== null) {
         const prevFailed = await this.checkPreviousSignificantFailure(
           sessionLogId, sessionLog.workout_id, travailSets
@@ -245,7 +252,6 @@ export class SessionService {
           for (const set of travailSets) {
             await this.setRepo.update(set.id, {
               reps_min: set.reps_min,
-              reps_max: set.reps_max,
               weight: newWeight,
               weight_type: set.weight_type,
               rest_duration: set.rest_duration,

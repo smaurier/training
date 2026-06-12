@@ -221,7 +221,7 @@ describe('SessionService.setStartingWeight', () => {
     const workout = await ctx.workoutRepo.save({ program_id: 1, name: 'Cardio', order_index: 0 });
     const we = await ctx.weRepo.save({ workout_id: workout.id, exercise_id: exercise.id, order_index: 0 });
     const cardioBlock = await ctx.blockRepo.save({ workout_exercise_id: we.id, name: 'Cardio', order_index: 0, is_work_block: 0 });
-    const set = await ctx.setRepo.save({ block_id: cardioBlock.id, reps_min: 1, reps_max: 1, weight: null, weight_type: 'fixed', rest_duration: 0, order_index: 0 });
+    const set = await ctx.setRepo.save({ block_id: cardioBlock.id, reps_min: 1, weight: null, weight_type: 'fixed', rest_duration: 0, order_index: 0 });
 
     await service.setStartingWeight(we.id, 50);
 
@@ -245,7 +245,7 @@ describe('SessionService.calculateProgressions', () => {
     const workout = await ctx.workoutRepo.save({ program_id: 1, name: 'Legs', order_index: 0 });
     const we = await ctx.weRepo.save({ workout_id: workout.id, exercise_id: exercise.id, order_index: 0 });
     const block = await ctx.blockRepo.save({ workout_exercise_id: we.id, name: 'Travail', order_index: 0, is_work_block: 1 });
-    const set = await ctx.setRepo.save({ block_id: block.id, reps_min: 6, reps_max: 8, weight: 80, weight_type: 'fixed', rest_duration: 120, order_index: 0 });
+    const set = await ctx.setRepo.save({ block_id: block.id, reps_min: 6, weight: 80, weight_type: 'fixed', rest_duration: 120, order_index: 0 });
     return { exercise, workout, we, block, set };
   }
 
@@ -261,10 +261,10 @@ describe('SessionService.calculateProgressions', () => {
     expect(progressions).toHaveLength(1);
     expect(progressions[0].achieved).toBe(true);
     expect(progressions[0].oldWeight).toBe(80);
-    expect(progressions[0].newWeight).toBe(82);
+    expect(progressions[0].newWeight).toBe(82.5);
 
     const updatedSet = await ctx.setRepo.findById(set.id);
-    expect(updatedSet?.weight).toBe(82);
+    expect(updatedSet?.weight).toBe(82.5);
   });
 
   it("ne progresse pas si manque d'1 rep (hold)", async () => {
@@ -328,7 +328,7 @@ describe('SessionService.calculateProgressions', () => {
     const workout = await ctx.workoutRepo.save({ program_id: 1, name: 'Cardio', order_index: 0 });
     const we = await ctx.weRepo.save({ workout_id: workout.id, exercise_id: exercise.id, order_index: 0 });
     const cardioBlock = await ctx.blockRepo.save({ workout_exercise_id: we.id, name: 'Cardio', order_index: 0, is_work_block: 0 });
-    const set = await ctx.setRepo.save({ block_id: cardioBlock.id, reps_min: 1, reps_max: 1, weight: null, weight_type: 'fixed', rest_duration: 0, order_index: 0 });
+    const set = await ctx.setRepo.save({ block_id: cardioBlock.id, reps_min: 1, weight: null, weight_type: 'fixed', rest_duration: 0, order_index: 0 });
 
     const session = await service.startSession(workout.id, { checkin_energy: 3, checkin_fatigue: 1, checkin_sleep: 3 });
     await service.logSet(session.id, set.id, exercise.id, { repsDone: 1, weightDone: 0, rpe: null, durationSeconds: 1800, distanceMeters: 5000 });
@@ -346,10 +346,10 @@ describe('SessionService.calculateProgressions', () => {
     const we = await ctx.weRepo.save({ workout_id: workout.id, exercise_id: exercise.id, order_index: 0 });
     // Bloc d'échauffement (is_work_block=0)
     const warmupBlock = await ctx.blockRepo.save({ workout_exercise_id: we.id, name: 'Échauffement', order_index: 0, is_work_block: 0 });
-    const warmupSet = await ctx.setRepo.save({ block_id: warmupBlock.id, reps_min: 10, reps_max: 10, weight: 40, weight_type: 'fixed', rest_duration: 60, order_index: 0 });
+    const warmupSet = await ctx.setRepo.save({ block_id: warmupBlock.id, reps_min: 10, weight: 40, weight_type: 'fixed', rest_duration: 60, order_index: 0 });
     // Bloc de travail (is_work_block=1)
     const workBlock = await ctx.blockRepo.save({ workout_exercise_id: we.id, name: 'Travail', order_index: 1, is_work_block: 1 });
-    const workSet = await ctx.setRepo.save({ block_id: workBlock.id, reps_min: 6, reps_max: 8, weight: 80, weight_type: 'fixed', rest_duration: 120, order_index: 0 });
+    const workSet = await ctx.setRepo.save({ block_id: workBlock.id, reps_min: 6, weight: 80, weight_type: 'fixed', rest_duration: 120, order_index: 0 });
 
     const session = await service.startSession(workout.id, { checkin_energy: 3, checkin_fatigue: 1, checkin_sleep: 3 });
     // Log seulement l'échauffement (pas le bloc travail)
