@@ -3,7 +3,6 @@ import { ISetRepository, CreateSetDto, UpdateSetDto } from './ISetRepository';
 const serie1: CreateSetDto = {
   block_id: 1,
   reps_min: 6,
-  reps_max: 8,
   weight: null,
   weight_type: 'fixed',
   rest_duration: 120,
@@ -19,7 +18,6 @@ export function runSetRepositoryContractTests(createRepo: () => ISetRepository) 
       const result = await repo.save(serie1);
       expect(result.id).toBeGreaterThan(0);
       expect(result.reps_min).toBe(6);
-      expect(result.reps_max).toBe(8);
     });
     it('assigne des ids distincts', async () => {
       const a = await repo.save(serie1);
@@ -47,7 +45,7 @@ export function runSetRepositoryContractTests(createRepo: () => ISetRepository) 
   describe('findById', () => {
     it('retourne la série correspondante', async () => {
       const saved = await repo.save(serie1);
-      expect((await repo.findById(saved.id))?.reps_max).toBe(8);
+      expect((await repo.findById(saved.id))?.reps_min).toBe(6);
     });
     it('retourne null si id inconnu', async () => {
       expect(await repo.findById(999)).toBeNull();
@@ -75,14 +73,12 @@ export function runSetRepositoryContractTests(createRepo: () => ISetRepository) 
       const saved = await repo.save(serie1);
       const dto: UpdateSetDto = {
         reps_min: 4,
-        reps_max: 6,
         weight: 80,
         weight_type: 'fixed',
         rest_duration: 90,
       };
       const updated = await repo.update(saved.id, dto);
       expect(updated.reps_min).toBe(4);
-      expect(updated.reps_max).toBe(6);
       expect(updated.weight).toBe(80);
       expect(updated.rest_duration).toBe(90);
       expect(updated.weight_type).toBe('fixed');
@@ -93,7 +89,6 @@ export function runSetRepositoryContractTests(createRepo: () => ISetRepository) 
       const saved = await repo.save(serie1);
       const dto: UpdateSetDto = {
         reps_min: 4,
-        reps_max: 6,
         weight: null,
         weight_type: 'bodyweight',
         rest_duration: 60,
@@ -108,7 +103,6 @@ export function runSetRepositoryContractTests(createRepo: () => ISetRepository) 
     it('throw si id inconnu', async () => {
       const dto: UpdateSetDto = {
         reps_min: 4,
-        reps_max: 6,
         weight: null,
         weight_type: 'fixed',
         rest_duration: 60,

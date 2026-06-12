@@ -18,8 +18,8 @@ export class SQLiteSetRepository implements ISetRepository {
 
   async save(dto: CreateSetDto): Promise<TrainingSet> {
     const result = await this.db.runAsync(
-      'INSERT INTO sets (block_id, reps_min, reps_max, weight, weight_type, rest_duration, order_index, duration_seconds) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-      [dto.block_id, dto.reps_min, dto.reps_max, dto.weight, dto.weight_type, dto.rest_duration, dto.order_index, dto.duration_seconds ?? null]
+      'INSERT INTO sets (block_id, reps_min, weight, weight_type, rest_duration, order_index, duration_seconds) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [dto.block_id, dto.reps_min, dto.weight, dto.weight_type, dto.rest_duration, dto.order_index, dto.duration_seconds ?? null]
     );
     const saved = await this.findById(result.lastInsertRowId);
     if (!saved) throw new Error(`Set ${result.lastInsertRowId} introuvable après insertion`);
@@ -28,8 +28,8 @@ export class SQLiteSetRepository implements ISetRepository {
 
   async update(id: number, dto: UpdateSetDto): Promise<TrainingSet> {
     await this.db.runAsync(
-      'UPDATE sets SET reps_min=?, reps_max=?, weight=?, weight_type=?, rest_duration=? WHERE id=?',
-      [dto.reps_min, dto.reps_max, dto.weight, dto.weight_type, dto.rest_duration, id]
+      'UPDATE sets SET reps_min=?, weight=?, weight_type=?, rest_duration=? WHERE id=?',
+      [dto.reps_min, dto.weight, dto.weight_type, dto.rest_duration, id]
     );
     const updated = await this.findById(id);
     if (!updated) throw new Error(`Set ${id} introuvable`);
