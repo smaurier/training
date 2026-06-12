@@ -51,7 +51,6 @@ export class WorkoutExerciseService {
       await this.setRepo.save({
         block_id: block.id,
         reps_min: 3,
-        reps_max: 8,
         weight: null,
         weight_type: 'fixed',
         rest_duration: 120,
@@ -84,7 +83,6 @@ export class WorkoutExerciseService {
     await this.setRepo.save({
       block_id: blockId,
       reps_min: 3,
-      reps_max: 8,
       weight: null,
       weight_type: 'fixed',
       rest_duration: 120,
@@ -108,7 +106,6 @@ export class WorkoutExerciseService {
       await this.setRepo.save({
         block_id: block.id,
         reps_min: 3,
-        reps_max: 8,
         weight: null,
         weight_type: 'fixed',
         rest_duration: 120,
