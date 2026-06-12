@@ -27,6 +27,8 @@ import { SQLiteWorkoutExerciseRepository } from '@/repositories/SQLiteWorkoutExe
 import { SQLiteBlockRepository } from '@/repositories/SQLiteBlockRepository';
 import { SQLiteSetRepository } from '@/repositories/SQLiteSetRepository';
 import { SQLiteExerciseRepository } from '@/repositories/SQLiteExerciseRepository';
+import { PlateauDetectionService } from '@/services/PlateauDetectionService';
+import type { PlateauResult } from '@/services/PlateauDetectionService';
 import { getDb } from '@/db';
 import { shouldWarnAbandon } from '@/services/sessionUtils';
 import { Ionicons } from '@expo/vector-icons';
@@ -168,6 +170,20 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
     }
   }, [session.phase, session.sessionStartedAt]);
 
+  const [plateaus, setPlateaus] = useState<PlateauResult[]>([]);
+
+  useEffect(() => {
+    if (session.phase !== 'summary' || !session.sessionLogId) return;
+    const db = getDb();
+    const service = new PlateauDetectionService(
+      new SQLiteSetLogRepository(db),
+      new SQLiteSessionLogRepository(db),
+      new SQLiteWorkoutExerciseRepository(db),
+      new SQLiteExerciseRepository(db),
+    );
+    service.detectPlateaus(session.sessionLogId).then(setPlateaus);
+  }, [session.phase, session.sessionLogId]);
+
   const [prBadge, setPrBadge] = useState<string | null>(null);
   const prBadgeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -286,6 +302,7 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
             totalSets={session.totalSetsLogged}
             durationSeconds={summaryDurationSeconds}
             totalVolumeKg={session.totalVolume}
+            plateaus={plateaus}
             onClose={handleBack}
           />
         )}
