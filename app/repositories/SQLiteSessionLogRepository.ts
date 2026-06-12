@@ -49,7 +49,30 @@ export class SQLiteSessionLogRepository implements ISessionLogRepository {
   }
 
   async complete(id: number, endedAt: string): Promise<void> {
-    await this.db.runAsync('UPDATE session_logs SET ended_at = ? WHERE id = ?', [endedAt, id]);
+    await this.db.runAsync(
+      "UPDATE session_logs SET ended_at = ?, status = 'completed' WHERE id = ?",
+      [endedAt, id]
+    );
+  }
+
+  async pause(id: number, position: string): Promise<void> {
+    await this.db.runAsync(
+      "UPDATE session_logs SET status = 'paused', paused_position = ? WHERE id = ?",
+      [position, id]
+    );
+  }
+
+  async abandon(id: number, endedAt: string): Promise<void> {
+    await this.db.runAsync(
+      "UPDATE session_logs SET status = 'abandoned', ended_at = ? WHERE id = ?",
+      [endedAt, id]
+    );
+  }
+
+  async findAnyPaused(): Promise<SessionLog | null> {
+    return this.db.getFirstAsync<SessionLog>(
+      "SELECT * FROM session_logs WHERE status = 'paused' ORDER BY started_at DESC LIMIT 1"
+    );
   }
 
   async findAll(): Promise<SessionLog[]> {
