@@ -58,6 +58,8 @@ export interface Set {
   weight_ratio: number | null;
 }
 
+export type SessionStatus = 'active' | 'paused' | 'completed' | 'abandoned';
+
 export interface SessionLog {
   id: number;
   workout_id: number;
@@ -67,6 +69,8 @@ export interface SessionLog {
   checkin_fatigue: 1 | 2 | 3 | null;
   checkin_sleep: 1 | 2 | 3 | null;
   notes: string | null;
+  status: SessionStatus;
+  paused_position: string | null;
 }
 
 export interface SetLog {

@@ -153,4 +153,11 @@ export const MIGRATIONS: string[] = [
 
   // v7 — template_id pour traçabilité des programmes importés
   `ALTER TABLE programs ADD COLUMN template_id TEXT;`,
+
+  // v8 — pause séance : position persistée + statut cycle de vie
+  `
+  ALTER TABLE session_logs ADD COLUMN status TEXT NOT NULL DEFAULT 'active'
+    CHECK(status IN ('active', 'paused', 'completed', 'abandoned'));
+  ALTER TABLE session_logs ADD COLUMN paused_position TEXT;
+  `,
 ];
