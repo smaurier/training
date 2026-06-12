@@ -72,11 +72,54 @@ export function runSessionLogRepositoryContractTests(createRepo: () => ISessionL
   });
 
   describe('complete', () => {
-    it('met à jour ended_at', async () => {
+    it('met à jour ended_at et status=completed', async () => {
       const saved = await repo.save(dto1);
       await repo.complete(saved.id, '2026-01-01T11:00:00.000Z');
       const updated = await repo.findById(saved.id);
       expect(updated?.ended_at).toBe('2026-01-01T11:00:00.000Z');
+      expect(updated?.status).toBe('completed');
+    });
+  });
+
+  describe('pause', () => {
+    it("met status='paused' et paused_position", async () => {
+      const saved = await repo.save(dto1);
+      const pos = JSON.stringify({ exerciseIdx: 1, blockIdx: 0, setIdx: 2 });
+      await repo.pause(saved.id, pos);
+      const updated = await repo.findById(saved.id);
+      expect(updated?.status).toBe('paused');
+      expect(updated?.paused_position).toBe(pos);
+    });
+  });
+
+  describe('abandon', () => {
+    it("met status='abandoned' et ended_at", async () => {
+      const saved = await repo.save(dto1);
+      await repo.abandon(saved.id, '2026-01-01T12:00:00.000Z');
+      const updated = await repo.findById(saved.id);
+      expect(updated?.status).toBe('abandoned');
+      expect(updated?.ended_at).toBe('2026-01-01T12:00:00.000Z');
+    });
+  });
+
+  describe('findAnyPaused', () => {
+    it('retourne null si aucune session pausée', async () => {
+      await repo.save(dto1);
+      expect(await repo.findAnyPaused()).toBeNull();
+    });
+    it('retourne la session pausée', async () => {
+      const saved = await repo.save(dto1);
+      await repo.pause(saved.id, '{}');
+      const result = await repo.findAnyPaused();
+      expect(result?.id).toBe(saved.id);
+      expect(result?.status).toBe('paused');
+    });
+    it('ignore sessions completed/abandoned', async () => {
+      const a = await repo.save(dto1);
+      const b = await repo.save({ ...dto1, started_at: '2026-01-02T10:00:00.000Z' });
+      await repo.complete(a.id, '2026-01-01T11:00:00.000Z');
+      await repo.abandon(b.id, '2026-01-02T11:00:00.000Z');
+      expect(await repo.findAnyPaused()).toBeNull();
     });
   });
 
