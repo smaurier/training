@@ -507,7 +507,6 @@ type WeightType = 'fixed' | 'bodyweight' | 'bar';
 
 type SetSpec = {
   reps_min: number;
-  reps_max: number;
   weight: number | null;
   weight_type: WeightType;
   rest: number;
@@ -533,18 +532,18 @@ type WorkoutSpec = {
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-function f(reps_min: number, reps_max: number, rest: number, weight: number | null = null, weight_ratio: number | null = null): SetSpec {
-  return { reps_min, reps_max, weight, weight_type: 'fixed', rest, weight_ratio };
+function f(reps_min: number, rest: number, weight: number | null = null, weight_ratio: number | null = null): SetSpec {
+  return { reps_min, weight, weight_type: 'fixed', rest, weight_ratio };
 }
-function bw(reps_min: number, reps_max: number, rest: number): SetSpec {
-  return { reps_min, reps_max, weight: null, weight_type: 'bodyweight', rest };
+function bw(reps_min: number, rest: number): SetSpec {
+  return { reps_min, weight: null, weight_type: 'bodyweight', rest };
 }
 function barOnly(reps: number, rest: number): SetSpec {
-  return { reps_min: reps, reps_max: reps, weight: null, weight_type: 'bar', rest };
+  return { reps_min: reps, weight: null, weight_type: 'bar', rest };
 }
-// Mobilité/étirements : duration_seconds = durée réelle, reps_min/max = 1
+// Mobilité/étirements : duration_seconds = durée réelle, reps_min = 1
 function mob(seconds: number): SetSpec {
-  return { reps_min: 1, reps_max: 1, weight: null, weight_type: 'bodyweight', rest: 0, duration_seconds: seconds };
+  return { reps_min: 1, weight: null, weight_type: 'bodyweight', rest: 0, duration_seconds: seconds };
 }
 
 function workBlock(sets: SetSpec[]): BlockSpec {
@@ -585,27 +584,27 @@ const PPL: { name: string; description: string; workouts: WorkoutSpec[] } = {
               is_work: false,
               sets: [
                 barOnly(10, 60),
-                { reps_min: 5, reps_max: 5, weight: 40, weight_type: 'fixed', rest: 60 },
-                { reps_min: 3, reps_max: 3, weight: 45, weight_type: 'fixed', rest: 90 },
+                { reps_min: 5, weight: 40, weight_type: 'fixed', rest: 60 },
+                { reps_min: 3, weight: 45, weight_type: 'fixed', rest: 90 },
               ],
             },
             {
               name: 'Travail',
               is_work: true,
-              sets: [f(8, 8, 120, 60), f(8, 8, 120, 60), f(8, 8, 120, 60), f(8, 8, 120, 60)],
+              sets: [f(8, 120, 60), f(8, 120, 60), f(8, 120, 60), f(8, 120, 60)],
             },
             {
               name: 'Back-off',
               is_work: true,
-              sets: [f(12, 15, 60, null, 0.8)],
+              sets: [f(12, 60, null, 0.8)],
             },
           ],
         },
-        { exercise: 'Développé incliné haltères',    blocks: [workBlock([f(8, 10, 60, 16), f(8, 10, 60, 16), f(8, 10, 60, 16)])] },
-        { exercise: 'Élévations latérales haltères', blocks: [workBlock([f(15, 15, 60, 8), f(15, 15, 60, 8), f(15, 15, 60, 8)])] },
-        { exercise: 'Dips',                          blocks: [workBlock([bw(8, 12, 60), bw(8, 12, 60), bw(8, 12, 60)])] },
-        { exercise: 'Extension triceps poulie haute', blocks: [workBlock([f(10, 12, 60, 20), f(10, 12, 60, 20), f(10, 12, 60, 20)])] },
-        { exercise: 'Crunch poulie haute',           blocks: [workBlock([f(12, 15, 45, 25), f(12, 15, 45, 25), f(12, 15, 45, 25)])] },
+        { exercise: 'Développé incliné haltères',    blocks: [workBlock([f(8, 60, 16), f(8, 60, 16), f(8, 60, 16)])] },
+        { exercise: 'Élévations latérales haltères', blocks: [workBlock([f(15, 60, 8), f(15, 60, 8), f(15, 60, 8)])] },
+        { exercise: 'Dips',                          blocks: [workBlock([bw(8, 60), bw(8, 60), bw(8, 60)])] },
+        { exercise: 'Extension triceps poulie haute', blocks: [workBlock([f(10, 60, 20), f(10, 60, 20), f(10, 60, 20)])] },
+        { exercise: 'Crunch poulie haute',           blocks: [workBlock([f(12, 45, 25), f(12, 45, 25), f(12, 45, 25)])] },
 
         // Étirements (5–10 min)
         { exercise: 'Étirement pectoraux au mur', blocks: [stretchBlock([mob(60)])] },
@@ -619,11 +618,11 @@ const PPL: { name: string; description: string; workouts: WorkoutSpec[] } = {
     {
       name: 'Footing Mardi — Récupération',
       exercises: [
-        { exercise: 'Footing',                 blocks: [workBlock([bw(1, 1, 0)])] },
+        { exercise: 'Footing',                 blocks: [workBlock([bw(1, 0)])] },
         { exercise: 'Deep squat hold',         blocks: [stretchBlock([mob(60)])] },
         { exercise: 'Couch stretch',           blocks: [stretchBlock([mob(60)])] },
         { exercise: 'Étirement mollets',       blocks: [stretchBlock([mob(60)])] },
-        { exercise: "World's Greatest Stretch", blocks: [stretchBlock([bw(5, 5, 0)])] },
+        { exercise: "World's Greatest Stretch", blocks: [stretchBlock([bw(5, 0)])] },
         { exercise: 'Pancake stretch',         blocks: [stretchBlock([mob(60)])] },
       ],
     },
@@ -639,12 +638,12 @@ const PPL: { name: string; description: string; workouts: WorkoutSpec[] } = {
         { exercise: 'Hip hinge léger',       blocks: [mobilityBlock([mob(10)])] },
 
         // Musculation
-        { exercise: 'Tractions',           blocks: [workBlock([bw(8, 8, 90), bw(8, 8, 90), bw(8, 8, 90), bw(8, 8, 90)])] },
-        { exercise: 'Rowing barre',        blocks: [workBlock([f(8, 8, 90, 50), f(8, 8, 90, 50), f(8, 8, 90, 50), f(8, 8, 90, 50)])] },
-        { exercise: 'Face pull',           blocks: [workBlock([f(15, 15, 60, 20), f(15, 15, 60, 20), f(15, 15, 60, 20)])] },
-        { exercise: 'Curl barre EZ',       blocks: [workBlock([f(10, 12, 60, 20), f(10, 12, 60, 20), f(10, 12, 60, 20)])] },
-        { exercise: 'Tirage poulie basse', blocks: [workBlock([f(10, 12, 60, 30), f(10, 12, 60, 30), f(10, 12, 60, 30)])] },
-        { exercise: 'Relevés de jambes suspendu', blocks: [workBlock([bw(12, 15, 45), bw(12, 15, 45), bw(12, 15, 45)])] },
+        { exercise: 'Tractions',           blocks: [workBlock([bw(8, 90), bw(8, 90), bw(8, 90), bw(8, 90)])] },
+        { exercise: 'Rowing barre',        blocks: [workBlock([f(8, 90, 50), f(8, 90, 50), f(8, 90, 50), f(8, 90, 50)])] },
+        { exercise: 'Face pull',           blocks: [workBlock([f(15, 60, 20), f(15, 60, 20), f(15, 60, 20)])] },
+        { exercise: 'Curl barre EZ',       blocks: [workBlock([f(10, 60, 20), f(10, 60, 20), f(10, 60, 20)])] },
+        { exercise: 'Tirage poulie basse', blocks: [workBlock([f(10, 60, 30), f(10, 60, 30), f(10, 60, 30)])] },
+        { exercise: 'Relevés de jambes suspendu', blocks: [workBlock([bw(12, 45), bw(12, 45), bw(12, 45)])] },
 
         // Étirements (5–10 min)
         { exercise: 'Étirement dorsaux',          blocks: [stretchBlock([mob(60)])] },
@@ -658,9 +657,9 @@ const PPL: { name: string; description: string; workouts: WorkoutSpec[] } = {
     {
       name: 'Footing Jeudi — Mobilité',
       exercises: [
-        { exercise: 'Footing',           blocks: [workBlock([bw(1, 1, 0)])] },
+        { exercise: 'Footing',           blocks: [workBlock([bw(1, 0)])] },
         { exercise: 'Deep squat hold',   blocks: [stretchBlock([mob(60)])] },
-        { exercise: 'Cossack squat',     blocks: [stretchBlock([bw(8, 8, 0)])] },
+        { exercise: 'Cossack squat',     blocks: [stretchBlock([bw(8, 0)])] },
         { exercise: 'Butterfly stretch', blocks: [stretchBlock([mob(60)])] },
         { exercise: 'Pancake stretch',   blocks: [stretchBlock([mob(90)])] },   // progression vs mardi
         { exercise: 'Frog stretch',      blocks: [stretchBlock([mob(45)])] },   // 30–60 sec, progressif
@@ -675,14 +674,14 @@ const PPL: { name: string; description: string; workouts: WorkoutSpec[] } = {
         { exercise: 'Deep squat hold',          blocks: [mobilityBlock([mob(30)])] },
         { exercise: 'Leg swings avant/arrière', blocks: [mobilityBlock([mob(10)])] },
         { exercise: 'Leg swings latéraux',      blocks: [mobilityBlock([mob(10)])] },
-        { exercise: 'Cossack squat',            blocks: [mobilityBlock([bw(8, 8, 0)])] },
+        { exercise: 'Cossack squat',            blocks: [mobilityBlock([bw(8, 0)])] },
 
         // Musculation
-        { exercise: 'Squat barre',       blocks: [workBlock([f(8, 8, 120, 60), f(8, 8, 120, 60), f(8, 8, 120, 60), f(8, 8, 120, 60)])] },
-        { exercise: 'Romanian Deadlift', blocks: [workBlock([f(8, 8, 90, 50), f(8, 8, 90, 50), f(8, 8, 90, 50)])] },
-        { exercise: 'Fentes bulgares',   blocks: [workBlock([f(10, 10, 60, 14), f(10, 10, 60, 14), f(10, 10, 60, 14)])] },
-        { exercise: 'Leg curl poulie',   blocks: [workBlock([f(12, 12, 60, 30), f(12, 12, 60, 30), f(12, 12, 60, 30)])] },
-        { exercise: 'Mollets debout sur step', blocks: [workBlock([bw(15, 20, 45), bw(15, 20, 45), bw(15, 20, 45), bw(15, 20, 45)])] },
+        { exercise: 'Squat barre',       blocks: [workBlock([f(8, 120, 60), f(8, 120, 60), f(8, 120, 60), f(8, 120, 60)])] },
+        { exercise: 'Romanian Deadlift', blocks: [workBlock([f(8, 90, 50), f(8, 90, 50), f(8, 90, 50)])] },
+        { exercise: 'Fentes bulgares',   blocks: [workBlock([f(10, 60, 14), f(10, 60, 14), f(10, 60, 14)])] },
+        { exercise: 'Leg curl poulie',   blocks: [workBlock([f(12, 60, 30), f(12, 60, 30), f(12, 60, 30)])] },
+        { exercise: 'Mollets debout sur step', blocks: [workBlock([bw(15, 45), bw(15, 45), bw(15, 45), bw(15, 45)])] },
 
         // Étirements très léger (5 min)
         { exercise: 'Couch stretch',              blocks: [stretchBlock([mob(60)])] },
@@ -704,12 +703,12 @@ const PPL: { name: string; description: string; workouts: WorkoutSpec[] } = {
         { exercise: 'Rotations poignets', blocks: [mobilityBlock([mob(10)])] },
 
         // Musculation
-        { exercise: 'Pin Press',                     blocks: [workBlock([f(5, 5, 120, 40), f(5, 5, 120, 40), f(5, 5, 120, 40), f(5, 5, 120, 40)])] },
-        { exercise: 'Tractions',                     blocks: [workBlock([bw(6, 10, 90), bw(6, 10, 90), bw(6, 10, 90)])] },
-        { exercise: 'Curl barre EZ',                 blocks: [workBlock([f(10, 12, 60, 20), f(10, 12, 60, 20), f(10, 12, 60, 20), f(10, 12, 60, 20)])] },
-        { exercise: 'Extension triceps poulie haute', blocks: [workBlock([f(10, 12, 60, 20), f(10, 12, 60, 20), f(10, 12, 60, 20), f(10, 12, 60, 20)])] },
-        { exercise: 'Élévations latérales haltères', blocks: [workBlock([f(15, 15, 60, 8), f(15, 15, 60, 8), f(15, 15, 60, 8), f(15, 15, 60, 8)])] },
-        { exercise: 'Mollets debout sur step',       blocks: [workBlock([bw(20, 20, 30), bw(20, 20, 30), bw(20, 20, 30)])] },
+        { exercise: 'Pin Press',                     blocks: [workBlock([f(5, 120, 40), f(5, 120, 40), f(5, 120, 40), f(5, 120, 40)])] },
+        { exercise: 'Tractions',                     blocks: [workBlock([bw(6, 90), bw(6, 90), bw(6, 90)])] },
+        { exercise: 'Curl barre EZ',                 blocks: [workBlock([f(10, 60, 20), f(10, 60, 20), f(10, 60, 20), f(10, 60, 20)])] },
+        { exercise: 'Extension triceps poulie haute', blocks: [workBlock([f(10, 60, 20), f(10, 60, 20), f(10, 60, 20), f(10, 60, 20)])] },
+        { exercise: 'Élévations latérales haltères', blocks: [workBlock([f(15, 60, 8), f(15, 60, 8), f(15, 60, 8), f(15, 60, 8)])] },
+        { exercise: 'Mollets debout sur step',       blocks: [workBlock([bw(20, 30), bw(20, 30), bw(20, 30)])] },
 
         // Étirements bridge running (8 min)
         { exercise: 'Pigeon pose',                blocks: [stretchBlock([mob(60)])] },
@@ -833,7 +832,7 @@ export async function seedProgram(db: SQLiteDatabase): Promise<void> {
           const s = block.sets[si];
 
           // Set — get or create by (block_id, order_index)
-          // If has set_logs → preserve weight (only update reps_min, reps_max, rest_duration, duration_seconds)
+          // If has set_logs → preserve weight (only update reps_min, rest_duration, duration_seconds)
           // If no set_logs → update everything including weight
           const existingSet = await db.getFirstAsync<{ id: number; weight: number | null }>(
             'SELECT id, weight FROM sets WHERE block_id = ? AND order_index = ?', [blockId, si]
@@ -845,19 +844,19 @@ export async function seedProgram(db: SQLiteDatabase): Promise<void> {
             const preserveWeight = (hasLogs?.count ?? 0) > 0 || existingSet.weight !== null;
             if (preserveWeight) {
               await db.runAsync(
-                'UPDATE sets SET reps_min = ?, reps_max = ?, weight_type = ?, rest_duration = ?, duration_seconds = ?, weight_ratio = ? WHERE id = ?',
-                [s.reps_min, s.reps_max, s.weight_type, s.rest, s.duration_seconds ?? null, s.weight_ratio ?? null, existingSet.id]
+                'UPDATE sets SET reps_min = ?, weight_type = ?, rest_duration = ?, duration_seconds = ?, weight_ratio = ? WHERE id = ?',
+                [s.reps_min, s.weight_type, s.rest, s.duration_seconds ?? null, s.weight_ratio ?? null, existingSet.id]
               );
             } else {
               await db.runAsync(
-                'UPDATE sets SET reps_min = ?, reps_max = ?, weight = ?, weight_type = ?, rest_duration = ?, duration_seconds = ?, weight_ratio = ? WHERE id = ?',
-                [s.reps_min, s.reps_max, s.weight, s.weight_type, s.rest, s.duration_seconds ?? null, s.weight_ratio ?? null, existingSet.id]
+                'UPDATE sets SET reps_min = ?, weight = ?, weight_type = ?, rest_duration = ?, duration_seconds = ?, weight_ratio = ? WHERE id = ?',
+                [s.reps_min, s.weight, s.weight_type, s.rest, s.duration_seconds ?? null, s.weight_ratio ?? null, existingSet.id]
               );
             }
           } else {
             await db.runAsync(
-              'INSERT INTO sets (block_id, reps_min, reps_max, weight, weight_type, rest_duration, order_index, duration_seconds, weight_ratio) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-              [blockId, s.reps_min, s.reps_max, s.weight, s.weight_type, s.rest, si, s.duration_seconds ?? null, s.weight_ratio ?? null]
+              'INSERT INTO sets (block_id, reps_min, weight, weight_type, rest_duration, order_index, duration_seconds, weight_ratio) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+              [blockId, s.reps_min, s.weight, s.weight_type, s.rest, si, s.duration_seconds ?? null, s.weight_ratio ?? null]
             );
           }
         }
