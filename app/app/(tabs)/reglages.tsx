@@ -1,4 +1,4 @@
-import { useContext, useState, useCallback } from 'react';
+import { useContext, useState, useCallback, useEffect } from 'react';
 import { View, Text, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import { useColorScheme } from '@/components/useColorScheme';
@@ -9,6 +9,7 @@ import { Radius } from '@/constants/Radius';
 import type { ThemePreference, UnitsPreference } from '@/services/settingsUtils';
 import { getDb } from '@/db';
 import { ExportService } from '@/services/ExportService';
+import { SQLiteSettingsRepository } from '@/repositories/SQLiteSettingsRepository';
 
 const THEME_OPTIONS: { value: ThemePreference; label: string }[] = [
   { value: 'system', label: 'Système' },
@@ -70,6 +71,20 @@ export default function ReglagesScreen() {
 
   const [isExporting, setIsExporting] = useState(false);
   const [exportError, setExportError] = useState<string | null>(null);
+  const [deloadWeeksStr, setDeloadWeeksStr] = useState<'4' | '6' | '8'>('4');
+
+  useEffect(() => {
+    const repo = new SQLiteSettingsRepository(getDb());
+    repo.get('deload_weeks').then(v => {
+      if (v === '6' || v === '8') setDeloadWeeksStr(v);
+    }).catch(console.error);
+  }, []);
+
+  const handleDeloadWeeksChange = useCallback(async (v: '4' | '6' | '8') => {
+    setDeloadWeeksStr(v);
+    const repo = new SQLiteSettingsRepository(getDb());
+    await repo.set('deload_weeks', v);
+  }, []);
 
   const handleExport = useCallback(async () => {
     setIsExporting(true);
@@ -119,6 +134,24 @@ export default function ReglagesScreen() {
             Actuellement : {resolvedUnits}
           </Text>
         )}
+      </View>
+
+      <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>DÉCHARGE AUTOMATIQUE</Text>
+      <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+        <Text style={[styles.hint, { color: colors.textSecondary, marginBottom: 8 }]}>
+          Semaines d'entraînement avant de suggérer une semaine de décharge
+        </Text>
+        <SegmentedControl
+          options={[
+            { value: '4' as const, label: '4 sem.' },
+            { value: '6' as const, label: '6 sem.' },
+            { value: '8' as const, label: '8 sem.' },
+          ]}
+          selected={deloadWeeksStr}
+          onSelect={handleDeloadWeeksChange}
+          colors={colors}
+          isDark={isDark}
+        />
       </View>
 
       <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>DONNÉES</Text>
