@@ -94,7 +94,7 @@ describe('WorkoutExerciseService', () => {
       const exercise = await seedExercise(exerciseRepo);
       const detail = await service.addToWorkout(1, exercise.id);
       const setId = detail.blocks[0].sets[0].id;
-      const dto: UpdateSetDto = { reps_min: 5, reps_max: 5, weight: 100, weight_type: 'fixed', rest_duration: 180 };
+      const dto: UpdateSetDto = { reps_min: 5, weight: 100, weight_type: 'fixed', rest_duration: 180 };
       await service.updateSet(setId, dto);
       const updated = await service.getWithDetails(1);
       expect(updated[0].blocks[0].sets[0].reps_min).toBe(5);
