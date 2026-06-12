@@ -59,6 +59,31 @@ Pre-commit TypeScript check installé dans `.githooks/`. Activer une fois :
 git config core.hooksPath .githooks
 ```
 
+## Philosophie UX — Entraînement sérieux, sans les mécaniques toxiques
+
+Référence complète : `../docs/superpowers/specs/2026-06-12-philosophie-entrainement-sain.md`
+
+### Principe fondateur
+> *Ta progression est visible, motivante, et personnelle. Elle ne te compare à personne. Elle ne te punit jamais.*
+
+### Filtre de décision — poser pour chaque feature/copy
+1. **Flèche :** célèbre la présence (✓) ou punit l'absence (✗) ?
+2. **Direction :** donnée tirée par l'utilisateur (✓) ou poussée vers lui (✗) ?
+3. **Comparaison :** compare à soi-même (✓) ou à d'autres (✗) ?
+
+Trois ✓ = go. Un ✗ = revoir avant d'implémenter.
+
+### Règle de copy
+- ❌ Jamais : "tu n'as pas fait de séance depuis X jours", "streak perdue", "tes perfs baissent", "comparé à la moyenne"
+- ✓ Toujours : factuel, additif, personnel — "3 séances ce mois", "nouvelle meilleure marque", "cible atteinte"
+
+### Anti-patterns à éviter absolument
+- **Strava Effect** : ne jamais ajouter classements, challenges publics, comparaisons externes
+- **Noom Effect** : si le discours dit "bienveillant" mais l'accueil pousse des stats perf → contradiction
+- **Apple Rings Effect** : aucun élément visuel rouge/incomplet/manquant qui peut culpabiliser passivement
+
+---
+
 ## Règles importantes
 
 - **Début de session** : annoncer le scope explicitement + lire `../docs/journal/project-log.md`
