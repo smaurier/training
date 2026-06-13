@@ -21,6 +21,8 @@ import { useUnits } from '@/hooks/useUnits';
 import { lbsToKg } from '@/services/settingsUtils';
 import { computeRepsFeedback } from '@/services/repsFeedback';
 
+const SWIPE_UNDO_THRESHOLD = -60;
+
 const RPE_OPTIONS = [
   { label: 'Facile', value: '3' },
   { label: 'Normal', value: '6' },
@@ -206,7 +208,7 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
         .activeOffsetX([-30, 30])
         .failOffsetY([-15, 15])
         .onEnd((e) => {
-          if (canUndo && e.translationX < -60) {
+          if (canUndo && e.translationX < SWIPE_UNDO_THRESHOLD) {
             onUndo();
           }
         }),
