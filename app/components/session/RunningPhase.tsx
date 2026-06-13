@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { View, Text, TextInput, StyleSheet, ScrollView, Vibration } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetScrollView,
@@ -198,6 +199,20 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
     set.weight_type === 'bodyweight',
   );
 
+  const undoSwipe = useMemo(
+    () =>
+      Gesture.Pan()
+        .runOnJS(true)
+        .activeOffsetX([-30, 30])
+        .failOffsetY([-15, 15])
+        .onEnd((e) => {
+          if (canUndo && e.translationX < -60) {
+            onUndo();
+          }
+        }),
+    [canUndo, onUndo],
+  );
+
   return (
     <>
       <ScrollView
@@ -215,23 +230,25 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
             <View style={styles.blockBadge}>
               <Text style={[styles.blockBadgeText, { color: colors.primary }]}>{block.name.toUpperCase()}</Text>
             </View>
-            <View
-              style={styles.seriesDots}
-              accessible
-              accessibilityLabel={`Série ${currentSetIndex + 1} sur ${block.sets.length}`}
-            >
-              {block.sets.map((_, i) => (
-                <View
-                  key={i}
-                  style={[
-                    styles.dot,
-                    i < currentSetIndex && { backgroundColor: '#16a34a' },
-                    i === currentSetIndex && { backgroundColor: colors.primary, width: 10, height: 10, borderRadius: 5 },
-                    i > currentSetIndex && { borderColor: colors.border, borderWidth: 1.5 },
-                  ]}
-                />
-              ))}
-            </View>
+            <GestureDetector gesture={undoSwipe}>
+              <View
+                style={styles.seriesDots}
+                accessible
+                accessibilityLabel={`Série ${currentSetIndex + 1} sur ${block.sets.length}`}
+              >
+                {block.sets.map((_, i) => (
+                  <View
+                    key={i}
+                    style={[
+                      styles.dot,
+                      i < currentSetIndex && { backgroundColor: '#16a34a' },
+                      i === currentSetIndex && { backgroundColor: colors.primary, width: 10, height: 10, borderRadius: 5 },
+                      i > currentSetIndex && { borderColor: colors.border, borderWidth: 1.5 },
+                    ]}
+                  />
+                ))}
+              </View>
+            </GestureDetector>
             {lastSetLog && (
               <Text style={[styles.lastLog, { color: colors.textSecondary }]}>
                 {formatLastLog(lastSetLog, isCardio, isDuration, convert, unitLabel)}
@@ -260,15 +277,15 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
                 <Ionicons name="help-circle-outline" size={22} color={colors.textSecondary} />
               </PressableA11y>
             )}
-            <PressableA11y
-              onPress={onUndo}
-              accessibilityLabel="Annuler la dernière série"
-              accessibilityState={{ disabled: !canUndo }}
-              style={[styles.actionBtn, !canUndo && styles.undoBtnDisabled]}
-              disabled={!canUndo}
-            >
-              <Ionicons name="arrow-undo-outline" size={22} color={canUndo ? colors.text : colors.textSecondary} />
-            </PressableA11y>
+            {canUndo && (
+              <PressableA11y
+                onPress={onUndo}
+                accessibilityLabel="Annuler la dernière série"
+                style={styles.actionBtn}
+              >
+                <Ionicons name="arrow-undo-outline" size={22} color={colors.text} />
+              </PressableA11y>
+            )}
           </View>
         </View>
       </View>
@@ -593,7 +610,6 @@ const styles = StyleSheet.create({
   headerTextGroup: { flex: 1, gap: 2, marginTop: 16 },
   headerActions: { gap: 4, marginTop: 16 },
   actionBtn: { padding: 8 },
-  undoBtnDisabled: { opacity: 0.3 },
   exerciseName: { fontSize: 26, fontWeight: '700' },
   progressLabel: { fontSize: 13 },
   circularTimerWrapper: { alignItems: 'center' },
