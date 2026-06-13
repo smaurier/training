@@ -180,7 +180,7 @@ export function useSession(workoutId: number, exercises: ResolvedExercise[], ini
 - `getPlateStep('invalid')` → `2`
 
 ### `progression.test.ts` — `applyDeload`
-- `applyDeload(60, 2.5)` → `54` (60×0.9=54, floor(54/2.5)×2.5 = 54)
+- `applyDeload(60, 2.5)` → `52.5` (60×0.9=54, floor(54/2.5)×2.5 = 21×2.5 = 52.5)
 - `applyDeload(65, 5)` → `55` (65×0.9=58.5, floor(58.5/5)×5 = 55)
 - `applyDeload(100, 1.25)` → `90` (100×0.9=90, floor(90/1.25)×1.25 = 90)
 - Tests existants sans 2e param passent inchangés (défaut 2)
