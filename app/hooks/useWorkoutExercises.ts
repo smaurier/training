@@ -24,6 +24,8 @@ export interface UseWorkoutExercisesResult {
   reorderExercise: (exerciseId: number, direction: 'up' | 'down') => Promise<void>;
   reorderBlock: (workoutExerciseId: number, blockId: number, direction: 'up' | 'down') => Promise<void>;
   reorderSet: (blockId: number, setId: number, direction: 'up' | 'down') => Promise<void>;
+  linkToNext: (aId: number, bId: number) => Promise<void>;
+  unlink: (id: number) => Promise<void>;
 }
 
 function makeService(): WorkoutExerciseService {
@@ -185,11 +187,34 @@ export function useWorkoutExercises(workoutId: number): UseWorkoutExercisesResul
     }
   }, [service, refresh]);
 
+  const linkToNext = useCallback(async (aId: number, bId: number) => {
+    try {
+      await service.linkToNext(aId, bId);
+      await refresh();
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'Erreur inconnue';
+      if (mountedRef.current) setError(msg);
+      throw e;
+    }
+  }, [service, refresh]);
+
+  const unlink = useCallback(async (id: number) => {
+    try {
+      await service.unlink(id);
+      await refresh();
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'Erreur inconnue';
+      if (mountedRef.current) setError(msg);
+      throw e;
+    }
+  }, [service, refresh]);
+
   return {
     exercises, loading, error,
     add, remove, refresh,
     updateSet, addSet, removeSet,
     addBlock, updateBlock, removeBlock,
     reorderExercise, reorderBlock, reorderSet,
+    linkToNext, unlink,
   };
 }
