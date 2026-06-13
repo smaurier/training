@@ -132,7 +132,11 @@ export default function ProgressionScreen() {
       <ScrollView contentContainerStyle={styles.statsContent}>
 
         {monthlyPresences > 0 && (
-          <View style={[styles.presencesCard, { backgroundColor: colors.surface }]}>
+          <View
+            style={[styles.presencesCard, { backgroundColor: colors.surface }]}
+            accessible={true}
+            accessibilityLabel={`${monthlyPresences} ${monthlyPresences === 1 ? 'séance' : 'séances'} ce mois`}
+          >
             <Text style={[styles.presencesText, { color: colors.text }]}>
               {monthlyPresences} {monthlyPresences === 1 ? 'séance' : 'séances'} ce mois
             </Text>
