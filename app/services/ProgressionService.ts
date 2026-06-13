@@ -197,4 +197,12 @@ export class ProgressionService {
         estimated1RM: Math.round(rm * 10) / 10,
       }));
   }
+
+  async getMonthlyPresences(now: Date = new Date()): Promise<number> {
+    const monthPrefix = now.toISOString().slice(0, 7);
+    const allSessions = await this.sessionLogRepo.findAll();
+    return allSessions.filter(
+      s => s.status === 'completed' && s.started_at.startsWith(monthPrefix),
+    ).length;
+  }
 }

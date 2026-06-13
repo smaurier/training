@@ -207,4 +207,35 @@ describe('ProgressionService', () => {
       expect(result.find(r => r.category === 'Pull')?.volume).toBe(600);
     });
   });
+
+  describe('getMonthlyPresences', () => {
+    it('retourne 0 si aucune session', async () => {
+      const { service } = makeService();
+      expect(await service.getMonthlyPresences(NOW)).toBe(0);
+    });
+
+    it('compte les sessions completed du mois courant', async () => {
+      const { service, sessionLogRepo } = makeService();
+      const s1 = await sessionLogRepo.save({ ...baseSessionDto, started_at: '2026-05-10T10:00:00.000Z' });
+      await sessionLogRepo.complete(s1.id, '2026-05-10T11:00:00.000Z');
+      const s2 = await sessionLogRepo.save({ ...baseSessionDto, started_at: '2026-05-20T10:00:00.000Z' });
+      await sessionLogRepo.complete(s2.id, '2026-05-20T11:00:00.000Z');
+      expect(await service.getMonthlyPresences(NOW)).toBe(2);
+    });
+
+    it('exclut les sessions abandoned et active', async () => {
+      const { service, sessionLogRepo } = makeService();
+      await sessionLogRepo.save({ ...baseSessionDto, started_at: '2026-05-10T10:00:00.000Z' });
+      const s2 = await sessionLogRepo.save({ ...baseSessionDto, started_at: '2026-05-15T10:00:00.000Z' });
+      await sessionLogRepo.abandon(s2.id, '2026-05-15T11:00:00.000Z');
+      expect(await service.getMonthlyPresences(NOW)).toBe(0);
+    });
+
+    it('exclut les sessions du mois précédent', async () => {
+      const { service, sessionLogRepo } = makeService();
+      const s1 = await sessionLogRepo.save({ ...baseSessionDto, started_at: '2026-04-10T10:00:00.000Z' });
+      await sessionLogRepo.complete(s1.id, '2026-04-10T11:00:00.000Z');
+      expect(await service.getMonthlyPresences(NOW)).toBe(0);
+    });
+  });
 });
