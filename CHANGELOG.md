@@ -5,6 +5,16 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.10.0] — 2026-06-13
+
+75e30a5 docs: journal S36 — volume par groupe musculaire
+480357a feat(stats): MuscleGroupCard — volume par stimulus Push/Pull/Jambes/Gainage
+6782611 feat(stats): ProgressionService.getVolumeByMuscleGroup — 4 semaines glissantes (TDD)
+4ee1f3b feat(stats): muscleGroupUtils — mapping, getMacroCategory, computeVolumeByMuscleGroup (TDD)
+2878ea8 docs: spec + plan volume par groupe musculaire
+
+---
+
 ## [1.9.0] — 2026-06-13
 
 b355126 style(tags): espace manquant avant category dans PREDEFINED_TAGS
