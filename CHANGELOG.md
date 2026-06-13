@@ -5,6 +5,16 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.11.1] — 2026-06-13
+
+e95b2a4 docs(journal): S42 comparaison séance vs précédente
+7cb04a6 feat(summary): delta volume + séries vs séance précédente dans SummaryPhase
+efea492 feat(summary): getPreviousSessionSummary — delta volume + séries (TDD)
+21b2b24 docs: plan comparaison séance vs précédente
+0e41581 docs: spec comparaison séance vs précédente
+
+---
+
 ## [1.11.0] — 2026-06-13
 
 5da6eb9 docs(journal): S41 objectifs personnels — ETA, GoalService, migration v12
