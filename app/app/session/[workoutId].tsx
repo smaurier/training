@@ -238,18 +238,7 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
   const handleMoodSelect = useCallback(async (mood: 1 | 2 | 3) => {
     setSelectedMood(mood);
     if (!session.sessionLogId) return;
-    const db = getDb();
-    const service = new SessionService(
-      new SQLiteSessionLogRepository(db),
-      new SQLiteSetLogRepository(db),
-      new SQLitePersonalRecordRepository(db),
-      new SQLiteWorkoutRepository(db),
-      new SQLiteWorkoutExerciseRepository(db),
-      new SQLiteBlockRepository(db),
-      new SQLiteSetRepository(db),
-      new SQLiteExerciseRepository(db),
-    );
-    await service.saveMoodAfter(session.sessionLogId, mood);
+    await makeServiceForCheck().saveMoodAfter(session.sessionLogId, mood);
   }, [session.sessionLogId]);
 
   const handlePause = useCallback(async () => {
