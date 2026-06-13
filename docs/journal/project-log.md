@@ -4,6 +4,38 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 
 ---
 
+## S34 — 2026-06-13 — Échauffement auto
+
+### Livré
+- **warmup.ts** : `computeWarmupSets(workWeight)` — 3 séries NSCA (40%×8 + 60%×5 + 80%×2), arrondi 2kg inférieur (`Math.floor(w/2)*2`). `shouldShowWarmup(weight, type)` — `fixed` ET ≥ 40kg. TDD 11 tests (cas limites : 65kg rounding, 40kg exact, bodyweight, bar).
+- **WarmupPhase.tsx** : écran dédié (pattern ExerciseTransitionPhase). Props `exerciseName / workWeight / onStart`. Tableau 3 lignes (poids + reps + %). Bouton unique "Commencer le travail →". Pas de timer, pas de check-off.
+- **useSession.ts** : phase `'warmup'` ajoutée au type union. `confirmWarmup()` → `'running'`. `confirmTransition` vérifie `shouldShowWarmup` → `'warmup'` ou `'running'`. `warmupWorkWeight` state exposé dans `UseSessionResult` (source unique).
+- **[workoutId].tsx** : render `<WarmupPhase>` sur `phase === 'warmup'`. Consomme `session.warmupWorkWeight` (plus de memo dupliqué).
+- **seeds.ts** : bloc `Échauffement` retiré de bench press. `seedProgram` DELETE cascade (idempotent après premier run).
+- 383/383 tests, 0 erreurs TypeScript.
+
+### Exercices qualifiés (PPL seed)
+Développé couché barre 60kg, Squat barre 60kg, Rowing barre 50kg, Romanian Deadlift 50kg, Pin Press 40kg.
+
+### Décisions
+- Bloc virtuel (pas de DB) : warmup = préparation, toujours synchronisé avec poids courant
+- Seuil 40kg fixe : couvre composés lourds, exclut isolations légères
+- Arrondi 2kg (pas 2.5kg) : matériel standard salle — futur : `plate_step` configurable en settings (backlog)
+- `warmupWorkWeight` dans `useSession` state (set dans `confirmTransition`) : source unique, élimine divergence risk avec [workoutId].tsx
+- WarmupPhase n'apparaît qu'une fois par exercice (avant 1er set Travail)
+- Issues reviewer (#1 DELETE chaque démarrage, #2 pause corruption) → YAGNI : idempotent + edge case infime
+
+### Hors scope → backlog V2/V3
+- `plate_step` configurable en settings
+- Timer entre séries échauffement
+- Check-off par série
+- Désactiver par exercice
+
+### Version
+v2.0.0 recommandé — feature majeure. Bump avec `bash scripts/version-bump.sh major`
+
+---
+
 ## S33 — 2026-06-12 — Décharge automatique
 
 ### Livré
