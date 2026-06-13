@@ -5,6 +5,27 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.10.1] — 2026-06-13
+
+316a1fc docs: journal S38 — présences ce mois
+156f08f fix(a11y): accessibilityLabel sur presencesCard dans Stats
+2596ac2 feat(stats): présences ce mois — hook + UI
+4485993 feat(stats): ProgressionService.getMonthlyPresences — sessions completed du mois (TDD)
+dea56b3 docs: spec présences ce mois
+b0fb1d4 docs: journal S37 — recherche historique exercice
+17471a9 fix(history): escape apostrophe in JSX (ESLint no-unescaped-entities)
+c189df8 fix(history): no duplicate session in historique, guard empty state, expose histError
+0fd4e86 fix(history): restore 1RM chart + add dernière séance + historique séances sections
+bad2a0f feat(history): écrans recherche + historique exercice
+31f8769 feat(history): useExerciseHistory + useLoggedExercises hooks
+db30437 fix(history): pin localeCompare locale, fix typo, add throw test
+fb443b5 feat(history): ExerciseHistoryService — getHistory, getLoggedExercises (TDD)
+858091b docs: spec recherche historique exercice
+a4e70b7 chore: add pre-push hook — lint + tests (miroir CI)
+e279b95 fix(lint): resolve 9 ESLint warnings — dedupe imports, unused vars, missing deps
+
+---
+
 ## [1.10.0] — 2026-06-13
 
 75e30a5 docs: journal S36 — volume par groupe musculaire
