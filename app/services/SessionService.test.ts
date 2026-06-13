@@ -513,3 +513,65 @@ describe('SessionService.saveSessionMeta', () => {
     expect(saved?.notes).toBeNull();
   });
 });
+
+describe('SessionService.getSessionRPELabel', () => {
+  it('retourne null si aucun set pour la session', async () => {
+    const ctx = makeService();
+    const service = ctx.build();
+    expect(await service.getSessionRPELabel(1)).toBeNull();
+  });
+
+  it('retourne null si tous les sets ont rpe null', async () => {
+    const ctx = makeService();
+    const service = ctx.build();
+    await ctx.setLogRepo.save({
+      session_log_id: 1, set_id: 1, exercise_id: 1,
+      reps_done: 10, weight_done: 50, rpe: null,
+      completed_at: '2026-05-01T10:00:00.000Z',
+    });
+    expect(await service.getSessionRPELabel(1)).toBeNull();
+  });
+
+  it('retourne "Facile" si moyenne RPE < 4.5 (tous à 3)', async () => {
+    const ctx = makeService();
+    const service = ctx.build();
+    await ctx.setLogRepo.save({
+      session_log_id: 1, set_id: 1, exercise_id: 1,
+      reps_done: 10, weight_done: 50, rpe: 3,
+      completed_at: '2026-05-01T10:00:00.000Z',
+    });
+    await ctx.setLogRepo.save({
+      session_log_id: 1, set_id: 2, exercise_id: 1,
+      reps_done: 10, weight_done: 50, rpe: 3,
+      completed_at: '2026-05-01T10:05:00.000Z',
+    });
+    expect(await service.getSessionRPELabel(1)).toBe('Facile');
+  });
+
+  it('retourne "Difficile" si moyenne RPE >= 7.5 (tous à 9)', async () => {
+    const ctx = makeService();
+    const service = ctx.build();
+    await ctx.setLogRepo.save({
+      session_log_id: 1, set_id: 1, exercise_id: 1,
+      reps_done: 10, weight_done: 50, rpe: 9,
+      completed_at: '2026-05-01T10:00:00.000Z',
+    });
+    expect(await service.getSessionRPELabel(1)).toBe('Difficile');
+  });
+
+  it('retourne "Normal" si moyenne RPE entre 4.5 et 7.5 (mix 3 + 9 = moyenne 6)', async () => {
+    const ctx = makeService();
+    const service = ctx.build();
+    await ctx.setLogRepo.save({
+      session_log_id: 1, set_id: 1, exercise_id: 1,
+      reps_done: 10, weight_done: 50, rpe: 3,
+      completed_at: '2026-05-01T10:00:00.000Z',
+    });
+    await ctx.setLogRepo.save({
+      session_log_id: 1, set_id: 2, exercise_id: 1,
+      reps_done: 10, weight_done: 50, rpe: 9,
+      completed_at: '2026-05-01T10:05:00.000Z',
+    });
+    expect(await service.getSessionRPELabel(1)).toBe('Normal');
+  });
+});

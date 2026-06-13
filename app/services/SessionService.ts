@@ -306,4 +306,14 @@ export class SessionService {
 
     return isSessionSignificantFailure(prevSetResults);
   }
+
+  async getSessionRPELabel(sessionLogId: number): Promise<'Facile' | 'Normal' | 'Difficile' | null> {
+    const sets = await this.setLogRepo.findBySessionLogId(sessionLogId);
+    const rpeValues = sets.map(s => s.rpe).filter((r): r is number => r !== null);
+    if (rpeValues.length === 0) return null;
+    const avg = rpeValues.reduce((sum, r) => sum + r, 0) / rpeValues.length;
+    if (avg < 4.5) return 'Facile';
+    if (avg < 7.5) return 'Normal';
+    return 'Difficile';
+  }
 }
