@@ -11,8 +11,9 @@ import { SQLiteExerciseRepository } from '../repositories/SQLiteExerciseReposito
 import type { WorkoutExerciseDetail, BlockWithSets } from '../services/WorkoutExerciseService';
 import type { Set as TrainingSet } from '../db/types';
 import { getDb } from '../db';
+import { shouldShowWarmup } from '../services/warmup';
 
-export type SessionPhase = 'checkin' | 'exercise_transition' | 'running' | 'rest' | 'summary';
+export type SessionPhase = 'checkin' | 'exercise_transition' | 'running' | 'rest' | 'summary' | 'warmup';
 
 export interface SessionPosition {
   exerciseIdx: number;
@@ -52,6 +53,7 @@ export interface UseSessionResult {
   startingWeightDone: boolean;
   markStartingWeightDone: () => void;
   confirmTransition: () => void;
+  confirmWarmup: () => void;
   confirmRest: () => void;
   restDuration: number;
   nextLabel: string;
@@ -218,6 +220,17 @@ export function useSession(
   }, [pendingPhase]);
 
   const confirmTransition = useCallback(() => {
+    const exercise = workoutDetails[position.exerciseIdx];
+    const travailBlock = exercise?.blocks.find(b => b.is_work_block === 1 && b.name === 'Travail');
+    const firstSet = travailBlock?.sets[0];
+    if (firstSet && shouldShowWarmup(firstSet.weight ?? 0, firstSet.weight_type)) {
+      setPhase('warmup');
+    } else {
+      setPhase('running');
+    }
+  }, [workoutDetails, position.exerciseIdx]);
+
+  const confirmWarmup = useCallback(() => {
     setPhase('running');
   }, []);
 
@@ -303,7 +316,7 @@ export function useSession(
     currentExercise, currentBlock, currentSet, progressLabel,
     startSession, validateSet, skipSet, skipExercise, undoLastSet, canUndo,
     setStartingWeight, startingWeightDone, markStartingWeightDone,
-    confirmTransition, confirmRest, restDuration, nextLabel,
+    confirmTransition, confirmRest, confirmWarmup, restDuration, nextLabel,
     progressions, sessionStartedAt, totalSetsLogged, totalVolume, lastSetLog, error, pauseSession,
   };
 }

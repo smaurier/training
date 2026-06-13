@@ -119,7 +119,7 @@ export class SessionService {
   async pauseSession(
     sessionLogId: number,
     position: { exerciseIdx: number; blockIdx: number; setIdx: number },
-    phase: 'checkin' | 'exercise_transition' | 'running' | 'rest' | 'summary',
+    phase: 'checkin' | 'exercise_transition' | 'running' | 'rest' | 'summary' | 'warmup',
   ): Promise<void> {
     const positionJson = JSON.stringify({
       exerciseIdx: position.exerciseIdx,
