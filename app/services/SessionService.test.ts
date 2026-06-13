@@ -447,3 +447,24 @@ describe('SessionService.startSession (garde session en pause)', () => {
     ).resolves.toBeDefined();
   });
 });
+
+describe('SessionService.saveMoodAfter', () => {
+  it('persiste mood_after sur le session_log', async () => {
+    const ctx = makeService();
+    const service = ctx.build();
+    const log = await service.startSession(1, { checkin_energy: null, checkin_fatigue: null, checkin_sleep: null });
+    await service.saveMoodAfter(log.id, 2);
+    const saved = await ctx.sessionLogRepo.findById(log.id);
+    expect(saved?.mood_after).toBe(2);
+  });
+
+  it('écrase mood_after si appelé deux fois', async () => {
+    const ctx = makeService();
+    const service = ctx.build();
+    const log = await service.startSession(1, { checkin_energy: null, checkin_fatigue: null, checkin_sleep: null });
+    await service.saveMoodAfter(log.id, 1);
+    await service.saveMoodAfter(log.id, 3);
+    const saved = await ctx.sessionLogRepo.findById(log.id);
+    expect(saved?.mood_after).toBe(3);
+  });
+});

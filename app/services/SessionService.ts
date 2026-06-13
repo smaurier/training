@@ -134,6 +134,10 @@ export class SessionService {
     await this.sessionLogRepo.abandon(sessionLogId, new Date().toISOString());
   }
 
+  async saveMoodAfter(sessionLogId: number, mood: 1 | 2 | 3): Promise<void> {
+    await this.sessionLogRepo.saveMoodAfter(sessionLogId, mood);
+  }
+
   async findAnyPausedSession(): Promise<PausedSessionInfo | null> {
     const sessionLog = await this.sessionLogRepo.findAnyPaused();
     if (!sessionLog) return null;
