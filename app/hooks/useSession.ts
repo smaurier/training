@@ -116,6 +116,7 @@ export function useSession(
   workoutId: number,
   workoutDetails: WorkoutExerciseDetail[],
   initialSession?: InitialSession,
+  plateStep: number = 2,
 ): UseSessionResult {
   const service = useMemo(() => makeService(), []);
 
@@ -187,7 +188,7 @@ export function useSession(
       if (next === null) {
         await service.completeSession(sessionLogId);
         try {
-          const progs = await service.calculateProgressions(sessionLogId);
+          const progs = await service.calculateProgressions(sessionLogId, plateStep);
           setProgressions(progs);
         } catch {
           setProgressions([]);
@@ -245,7 +246,7 @@ export function useSession(
     if (next === null) {
       await service.completeSession(sessionLogId);
       try {
-        const progs = await service.calculateProgressions(sessionLogId);
+        const progs = await service.calculateProgressions(sessionLogId, plateStep);
         setProgressions(progs);
       } catch {
         setProgressions([]);
@@ -281,7 +282,7 @@ export function useSession(
     if (nextExerciseIdx >= workoutDetails.length) {
       await service.completeSession(sessionLogId);
       try {
-        const progs = await service.calculateProgressions(sessionLogId);
+        const progs = await service.calculateProgressions(sessionLogId, plateStep);
         setProgressions(progs);
       } catch {
         setProgressions([]);

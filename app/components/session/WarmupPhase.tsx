@@ -9,14 +9,15 @@ import { computeWarmupSets } from '@/services/warmup';
 interface WarmupPhaseProps {
   exerciseName: string;
   workWeight: number;
+  plateStep?: number;
   onStart: () => void;
 }
 
-export function WarmupPhase({ exerciseName, workWeight, onStart }: WarmupPhaseProps) {
+export function WarmupPhase({ exerciseName, workWeight, plateStep = 2, onStart }: WarmupPhaseProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const { convert, label: unitLabel } = useUnits();
-  const sets = computeWarmupSets(workWeight);
+  const sets = computeWarmupSets(workWeight, plateStep);
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
