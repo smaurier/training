@@ -20,6 +20,11 @@ function makeService() {
 }
 
 describe('ExerciseHistoryService.getHistory', () => {
+  it('lève une erreur si exerciseId inexistant', async () => {
+    const { service } = makeService();
+    await expect(service.getHistory(999)).rejects.toThrow('Exercise 999 not found');
+  });
+
   it('retourne lastSession null si aucun set_log', async () => {
     const { service, exerciseRepo } = makeService();
     const ex = await exerciseRepo.save(baseExerciseDto);
@@ -57,7 +62,7 @@ describe('ExerciseHistoryService.getHistory', () => {
     expect(result.lastSession).toEqual(result.recentSessions[0]);
   });
 
-  it('bestSet = set con poids le plus élevé', async () => {
+  it('bestSet = set avec poids le plus élevé', async () => {
     const { service, setLogRepo, exerciseRepo } = makeService();
     const ex = await exerciseRepo.save(baseExerciseDto);
     await setLogRepo.save({ session_log_id: 1, set_id: 1, exercise_id: ex.id, reps_done: 5, weight_done: 80, rpe: null, completed_at: '2026-06-01T10:00:00.000Z' });

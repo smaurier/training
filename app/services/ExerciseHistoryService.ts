@@ -63,6 +63,6 @@ export class ExerciseHistoryService {
     const all = await this.exerciseRepo.findAll();
     return all
       .filter(e => loggedIds.has(e.id))
-      .sort((a, b) => a.name.localeCompare(b.name));
+      .sort((a, b) => a.name.localeCompare(b.name, 'fr'));
   }
 }
