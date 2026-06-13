@@ -5,7 +5,6 @@ import { InMemoryWorkoutExerciseRepository } from '../repositories/InMemoryWorko
 import { InMemoryExerciseRepository } from '../repositories/InMemoryExerciseRepository';
 
 const WORKOUT_ID = 1;
-const EXERCISE_ID = 10;
 
 async function makeCtx() {
   const setLogRepo = new InMemorySetLogRepository();

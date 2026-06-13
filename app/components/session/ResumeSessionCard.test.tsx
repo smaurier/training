@@ -5,6 +5,7 @@ import { ResumeSessionCard } from './ResumeSessionCard';
 jest.mock('@/components/useColorScheme', () => ({ useColorScheme: () => 'light' }));
 jest.mock('@expo/vector-icons', () => ({ Ionicons: 'Ionicons' }));
 jest.mock('@/components/ui/PressableA11y', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { Pressable } = require('react-native');
   return {
     PressableA11y: ({ onPress, children, accessibilityLabel, ...rest }: any) => (

@@ -538,9 +538,6 @@ function f(reps_min: number, rest: number, weight: number | null = null, weight_
 function bw(reps_min: number, rest: number): SetSpec {
   return { reps_min, weight: null, weight_type: 'bodyweight', rest };
 }
-function barOnly(reps: number, rest: number): SetSpec {
-  return { reps_min: reps, weight: null, weight_type: 'bar', rest };
-}
 // Mobilité/étirements : duration_seconds = durée réelle, reps_min = 1
 function mob(seconds: number): SetSpec {
   return { reps_min: 1, weight: null, weight_type: 'bodyweight', rest: 0, duration_seconds: seconds };

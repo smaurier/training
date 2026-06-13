@@ -1,8 +1,7 @@
-import { computeNextLabel, advancePosition } from './useSession';
+import { computeNextLabel, advancePosition, useSession } from './useSession';
 import type { SessionPosition } from './useSession';
 import type { WorkoutExerciseDetail } from '../services/WorkoutExerciseService';
 import { renderHook, act } from '@testing-library/react-native';
-import { useSession } from './useSession';
 
 jest.mock('../db', () => ({
   getDb: () => ({

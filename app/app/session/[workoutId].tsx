@@ -16,10 +16,9 @@ import { WarmupPhase } from '@/components/session/WarmupPhase';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { resolveWeights } from '@/services/weightRatio';
-import type { SetActual } from '@/services/SessionService';
+import type { SetActual, PausedSessionInfo } from '@/services/SessionService';
 import type { SessionTagSlug } from '@/services/sessionTagsUtils';
 import type { InitialSession } from '@/hooks/useSession';
-import type { PausedSessionInfo } from '@/services/SessionService';
 import { SessionService } from '@/services/SessionService';
 import { SQLiteSessionLogRepository } from '@/repositories/SQLiteSessionLogRepository';
 import { SQLiteSetLogRepository } from '@/repositories/SQLiteSetLogRepository';
@@ -257,7 +256,7 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
       AccessibilityInfo.announceForAccessibility('Nouvelle meilleure marque !');
       prBadgeTimeout.current = setTimeout(() => setPrBadge(null), 3000);
     }
-  }, [session.validateSet, session.currentExercise]);
+  }, [session]);
 
   const handleMoodSelect = useCallback(async (mood: 1 | 2 | 3) => {
     setSelectedMood(mood);
@@ -272,7 +271,7 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
     } catch {
       // error already shown via session.error
     }
-  }, [session.pauseSession, router]);
+  }, [session, router]);
 
   const abandonSheetRef = useRef<BottomSheetModal>(null);
   const abandonSnapPoints = useMemo(() => ['30%'], []);
