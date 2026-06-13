@@ -4,6 +4,26 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 
 ---
 
+## S42 — 2026-06-13 — Comparaison séance vs précédente
+
+### Livré
+- **`SessionService.getPreviousSessionSummary(workoutId, currentSessionLogId)`** : filtre sessions `completed` du même workout, exclut la séance courante, trie DESC par `started_at`, calcule `volume = Σ(reps_done × weight_done)` + `sets = length`. Retourne `{ volume, sets } | null`. 3 tests TDD (null, correct, ignore abandoned). Commit `efea492`.
+- **SummaryPhase** : prop `previousSession?: { volume, sets } | null`. Deltas calculés dans le composant. Ligne delta inline dans la volume card : `+1 250 kg · +3 séries vs séance préc.`. Positif → `colors.primary`, négatif → `colors.textSecondary`. Masqué si les deux deltas = 0 ou si pas de séance préc. Commit `7cb04a6`.
+- **`[workoutId].tsx`** : state `prevSummary` + useEffect sur `session.phase === 'summary'` (pattern identique à `rpeLabel`). Commit `7cb04a6`.
+- 461/461 tests, 0 erreurs TypeScript.
+
+### Décisions
+- **Delta négatif en textSecondary (gris)** : pas de rouge, pas de punition — philosophie anti-perf. Un delta négatif peut être intentionnel (décharge, blessure, séance courte).
+- **Masquer si deux deltas = 0** : afficher "+0 kg · +0 séries" n'apporte rien. Un seul delta à 0 est informatif (ex: même volume, moins de séries = séries plus lourdes).
+- **Pattern useEffect** : calqué sur `rpeLabel` et `detectPlateaus` — même guard `session.phase !== 'summary'`, même `makeServiceForCheck()`, pas de nouveau hook.
+- **Tri DESC par `started_at`** dans le service pour garantir la séance la plus récente (InMemory n'ordonne pas).
+
+### Hors scope → backlog
+- Comparaison par exercice ("Squat : +5 kg vs préc.")
+- Tendance N séances (graphe)
+
+---
+
 ## S41 — 2026-06-13 — Objectifs personnels
 
 ### Livré
