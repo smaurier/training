@@ -1,7 +1,7 @@
 import { computeNextLabel, advancePosition } from './useSession';
 import type { SessionPosition } from './useSession';
 import type { WorkoutExerciseDetail } from '../services/WorkoutExerciseService';
-import { renderHook } from '@testing-library/react-native';
+import { renderHook, act } from '@testing-library/react-native';
 import { useSession } from './useSession';
 
 jest.mock('../db', () => ({
@@ -161,5 +161,103 @@ describe('useSession avec initialSession', () => {
   it('expose pauseSession dans le résultat', () => {
     const { result } = renderHook(() => useSession(1, []));
     expect(typeof result.current.pauseSession).toBe('function');
+  });
+});
+
+describe('useSession — flow warmup', () => {
+  function makeExerciseWithWeight(weight: number, weightType: 'fixed' | 'bodyweight' | 'bar' = 'fixed'): WorkoutExerciseDetail {
+    return {
+      id: 10,
+      workout_id: 1,
+      order_index: 0,
+      exercise: {
+        id: 10,
+        name: 'Squat barre',
+        type: 'musculation',
+        technical_notes: null,
+        muscle_groups: '[]',
+        description: null,
+      },
+      blocks: [
+        {
+          id: 20,
+          name: 'Travail',
+          order_index: 0,
+          is_work_block: 1,
+          sets: [
+            {
+              id: 100,
+              block_id: 20,
+              reps_min: 5,
+              weight,
+              weight_type: weightType,
+              rest_duration: 180,
+              order_index: 0,
+              duration_seconds: null,
+              weight_ratio: null,
+            },
+          ],
+        },
+      ],
+    };
+  }
+
+  it('confirmTransition avec exercice qualifié (weight ≥ 40, fixed) → phase devient warmup', () => {
+    const exercises = [makeExerciseWithWeight(80)];
+    const { result } = renderHook(() =>
+      useSession(1, exercises, {
+        sessionLogId: 1,
+        position: { exerciseIdx: 0, blockIdx: 0, setIdx: 0 },
+        phase: 'exercise_transition',
+        startedAt: Date.now(),
+        setsLogged: 0,
+        volume: 0,
+      })
+    );
+    act(() => {
+      result.current.confirmTransition();
+    });
+    expect(result.current.phase).toBe('warmup');
+    expect(result.current.warmupWorkWeight).toBe(80);
+  });
+
+  it('confirmTransition avec exercice non qualifié (weight < 40) → phase devient running', () => {
+    const exercises = [makeExerciseWithWeight(30)];
+    const { result } = renderHook(() =>
+      useSession(1, exercises, {
+        sessionLogId: 1,
+        position: { exerciseIdx: 0, blockIdx: 0, setIdx: 0 },
+        phase: 'exercise_transition',
+        startedAt: Date.now(),
+        setsLogged: 0,
+        volume: 0,
+      })
+    );
+    act(() => {
+      result.current.confirmTransition();
+    });
+    expect(result.current.phase).toBe('running');
+  });
+
+  it('confirmWarmup → phase devient running depuis warmup', () => {
+    const exercises = [makeExerciseWithWeight(80)];
+    const { result } = renderHook(() =>
+      useSession(1, exercises, {
+        sessionLogId: 1,
+        position: { exerciseIdx: 0, blockIdx: 0, setIdx: 0 },
+        phase: 'exercise_transition',
+        startedAt: Date.now(),
+        setsLogged: 0,
+        volume: 0,
+      })
+    );
+    act(() => {
+      result.current.confirmTransition();
+    });
+    expect(result.current.phase).toBe('warmup');
+    act(() => {
+      result.current.confirmWarmup();
+    });
+    expect(result.current.phase).toBe('running');
   });
 });

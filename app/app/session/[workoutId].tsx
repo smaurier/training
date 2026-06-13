@@ -153,14 +153,6 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
     return travailSets.every(s => s.weight === null);
   }, [session.startingWeightDone, session.phase, session.currentExercise, session.position]);
 
-  const warmupWorkWeight = useMemo(() => {
-    if (!session.currentExercise) return 0;
-    const travailBlock = session.currentExercise.blocks.find(
-      b => b.is_work_block === 1 && b.name === 'Travail'
-    );
-    return travailBlock?.sets[0]?.weight ?? 0;
-  }, [session.currentExercise]);
-
   const { reset: timerReset, start: timerStart } = timer;
 
   useEffect(() => {
@@ -309,7 +301,7 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
         {!session.error && session.phase === 'warmup' && session.currentExercise && (
           <WarmupPhase
             exerciseName={session.currentExercise.exercise.name}
-            workWeight={warmupWorkWeight}
+            workWeight={session.warmupWorkWeight}
             onStart={session.confirmWarmup}
           />
         )}

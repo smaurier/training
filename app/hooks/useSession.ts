@@ -52,6 +52,7 @@ export interface UseSessionResult {
   setStartingWeight: (weight: number) => Promise<void>;
   startingWeightDone: boolean;
   markStartingWeightDone: () => void;
+  warmupWorkWeight: number;
   confirmTransition: () => void;
   confirmWarmup: () => void;
   confirmRest: () => void;
@@ -132,6 +133,7 @@ export function useSession(
   const [pendingPhase, setPendingPhase] = useState<'running' | 'exercise_transition'>('running');
   const [nextLabel, setNextLabel] = useState('');
   const [lastSetLog, setLastSetLog] = useState<LastSetLog | null>(null);
+  const [warmupWorkWeight, setWarmupWorkWeight] = useState(0);
 
   const positionHistory = useRef<HistoryEntry[]>([]);
   const [historySize, setHistorySize] = useState(0);
@@ -225,6 +227,7 @@ export function useSession(
     const travailBlock = exercise?.blocks.find(b => b.is_work_block === 1 && b.name === 'Travail');
     const firstSet = travailBlock?.sets[0];
     if (firstSet && shouldShowWarmup(firstSet.weight ?? 0, firstSet.weight_type)) {
+      setWarmupWorkWeight(firstSet.weight ?? 0);
       setPhase('warmup');
     } else {
       // Pas de bloc Travail ou poids non qualifié → pas d'échauffement
@@ -318,7 +321,7 @@ export function useSession(
     currentExercise, currentBlock, currentSet, progressLabel,
     startSession, validateSet, skipSet, skipExercise, undoLastSet, canUndo,
     setStartingWeight, startingWeightDone, markStartingWeightDone,
-    confirmTransition, confirmRest, confirmWarmup, restDuration, nextLabel,
+    warmupWorkWeight, confirmTransition, confirmRest, confirmWarmup, restDuration, nextLabel,
     progressions, sessionStartedAt, totalSetsLogged, totalVolume, lastSetLog, error, pauseSession,
   };
 }
