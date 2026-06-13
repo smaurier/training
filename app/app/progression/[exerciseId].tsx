@@ -158,7 +158,7 @@ export default function ExerciseProgressionScreen() {
       {!histLoading && histError && (
         <View style={[styles.section, { backgroundColor: colors.surface }]}>
           <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
-            Impossible de charger l'historique
+            Impossible de charger l&apos;historique
           </Text>
         </View>
       )}
