@@ -5,6 +5,20 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.8.0] — 2026-06-13
+
+f2217c9 refactor(session): handleMoodSelect — réutiliser makeServiceForCheck
+d67210b fix(copy): micro-copy audit — langage factuel, sans compétitif
+c4f263e feat(summary): section humeur post-séance — 3 chips mood_after
+56172b2 feat(service): SessionService.saveMoodAfter — TDD
+636902f feat(db): migration v10 — mood_after sur session_logs + repos
+b733ca0 fix(RunningPhase): nommer constante seuil swipe undo
+81ee5d4 feat(RunningPhase): undo conditionnel + swipe dots pour annuler
+9f9eef5 docs(plan): Pack A séance — 5 tasks (undo swipe, humeur, micro-copy)
+0b7467d docs(spec): Pack A séance — annuler série + humeur + micro-copy audit
+
+---
+
 ## [1.7.0] — 2026-06-13
 
 bb62981 docs(journal): S34 échauffement auto — decisions + livraisons
