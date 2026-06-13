@@ -89,6 +89,20 @@ describe('ExerciseHistoryService.getHistory', () => {
     const result = await service.getHistory(ex.id, 2);
     expect(result.recentSessions).toHaveLength(2);
   });
+
+  it('retourne toutes les sessions quand limit omis', async () => {
+    const { service, setLogRepo, exerciseRepo } = makeService();
+    const ex = await exerciseRepo.save(baseExerciseDto);
+    for (let i = 1; i <= 15; i++) {
+      await setLogRepo.save({
+        session_log_id: i, set_id: i, exercise_id: ex.id,
+        reps_done: 5, weight_done: 80, rpe: null,
+        completed_at: `2026-06-${String(i).padStart(2, '0')}T10:00:00.000Z`,
+      });
+    }
+    const result = await service.getHistory(ex.id);
+    expect(result.recentSessions).toHaveLength(15);
+  });
 });
 
 describe('ExerciseHistoryService.getLoggedExercises', () => {

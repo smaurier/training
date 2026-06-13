@@ -26,7 +26,7 @@ export class ExerciseHistoryService {
     private exerciseRepo: IExerciseRepository,
   ) {}
 
-  async getHistory(exerciseId: number, limit = 10): Promise<ExerciseHistory> {
+  async getHistory(exerciseId: number, limit?: number): Promise<ExerciseHistory> {
     const exercise = await this.exerciseRepo.findById(exerciseId);
     if (!exercise) throw new Error(`Exercise ${exerciseId} not found`);
 
@@ -54,7 +54,7 @@ export class ExerciseHistoryService {
     return {
       exercise,
       lastSession: sessions[0] ?? null,
-      recentSessions: sessions.slice(0, limit),
+      recentSessions: limit !== undefined ? sessions.slice(0, limit) : sessions,
     };
   }
 
