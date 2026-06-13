@@ -183,4 +183,7 @@ export const MIGRATIONS: string[] = [
 
   // v10 — humeur après séance
   `ALTER TABLE session_logs ADD COLUMN mood_after INTEGER CHECK(mood_after BETWEEN 1 AND 3);`,
+
+  // v11 — tags séance
+  `ALTER TABLE session_logs ADD COLUMN tags TEXT;`,
 ];

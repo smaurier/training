@@ -71,6 +71,7 @@ export interface SessionLog {
   status: SessionStatus;
   paused_position: string | null;
   mood_after: 1 | 2 | 3 | null;
+  tags: string | null;
 }
 
 export interface SetLog {
