@@ -5,6 +5,21 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.11.0] — 2026-06-13
+
+5da6eb9 docs(journal): S41 objectifs personnels — ETA, GoalService, migration v12
+e86e0ba feat(goals): section OBJECTIFS dans Stats — liste + navigation exercice
+1f928d0 feat(goals): section OBJECTIF dans détail exercice + BottomSheet création
+93469ae feat(goals): useGoals hook — GoalWithExercise[] pour Stats
+139401e feat(goals): GoalService — CRUD objectifs (TDD)
+55e98d3 feat(goals): computeETA — régression linéaire ETA par poids de travail (TDD)
+d045eb6 feat(goals): migration v12 + types + IGoalRepository + InMemory + SQLite
+77712fe docs: spec objectifs — fix algo ETA, gate bodyweight, hook useGoals
+58c2b58 docs: spec objectifs personnels — ETA regression + UI
+63b39b3 docs: journal S40 — historique exercice fixes v1.10.3
+
+---
+
 ## [1.10.3] — 2026-06-13
 
 82f6965 feat(progression): useLoggedExercises — error state + affichage dans search
