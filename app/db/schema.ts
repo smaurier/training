@@ -186,4 +186,17 @@ export const MIGRATIONS: string[] = [
 
   // v11 — tags séance
   `ALTER TABLE session_logs ADD COLUMN tags TEXT;`,
+
+  // v12 — objectifs personnels
+  `
+  CREATE TABLE IF NOT EXISTS goals (
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    exercise_id   INTEGER NOT NULL REFERENCES exercises(id) ON DELETE CASCADE,
+    target_weight REAL    NOT NULL,
+    target_date   TEXT,
+    achieved_at   TEXT,
+    created_at    TEXT NOT NULL DEFAULT (datetime('now')),
+    UNIQUE(exercise_id)
+  );
+  `,
 ];

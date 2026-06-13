@@ -96,3 +96,23 @@ export interface PersonalRecord {
   achieved_at: string;
   session_log_id: number | null;
 }
+
+export interface Goal {
+  id: number;
+  exercise_id: number;
+  target_weight: number;
+  target_date: string | null;
+  achieved_at: string | null;
+  created_at: string;
+}
+
+export interface CreateGoalDto {
+  exercise_id: number;
+  target_weight: number;
+  target_date: string | null;
+}
+
+export interface GoalWithExercise {
+  goal: Goal;
+  exerciseName: string;
+}
