@@ -67,11 +67,78 @@ export interface UseSessionResult {
   pauseSession: () => Promise<void>;
 }
 
+export function isSupersetForward(
+  current: SessionPosition,
+  next: SessionPosition,
+  details: WorkoutExerciseDetail[]
+): boolean {
+  const currentGroupId = details[current.exerciseIdx]?.superset_group_id;
+  if (currentGroupId == null) return false;
+  if (details[next.exerciseIdx]?.superset_group_id !== currentGroupId) return false;
+  const group = details
+    .map((d, i) => ({ d, i }))
+    .filter(({ d }) => d.superset_group_id === currentGroupId)
+    .sort((a, b) => a.i - b.i);
+  const currentPos = group.findIndex(g => g.i === current.exerciseIdx);
+  const nextPos = group.findIndex(g => g.i === next.exerciseIdx);
+  return nextPos > currentPos;
+}
+
+export function isSupersetNextRound(
+  current: SessionPosition,
+  next: SessionPosition,
+  details: WorkoutExerciseDetail[]
+): boolean {
+  const currentGroupId = details[current.exerciseIdx]?.superset_group_id;
+  if (currentGroupId == null) return false;
+  if (details[next.exerciseIdx]?.superset_group_id !== currentGroupId) return false;
+  const group = details
+    .map((d, i) => ({ d, i }))
+    .filter(({ d }) => d.superset_group_id === currentGroupId)
+    .sort((a, b) => a.i - b.i);
+  const currentPos = group.findIndex(g => g.i === current.exerciseIdx);
+  const nextPos = group.findIndex(g => g.i === next.exerciseIdx);
+  return nextPos < currentPos;
+}
+
 export function advancePosition(
   position: SessionPosition,
   details: WorkoutExerciseDetail[]
 ): SessionPosition | null {
   const { exerciseIdx, blockIdx, setIdx } = position;
+
+  // --- SUPERSET ROUTING ---
+  const currentGroupId = details[exerciseIdx]?.superset_group_id;
+  if (currentGroupId != null) {
+    const groupExercises = details
+      .map((d, i) => ({ detail: d, exerciseIdx: i }))
+      .filter(({ detail }) => detail.superset_group_id === currentGroupId)
+      .sort((a, b) => a.exerciseIdx - b.exerciseIdx);
+
+    const posInGroup = groupExercises.findIndex(g => g.exerciseIdx === exerciseIdx);
+    const isLastInGroup = posInGroup === groupExercises.length - 1;
+
+    if (!isLastInGroup) {
+      const next = groupExercises[posInGroup + 1];
+      return { exerciseIdx: next.exerciseIdx, blockIdx: 0, setIdx };
+    }
+
+    // Dernier du groupe : vérifier s'il reste des tours
+    const firstInGroup = groupExercises[0];
+    const firstBlock = details[firstInGroup.exerciseIdx]?.blocks[0];
+    if (firstBlock && setIdx + 1 < firstBlock.sets.length) {
+      return { exerciseIdx: firstInGroup.exerciseIdx, blockIdx: 0, setIdx: setIdx + 1 };
+    }
+
+    // Tous les tours terminés : exercice après le groupe
+    const lastGroupExerciseIdx = groupExercises[groupExercises.length - 1].exerciseIdx;
+    if (lastGroupExerciseIdx + 1 < details.length) {
+      return { exerciseIdx: lastGroupExerciseIdx + 1, blockIdx: 0, setIdx: 0 };
+    }
+    return null;
+  }
+
+  // --- LOGIQUE STANDARD (inchangée) ---
   const exercise = details[exerciseIdx];
   if (!exercise) return null;
   const block = exercise.blocks[blockIdx];

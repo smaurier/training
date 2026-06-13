@@ -1,4 +1,4 @@
-import { computeNextLabel, advancePosition, useSession } from './useSession';
+import { computeNextLabel, advancePosition, isSupersetForward, isSupersetNextRound, useSession } from './useSession';
 import type { SessionPosition } from './useSession';
 import type { WorkoutExerciseDetail } from '../services/WorkoutExerciseService';
 import { renderHook, act } from '@testing-library/react-native';
@@ -16,6 +16,7 @@ function makeExercise(name: string, weight: number | null = 80, sets = 3): Worko
     id: 1,
     workout_id: 1,
     order_index: 0,
+    superset_group_id: null,
     exercise: {
       id: 1,
       name,
@@ -169,6 +170,7 @@ describe('useSession — flow warmup', () => {
       id: 10,
       workout_id: 1,
       order_index: 0,
+      superset_group_id: null,
       exercise: {
         id: 10,
         name: 'Squat barre',
@@ -258,5 +260,108 @@ describe('useSession — flow warmup', () => {
       result.current.confirmWarmup();
     });
     expect(result.current.phase).toBe('running');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Superset helpers — TDD new tests
+// ---------------------------------------------------------------------------
+
+function makeDetail(exerciseIdx: number, groupId: number | null = null, numSets = 3): WorkoutExerciseDetail {
+  const sets = Array.from({ length: numSets }, (_, i) => ({
+    id: exerciseIdx * 10 + i + 1,
+    block_id: exerciseIdx + 1,
+    reps_min: 5,
+    weight: 80,
+    weight_type: 'fixed' as const,
+    rest_duration: 90,
+    order_index: i,
+    duration_seconds: null,
+    weight_ratio: null,
+  }));
+  return {
+    id: exerciseIdx + 1,
+    workout_id: 1,
+    order_index: exerciseIdx,
+    superset_group_id: groupId,
+    exercise: {
+      id: exerciseIdx + 1,
+      name: `Ex${exerciseIdx}`,
+      type: 'musculation',
+      technical_notes: null,
+      muscle_groups: '[]',
+      description: null,
+    },
+    blocks: [{ id: exerciseIdx + 1, name: 'Travail', order_index: 0, is_work_block: 1, sets }],
+  };
+}
+
+// details: [standalone(0), A(1, group1), B(2, group1), C(3, group1), standalone(4)]
+const SUPERSET_GROUP_ID = 1;
+function makeDetails() {
+  return [
+    makeDetail(0),                    // standalone
+    makeDetail(1, SUPERSET_GROUP_ID), // A
+    makeDetail(2, SUPERSET_GROUP_ID), // B
+    makeDetail(3, SUPERSET_GROUP_ID), // C
+    makeDetail(4),                    // standalone after group
+  ];
+}
+
+describe('advancePosition — supersets', () => {
+  it('A→B : avance au prochain exercice du groupe, même setIdx', () => {
+    const details = makeDetails();
+    const next = advancePosition({ exerciseIdx: 1, blockIdx: 0, setIdx: 0 }, details);
+    expect(next).toEqual({ exerciseIdx: 2, blockIdx: 0, setIdx: 0 });
+  });
+
+  it('B→C : avance encore dans le groupe', () => {
+    const details = makeDetails();
+    const next = advancePosition({ exerciseIdx: 2, blockIdx: 0, setIdx: 0 }, details);
+    expect(next).toEqual({ exerciseIdx: 3, blockIdx: 0, setIdx: 0 });
+  });
+
+  it('C (dernier du groupe) → A tour suivant (setIdx+1)', () => {
+    const details = makeDetails();
+    const next = advancePosition({ exerciseIdx: 3, blockIdx: 0, setIdx: 0 }, details);
+    expect(next).toEqual({ exerciseIdx: 1, blockIdx: 0, setIdx: 1 });
+  });
+
+  it('C dernier tour → exercice standalone après le groupe', () => {
+    const details = makeDetails();
+    const next = advancePosition({ exerciseIdx: 3, blockIdx: 0, setIdx: 2 }, details);
+    expect(next).toEqual({ exerciseIdx: 4, blockIdx: 0, setIdx: 0 });
+  });
+
+  it('C dernier tour sans exercice suivant → null', () => {
+    const details = [makeDetail(0, SUPERSET_GROUP_ID), makeDetail(1, SUPERSET_GROUP_ID)];
+    const next = advancePosition({ exerciseIdx: 1, blockIdx: 0, setIdx: 2 }, details);
+    expect(next).toBeNull();
+  });
+
+  it('groupe à un seul membre avec 1 set : null', () => {
+    const details = [makeDetail(0, 99, 1)];
+    const next = advancePosition({ exerciseIdx: 0, blockIdx: 0, setIdx: 0 }, details);
+    expect(next).toBeNull();
+  });
+});
+
+describe('isSupersetForward', () => {
+  it('A→B dans le même groupe → true', () => {
+    const details = makeDetails();
+    expect(isSupersetForward(
+      { exerciseIdx: 1, blockIdx: 0, setIdx: 0 },
+      { exerciseIdx: 2, blockIdx: 0, setIdx: 0 },
+      details
+    )).toBe(true);
+  });
+
+  it('C→A (retour début de groupe) → false', () => {
+    const details = makeDetails();
+    expect(isSupersetForward(
+      { exerciseIdx: 3, blockIdx: 0, setIdx: 0 },
+      { exerciseIdx: 1, blockIdx: 0, setIdx: 1 },
+      details
+    )).toBe(false);
   });
 });
