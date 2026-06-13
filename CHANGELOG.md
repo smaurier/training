@@ -5,6 +5,21 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.8.1] — 2026-06-13
+
+ade9102 feat(reglages): plate_step configurable — SegmentedControl kg/lbs
+b284392 feat(warmup,session): thread plateStep dans WarmupPhase + useSession
+bb0f0ef feat(session): calculateProgressions accepte plateStep — défaut 2
+75e4f1f feat(deload): applyDeloadToExercises accepte plateStep — défaut 2
+ebb05ab feat(warmup): computeWarmupSets accepte plateStep — défaut 2
+6e52277 feat(progression): applyDeload accepte plateStep — défaut 2
+e0040d8 feat(settings): getPlateStep — TDD
+d0c51cb docs(plan): plate_step configurable — 7 tasks TDD
+403fc1b fix(spec): correction calcul applyDeload(60, 2.5) → 52.5
+137d08a docs(spec): plate_step configurable — réglages + fonctions pures
+
+---
+
 ## [1.8.0] — 2026-06-13
 
 f2217c9 refactor(session): handleMoodSelect — réutiliser makeServiceForCheck
