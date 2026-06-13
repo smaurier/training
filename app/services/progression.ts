@@ -54,8 +54,8 @@ export function calculateProgression(
   };
 }
 
-export function applyDeload(weight: number): number {
-  return Math.floor((weight * 0.9) / 2) * 2;
+export function applyDeload(weight: number, plateStep: number = 2): number {
+  return Math.floor((weight * 0.9) / plateStep) * plateStep;
 }
 
 export function isSessionFullSuccess(workSets: SetResult[]): boolean {

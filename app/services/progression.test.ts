@@ -105,6 +105,25 @@ describe('applyDeload', () => {
   it('arrondit au 2kg inférieur — 40kg', () => {
     expect(applyDeload(40)).toBe(36); // 40 * 0.9 = 36 → floor(18)*2 = 36
   });
+
+  it('plateStep 2.5 — applyDeload(60, 2.5) → 52.5', () => {
+    // 60×0.9=54, floor(54/2.5)=21, 21×2.5=52.5
+    expect(applyDeload(60, 2.5)).toBe(52.5);
+  });
+
+  it('plateStep 5 — applyDeload(65, 5) → 55', () => {
+    // 65×0.9=58.5, floor(58.5/5)=11, 11×5=55
+    expect(applyDeload(65, 5)).toBe(55);
+  });
+
+  it('plateStep 1.25 — applyDeload(100, 1.25) → 90', () => {
+    // 100×0.9=90, floor(90/1.25)=72, 72×1.25=90
+    expect(applyDeload(100, 1.25)).toBe(90);
+  });
+
+  it('défaut plateStep=2 — comportement inchangé', () => {
+    expect(applyDeload(60)).toBe(54);
+  });
 });
 
 // --- isSessionFullSuccess ---
