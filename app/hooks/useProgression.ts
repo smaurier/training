@@ -5,12 +5,14 @@ import { SQLiteSetLogRepository } from '../repositories/SQLiteSetLogRepository';
 import { SQLitePersonalRecordRepository } from '../repositories/SQLitePersonalRecordRepository';
 import { SQLiteExerciseRepository } from '../repositories/SQLiteExerciseRepository';
 import { getDb } from '../db';
+import type { MacroGroupVolume } from '../services/muscleGroupUtils';
 
 export interface UseProgressionReturn {
   stats: DashboardStats | null;
   volumeByWeek: WeeklyVolume[];
   recentPRs: RecentPR[];
   exercise1RMList: Exercise1RM[];
+  volumeByMuscleGroup: MacroGroupVolume[];
   isLoading: boolean;
   error: string | null;
   refresh: () => Promise<void>;
@@ -35,6 +37,7 @@ export function useProgression(): UseProgressionReturn {
   const [volumeByWeek, setVolumeByWeek] = useState<WeeklyVolume[]>([]);
   const [recentPRs, setRecentPRs] = useState<RecentPR[]>([]);
   const [exercise1RMList, setExercise1RMList] = useState<Exercise1RM[]>([]);
+  const [volumeByMuscleGroup, setVolumeByMuscleGroup] = useState<MacroGroupVolume[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -45,17 +48,19 @@ export function useProgression(): UseProgressionReturn {
     try {
       setIsLoading(true);
       setError(null);
-      const [s, v, p, e] = await Promise.all([
+      const [s, v, p, e, m] = await Promise.all([
         service.getDashboardStats(),
         service.getVolumeByWeek(),
         service.getRecentPRs(5),
         service.getExercise1RMList(),
+        service.getVolumeByMuscleGroup(),
       ]);
       if (mountedRef.current) {
         setStats(s);
         setVolumeByWeek(v);
         setRecentPRs(p);
         setExercise1RMList(e);
+        setVolumeByMuscleGroup(m);
       }
     } catch (err) {
       if (mountedRef.current) setError(err instanceof Error ? err.message : 'Erreur inconnue');
@@ -66,5 +71,5 @@ export function useProgression(): UseProgressionReturn {
 
   useEffect(() => { refresh(); }, [refresh]);
 
-  return { stats, volumeByWeek, recentPRs, exercise1RMList, isLoading, error, refresh };
+  return { stats, volumeByWeek, recentPRs, exercise1RMList, volumeByMuscleGroup, isLoading, error, refresh };
 }

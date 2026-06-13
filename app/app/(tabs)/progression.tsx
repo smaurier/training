@@ -7,6 +7,7 @@ import { useProgression } from '@/hooks/useProgression';
 import { SessionCard } from '@/components/history/SessionCard';
 import { VolumeBarChart } from '@/components/progression/VolumeBarChart';
 import { Exercise1RMCard } from '@/components/progression/Exercise1RMCard';
+import { MuscleGroupCard } from '@/components/progression/MuscleGroupCard';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
@@ -17,7 +18,7 @@ type Segment = 'historique' | 'stats';
 
 export default function ProgressionScreen() {
   const { sections, isLoading: histLoading, error: histError, refresh: refreshHist } = useHistory();
-  const { stats, volumeByWeek, recentPRs, exercise1RMList, isLoading: statsLoading, error: statsError, refresh: refreshStats } = useProgression();
+  const { stats, volumeByWeek, recentPRs, exercise1RMList, volumeByMuscleGroup, isLoading: statsLoading, error: statsError, refresh: refreshStats } = useProgression();
   const router = useRouter();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
@@ -149,6 +150,8 @@ export default function ProgressionScreen() {
         <View style={[styles.card, { backgroundColor: colors.surface }]}>
           <VolumeBarChart data={volumeByWeek} />
         </View>
+
+        <MuscleGroupCard data={volumeByMuscleGroup} />
 
         {recentPRs.length > 0 && (
           <View style={[styles.card, { backgroundColor: colors.surface }]}>
