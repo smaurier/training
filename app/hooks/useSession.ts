@@ -377,7 +377,7 @@ export function useSession(
       setPosition({ exerciseIdx: nextExerciseIdx, blockIdx: 0, setIdx: 0 });
       setPhase('exercise_transition');
     }
-  }, [service, sessionLogId, position.exerciseIdx, workoutDetails.length, plateStep]);
+  }, [service, sessionLogId, position.exerciseIdx, workoutDetails, plateStep]);
 
   const setStartingWeight = useCallback(async (weight: number) => {
     if (!currentExercise) return;
