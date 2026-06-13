@@ -98,6 +98,7 @@ function RootLayoutNav() {
           <Stack.Screen name="session/[workoutId]" options={{ headerShown: false }} />
           <Stack.Screen name="history/[sessionLogId]" options={{ title: 'Détail séance' }} />
           <Stack.Screen name="progression/[exerciseId]" options={{ title: 'Progression' }} />
+          <Stack.Screen name="progression/search" options={{ title: 'Rechercher un exercice' }} />
         </Stack>
       </ThemeProvider>
     </GestureHandlerRootView>

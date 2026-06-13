@@ -153,6 +153,15 @@ export default function ProgressionScreen() {
 
         <MuscleGroupCard data={volumeByMuscleGroup} />
 
+        <PressableA11y
+          accessibilityLabel="Rechercher un exercice"
+          onPress={() => router.push('/progression/search' as any)}
+          style={[styles.searchEntry, { backgroundColor: colors.surface }]}
+        >
+          <Text style={[styles.searchEntryText, { color: colors.textSecondary }]}>Rechercher un exercice</Text>
+          <Text style={[styles.searchEntryChevron, { color: colors.textSecondary }]}>›</Text>
+        </PressableA11y>
+
         {recentPRs.length > 0 && (
           <View style={[styles.card, { backgroundColor: colors.surface }]}>
             <Text style={[styles.cardLabel, { color: colors.textSecondary }]}>PRs RÉCENTS</Text>
@@ -226,4 +235,7 @@ const styles = StyleSheet.create({
   prDate: { fontSize: 12 },
   listTitle: { fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 6 },
   list: { borderRadius: Radius.sm, overflow: 'hidden' },
+  searchEntry: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderRadius: Radius.sm, paddingHorizontal: 14, paddingVertical: 12 },
+  searchEntryText: { fontSize: 14 },
+  searchEntryChevron: { fontSize: 18 },
 });

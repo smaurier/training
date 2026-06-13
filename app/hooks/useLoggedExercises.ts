@@ -29,7 +29,7 @@ export function useLoggedExercises() {
       setIsLoading(true);
       const result = await service.getLoggedExercises();
       if (mountedRef.current) setExercises(result);
-    } catch (err) {
+    } catch {
       // Fail silently for getLoggedExercises
     } finally {
       if (mountedRef.current) setIsLoading(false);
