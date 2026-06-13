@@ -5,6 +5,23 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.9.0] — 2026-06-13
+
+b355126 style(tags): espace manquant avant category dans PREDEFINED_TAGS
+5604a71 feat(session): tags + notes séance — state, handleTagToggle, handleBack async
+8a53d58 fix(ui): SummaryPhase — onChangeText guard pour notes optionnel
+7208ca0 feat(ui): SummaryPhase — section tags + champ notes
+68963cd feat(session): SessionService.saveSessionMeta — tags + notes (TDD)
+002aa10 feat(repo): saveSessionMeta — tags + notes sur session_logs
+0e6825d feat(db): migration v11 — tags TEXT sur session_logs
+ba5484e feat(tags): sessionTagsUtils — PREDEFINED_TAGS, parseTags, serializeTags (TDD)
+a53b97e docs(plan): tags séance — 6 tasks TDD
+fbcb790 docs(spec): tags séance — migration v11, sessionTagsUtils, SummaryPhase
+6179046 fix(lint): apostrophes JSX + plateStep dans deps useCallback + import inutilisé
+28d8316 docs(journal): S35 — plate_step configurable v1.8.1
+
+---
+
 ## [1.8.1] — 2026-06-13
 
 ade9102 feat(reglages): plate_step configurable — SegmentedControl kg/lbs
