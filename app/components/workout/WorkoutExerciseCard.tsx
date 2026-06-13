@@ -26,6 +26,10 @@ interface WorkoutExerciseCardProps {
   onMoveUp: () => Promise<void>;
   onMoveDown: () => Promise<void>;
   onReorderBlock: (workoutExerciseId: number, blockId: number, direction: 'up' | 'down') => Promise<void>;
+  supersetGroupLabel?: string;
+  isLastInWorkout?: boolean;
+  onLinkToNext?: () => void;
+  onUnlink?: () => void;
 }
 
 export function WorkoutExerciseCard({
@@ -42,6 +46,10 @@ export function WorkoutExerciseCard({
   onMoveUp,
   onMoveDown,
   onReorderBlock,
+  supersetGroupLabel,
+  isLastInWorkout,
+  onLinkToNext,
+  onUnlink,
 }: WorkoutExerciseCardProps) {
   const [expanded, setExpanded] = useState(false);
   const [showAddBlock, setShowAddBlock] = useState(false);
@@ -182,6 +190,38 @@ export function WorkoutExerciseCard({
         </View>
       )}
 
+      {/* Superset controls */}
+      <View style={styles.supersetRow}>
+        {supersetGroupLabel ? (
+          <>
+            <View style={[styles.supersetBadge, { backgroundColor: '#7c3aed20', borderColor: '#7c3aed', borderWidth: 1 }]}>
+              <Text style={[styles.supersetBadgeText, { color: '#7c3aed' }]}>
+                SUPERSET · {supersetGroupLabel}
+              </Text>
+            </View>
+            {onUnlink && (
+              <PressableA11y
+                accessibilityLabel="Délier cet exercice du superset"
+                onPress={onUnlink}
+                style={styles.unlinkBtn}
+              >
+                <Text style={[styles.unlinkBtnText, { color: colors.textSecondary }]}>✕ Délier</Text>
+              </PressableA11y>
+            )}
+          </>
+        ) : (
+          !isLastInWorkout && onLinkToNext && (
+            <PressableA11y
+              accessibilityLabel="Grouper cet exercice avec le suivant en superset"
+              onPress={onLinkToNext}
+              style={[styles.linkBtn, { borderColor: colors.border }]}
+            >
+              <Text style={[styles.linkBtnText, { color: colors.textSecondary }]}>🔗 Grouper avec le suivant</Text>
+            </PressableA11y>
+          )
+        )}
+      </View>
+
       <EditBlockModal
         visible={showAddBlock || editingBlock !== null}
         block={editingBlock}
@@ -207,4 +247,11 @@ const styles = StyleSheet.create({
   hint: { fontSize: 12, fontStyle: 'italic', paddingVertical: 4, lineHeight: 18 },
   addBlockBtn: { marginTop: 4, paddingVertical: 8 },
   addBlockText: { fontSize: 13, fontWeight: '500' },
+  supersetRow: { marginTop: 8, flexDirection: 'row', alignItems: 'center', gap: 8 },
+  supersetBadge: { borderRadius: 4, paddingHorizontal: 8, paddingVertical: 2 },
+  supersetBadgeText: { fontSize: 11, fontWeight: '700' },
+  linkBtn: { borderWidth: 1, borderRadius: 6, paddingHorizontal: 10, paddingVertical: 4 },
+  linkBtnText: { fontSize: 12 },
+  unlinkBtn: { paddingHorizontal: 8, paddingVertical: 4 },
+  unlinkBtnText: { fontSize: 12 },
 });

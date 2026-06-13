@@ -16,6 +16,33 @@ import type { WorkoutExerciseDetail } from '@/services/WorkoutExerciseService';
 const FAB_ICON_COLOR = '#fff' as const;
 const SHADOW_COLOR = '#000' as const;
 
+type RenderItem =
+  | { type: 'standalone'; exercise: WorkoutExerciseDetail; index: number }
+  | { type: 'superset'; members: { exercise: WorkoutExerciseDetail; index: number; label: string }[] };
+
+function buildRenderItems(exercises: WorkoutExerciseDetail[]): RenderItem[] {
+  const items: RenderItem[] = [];
+  let i = 0;
+  while (i < exercises.length) {
+    const ex = exercises[i];
+    const groupId = ex.superset_group_id;
+    if (groupId != null) {
+      const members: { exercise: WorkoutExerciseDetail; index: number; label: string }[] = [];
+      const LABELS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      let labelIdx = 0;
+      while (i < exercises.length && exercises[i].superset_group_id === groupId) {
+        members.push({ exercise: exercises[i], index: i, label: LABELS[labelIdx++] ?? String(labelIdx) });
+        i++;
+      }
+      items.push({ type: 'superset', members });
+    } else {
+      items.push({ type: 'standalone', exercise: ex, index: i });
+      i++;
+    }
+  }
+  return items;
+}
+
 export default function WorkoutDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const workoutId = Number(id) || 0;
@@ -38,6 +65,8 @@ export default function WorkoutDetailScreen() {
     removeBlock,
     reorderExercise,
     reorderBlock,
+    linkToNext,
+    unlink,
   } = useWorkoutExercises(workoutId);
 
   useEffect(() => {
@@ -87,25 +116,71 @@ export default function WorkoutDetailScreen() {
       <Stack.Screen options={{ title: workoutName }} />
       <View style={[styles.container, { backgroundColor: colors.background }]}>
         <FlatList
-          data={exercises}
-          keyExtractor={(item) => String(item.id)}
-          renderItem={({ item, index }) => (
-            <WorkoutExerciseCard
-              detail={item}
-              isFirst={index === 0}
-              isLast={index === exercises.length - 1}
-              onMoveUp={() => reorderExercise(item.id, 'up')}
-              onMoveDown={() => reorderExercise(item.id, 'down')}
-              onReorderBlock={reorderBlock}
-              onRemove={() => confirmRemove(item)}
-              onUpdateSet={updateSet}
-              onAddSet={addSet}
-              onRemoveSet={removeSet}
-              onAddBlock={addBlock}
-              onUpdateBlock={updateBlock}
-              onRemoveBlock={removeBlock}
-            />
-          )}
+          data={buildRenderItems(exercises)}
+          keyExtractor={(item) =>
+            item.type === 'standalone'
+              ? String(item.exercise.id)
+              : `superset-${item.members[0].exercise.id}`
+          }
+          renderItem={({ item }) => {
+            if (item.type === 'standalone') {
+              const { exercise, index } = item;
+              return (
+                <WorkoutExerciseCard
+                  detail={exercise}
+                  isFirst={index === 0}
+                  isLast={index === exercises.length - 1}
+                  isLastInWorkout={index === exercises.length - 1}
+                  onMoveUp={() => reorderExercise(exercise.id, 'up')}
+                  onMoveDown={() => reorderExercise(exercise.id, 'down')}
+                  onReorderBlock={reorderBlock}
+                  onRemove={() => confirmRemove(exercise)}
+                  onUpdateSet={updateSet}
+                  onAddSet={addSet}
+                  onRemoveSet={removeSet}
+                  onAddBlock={addBlock}
+                  onUpdateBlock={updateBlock}
+                  onRemoveBlock={removeBlock}
+                  onLinkToNext={index < exercises.length - 1 ? () => linkToNext(exercise.id, exercises[index + 1].id) : undefined}
+                />
+              );
+            }
+            // Superset group container
+            const lastMemberIndex = item.members[item.members.length - 1].index;
+            return (
+              <View style={styles.supersetContainer}>
+                <View style={styles.supersetLabel}>
+                  <Text style={styles.supersetLabelText}>SUPERSET</Text>
+                </View>
+                {item.members.map(({ exercise, index, label }) => (
+                  <WorkoutExerciseCard
+                    key={exercise.id}
+                    detail={exercise}
+                    isFirst={index === 0}
+                    isLast={index === exercises.length - 1}
+                    isLastInWorkout={index === exercises.length - 1}
+                    supersetGroupLabel={label}
+                    onMoveUp={() => reorderExercise(exercise.id, 'up')}
+                    onMoveDown={() => reorderExercise(exercise.id, 'down')}
+                    onReorderBlock={reorderBlock}
+                    onRemove={() => confirmRemove(exercise)}
+                    onUpdateSet={updateSet}
+                    onAddSet={addSet}
+                    onRemoveSet={removeSet}
+                    onAddBlock={addBlock}
+                    onUpdateBlock={updateBlock}
+                    onRemoveBlock={removeBlock}
+                    onUnlink={() => unlink(exercise.id)}
+                    onLinkToNext={
+                      lastMemberIndex < exercises.length - 1
+                        ? () => linkToNext(exercise.id, exercises[lastMemberIndex + 1].id)
+                        : undefined
+                    }
+                  />
+                ))}
+              </View>
+            );
+          }}
           contentContainerStyle={styles.list}
           ListEmptyComponent={
             <Text style={[styles.empty, { color: colors.textSecondary }]}>
@@ -174,4 +249,23 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   startBtnText: { color: '#fff', fontSize: 15, fontWeight: '600' },
+  supersetContainer: {
+    borderWidth: 2,
+    borderColor: '#7c3aed',
+    borderRadius: 10,
+    marginBottom: 8,
+    padding: 4,
+    position: 'relative',
+    paddingTop: 16,
+  },
+  supersetLabel: {
+    position: 'absolute',
+    top: -10,
+    left: 12,
+    backgroundColor: '#7c3aed',
+    borderRadius: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+  },
+  supersetLabelText: { color: '#fff', fontSize: 10, fontWeight: '700' },
 });
