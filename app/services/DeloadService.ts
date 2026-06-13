@@ -44,6 +44,7 @@ export class DeloadService {
 
 export function applyDeloadToExercises(
   exercises: WorkoutExerciseDetail[],
+  plateStep: number = 2,
 ): WorkoutExerciseDetail[] {
   return exercises.map(ex => ({
     ...ex,
@@ -52,7 +53,7 @@ export function applyDeloadToExercises(
       sets: block.sets.map(set => ({
         ...set,
         weight: set.weight !== null && set.weight_type === 'fixed'
-          ? applyDeload(set.weight)
+          ? applyDeload(set.weight, plateStep)
           : set.weight,
       })),
     })),

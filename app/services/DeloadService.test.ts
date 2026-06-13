@@ -181,6 +181,20 @@ describe('applyDeloadToExercises', () => {
     expect(result[0].blocks[0].sets[0].weight).toBe(20);
   });
 
+  it('utilise le plateStep fourni — 65 kg avec plateStep=5 → 55 kg', () => {
+    const exercises = [{
+      id: 1, workout_id: 1, order_index: 0,
+      exercise: { id: 10, name: 'Squat', type: 'musculation' as const, technical_notes: null, muscle_groups: '[]', description: null },
+      blocks: [{
+        id: 1, name: 'Travail', order_index: 0, is_work_block: 1 as const,
+        sets: [{ id: 1, block_id: 1, order_index: 0, reps_min: 5, rest_duration: 120, weight: 65, weight_type: 'fixed' as const, duration_seconds: null, weight_ratio: null }],
+      }],
+    }];
+    const result = applyDeloadToExercises(exercises, 5);
+    // applyDeload(65, 5) = floor(58.5/5)*5 = 11*5 = 55
+    expect(result[0].blocks[0].sets[0].weight).toBe(55);
+  });
+
   it('passe les poids null inchangés', () => {
     const exercises = [{
       id: 1, workout_id: 1, order_index: 0,
