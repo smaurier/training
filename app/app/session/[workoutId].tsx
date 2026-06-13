@@ -214,6 +214,7 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
   }, [workoutId]);
 
   const [plateaus, setPlateaus] = useState<PlateauResult[]>([]);
+  const [rpeLabel, setRpeLabel] = useState<'Facile' | 'Normal' | 'Difficile' | null>(null);
   const [selectedMood, setSelectedMood] = useState<1 | 2 | 3 | undefined>(undefined);
 
   useEffect(() => {
@@ -226,6 +227,11 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
       new SQLiteExerciseRepository(db),
     );
     service.detectPlateaus(session.sessionLogId).then(setPlateaus).catch(console.error);
+  }, [session.phase, session.sessionLogId]);
+
+  useEffect(() => {
+    if (session.phase !== 'summary' || !session.sessionLogId) return;
+    makeServiceForCheck().getSessionRPELabel(session.sessionLogId).then(setRpeLabel).catch(console.error);
   }, [session.phase, session.sessionLogId]);
 
   useEffect(() => {
@@ -384,6 +390,7 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
             durationSeconds={summaryDurationSeconds}
             totalVolumeKg={session.totalVolume}
             plateaus={plateaus}
+            rpeLabel={rpeLabel}
             suggestNextDeload={deloadSuggested && !isDeloadSession}
             onMoodSelect={handleMoodSelect}
             selectedMood={selectedMood}

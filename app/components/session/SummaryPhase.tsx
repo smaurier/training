@@ -16,6 +16,7 @@ interface SummaryPhaseProps {
   durationSeconds: number;
   totalVolumeKg?: number;
   plateaus?: PlateauResult[];
+  rpeLabel?: 'Facile' | 'Normal' | 'Difficile' | null;
   suggestNextDeload?: boolean;
   onMoodSelect?: (mood: 1 | 2 | 3) => void;
   selectedMood?: 1 | 2 | 3;
@@ -32,7 +33,7 @@ function formatDuration(seconds: number): string {
   return m > 0 ? `${m} min ${s > 0 ? `${s} s` : ''}`.trim() : `${s} s`;
 }
 
-export function SummaryPhase({ progressions, totalSets, durationSeconds, totalVolumeKg, plateaus, suggestNextDeload, onMoodSelect, selectedMood, selectedTags = [], onTagToggle, notes = '', onNotesChange, onClose }: SummaryPhaseProps) {
+export function SummaryPhase({ progressions, totalSets, durationSeconds, totalVolumeKg, plateaus, rpeLabel, suggestNextDeload, onMoodSelect, selectedMood, selectedTags = [], onTagToggle, notes = '', onNotesChange, onClose }: SummaryPhaseProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const { convert, label: unitLabel } = useUnits();
@@ -44,7 +45,9 @@ export function SummaryPhase({ progressions, totalSets, durationSeconds, totalVo
       <View style={styles.hero}>
         <Text style={styles.emoji}>🎉</Text>
         <Text style={[styles.heroTitle, { color: colors.text }]}>Séance terminée !</Text>
-        <Text style={[styles.heroDuration, { color: colors.textSecondary }]}>{formatDuration(durationSeconds)}</Text>
+        <Text style={[styles.heroDuration, { color: colors.textSecondary }]}>
+          {formatDuration(durationSeconds)}{rpeLabel ? ` · Effort : ${rpeLabel}` : ''}
+        </Text>
       </View>
 
       <View style={styles.statsRow}>
