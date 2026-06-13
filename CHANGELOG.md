@@ -5,6 +5,16 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.10.2] — 2026-06-13
+
+193f38f docs: journal S39 — RPE moyen SummaryPhase
+628bc25 feat(session): RPE moyen affiché dans SummaryPhase hero
+139c8ed feat(session): SessionService.getSessionRPELabel — moyenne RPE par séance (TDD)
+2b2262f docs: plan RPE moyen en SummaryPhase
+daca5b5 docs: spec RPE moyen en SummaryPhase
+
+---
+
 ## [1.10.1] — 2026-06-13
 
 316a1fc docs: journal S38 — présences ce mois
