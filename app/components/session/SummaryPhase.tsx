@@ -174,7 +174,7 @@ export function SummaryPhase({ progressions, totalSets, durationSeconds, totalVo
         <TextInput
           style={[styles.notesInput, { backgroundColor: colors.background, borderColor: colors.border, color: colors.text }]}
           value={notes}
-          onChangeText={onNotesChange}
+          onChangeText={onNotesChange ?? (() => {})}
           placeholder="Observations…"
           placeholderTextColor={colors.textSecondary}
           multiline
