@@ -220,15 +220,17 @@ export function useSession(
   }, [pendingPhase]);
 
   const confirmTransition = useCallback(() => {
+    if (phase !== 'exercise_transition') return;
     const exercise = workoutDetails[position.exerciseIdx];
     const travailBlock = exercise?.blocks.find(b => b.is_work_block === 1 && b.name === 'Travail');
     const firstSet = travailBlock?.sets[0];
     if (firstSet && shouldShowWarmup(firstSet.weight ?? 0, firstSet.weight_type)) {
       setPhase('warmup');
     } else {
+      // Pas de bloc Travail ou poids non qualifié → pas d'échauffement
       setPhase('running');
     }
-  }, [workoutDetails, position.exerciseIdx]);
+  }, [phase, workoutDetails, position.exerciseIdx]);
 
   const confirmWarmup = useCallback(() => {
     setPhase('running');
