@@ -12,6 +12,7 @@ import { SummaryPhase } from '@/components/session/SummaryPhase';
 import { ExerciseStartingWeightPhase } from '@/components/session/ExerciseStartingWeightPhase';
 import { RestPhase } from '@/components/session/RestPhase';
 import { ExerciseTransitionPhase } from '@/components/session/ExerciseTransitionPhase';
+import { WarmupPhase } from '@/components/session/WarmupPhase';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { resolveWeights } from '@/services/weightRatio';
@@ -151,6 +152,14 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
     if (travailSets.every(s => s.weight_type === 'bodyweight')) return false;
     return travailSets.every(s => s.weight === null);
   }, [session.startingWeightDone, session.phase, session.currentExercise, session.position]);
+
+  const warmupWorkWeight = useMemo(() => {
+    if (!session.currentExercise) return 0;
+    const travailBlock = session.currentExercise.blocks.find(
+      b => b.is_work_block === 1 && b.name === 'Travail'
+    );
+    return travailBlock?.sets[0]?.weight ?? 0;
+  }, [session.currentExercise]);
 
   const { reset: timerReset, start: timerStart } = timer;
 
@@ -294,6 +303,14 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
             exerciseNumber={session.position.exerciseIdx + 1}
             totalExercises={exercises.length}
             onContinue={session.confirmTransition}
+          />
+        )}
+
+        {!session.error && session.phase === 'warmup' && session.currentExercise && (
+          <WarmupPhase
+            exerciseName={session.currentExercise.exercise.name}
+            workWeight={warmupWorkWeight}
+            onStart={session.confirmWarmup}
           />
         )}
 
