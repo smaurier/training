@@ -26,7 +26,7 @@ export function RestPhase({ durationSeconds, timer, nextLabel, onContinue }: Res
         style={[styles.phaseLabel, { color: isDone ? '#16a34a' : colors.primary }]}
         accessibilityRole="header"
       >
-        {isDone ? "C'EST PARTI !" : 'REPOS'}
+        {isDone ? "À toi ·" : 'REPOS'}
       </Text>
 
       <View
@@ -36,7 +36,7 @@ export function RestPhase({ durationSeconds, timer, nextLabel, onContinue }: Res
         <CircularTimer
           progress={progress}
           remaining={timer.remaining}
-          label={isDone ? "C'EST PARTI" : 'REPOS'}
+          label={isDone ? "À toi" : 'REPOS'}
           size={200}
         />
       </View>
@@ -47,7 +47,7 @@ export function RestPhase({ durationSeconds, timer, nextLabel, onContinue }: Res
       </View>
 
       <PressableA11y
-        accessibilityLabel={isDone ? "C'est parti, continuer la séance" : 'Passer le repos'}
+        accessibilityLabel={isDone ? "À toi — continuer la séance" : 'Passer le repos'}
         onPress={onContinue}
         style={[
           styles.continueBtn,
@@ -62,7 +62,7 @@ export function RestPhase({ durationSeconds, timer, nextLabel, onContinue }: Res
             { color: isDone ? (colorScheme === 'dark' ? '#000' : '#fff') : colors.textSecondary },
           ]}
         >
-          {isDone ? "C'est parti →" : 'Passer →'}
+          {isDone ? "À toi →" : 'Passer →'}
         </Text>
       </PressableA11y>
     </View>

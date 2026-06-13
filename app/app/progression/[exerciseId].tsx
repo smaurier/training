@@ -112,7 +112,7 @@ export default function ExerciseProgressionScreen() {
 
       {bestPR && (
         <View style={[styles.section, { backgroundColor: colors.surface }]}>
-          <Text style={[styles.sectionLabel, { color: colors.textSecondary }]}>MEILLEUR PR</Text>
+          <Text style={[styles.sectionLabel, { color: colors.textSecondary }]}>MEILLEURE MARQUE</Text>
           <Text style={[styles.prValue, { color: colors.text }]}>
             {convert(bestPR.weight)} {unitLabel} × {bestPR.reps} reps
           </Text>

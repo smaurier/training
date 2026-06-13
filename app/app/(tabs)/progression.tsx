@@ -134,7 +134,7 @@ export default function ProgressionScreen() {
           <View style={styles.chipsRow}>
             {[
               { label: 'SÉANCES', value: stats.sessionCount },
-              { label: 'PRs', value: stats.prCount },
+              { label: 'MARQUES', value: stats.prCount },
               { label: 'EXERCICES', value: stats.exerciseCount },
             ].map(chip => (
               <View key={chip.label} style={[styles.chip, { backgroundColor: colors.surface }]}>

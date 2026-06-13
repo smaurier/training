@@ -24,7 +24,7 @@ import { SQLiteExerciseRepository } from '@/repositories/SQLiteExerciseRepositor
 import { getDb } from '@/db';
 
 function formatRelativeDate(isoDate: string | null | undefined): string {
-  if (!isoDate) return 'Jamais faite';
+  if (!isoDate) return 'Nouvelle';
   const todayMidnight = new Date();
   todayMidnight.setHours(0, 0, 0, 0);
   const sessionMidnight = new Date(isoDate);
@@ -73,7 +73,7 @@ export default function HomeScreen() {
           workoutName={pausedSession.workoutName}
           serieLabel={
             pausedSession.setsLogged === 0
-              ? 'Aucune série complétée'
+              ? 'Interrompue'
               : `${pausedSession.setsLogged} série${pausedSession.setsLogged > 1 ? 's' : ''} complétée${pausedSession.setsLogged > 1 ? 's' : ''}`
           }
           onPress={() =>

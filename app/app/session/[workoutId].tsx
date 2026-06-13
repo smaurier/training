@@ -230,7 +230,7 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
     if (isPR && exerciseName) {
       if (prBadgeTimeout.current) clearTimeout(prBadgeTimeout.current);
       setPrBadge(exerciseName);
-      AccessibilityInfo.announceForAccessibility('Nouveau record personnel !');
+      AccessibilityInfo.announceForAccessibility('Nouvelle meilleure marque !');
       prBadgeTimeout.current = setTimeout(() => setPrBadge(null), 3000);
     }
   }, [session.validateSet, session.currentExercise]);
@@ -381,7 +381,7 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
       {prBadge !== null && (
         <View style={styles.prBadge} pointerEvents="none">
           <Text style={styles.prBadgeIcon}>🏆</Text>
-          <Text style={styles.prBadgeTitle}>Nouveau PR !</Text>
+          <Text style={styles.prBadgeTitle}>✦ Nouvelle meilleure marque</Text>
           <Text style={styles.prBadgeSub} numberOfLines={1}>{prBadge}</Text>
         </View>
       )}
