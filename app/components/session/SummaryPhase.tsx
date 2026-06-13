@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, TextInput, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import type { ProgressionResult } from '@/services/SessionService';
@@ -7,6 +7,8 @@ import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
 import { useUnits } from '@/hooks/useUnits';
+import type { SessionTagSlug } from '@/services/sessionTagsUtils';
+import { PREDEFINED_TAGS } from '@/services/sessionTagsUtils';
 
 interface SummaryPhaseProps {
   progressions: ProgressionResult[];
@@ -17,7 +19,11 @@ interface SummaryPhaseProps {
   suggestNextDeload?: boolean;
   onMoodSelect?: (mood: 1 | 2 | 3) => void;
   selectedMood?: 1 | 2 | 3;
-  onClose: () => void;
+  selectedTags?: SessionTagSlug[];
+  onTagToggle?: (slug: SessionTagSlug) => void;
+  notes?: string;
+  onNotesChange?: (text: string) => void;
+  onClose: () => void | Promise<void>;
 }
 
 function formatDuration(seconds: number): string {
@@ -26,7 +32,7 @@ function formatDuration(seconds: number): string {
   return m > 0 ? `${m} min ${s > 0 ? `${s} s` : ''}`.trim() : `${s} s`;
 }
 
-export function SummaryPhase({ progressions, totalSets, durationSeconds, totalVolumeKg, plateaus, suggestNextDeload, onMoodSelect, selectedMood, onClose }: SummaryPhaseProps) {
+export function SummaryPhase({ progressions, totalSets, durationSeconds, totalVolumeKg, plateaus, suggestNextDeload, onMoodSelect, selectedMood, selectedTags = [], onTagToggle, notes = '', onNotesChange, onClose }: SummaryPhaseProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const { convert, label: unitLabel } = useUnits();
@@ -139,6 +145,44 @@ export function SummaryPhase({ progressions, totalSets, durationSeconds, totalVo
         </View>
       </View>
 
+      <View style={[styles.tagsSection, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+        <Text style={[styles.sectionTitle, { color: colors.text }]}>Notes de séance</Text>
+        <View style={styles.tagsWrap}>
+          {PREDEFINED_TAGS.map(tag => (
+            <PressableA11y
+              key={tag.slug}
+              accessibilityLabel={tag.label}
+              accessibilityState={{ selected: selectedTags.includes(tag.slug) }}
+              onPress={() => onTagToggle?.(tag.slug)}
+              style={[
+                styles.tagChip,
+                { borderColor: colors.border },
+                selectedTags.includes(tag.slug)
+                  ? { backgroundColor: colors.primary }
+                  : { backgroundColor: colors.surface },
+              ]}
+            >
+              <Text style={[
+                styles.tagLabel,
+                { color: selectedTags.includes(tag.slug) ? '#fff' : colors.text },
+              ]}>
+                {tag.label}
+              </Text>
+            </PressableA11y>
+          ))}
+        </View>
+        <TextInput
+          style={[styles.notesInput, { backgroundColor: colors.background, borderColor: colors.border, color: colors.text }]}
+          value={notes}
+          onChangeText={onNotesChange}
+          placeholder="Observations…"
+          placeholderTextColor={colors.textSecondary}
+          multiline
+          maxLength={200}
+          accessibilityLabel="Notes de séance"
+        />
+      </View>
+
       <PressableA11y
         accessibilityLabel="Retour au programme"
         onPress={onClose}
@@ -182,6 +226,11 @@ const styles = StyleSheet.create({
   moodChip: { flex: 1, alignItems: 'center', borderWidth: 1, borderRadius: Radius.sm, paddingVertical: 12, gap: 4 },
   moodEmoji: { fontSize: 22 },
   moodLabel: { fontSize: 12, fontWeight: '600' },
+  tagsSection: { borderWidth: 1, borderRadius: Radius.sm, padding: 16, gap: 12 },
+  tagsWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  tagChip: { borderWidth: 1, borderRadius: Radius.sm, paddingHorizontal: 12, paddingVertical: 8 },
+  tagLabel: { fontSize: 13, fontWeight: '500' },
+  notesInput: { borderWidth: 1, borderRadius: Radius.sm, padding: 12, fontSize: 14, minHeight: 72, textAlignVertical: 'top' },
   closeBtn: { paddingVertical: 16, borderRadius: Radius.sm, alignItems: 'center', marginTop: 8 },
   closeBtnText: { color: '#fff', fontSize: 17, fontWeight: '600' },
 });
