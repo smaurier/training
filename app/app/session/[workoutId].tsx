@@ -17,6 +17,7 @@ import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { resolveWeights } from '@/services/weightRatio';
 import type { SetActual } from '@/services/SessionService';
+import type { SessionTagSlug } from '@/services/sessionTagsUtils';
 import type { InitialSession } from '@/hooks/useSession';
 import type { PausedSessionInfo } from '@/services/SessionService';
 import { SessionService } from '@/services/SessionService';
@@ -179,7 +180,23 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
     session.markStartingWeightDone();
   }, [session, refresh]);
 
-  const handleBack = useCallback(() => router.back(), [router]);
+  const [selectedTags, setSelectedTags] = useState<SessionTagSlug[]>([]);
+  const [sessionNotes, setSessionNotes] = useState('');
+
+  const handleTagToggle = useCallback((slug: SessionTagSlug) => {
+    setSelectedTags(prev =>
+      prev.includes(slug) ? prev.filter(s => s !== slug) : [...prev, slug]
+    );
+  }, []);
+
+  const handleBack = useCallback(async () => {
+    if (session.sessionLogId) {
+      await makeServiceForCheck()
+        .saveSessionMeta(session.sessionLogId, selectedTags, sessionNotes.trim() || null)
+        .catch(console.error);
+    }
+    router.back();
+  }, [session.sessionLogId, selectedTags, sessionNotes, router]);
 
   const [summaryDurationSeconds, setSummaryDurationSeconds] = useState(0);
   useEffect(() => {
@@ -371,6 +388,10 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
             suggestNextDeload={deloadSuggested && !isDeloadSession}
             onMoodSelect={handleMoodSelect}
             selectedMood={selectedMood}
+            selectedTags={selectedTags}
+            onTagToggle={handleTagToggle}
+            notes={sessionNotes}
+            onNotesChange={setSessionNotes}
             onClose={handleBack}
           />
         )}
