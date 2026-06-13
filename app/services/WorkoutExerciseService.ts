@@ -18,6 +18,7 @@ export interface WorkoutExerciseDetail {
   id: number;
   workout_id: number;
   order_index: number;
+  superset_group_id: number | null;
   exercise: Pick<Exercise, 'id' | 'name' | 'type' | 'technical_notes' | 'muscle_groups' | 'description'>;
   blocks: BlockWithSets[];
 }
@@ -164,6 +165,7 @@ export class WorkoutExerciseService {
       id: we.id,
       workout_id: we.workout_id,
       order_index: we.order_index,
+      superset_group_id: we.superset_group_id,
       exercise: {
         id: exercise.id,
         name: exercise.name,

@@ -35,6 +35,7 @@ export interface WorkoutExercise {
   workout_id: number;
   exercise_id: number;
   order_index: number;
+  superset_group_id: number | null;
 }
 
 export interface Block {

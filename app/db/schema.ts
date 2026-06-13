@@ -199,4 +199,7 @@ export const MIGRATIONS: string[] = [
     UNIQUE(exercise_id)
   );
   `,
+
+  // v13 — supersets : grouper des exercices en round-robin
+  `ALTER TABLE workout_exercises ADD COLUMN superset_group_id INTEGER;`,
 ];
