@@ -38,15 +38,16 @@ Philosophie anti-perf (filtre 3 questions) :
 1. Filtrer sessions avec `weight > 0` (exclure bodyweight si jamais)
 2. Si `< 3 sessions` → `{ status: 'no_data' }`
 3. Si `sessions[sessions.length - 1].weight >= targetWeight` → `{ status: 'achieved' }`
-4. Convertir dates en jours depuis la première session (offset en jours)
-5. Régression linéaire sur (xi = jour, yi = weight) :
+4. Poser `x0 = Date.parse(sessions[0].date)`. Convertir chaque session en `xi = (Date.parse(sessions[i].date) - x0) / 86400000` (jours depuis la première session). `yi = sessions[i].weight`.
+5. Régression linéaire sur (xi, yi) :
    - `slope = (n·Σxy - Σx·Σy) / (n·Σx² - (Σx)²)` kg/jour
    - `intercept = (Σy - slope·Σx) / n`
 6. Si `slope ≤ 0` → `{ status: 'stagnant' }`
-7. Calculer `daysUntilTarget = (targetWeight - currentWeight) / slope`
-8. `etaDate = today + daysUntilTarget` (ISO date)
-9. Si `targetDate` fournie → calculer `projectedAtTargetDate = intercept + slope · (targetDay - firstDay)`
-10. Retourner `{ status: 'on_track', etaDate, ratePerWeek: slope * 7, projectedAtTargetDate? }`
+7. Calculer le poids estimé aujourd'hui : `x_today = (Date.now() - x0) / 86400000`, `weightToday = intercept + slope * x_today`
+8. `daysUntilTarget = (targetWeight - weightToday) / slope`
+9. `etaDate = new Date(Date.now() + daysUntilTarget * 86400000).toISOString().slice(0, 10)`
+10. Si `targetDate` fournie → `x_target = (Date.parse(targetDate) - x0) / 86400000`, `projectedAtTargetDate = Math.round((intercept + slope * x_target) * 10) / 10`
+11. Retourner `{ status: 'on_track', etaDate, ratePerWeek: Math.round(slope * 7 * 10) / 10, projectedAtTargetDate? }`
 
 **Type `ETAResult` :**
 ```typescript
@@ -166,7 +167,7 @@ Après la section "HISTORIQUE SÉANCES", nouvelle section "OBJECTIF" :
 ```
 [Définir un objectif]   (PressableA11y, ouvre BottomSheet)
 ```
-*(Masqué entièrement si exercise est bodyweight)*
+*(Masqué entièrement si `exerciseHistory?.recentSessions.every(s => s.bestSet.weight === 0)` — proxy bodyweight, pas de colonne weight_type sur exercises)*
 
 **État — en cours :**
 ```
@@ -221,6 +222,8 @@ Développé couché   ✦ 80 kg atteint
 
 Masqué si `goals.length === 0`. Chaque ligne est un `PressableA11y` qui navigue vers `/progression/[exerciseId]`.
 
+**Source de données :** hook `useGoals()` → `{ goals: GoalWithExercise[], isLoading, refresh }`. Appelé dans `progression.tsx` avec `useFocusEffect` + `refresh` (même pattern que `useHistory` / `useProgression`). GoalService construit inline avec `SQLiteGoalRepository`.
+
 ---
 
 ## Fichiers touchés
@@ -237,6 +240,7 @@ Masqué si `goals.length === 0`. Chaque ligne est un `PressableA11y` qui navigue
 | `app/services/GoalService.ts` | Créer |
 | `app/services/GoalService.test.ts` | Créer — 4 tests TDD |
 | `app/app/progression/[exerciseId].tsx` | Modifier — section OBJECTIF + BottomSheet |
+| `app/hooks/useGoals.ts` | Créer — `useGoals()` → `{ goals: GoalWithExercise[], isLoading, refresh }` |
 | `app/app/(tabs)/progression.tsx` | Modifier — section OBJECTIFS Stats |
 
 ---
