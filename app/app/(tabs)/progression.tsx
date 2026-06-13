@@ -18,7 +18,7 @@ type Segment = 'historique' | 'stats';
 
 export default function ProgressionScreen() {
   const { sections, isLoading: histLoading, error: histError, refresh: refreshHist } = useHistory();
-  const { stats, volumeByWeek, recentPRs, exercise1RMList, volumeByMuscleGroup, isLoading: statsLoading, error: statsError, refresh: refreshStats } = useProgression();
+  const { stats, volumeByWeek, recentPRs, exercise1RMList, volumeByMuscleGroup, monthlyPresences, isLoading: statsLoading, error: statsError, refresh: refreshStats } = useProgression();
   const router = useRouter();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
@@ -131,6 +131,14 @@ export default function ProgressionScreen() {
       {segmentControl}
       <ScrollView contentContainerStyle={styles.statsContent}>
 
+        {monthlyPresences > 0 && (
+          <View style={[styles.presencesCard, { backgroundColor: colors.surface }]}>
+            <Text style={[styles.presencesText, { color: colors.text }]}>
+              {monthlyPresences} {monthlyPresences === 1 ? 'séance' : 'séances'} ce mois
+            </Text>
+          </View>
+        )}
+
         {stats && (
           <View style={styles.chipsRow}>
             {[
@@ -235,6 +243,8 @@ const styles = StyleSheet.create({
   prDate: { fontSize: 12 },
   listTitle: { fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 6 },
   list: { borderRadius: Radius.sm, overflow: 'hidden' },
+  presencesCard: { borderRadius: Radius.sm, paddingHorizontal: 14, paddingVertical: 12 },
+  presencesText: { fontSize: 15, fontWeight: '600' },
   searchEntry: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderRadius: Radius.sm, paddingHorizontal: 14, paddingVertical: 12 },
   searchEntryText: { fontSize: 14 },
   searchEntryChevron: { fontSize: 18 },

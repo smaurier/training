@@ -13,6 +13,7 @@ export interface UseProgressionReturn {
   recentPRs: RecentPR[];
   exercise1RMList: Exercise1RM[];
   volumeByMuscleGroup: MacroGroupVolume[];
+  monthlyPresences: number;
   isLoading: boolean;
   error: string | null;
   refresh: () => Promise<void>;
@@ -38,6 +39,7 @@ export function useProgression(): UseProgressionReturn {
   const [recentPRs, setRecentPRs] = useState<RecentPR[]>([]);
   const [exercise1RMList, setExercise1RMList] = useState<Exercise1RM[]>([]);
   const [volumeByMuscleGroup, setVolumeByMuscleGroup] = useState<MacroGroupVolume[]>([]);
+  const [monthlyPresences, setMonthlyPresences] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -48,12 +50,13 @@ export function useProgression(): UseProgressionReturn {
     try {
       setIsLoading(true);
       setError(null);
-      const [s, v, p, e, m] = await Promise.all([
+      const [s, v, p, e, m, presences] = await Promise.all([
         service.getDashboardStats(),
         service.getVolumeByWeek(),
         service.getRecentPRs(5),
         service.getExercise1RMList(),
         service.getVolumeByMuscleGroup(),
+        service.getMonthlyPresences(),
       ]);
       if (mountedRef.current) {
         setStats(s);
@@ -61,6 +64,7 @@ export function useProgression(): UseProgressionReturn {
         setRecentPRs(p);
         setExercise1RMList(e);
         setVolumeByMuscleGroup(m);
+        setMonthlyPresences(presences);
       }
     } catch (err) {
       if (mountedRef.current) setError(err instanceof Error ? err.message : 'Erreur inconnue');
@@ -71,5 +75,5 @@ export function useProgression(): UseProgressionReturn {
 
   useEffect(() => { refresh(); }, [refresh]);
 
-  return { stats, volumeByWeek, recentPRs, exercise1RMList, volumeByMuscleGroup, isLoading, error, refresh };
+  return { stats, volumeByWeek, recentPRs, exercise1RMList, volumeByMuscleGroup, monthlyPresences, isLoading, error, refresh };
 }
