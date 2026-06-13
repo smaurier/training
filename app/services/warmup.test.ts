@@ -40,6 +40,36 @@ describe('computeWarmupSets', () => {
       { weight: 80, reps: 2, rest: 90, percent: 80 },
     ]);
   });
+
+  it('plateStep 2.5 — 100 kg → 40/60/80 (multiples de 2.5)', () => {
+    // 100×0.4=40, floor(40/2.5)×2.5=40
+    // 100×0.6=60, floor(60/2.5)×2.5=60
+    // 100×0.8=80, floor(80/2.5)×2.5=80
+    expect(computeWarmupSets(100, 2.5)).toEqual([
+      { weight: 40, reps: 8, rest: 60, percent: 40 },
+      { weight: 60, reps: 5, rest: 60, percent: 60 },
+      { weight: 80, reps: 2, rest: 90, percent: 80 },
+    ]);
+  });
+
+  it('plateStep 5 — 65 kg → 25/35/50 (multiples de 5)', () => {
+    // 65×0.4=26, floor(26/5)×5=25
+    // 65×0.6=39, floor(39/5)×5=35
+    // 65×0.8=52, floor(52/5)×5=50
+    expect(computeWarmupSets(65, 5)).toEqual([
+      { weight: 25, reps: 8, rest: 60, percent: 40 },
+      { weight: 35, reps: 5, rest: 60, percent: 60 },
+      { weight: 50, reps: 2, rest: 90, percent: 80 },
+    ]);
+  });
+
+  it('défaut plateStep=2 — comportement inchangé', () => {
+    expect(computeWarmupSets(60)).toEqual([
+      { weight: 24, reps: 8, rest: 60, percent: 40 },
+      { weight: 36, reps: 5, rest: 60, percent: 60 },
+      { weight: 48, reps: 2, rest: 90, percent: 80 },
+    ]);
+  });
 });
 
 describe('shouldShowWarmup', () => {

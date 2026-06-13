@@ -7,12 +7,12 @@ export type WarmupSet = {
   percent: number;
 };
 
-export function computeWarmupSets(workWeight: number): WarmupSet[] {
-  const round2 = (w: number) => Math.floor(w / 2) * 2;
+export function computeWarmupSets(workWeight: number, plateStep: number = 2): WarmupSet[] {
+  const roundPlate = (w: number) => Math.floor(w / plateStep) * plateStep;
   return [
-    { weight: round2(workWeight * 0.4), reps: 8, rest: 60, percent: 40 },
-    { weight: round2(workWeight * 0.6), reps: 5, rest: 60, percent: 60 },
-    { weight: round2(workWeight * 0.8), reps: 2, rest: 90, percent: 80 },
+    { weight: roundPlate(workWeight * 0.4), reps: 8, rest: 60, percent: 40 },
+    { weight: roundPlate(workWeight * 0.6), reps: 5, rest: 60, percent: 60 },
+    { weight: roundPlate(workWeight * 0.8), reps: 2, rest: 90, percent: 80 },
   ];
 }
 
