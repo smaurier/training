@@ -23,7 +23,7 @@ export const PREDEFINED_TAGS: SessionTag[] = [
   { slug: 'douleur_articulaire', label: 'Douleur articulaire',       category: 'physique' },
   { slug: 'manque_sommeil',      label: 'Manque de sommeil',         category: 'physique' },
   { slug: 'pr_inattendu',        label: 'PR inattendu',              category: 'perf'     },
-  { slug: 'en_dessous_attentes', label: 'En dessous de mes attentes',category: 'perf'     },
+  { slug: 'en_dessous_attentes', label: 'En dessous de mes attentes', category: 'perf'     },
   { slug: 'seance_ecourtee',     label: 'Séance écourtée',           category: 'contexte' },
 ];
 
