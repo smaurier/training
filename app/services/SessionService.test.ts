@@ -575,3 +575,59 @@ describe('SessionService.getSessionRPELabel', () => {
     expect(await service.getSessionRPELabel(1)).toBe('Normal');
   });
 });
+
+describe('SessionService.getPreviousSessionSummary', () => {
+  it('retourne null si aucune séance précédente complétée', async () => {
+    const ctx = makeService();
+    const service = ctx.build();
+    const current = await ctx.sessionLogRepo.save({
+      workout_id: 1, started_at: '2026-06-08T10:00:00.000Z',
+      checkin_energy: null, checkin_fatigue: null, checkin_sleep: null, notes: null,
+    });
+    expect(await service.getPreviousSessionSummary(1, current.id)).toBeNull();
+  });
+
+  it('retourne volume + sets de la séance précédente complétée', async () => {
+    const ctx = makeService();
+    const service = ctx.build();
+    const prev = await ctx.sessionLogRepo.save({
+      workout_id: 1, started_at: '2026-06-01T10:00:00.000Z',
+      checkin_energy: null, checkin_fatigue: null, checkin_sleep: null, notes: null,
+    });
+    await ctx.sessionLogRepo.complete(prev.id, '2026-06-01T11:00:00.000Z');
+    await ctx.setLogRepo.save({ session_log_id: prev.id, set_id: 1, exercise_id: 1, reps_done: 5, weight_done: 80, rpe: null, completed_at: '2026-06-01T10:30:00.000Z' });
+    await ctx.setLogRepo.save({ session_log_id: prev.id, set_id: 2, exercise_id: 1, reps_done: 8, weight_done: 60, rpe: null, completed_at: '2026-06-01T10:35:00.000Z' });
+    const current = await ctx.sessionLogRepo.save({
+      workout_id: 1, started_at: '2026-06-08T10:00:00.000Z',
+      checkin_energy: null, checkin_fatigue: null, checkin_sleep: null, notes: null,
+    });
+    const result = await service.getPreviousSessionSummary(1, current.id);
+    expect(result).not.toBeNull();
+    expect(result!.sets).toBe(2);
+    expect(result!.volume).toBe(5 * 80 + 8 * 60); // 880
+  });
+
+  it('ignore les séances abandoned et la séance courante', async () => {
+    const ctx = makeService();
+    const service = ctx.build();
+    const abandoned = await ctx.sessionLogRepo.save({
+      workout_id: 1, started_at: '2026-05-25T10:00:00.000Z',
+      checkin_energy: null, checkin_fatigue: null, checkin_sleep: null, notes: null,
+    });
+    await ctx.sessionLogRepo.abandon(abandoned.id, '2026-05-25T10:30:00.000Z');
+    await ctx.setLogRepo.save({ session_log_id: abandoned.id, set_id: 1, exercise_id: 1, reps_done: 5, weight_done: 100, rpe: null, completed_at: '2026-05-25T10:15:00.000Z' });
+    const completed = await ctx.sessionLogRepo.save({
+      workout_id: 1, started_at: '2026-06-01T10:00:00.000Z',
+      checkin_energy: null, checkin_fatigue: null, checkin_sleep: null, notes: null,
+    });
+    await ctx.sessionLogRepo.complete(completed.id, '2026-06-01T11:00:00.000Z');
+    await ctx.setLogRepo.save({ session_log_id: completed.id, set_id: 2, exercise_id: 1, reps_done: 5, weight_done: 80, rpe: null, completed_at: '2026-06-01T10:30:00.000Z' });
+    const current = await ctx.sessionLogRepo.save({
+      workout_id: 1, started_at: '2026-06-08T10:00:00.000Z',
+      checkin_energy: null, checkin_fatigue: null, checkin_sleep: null, notes: null,
+    });
+    const result = await service.getPreviousSessionSummary(1, current.id);
+    expect(result!.volume).toBe(5 * 80); // 400 — not 500 (abandoned ignored)
+    expect(result!.sets).toBe(1);
+  });
+});

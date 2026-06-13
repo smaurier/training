@@ -316,4 +316,18 @@ export class SessionService {
     if (avg < 7.5) return 'Normal';
     return 'Difficile';
   }
+
+  async getPreviousSessionSummary(
+    workoutId: number,
+    currentSessionLogId: number,
+  ): Promise<{ volume: number; sets: number } | null> {
+    const all = await this.sessionLogRepo.findByWorkoutId(workoutId);
+    const prev = all
+      .filter(s => s.status === 'completed' && s.id !== currentSessionLogId)
+      .sort((a, b) => b.started_at.localeCompare(a.started_at))[0] ?? null;
+    if (!prev) return null;
+    const setLogs = await this.setLogRepo.findBySessionLogId(prev.id);
+    const volume = setLogs.reduce((sum, sl) => sum + sl.reps_done * sl.weight_done, 0);
+    return { volume, sets: setLogs.length };
+  }
 }
