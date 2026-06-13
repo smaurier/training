@@ -191,6 +191,7 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
   }, [workoutId]);
 
   const [plateaus, setPlateaus] = useState<PlateauResult[]>([]);
+  const [selectedMood, setSelectedMood] = useState<1 | 2 | 3 | undefined>(undefined);
 
   useEffect(() => {
     if (session.phase !== 'summary' || !session.sessionLogId) return;
@@ -233,6 +234,23 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
       prBadgeTimeout.current = setTimeout(() => setPrBadge(null), 3000);
     }
   }, [session.validateSet, session.currentExercise]);
+
+  const handleMoodSelect = useCallback(async (mood: 1 | 2 | 3) => {
+    setSelectedMood(mood);
+    if (!session.sessionLogId) return;
+    const db = getDb();
+    const service = new SessionService(
+      new SQLiteSessionLogRepository(db),
+      new SQLiteSetLogRepository(db),
+      new SQLitePersonalRecordRepository(db),
+      new SQLiteWorkoutRepository(db),
+      new SQLiteWorkoutExerciseRepository(db),
+      new SQLiteBlockRepository(db),
+      new SQLiteSetRepository(db),
+      new SQLiteExerciseRepository(db),
+    );
+    await service.saveMoodAfter(session.sessionLogId, mood);
+  }, [session.sessionLogId]);
 
   const handlePause = useCallback(async () => {
     try {
@@ -354,6 +372,8 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
             totalVolumeKg={session.totalVolume}
             plateaus={plateaus}
             suggestNextDeload={deloadSuggested && !isDeloadSession}
+            onMoodSelect={handleMoodSelect}
+            selectedMood={selectedMood}
             onClose={handleBack}
           />
         )}

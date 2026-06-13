@@ -15,6 +15,8 @@ interface SummaryPhaseProps {
   totalVolumeKg?: number;
   plateaus?: PlateauResult[];
   suggestNextDeload?: boolean;
+  onMoodSelect?: (mood: 1 | 2 | 3) => void;
+  selectedMood?: 1 | 2 | 3;
   onClose: () => void;
 }
 
@@ -24,7 +26,7 @@ function formatDuration(seconds: number): string {
   return m > 0 ? `${m} min ${s > 0 ? `${s} s` : ''}`.trim() : `${s} s`;
 }
 
-export function SummaryPhase({ progressions, totalSets, durationSeconds, totalVolumeKg, plateaus, suggestNextDeload, onClose }: SummaryPhaseProps) {
+export function SummaryPhase({ progressions, totalSets, durationSeconds, totalVolumeKg, plateaus, suggestNextDeload, onMoodSelect, selectedMood, onClose }: SummaryPhaseProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const { convert, label: unitLabel } = useUnits();
@@ -109,6 +111,34 @@ export function SummaryPhase({ progressions, totalSets, durationSeconds, totalVo
         </View>
       )}
 
+      <View style={[styles.moodSection, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+        <Text style={[styles.sectionTitle, { color: colors.text }]}>Comment tu te sens ?</Text>
+        <View style={styles.moodRow}>
+          {([
+            { mood: 1 as const, emoji: '😓', label: 'Épuisé' },
+            { mood: 2 as const, emoji: '😌', label: 'Bien' },
+            { mood: 3 as const, emoji: '⚡', label: 'En forme' },
+          ] as const).map(({ mood, emoji, label }) => (
+            <PressableA11y
+              key={mood}
+              accessibilityLabel={`Humeur : ${label}`}
+              accessibilityState={{ selected: selectedMood === mood }}
+              onPress={() => onMoodSelect?.(mood)}
+              style={[
+                styles.moodChip,
+                { borderColor: colors.border },
+                selectedMood === mood
+                  ? { backgroundColor: colors.primary }
+                  : { backgroundColor: colors.surface },
+              ]}
+            >
+              <Text style={styles.moodEmoji}>{emoji}</Text>
+              <Text style={[styles.moodLabel, { color: selectedMood === mood ? '#fff' : colors.text }]}>{label}</Text>
+            </PressableA11y>
+          ))}
+        </View>
+      </View>
+
       <PressableA11y
         accessibilityLabel="Retour au programme"
         onPress={onClose}
@@ -147,6 +177,11 @@ const styles = StyleSheet.create({
   plateauHint: { fontSize: 13, fontStyle: 'italic', marginTop: 2 },
   deloadHintSection: { borderWidth: 1, borderRadius: Radius.sm, padding: 16, gap: 8 },
   deloadHintBody: { fontSize: 13, lineHeight: 18 },
+  moodSection: { borderWidth: 1, borderRadius: Radius.sm, padding: 16, gap: 12 },
+  moodRow: { flexDirection: 'row', gap: 8 },
+  moodChip: { flex: 1, alignItems: 'center', borderWidth: 1, borderRadius: Radius.sm, paddingVertical: 12, gap: 4 },
+  moodEmoji: { fontSize: 22 },
+  moodLabel: { fontSize: 12, fontWeight: '600' },
   closeBtn: { paddingVertical: 16, borderRadius: Radius.sm, alignItems: 'center', marginTop: 8 },
   closeBtnText: { color: '#fff', fontSize: 17, fontWeight: '600' },
 });
