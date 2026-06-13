@@ -188,7 +188,7 @@ export class SessionService {
     };
   }
 
-  async calculateProgressions(sessionLogId: number): Promise<ProgressionResult[]> {
+  async calculateProgressions(sessionLogId: number, plateStep: number = 2): Promise<ProgressionResult[]> {
     const sessionLog = await this.sessionLogRepo.findById(sessionLogId);
     if (!sessionLog) throw new Error(`SessionLog ${sessionLogId} introuvable`);
 
@@ -251,7 +251,7 @@ export class SessionService {
           sessionLogId, sessionLog.workout_id, travailSets
         );
         if (prevFailed) {
-          const newWeight = applyDeload(oldWeight);
+          const newWeight = applyDeload(oldWeight, plateStep);
           for (const set of travailSets) {
             await this.setRepo.update(set.id, {
               reps_min: set.reps_min,

@@ -321,6 +321,29 @@ describe('SessionService.calculateProgressions', () => {
     expect(updatedSet?.weight).toBe(72);
   });
 
+  it('utilise le plateStep fourni pour le décharge auto — plateStep=5 → 70 kg', async () => {
+    const ctx = makeService();
+    const service = ctx.build();
+    const { exercise, workout, set } = await seedWorkoutWithExercise(ctx, 1);
+    // set.weight = 80, reps_min = 6
+
+    // Session 1 : échec significatif (reps_done=4, reps_min=6, 4 ≤ 6-2)
+    const session1 = await service.startSession(workout.id, { checkin_energy: 3, checkin_fatigue: 1, checkin_sleep: 3 });
+    await service.logSet(session1.id, set.id, exercise.id, { repsDone: 4, weightDone: 80, rpe: 9 });
+    await service.completeSession(session1.id);
+
+    // Session 2 : échec significatif → décharge avec plateStep=5
+    const session2 = await service.startSession(workout.id, { checkin_energy: 3, checkin_fatigue: 1, checkin_sleep: 3 });
+    await service.logSet(session2.id, set.id, exercise.id, { repsDone: 4, weightDone: 80, rpe: 9 });
+    await service.completeSession(session2.id);
+
+    const progressions = await service.calculateProgressions(session2.id, 5);
+    // applyDeload(80, 5) = floor(72/5)*5 = 14*5 = 70
+    expect(progressions[0].newWeight).toBe(70);
+    const updatedSet = await ctx.setRepo.findById(set.id);
+    expect(updatedSet?.weight).toBe(70);
+  });
+
   it('ignore les exercices sans bloc Travail (cardio/durée)', async () => {
     const ctx = makeService();
     const service = ctx.build();
