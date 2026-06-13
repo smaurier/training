@@ -31,6 +31,7 @@ import { SQLiteExerciseRepository } from '@/repositories/SQLiteExerciseRepositor
 import { PlateauDetectionService } from '@/services/PlateauDetectionService';
 import type { PlateauResult } from '@/services/PlateauDetectionService';
 import { DeloadService, applyDeloadToExercises } from '@/services/DeloadService';
+import { getPlateStep } from '@/services/settingsUtils';
 import { SQLiteSettingsRepository } from '@/repositories/SQLiteSettingsRepository';
 import { getDb } from '@/db';
 import { shouldWarnAbandon } from '@/services/sessionUtils';
@@ -130,13 +131,19 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
 
   const [deloadSuggested, setDeloadSuggested] = useState(false);
   const [isDeloadSession, setIsDeloadSession] = useState(false);
+  const [plateStep, setPlateStep] = useState<number>(2);
+
+  useEffect(() => {
+    const repo = new SQLiteSettingsRepository(getDb());
+    repo.get('plate_step').then(v => setPlateStep(getPlateStep(v))).catch(console.error);
+  }, []);
 
   const resolvedExercises = useMemo(() => exercises.map(resolveWeights), [exercises]);
   const deloadedExercises = useMemo(
-    () => isDeloadSession ? applyDeloadToExercises(resolvedExercises) : resolvedExercises,
-    [isDeloadSession, resolvedExercises],
+    () => isDeloadSession ? applyDeloadToExercises(resolvedExercises, plateStep) : resolvedExercises,
+    [isDeloadSession, resolvedExercises, plateStep],
   );
-  const session = useSession(workoutId, deloadedExercises, initialSession);
+  const session = useSession(workoutId, deloadedExercises, initialSession, plateStep);
   const timer = useTimer(120);
 
   const needsStartingWeight = useMemo(() => {
@@ -309,6 +316,7 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
           <WarmupPhase
             exerciseName={session.currentExercise.exercise.name}
             workWeight={session.warmupWorkWeight}
+            plateStep={plateStep}
             onStart={session.confirmWarmup}
           />
         )}

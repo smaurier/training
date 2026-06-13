@@ -6,7 +6,8 @@ import { ThemeContext } from '@/contexts/ThemeContext';
 import { useUnits } from '@/hooks/useUnits';
 import Colors from '@/constants/Colors';
 import { Radius } from '@/constants/Radius';
-import type { ThemePreference, UnitsPreference } from '@/services/settingsUtils';
+import type { ThemePreference, UnitsPreference, PlateStepValue } from '@/services/settingsUtils';
+import { getPlateStep } from '@/services/settingsUtils';
 import { getDb } from '@/db';
 import { ExportService } from '@/services/ExportService';
 import { SQLiteSettingsRepository } from '@/repositories/SQLiteSettingsRepository';
@@ -21,6 +22,19 @@ const UNITS_OPTIONS: { value: UnitsPreference; label: string }[] = [
   { value: 'system', label: 'Système' },
   { value: 'kg', label: 'kg' },
   { value: 'lbs', label: 'lbs' },
+];
+
+const PLATE_STEP_OPTIONS_KG: { value: PlateStepValue; label: string }[] = [
+  { value: '1', label: '1 kg' },
+  { value: '2', label: '2 kg' },
+  { value: '2.5', label: '2,5 kg' },
+  { value: '5', label: '5 kg' },
+];
+
+const PLATE_STEP_OPTIONS_LBS: { value: PlateStepValue; label: string }[] = [
+  { value: '1.25', label: '2,5 lbs' },
+  { value: '2.5', label: '5 lbs' },
+  { value: '5', label: '10 lbs' },
 ];
 
 function SegmentedControl<T extends string,>({
@@ -86,6 +100,24 @@ export default function ReglagesScreen() {
     await repo.set('deload_weeks', v);
   }, []);
 
+  const [plateStepValue, setPlateStepValue] = useState<PlateStepValue>('2');
+
+  useEffect(() => {
+    const repo = new SQLiteSettingsRepository(getDb());
+    repo.get('plate_step').then(v => {
+      const valid: PlateStepValue[] = ['1', '1.25', '2', '2.5', '5'];
+      if (v && valid.includes(v as PlateStepValue)) {
+        setPlateStepValue(v as PlateStepValue);
+      }
+    }).catch(console.error);
+  }, []);
+
+  const handlePlateStepChange = useCallback(async (v: PlateStepValue) => {
+    setPlateStepValue(v);
+    const repo = new SQLiteSettingsRepository(getDb());
+    await repo.set('plate_step', v);
+  }, []);
+
   const handleExport = useCallback(async () => {
     setIsExporting(true);
     setExportError(null);
@@ -149,6 +181,20 @@ export default function ReglagesScreen() {
           ]}
           selected={deloadWeeksStr}
           onSelect={handleDeloadWeeksChange}
+          colors={colors}
+          isDark={isDark}
+        />
+      </View>
+
+      <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>PROGRESSION</Text>
+      <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+        <Text style={[styles.hint, { color: colors.textSecondary, marginBottom: 8 }]}>
+          Incrément minimal lors des calculs de poids (décharge, échauffement)
+        </Text>
+        <SegmentedControl
+          options={resolvedUnits === 'lbs' ? PLATE_STEP_OPTIONS_LBS : PLATE_STEP_OPTIONS_KG}
+          selected={plateStepValue}
+          onSelect={handlePlateStepChange}
           colors={colors}
           isDark={isDark}
         />
