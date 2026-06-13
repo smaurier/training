@@ -7,6 +7,7 @@ import { IWorkoutExerciseRepository } from '../repositories/IWorkoutExerciseRepo
 import { IBlockRepository } from '../repositories/IBlockRepository';
 import { ISetRepository } from '../repositories/ISetRepository';
 import { IExerciseRepository } from '../repositories/IExerciseRepository';
+import type { SessionTagSlug } from './sessionTagsUtils';
 import {
   calculateProgression,
   applyDeload,
@@ -136,6 +137,14 @@ export class SessionService {
 
   async saveMoodAfter(sessionLogId: number, mood: 1 | 2 | 3): Promise<void> {
     await this.sessionLogRepo.saveMoodAfter(sessionLogId, mood);
+  }
+
+  async saveSessionMeta(
+    sessionLogId: number,
+    tags: SessionTagSlug[],
+    notes: string | null,
+  ): Promise<void> {
+    await this.sessionLogRepo.saveSessionMeta(sessionLogId, tags, notes);
   }
 
   async findAnyPausedSession(): Promise<PausedSessionInfo | null> {

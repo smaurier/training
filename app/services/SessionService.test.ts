@@ -491,3 +491,25 @@ describe('SessionService.saveMoodAfter', () => {
     expect(saved?.mood_after).toBe(3);
   });
 });
+
+describe('SessionService.saveSessionMeta', () => {
+  it('persiste tags sérialisés et notes', async () => {
+    const ctx = makeService();
+    const service = ctx.build();
+    const log = await service.startSession(1, { checkin_energy: null, checkin_fatigue: null, checkin_sleep: null });
+    await service.saveSessionMeta(log.id, ['bonne_seance', 'pr_inattendu'], 'Super séance');
+    const saved = await ctx.sessionLogRepo.findById(log.id);
+    expect(saved?.tags).toBe('bonne_seance,pr_inattendu');
+    expect(saved?.notes).toBe('Super séance');
+  });
+
+  it('accepte tableau vide et notes null', async () => {
+    const ctx = makeService();
+    const service = ctx.build();
+    const log = await service.startSession(1, { checkin_energy: null, checkin_fatigue: null, checkin_sleep: null });
+    await service.saveSessionMeta(log.id, [], null);
+    const saved = await ctx.sessionLogRepo.findById(log.id);
+    expect(saved?.tags).toBeNull();
+    expect(saved?.notes).toBeNull();
+  });
+});
