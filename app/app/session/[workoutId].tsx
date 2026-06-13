@@ -18,7 +18,8 @@ import { useColorScheme } from '@/components/useColorScheme';
 import { resolveWeights } from '@/services/weightRatio';
 import type { SetActual, PausedSessionInfo } from '@/services/SessionService';
 import type { SessionTagSlug } from '@/services/sessionTagsUtils';
-import type { InitialSession } from '@/hooks/useSession';
+import type { InitialSession, SessionPosition } from '@/hooks/useSession';
+import type { WorkoutExerciseDetail } from '@/services/WorkoutExerciseService';
 import { SessionService } from '@/services/SessionService';
 import { SQLiteSessionLogRepository } from '@/repositories/SQLiteSessionLogRepository';
 import { SQLiteSetLogRepository } from '@/repositories/SQLiteSetLogRepository';
@@ -114,6 +115,32 @@ export default function SessionScreen() {
       conflict={mountResult.conflict}
     />
   );
+}
+
+function getSupersetPosition(
+  position: SessionPosition,
+  details: WorkoutExerciseDetail[]
+): { current: number; total: number } | undefined {
+  const groupId = details[position.exerciseIdx]?.superset_group_id;
+  if (groupId == null) return undefined;
+  const group = details
+    .map((d, i) => ({ d, i }))
+    .filter(({ d }) => d.superset_group_id === groupId)
+    .sort((a, b) => a.i - b.i);
+  const pos = group.findIndex(g => g.i === position.exerciseIdx);
+  return { current: pos + 1, total: group.length };
+}
+
+function getSupersetExerciseNames(
+  position: SessionPosition,
+  details: WorkoutExerciseDetail[]
+): string[] | undefined {
+  const groupId = details[position.exerciseIdx]?.superset_group_id;
+  if (groupId == null) return undefined;
+  return details
+    .filter(d => d.superset_group_id === groupId)
+    .sort((a, b) => details.indexOf(a) - details.indexOf(b))
+    .map(d => d.exercise.name);
 }
 
 interface SessionContentProps {
@@ -378,6 +405,8 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
                 canUndo={session.canUndo}
                 lastSetLog={session.lastSetLog}
                 onAdjustWeight={session.setStartingWeight}
+                supersetPosition={getSupersetPosition(session.position, deloadedExercises)}
+                supersetExerciseNames={getSupersetExerciseNames(session.position, deloadedExercises)}
               />
             )}
           </>

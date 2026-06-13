@@ -41,6 +41,8 @@ interface RunningPhaseProps {
   canUndo: boolean;
   lastSetLog?: LastSetLog | null;
   onAdjustWeight?: (kg: number) => Promise<void>;
+  supersetPosition?: { current: number; total: number };
+  supersetExerciseNames?: string[];
 }
 
 function formatLastLog(log: LastSetLog, isCardio: boolean, isDuration: boolean, convert: (kg: number) => string, unitLabel: string): string {
@@ -65,7 +67,7 @@ function formatTime(seconds: number): string {
   return `${m}:${s.toString().padStart(2, '0')}`;
 }
 
-export function RunningPhase({ exercise, block, set, progressLabel, onValidate, onSkip, onSkipExercise, onUndo, canUndo, lastSetLog, onAdjustWeight }: RunningPhaseProps) {
+export function RunningPhase({ exercise, block, set, progressLabel, onValidate, onSkip, onSkipExercise, onUndo, canUndo, lastSetLog, onAdjustWeight, supersetPosition, supersetExerciseNames }: RunningPhaseProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const { convert, label: unitLabel, resolved: unitResolved } = useUnits();
@@ -232,6 +234,13 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
             <View style={styles.blockBadge}>
               <Text style={[styles.blockBadgeText, { color: colors.primary }]}>{block.name.toUpperCase()}</Text>
             </View>
+            {supersetPosition && (
+              <View style={styles.supersetBadge}>
+                <Text style={styles.supersetBadgeText}>
+                  SUPERSET · {supersetPosition.current}/{supersetPosition.total}
+                </Text>
+              </View>
+            )}
             <GestureDetector gesture={undoSwipe}>
               <View
                 style={styles.seriesDots}
@@ -496,14 +505,20 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
             <Text style={[styles.sheetCancelText, { color: colors.text }]}>Passer cette série</Text>
           </PressableA11y>
           <PressableA11y
-            accessibilityLabel="Passer l'exercice entier — toutes les séries restantes"
+            accessibilityLabel={supersetExerciseNames
+              ? `Passer le superset entier : ${supersetExerciseNames.join(', ')}`
+              : "Passer l'exercice entier — toutes les séries restantes"}
             onPress={() => {
               skipExerciseSheetRef.current?.close();
               onSkipExercise();
             }}
             style={[styles.sheetDestructiveBtn, { backgroundColor: '#dc2626' }]}
           >
-            <Text style={styles.sheetBtnText}>Passer l&apos;exercice entier</Text>
+            <Text style={styles.sheetBtnText}>
+              {supersetExerciseNames
+                ? `Passer le superset entier (${supersetExerciseNames.join(' · ')})`
+                : "Passer l’exercice entier"}
+            </Text>
           </PressableA11y>
           <PressableA11y
             accessibilityLabel="Annuler"
@@ -670,4 +685,18 @@ const styles = StyleSheet.create({
   stepperValue: { flex: 1, alignItems: 'center' },
   stepperValueText: { fontSize: 22, fontWeight: '600' },
   adjustSuccessMsg: { fontSize: 13, textAlign: 'center' },
+  supersetBadge: {
+    alignSelf: 'flex-start',
+    marginTop: 2,
+    backgroundColor: '#7c3aed',
+    borderRadius: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+  },
+  supersetBadgeText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#fff',
+    letterSpacing: 0.5,
+  },
 });
