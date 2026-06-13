@@ -12,7 +12,7 @@ export default function ExerciseSearchScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
-  const { exercises, isLoading } = useLoggedExercises();
+  const { exercises, isLoading, error } = useLoggedExercises();
   const [query, setQuery] = useState('');
 
   const filtered = query.trim()
@@ -34,6 +34,12 @@ export default function ExerciseSearchScreen() {
       {isLoading ? (
         <View style={styles.center}>
           <ActivityIndicator color={colors.primary} />
+        </View>
+      ) : error ? (
+        <View style={styles.center}>
+          <Text style={[styles.empty, { color: colors.textSecondary }]}>
+            Impossible de charger les exercices
+          </Text>
         </View>
       ) : filtered.length === 0 ? (
         <View style={styles.center}>

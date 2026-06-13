@@ -20,6 +20,7 @@ export function useLoggedExercises() {
 
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const mountedRef = useRef(true);
   useEffect(() => () => { mountedRef.current = false; }, []);
@@ -27,10 +28,11 @@ export function useLoggedExercises() {
   const refresh = useCallback(async () => {
     try {
       setIsLoading(true);
+      setError(null);
       const result = await service.getLoggedExercises();
       if (mountedRef.current) setExercises(result);
-    } catch {
-      // Fail silently for getLoggedExercises
+    } catch (err) {
+      if (mountedRef.current) setError(err instanceof Error ? err.message : 'Erreur inconnue');
     } finally {
       if (mountedRef.current) setIsLoading(false);
     }
@@ -38,5 +40,5 @@ export function useLoggedExercises() {
 
   useEffect(() => { refresh(); }, [refresh]);
 
-  return { exercises, isLoading, refresh };
+  return { exercises, isLoading, error, refresh };
 }
