@@ -580,15 +580,6 @@ const PPL: { name: string; description: string; workouts: WorkoutSpec[] } = {
           exercise: 'Développé couché barre',
           blocks: [
             {
-              name: 'Échauffement',
-              is_work: false,
-              sets: [
-                barOnly(10, 60),
-                { reps_min: 5, weight: 40, weight_type: 'fixed', rest: 60 },
-                { reps_min: 3, weight: 45, weight_type: 'fixed', rest: 90 },
-              ],
-            },
-            {
               name: 'Travail',
               is_work: true,
               sets: [f(8, 120, 60), f(8, 120, 60), f(8, 120, 60), f(8, 120, 60)],
@@ -766,6 +757,16 @@ export async function seedProgram(db: SQLiteDatabase): Promise<void> {
     );
     programId = lastInsertRowId;
   }
+
+  // Supprimer les blocs Échauffement hardcodés (remplacés par WarmupPhase dynamique)
+  await db.runAsync(
+    `DELETE FROM blocks WHERE name = 'Échauffement'
+     AND workout_exercise_id IN (
+       SELECT id FROM workout_exercises
+       WHERE workout_id IN (SELECT id FROM workouts WHERE program_id = ?)
+     )`,
+    [programId]
+  );
 
   for (let wi = 0; wi < PPL.workouts.length; wi++) {
     const workout = PPL.workouts[wi];
