@@ -172,7 +172,7 @@ export default function WorkoutDetailScreen() {
                     onRemoveBlock={removeBlock}
                     onUnlink={() => unlink(exercise.id)}
                     onLinkToNext={
-                      lastMemberIndex < exercises.length - 1
+                      index === lastMemberIndex && lastMemberIndex < exercises.length - 1
                         ? () => linkToNext(exercise.id, exercises[lastMemberIndex + 1].id)
                         : undefined
                     }
