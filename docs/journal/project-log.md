@@ -4,6 +4,31 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 
 ---
 
+## S37 — 2026-06-13 — Recherche historique exercice
+
+### Livré
+- **ExerciseHistoryService.ts** : `getHistory(exerciseId, limit=10)` — groupe les set_logs par `session_log_id`, tri DESC, `bestSet` = poids max ou reps max (bodyweight), `date` = premier set du groupe. `getLoggedExercises()` — filtre exercices ayant ≥1 log, tri alpha `localeCompare('fr')`. TDD 11 tests (incl. test throw exercice introuvable). Commits `fb443b5`, `db30437`.
+- **useExerciseHistory.ts** + **useLoggedExercises.ts** : hooks fins suivant pattern `useProgression` — `useRef` service stable, `mountedRef` anti-setState après unmount, `useCallback refresh`. Commit `31f8769`.
+- **progression/search.tsx** : écran recherche — `TextInput` autoFocus, `FlatList` exercices loggés filtrés client-side, empty states différenciés ("Aucun exercice loggé" vs "Aucun résultat"), `keyboardShouldPersistTaps="handled"`.
+- **progression/[exerciseId].tsx** : enrichi — sections "ÉVOLUTION 1RM" + "MEILLEURE MARQUE" + "HISTORIQUE PRs" conservées intactes ; sections "DERNIÈRE SÉANCE" (liste sets) + "HISTORIQUE SÉANCES" (sessions, `slice(1)` pour éviter doublon) ajoutées via `useExerciseHistory`. Guard `!histLoading` sur empty state anti-flash. `histError` exposé.
+- **_layout.tsx** : Stack.Screen `progression/search` ajouté.
+- **progression.tsx** : pressable "Rechercher un exercice" inséré après `MuscleGroupCard`, avant `recentPRs`.
+- 437/437 tests, 0 erreurs TypeScript, 0 warnings ESLint. Poussé sur main.
+
+### Décisions
+- **Route `progression/[exerciseId]` déjà existante** — le fichier existait avec 1RM chart + PRs. Implémenteur l'a écrasé → détecté en review → restauré + enrichi (merge des deux features en un écran). Meilleure UX que deux routes séparées.
+- **`recentSessions[0]` = `lastSession`** — la section HISTORIQUE SÉANCES utilise `.slice(1)` pour ne pas dupliquer la dernière séance déjà affichée ci-dessus.
+- **Locale `'fr'` forcée** dans `localeCompare` pour garantir l'ordre des accents (Développé < Squat) indépendamment du device.
+- **Subagent-driven** : 3 tâches, 2 reviewers chacune (spec + qualité) + 1 final reviewer. Tâche 3 : un timeout subagent → exécution directe par le contrôleur pour le merge de `[exerciseId].tsx`.
+
+### Hors scope → backlog
+- Graphe évolution temporelle bestSet par exercice
+- Export historique CSV
+- "Voir plus" si > 10 séances (limite actuelle silencieuse)
+- Error state dans `useLoggedExercises` (silent catch actuel)
+
+---
+
 ## S36 — 2026-06-13 — Volume par groupe musculaire (Stats)
 
 ### Livré
