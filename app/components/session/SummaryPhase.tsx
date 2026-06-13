@@ -17,6 +17,7 @@ interface SummaryPhaseProps {
   totalVolumeKg?: number;
   plateaus?: PlateauResult[];
   rpeLabel?: 'Facile' | 'Normal' | 'Difficile' | null;
+  previousSession?: { volume: number; sets: number } | null;
   suggestNextDeload?: boolean;
   onMoodSelect?: (mood: 1 | 2 | 3) => void;
   selectedMood?: 1 | 2 | 3;
@@ -33,12 +34,21 @@ function formatDuration(seconds: number): string {
   return m > 0 ? `${m} min ${s > 0 ? `${s} s` : ''}`.trim() : `${s} s`;
 }
 
-export function SummaryPhase({ progressions, totalSets, durationSeconds, totalVolumeKg, plateaus, rpeLabel, suggestNextDeload, onMoodSelect, selectedMood, selectedTags = [], onTagToggle, notes = '', onNotesChange, onClose }: SummaryPhaseProps) {
+export function SummaryPhase({ progressions, totalSets, durationSeconds, totalVolumeKg, plateaus, rpeLabel, previousSession, suggestNextDeload, onMoodSelect, selectedMood, selectedTags = [], onTagToggle, notes = '', onNotesChange, onClose }: SummaryPhaseProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const { convert, label: unitLabel } = useUnits();
 
   const progressionCount = progressions.filter(p => p.achieved).length;
+
+  const deltaVolume = previousSession != null && totalVolumeKg != null
+    ? totalVolumeKg - previousSession.volume
+    : null;
+  const deltaSets = previousSession != null
+    ? totalSets - previousSession.sets
+    : null;
+  const showDelta = deltaVolume !== null && deltaSets !== null
+    && !(deltaVolume === 0 && deltaSets === 0);
 
   return (
     <ScrollView contentContainerStyle={[styles.container, { backgroundColor: colors.background }]}>
@@ -67,6 +77,13 @@ export function SummaryPhase({ progressions, totalSets, durationSeconds, totalVo
           <Text style={[styles.volumeValue, { color: colors.text }]}>
             {Math.round(parseFloat(convert(totalVolumeKg))).toLocaleString()} {unitLabel}
           </Text>
+          {showDelta && (
+            <Text style={[styles.volumeDelta, { color: deltaVolume! >= 0 ? colors.primary : colors.textSecondary }]}>
+              {deltaVolume! >= 0 ? '+' : ''}{Math.round(parseFloat(convert(deltaVolume!))).toLocaleString()} {unitLabel}
+              {' · '}
+              {deltaSets! >= 0 ? '+' : ''}{deltaSets} série{Math.abs(deltaSets!) > 1 ? 's' : ''} vs séance préc.
+            </Text>
+          )}
         </View>
       )}
 
@@ -209,6 +226,7 @@ const styles = StyleSheet.create({
   statLabel: { fontSize: 10, fontWeight: '600', letterSpacing: 0.5 },
   volumeCard: { borderWidth: 1, borderRadius: Radius.sm, padding: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   volumeValue: { fontSize: 22, fontWeight: '700' },
+  volumeDelta: { fontSize: 13, marginTop: 4 },
   progressionSection: { borderWidth: 1, borderRadius: Radius.sm, padding: 16, gap: 12 },
   sectionTitle: { fontSize: 15, fontWeight: '600' },
   progressionRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 8, borderBottomWidth: 1 },

@@ -215,6 +215,7 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
 
   const [plateaus, setPlateaus] = useState<PlateauResult[]>([]);
   const [rpeLabel, setRpeLabel] = useState<'Facile' | 'Normal' | 'Difficile' | null>(null);
+  const [prevSummary, setPrevSummary] = useState<{ volume: number; sets: number } | null>(null);
   const [selectedMood, setSelectedMood] = useState<1 | 2 | 3 | undefined>(undefined);
 
   useEffect(() => {
@@ -233,6 +234,14 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
     if (session.phase !== 'summary' || !session.sessionLogId) return;
     makeServiceForCheck().getSessionRPELabel(session.sessionLogId).then(setRpeLabel).catch(console.error);
   }, [session.phase, session.sessionLogId]);
+
+  useEffect(() => {
+    if (session.phase !== 'summary' || !session.sessionLogId) return;
+    makeServiceForCheck()
+      .getPreviousSessionSummary(workoutId, session.sessionLogId)
+      .then(setPrevSummary)
+      .catch(console.error);
+  }, [session.phase, session.sessionLogId, workoutId]);
 
   useEffect(() => {
     if (session.phase !== 'summary' || !session.sessionLogId || !isDeloadSession) return;
@@ -391,6 +400,7 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
             totalVolumeKg={session.totalVolume}
             plateaus={plateaus}
             rpeLabel={rpeLabel}
+            previousSession={prevSummary}
             suggestNextDeload={deloadSuggested && !isDeloadSession}
             onMoodSelect={handleMoodSelect}
             selectedMood={selectedMood}
