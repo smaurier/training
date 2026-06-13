@@ -4,6 +4,26 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 
 ---
 
+## S39 — 2026-06-13 — RPE moyen en SummaryPhase
+
+### Livré
+- **SessionService.getSessionRPELabel(sessionLogId)** : moyenne des `rpe` non-null du `set_logs` via `findBySessionLogId`, mapping < 4.5 → 'Facile', 4.5–7.5 → 'Normal', ≥ 7.5 → 'Difficile', null si aucun set coté. TDD 5 tests. Commit `139c8ed`.
+- **[workoutId].tsx** : state `rpeLabel` + useEffect au passage en phase `summary` (pattern `detectPlateaus`), prop passée à `<SummaryPhase />`. Commit `628bc25`.
+- **SummaryPhase.tsx** : prop `rpeLabel?` + affichage inline dans hero : `"47 min · Effort : Normal"` (caché si null). Commit `628bc25`.
+- 446/446 tests, 0 erreurs TypeScript, 0 warnings ESLint. Subagent-driven, 2 tâches, 2 reviewers chacune + 1 final reviewer.
+
+### Décisions
+- **Agrégation par moyenne** : plus simple que mode ou max, acceptable pour V1. Si utilisateur signale que "Normal" masque un exercice difficile, on pourra passer au mode ou max.
+- **Inline hero** (pas de card dédiée) : données secondaires — `"47 min · Effort : Normal"` sous le titre suffit sans alourdir l'UI.
+- **Null = rien affiché** : si l'utilisateur n'a coté aucun set, pas d'interpolation, pas de valeur par défaut.
+
+### Hors scope → backlog
+- Tests boundary exact (avg=4.5 → 'Normal', avg=7.5 → 'Difficile') — documentaires, implémentation correcte
+- Historique RPE moyen par séance dans l'onglet Stats
+- RPE par exercice (agrégat plus fin)
+
+---
+
 ## S37 — 2026-06-13 — Recherche historique exercice
 
 ### Livré
