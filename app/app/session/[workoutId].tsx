@@ -367,6 +367,7 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
             exerciseNumber={session.position.exerciseIdx + 1}
             totalExercises={exercises.length}
             onContinue={session.confirmTransition}
+            supersetGroup={getSupersetExerciseNames(session.position, deloadedExercises)}
           />
         )}
 

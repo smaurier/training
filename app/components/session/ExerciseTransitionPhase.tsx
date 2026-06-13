@@ -10,6 +10,7 @@ interface ExerciseTransitionPhaseProps {
   exerciseNumber: number;
   totalExercises: number;
   onContinue: () => void;
+  supersetGroup?: string[];
 }
 
 function getTypeColor(type: string, primaryColor: string): string {
@@ -40,6 +41,7 @@ export function ExerciseTransitionPhase({
   exerciseNumber,
   totalExercises,
   onContinue,
+  supersetGroup,
 }: ExerciseTransitionPhaseProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
@@ -69,6 +71,19 @@ export function ExerciseTransitionPhase({
             {workSummary}
           </Text>
         ) : null}
+
+        {supersetGroup && supersetGroup.length > 1 && (
+          <View style={[styles.supersetPreview, { backgroundColor: '#7c3aed20', borderColor: '#7c3aed', borderWidth: 1, borderRadius: 8, padding: 12 }]}>
+            <Text style={[styles.supersetPreviewLabel, { color: '#7c3aed' }]}>
+              {'Tu vas enchaîner :'}
+            </Text>
+            <Text style={[styles.supersetPreviewChain, { color: colors.text }]}>
+              {supersetGroup.join(' → ')}
+              {' · repos après '}
+              {supersetGroup[supersetGroup.length - 1]}
+            </Text>
+          </View>
+        )}
 
         {description ? (
           <>
@@ -125,6 +140,9 @@ const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 22,
   },
+  supersetPreview: { marginTop: 4 },
+  supersetPreviewLabel: { fontSize: 11, fontWeight: '700', letterSpacing: 0.5, marginBottom: 4 },
+  supersetPreviewChain: { fontSize: 14, fontWeight: '500' },
   continueBtn: {
     paddingVertical: 14,
     borderRadius: Radius.sm,
