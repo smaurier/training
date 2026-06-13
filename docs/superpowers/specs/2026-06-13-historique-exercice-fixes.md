@@ -38,7 +38,25 @@ L'écran détail exercice est une page de consultation intentionnelle. Toutes le
 
 Test existant `'respecte la limite — limit=2 retourne max 2 sessions'` reste valide et passe sans modification.
 
-Pas de nouveaux tests : la logique de rendu est purement déclarative (`recentSessions.slice(1)`).
+Nouveau test RED→GREEN à ajouter dans `ExerciseHistoryService.test.ts` :
+
+```typescript
+it('retourne toutes les sessions quand limit omis', async () => {
+  const { service, setLogRepo, exerciseRepo } = makeService();
+  const ex = await exerciseRepo.save(baseExerciseDto);
+  for (let i = 1; i <= 15; i++) {
+    await setLogRepo.save({
+      session_log_id: i, set_id: i, exercise_id: ex.id,
+      reps_done: 5, weight_done: 80, rpe: null,
+      completed_at: `2026-06-${String(i).padStart(2, '0')}T10:00:00.000Z`,
+    });
+  }
+  const result = await service.getHistory(ex.id);
+  expect(result.recentSessions).toHaveLength(15);
+});
+```
+
+Rationale : protège contre une régression silencieuse (quelqu'un remet `limit = 10` par défaut sans comprendre l'intention).
 
 ---
 
