@@ -2,6 +2,8 @@ import type { ISessionLogRepository } from '../repositories/ISessionLogRepositor
 import type { ISetLogRepository } from '../repositories/ISetLogRepository';
 import type { IPersonalRecordRepository } from '../repositories/IPersonalRecordRepository';
 import type { IExerciseRepository } from '../repositories/IExerciseRepository';
+import { computeVolumeByMuscleGroup } from './muscleGroupUtils';
+import type { MacroGroupVolume } from './muscleGroupUtils';
 
 export interface DashboardStats {
   sessionCount: number;
@@ -104,6 +106,20 @@ export class ProgressionService {
       const sessionCount = new Set(weekLogs.map(log => log.session_log_id)).size;
       return { weekLabel: labels[i], volume, sessionCount };
     });
+  }
+
+  async getVolumeByMuscleGroup(now: Date = new Date()): Promise<MacroGroupVolume[]> {
+    const thisMonday = getWeekMonday(now);
+    const earliestMonday = new Date(thisMonday);
+    earliestMonday.setUTCDate(earliestMonday.getUTCDate() - 21);
+
+    const [setLogs, exercises] = await Promise.all([
+      this.setLogRepo.findFromDate(earliestMonday.toISOString()),
+      this.exerciseRepo.findAll(),
+    ]);
+
+    const exerciseMap = new Map(exercises.map(e => [e.id, e]));
+    return computeVolumeByMuscleGroup(setLogs, exerciseMap);
   }
 
   async getRecentPRs(limit: number): Promise<RecentPR[]> {

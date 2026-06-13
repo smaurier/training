@@ -180,4 +180,31 @@ describe('ProgressionService', () => {
       expect(history[0].estimated1RM).toBeLessThan(history[1].estimated1RM);
     });
   });
+
+  describe('ProgressionService.getVolumeByMuscleGroup', () => {
+    it('retourne [] si aucun set_log dans la période', async () => {
+      const { service } = makeService();
+      const result = await service.getVolumeByMuscleGroup(NOW);
+      expect(result).toEqual([]);
+    });
+
+    it('retourne volumes Push et Pull agrégés sur 4 semaines', async () => {
+      const { service, setLogRepo, exerciseRepo } = makeService();
+      const pushEx = await exerciseRepo.save({ ...baseExerciseDto, name: 'Bench', muscle_groups: '["pectoraux"]' });
+      const pullEx = await exerciseRepo.save({ ...baseExerciseDto, name: 'Row', muscle_groups: '["grand dorsal"]' });
+      await setLogRepo.save({
+        session_log_id: 1, set_id: 1, exercise_id: pushEx.id,
+        reps_done: 10, weight_done: 80, rpe: null,
+        completed_at: '2026-05-27T10:00:00.000Z',
+      });
+      await setLogRepo.save({
+        session_log_id: 1, set_id: 2, exercise_id: pullEx.id,
+        reps_done: 10, weight_done: 60, rpe: null,
+        completed_at: '2026-05-27T10:00:00.000Z',
+      });
+      const result = await service.getVolumeByMuscleGroup(NOW);
+      expect(result.find(r => r.category === 'Push')?.volume).toBe(800);
+      expect(result.find(r => r.category === 'Pull')?.volume).toBe(600);
+    });
+  });
 });
