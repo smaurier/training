@@ -14,7 +14,7 @@ export class InMemoryWorkoutExerciseRepository implements IWorkoutExerciseReposi
   }
 
   async save(dto: CreateWorkoutExerciseDto): Promise<WorkoutExercise> {
-    const item: WorkoutExercise = { ...dto, id: this.nextId++ };
+    const item: WorkoutExercise = { ...dto, id: this.nextId++, superset_group_id: null };
     this.items.push(item);
     return item;
   }
@@ -30,5 +30,10 @@ export class InMemoryWorkoutExerciseRepository implements IWorkoutExerciseReposi
     const tmp = a.order_index;
     a.order_index = b.order_index;
     b.order_index = tmp;
+  }
+
+  async updateSuperset(id: number, groupId: number | null): Promise<void> {
+    const item = this.items.find(i => i.id === id);
+    if (item) item.superset_group_id = groupId;
   }
 }

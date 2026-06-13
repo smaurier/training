@@ -48,4 +48,11 @@ export class SQLiteWorkoutExerciseRepository implements IWorkoutExerciseReposito
       );
     });
   }
+
+  async updateSuperset(id: number, groupId: number | null): Promise<void> {
+    await this.db.runAsync(
+      'UPDATE workout_exercises SET superset_group_id = ? WHERE id = ?',
+      [groupId, id]
+    );
+  }
 }
