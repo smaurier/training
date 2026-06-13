@@ -1,4 +1,4 @@
-import { resolveTheme, resolveUnits, convertWeight, lbsToKg } from './settingsUtils';
+import { resolveTheme, resolveUnits, convertWeight, lbsToKg, getPlateStep } from './settingsUtils';
 
 describe('resolveTheme', () => {
   it('system + OS dark → dark', () => {
@@ -61,4 +61,15 @@ describe('lbsToKg', () => {
   it('0 → 0', () => {
     expect(lbsToKg(0)).toBe(0);
   });
+});
+
+describe('getPlateStep', () => {
+  it('null → 2 (défaut)', () => expect(getPlateStep(null)).toBe(2));
+  it("'2' → 2", () => expect(getPlateStep('2')).toBe(2));
+  it("'1' → 1", () => expect(getPlateStep('1')).toBe(1));
+  it("'1.25' → 1.25", () => expect(getPlateStep('1.25')).toBe(1.25));
+  it("'2.5' → 2.5", () => expect(getPlateStep('2.5')).toBe(2.5));
+  it("'5' → 5", () => expect(getPlateStep('5')).toBe(5));
+  it("valeur invalide → 2", () => expect(getPlateStep('invalid')).toBe(2));
+  it("'3' (hors liste) → 2", () => expect(getPlateStep('3')).toBe(2));
 });

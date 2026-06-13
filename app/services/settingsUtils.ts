@@ -29,3 +29,11 @@ export function convertWeight(kg: number, unit: 'kg' | 'lbs'): string {
 export function lbsToKg(lbs: number): number {
   return lbs / 2.20462;
 }
+
+const VALID_PLATE_STEPS = [1, 1.25, 2, 2.5, 5] as const;
+export type PlateStepValue = '1' | '1.25' | '2' | '2.5' | '5';
+
+export function getPlateStep(stored: string | null): number {
+  const n = parseFloat(stored ?? '');
+  return (VALID_PLATE_STEPS as readonly number[]).includes(n) ? n : 2;
+}
