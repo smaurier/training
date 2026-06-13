@@ -7,7 +7,6 @@ import { useUnits } from '@/hooks/useUnits';
 import Colors from '@/constants/Colors';
 import { Radius } from '@/constants/Radius';
 import type { ThemePreference, UnitsPreference, PlateStepValue } from '@/services/settingsUtils';
-import { getPlateStep } from '@/services/settingsUtils';
 import { getDb } from '@/db';
 import { ExportService } from '@/services/ExportService';
 import { SQLiteSettingsRepository } from '@/repositories/SQLiteSettingsRepository';
@@ -171,7 +170,7 @@ export default function ReglagesScreen() {
       <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>DÉCHARGE AUTOMATIQUE</Text>
       <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
         <Text style={[styles.hint, { color: colors.textSecondary, marginBottom: 8 }]}>
-          Semaines d'entraînement avant de suggérer une semaine de décharge
+          {"Semaines d'entraînement avant de suggérer une semaine de décharge"}
         </Text>
         <SegmentedControl
           options={[

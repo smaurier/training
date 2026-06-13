@@ -111,7 +111,7 @@ export function CheckInPhase({ onStart, exercises, deloadSuggested, onDeloadAppl
           </Text>
           {!deloadAccepted && (
             <Text style={[styles.deloadBody, { color: colors.textSecondary }]}>
-              Après plusieurs semaines d'entraînement, une semaine à charge réduite (-10%) permet aux muscles et tendons de récupérer et de repartir plus forts.
+              {"Après plusieurs semaines d'entraînement, une semaine à charge réduite (-10%) permet aux muscles et tendons de récupérer et de repartir plus forts."}
             </Text>
           )}
           {!deloadAccepted && (

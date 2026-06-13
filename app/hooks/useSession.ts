@@ -216,7 +216,7 @@ export function useSession(
       setError(e instanceof Error ? e.message : 'Erreur validation série');
       return false;
     }
-  }, [service, sessionLogId, currentSet, currentExercise, position, workoutDetails]);
+  }, [service, sessionLogId, currentSet, currentExercise, position, workoutDetails, plateStep]);
 
   const confirmRest = useCallback(() => {
     setPhase(pendingPhase);
@@ -255,7 +255,7 @@ export function useSession(
     } else {
       setPosition(next);
     }
-  }, [service, sessionLogId, position, workoutDetails]);
+  }, [service, sessionLogId, position, workoutDetails, plateStep]);
 
   const undoLastSet = useCallback(async () => {
     if (!sessionLogId || positionHistory.current.length === 0) return;
@@ -292,7 +292,7 @@ export function useSession(
       setPosition({ exerciseIdx: nextExerciseIdx, blockIdx: 0, setIdx: 0 });
       setPhase('exercise_transition');
     }
-  }, [service, sessionLogId, position.exerciseIdx, workoutDetails.length]);
+  }, [service, sessionLogId, position.exerciseIdx, workoutDetails.length, plateStep]);
 
   const setStartingWeight = useCallback(async (weight: number) => {
     if (!currentExercise) return;
