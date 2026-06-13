@@ -4,6 +4,7 @@ import { useRouter, useFocusEffect } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
 import { useHistory } from '@/hooks/useHistory';
 import { useProgression } from '@/hooks/useProgression';
+import { useGoals } from '@/hooks/useGoals';
 import { SessionCard } from '@/components/history/SessionCard';
 import { VolumeBarChart } from '@/components/progression/VolumeBarChart';
 import { Exercise1RMCard } from '@/components/progression/Exercise1RMCard';
@@ -20,6 +21,7 @@ export default function ProgressionScreen() {
   const { sections, isLoading: histLoading, error: histError, refresh: refreshHist } = useHistory();
   const { stats, volumeByWeek, recentPRs, exercise1RMList, volumeByMuscleGroup, monthlyPresences, isLoading: statsLoading, error: statsError, refresh: refreshStats } = useProgression();
   const router = useRouter();
+  const { goals, refresh: refreshGoals } = useGoals();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
 
@@ -34,7 +36,8 @@ export default function ProgressionScreen() {
       }
       refreshHist();
       refreshStats();
-    }, [refreshHist, refreshStats])
+      refreshGoals();
+    }, [refreshHist, refreshStats, refreshGoals])
   );
 
   const segmentControl = (
@@ -165,6 +168,28 @@ export default function ProgressionScreen() {
 
         <MuscleGroupCard data={volumeByMuscleGroup} />
 
+        {goals.length > 0 && (
+          <View style={[styles.card, { backgroundColor: colors.surface }]}>
+            <Text style={[styles.cardLabel, { color: colors.textSecondary }]}>OBJECTIFS</Text>
+            {goals.map(({ goal, exerciseName }, i) => (
+              <PressableA11y
+                key={goal.id}
+                accessibilityLabel={`Objectif ${exerciseName} : ${goal.target_weight} kg${goal.achieved_at ? ', atteint' : ''}`}
+                onPress={() => router.push({
+                  pathname: '/progression/[exerciseId]' as any,
+                  params: { exerciseId: String(goal.exercise_id), exerciseName },
+                })}
+                style={[styles.goalRow, i > 0 && { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: colors.border }]}
+              >
+                <Text style={[styles.goalRowName, { color: colors.text }]}>{exerciseName}</Text>
+                <Text style={[styles.goalRowTarget, { color: goal.achieved_at ? colors.primary : colors.textSecondary }]}>
+                  {goal.achieved_at ? `✦ ${goal.target_weight} kg atteint` : `→ ${goal.target_weight} kg`}
+                </Text>
+              </PressableA11y>
+            ))}
+          </View>
+        )}
+
         <PressableA11y
           accessibilityLabel="Rechercher un exercice"
           onPress={() => router.push('/progression/search' as any)}
@@ -252,4 +277,7 @@ const styles = StyleSheet.create({
   searchEntry: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderRadius: Radius.sm, paddingHorizontal: 14, paddingVertical: 12 },
   searchEntryText: { fontSize: 14 },
   searchEntryChevron: { fontSize: 18 },
+  goalRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 10 },
+  goalRowName: { fontSize: 14, fontWeight: '500', flex: 1 },
+  goalRowTarget: { fontSize: 13 },
 });
