@@ -4,6 +4,32 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 
 ---
 
+## S35 — 2026-06-13 — Pack B : plate_step configurable (v1.8.1)
+
+### Livré
+- **Pack A** (rappel, livré v1.8.0) : annuler série (swipe dots), humeur après séance (mood_after DB + SummaryPhase chips 😓/😌/⚡), micro-copy (10 strings auditées).
+- **T1 settingsUtils.ts** : `getPlateStep(stored: string | null): number` — validation liste blanche `[1, 1.25, 2, 2.5, 5]`, défaut 2. `PlateStepValue` type union. TDD 8 tests. Commit `e0040d8`.
+- **T2 progression.ts** : `applyDeload(weight, plateStep = 2)` — param optionnel, rétrocompat totale. TDD 4 nouveaux tests. Commit `6e52277`.
+- **T3 warmup.ts** : `computeWarmupSets(workWeight, plateStep = 2)` — `round2` renommé `roundPlate`, paramétrique. TDD 3 nouveaux tests. Commit `ebb05ab`.
+- **T4 DeloadService.ts** : `applyDeloadToExercises(exercises, plateStep = 2)` — passe plateStep à `applyDeload`. TDD 1 nouveau test. Commit `75e4f1f`.
+- **T5 SessionService.ts** : `calculateProgressions(sessionLogId, plateStep = 2)` — passe plateStep à `applyDeload` dans la branche décharge. TDD 1 nouveau test. Commit `bb0f0ef`.
+- **T6 WarmupPhase.tsx + useSession.ts** : prop `plateStep?: number` (défaut 2), 4e param useSession, 3 appels calculateProgressions mis à jour. Commit `b284392`.
+- **T7 reglages.tsx + [workoutId].tsx** : section PROGRESSION entre DÉCHARGE AUTOMATIQUE et DONNÉES. `SegmentedControl` options kg (1/2/2.5/5) ou lbs (2.5/5/10 → stockés 1.25/2.5/5 kg). State `plateStep` lu au mount depuis settings KV, passé à useSession/WarmupPhase/applyDeloadToExercises. Commit `ade9102`.
+- 402/402 tests, 0 erreurs TypeScript. **v1.8.1**.
+
+### Décisions
+- **lbs mapping** : 2.5 lbs→1.25 kg, 5 lbs→2.5 kg, 10 lbs→5 kg. Approximation <5% (pas de conversion exacte) — sans impact pratique pour des arrondis de rondelles. Valeur toujours stockée en kg.
+- **Défaut 2 partout** : rétrocompat totale, tous tests existants passent inchangés.
+- **Options kg affichées** : 1/2/2.5/5 (exclut 1.25 kg car pas standard en salle standard).
+- **Subagent-driven** pour T1-T2, puis exécution directe pour T3-T7 (contexte déjà chargé, économie de tokens).
+
+### Hors scope → backlog
+- Conversion dynamique si changement unités en cours de séance
+- plate_step différent par exercice
+- Micro-rondelles lbs (1.25 lbs)
+
+---
+
 ## S34 — 2026-06-13 — Échauffement auto
 
 ### Livré
