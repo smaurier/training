@@ -73,7 +73,7 @@ export default function ExerciseProgressionScreen() {
     });
   }, [exerciseId]);
 
-  const { history: exerciseHistory, isLoading: histLoading } = useExerciseHistory(Number(exerciseId));
+  const { history: exerciseHistory, isLoading: histLoading, error: histError } = useExerciseHistory(Number(exerciseId));
 
   if (isLoading) {
     return (
@@ -155,13 +155,21 @@ export default function ExerciseProgressionScreen() {
         </View>
       )}
 
+      {!histLoading && histError && (
+        <View style={[styles.section, { backgroundColor: colors.surface }]}>
+          <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
+            Impossible de charger l'historique
+          </Text>
+        </View>
+      )}
+
       {!histLoading && exerciseHistory?.lastSession && (
         <View style={[styles.section, { backgroundColor: colors.surface }]}>
           <Text style={[styles.sectionLabel, { color: colors.textSecondary }]}>
             DERNIÈRE SÉANCE — {formatDateLong(exerciseHistory.lastSession.date)}
           </Text>
           {exerciseHistory.lastSession.sets.map((s, i) => (
-            <Text key={i} style={[styles.setRow, { color: colors.text }]}>
+            <Text key={`${s.weight}-${s.reps}-${i}`} style={[styles.setRow, { color: colors.text }]}>
               · {s.weight > 0 ? `${convert(s.weight)} ${unitLabel}` : 'Poids de corps'} × {s.reps} reps
             </Text>
           ))}
@@ -171,7 +179,7 @@ export default function ExerciseProgressionScreen() {
       {!histLoading && exerciseHistory && exerciseHistory.recentSessions.length > 1 && (
         <View style={[styles.section, { backgroundColor: colors.surface }]}>
           <Text style={[styles.sectionLabel, { color: colors.textSecondary }]}>HISTORIQUE SÉANCES</Text>
-          {exerciseHistory.recentSessions.map((session: ExerciseSession, i) => (
+          {exerciseHistory.recentSessions.slice(1).map((session: ExerciseSession, i) => (
             <View
               key={session.sessionLogId}
               style={[
@@ -192,7 +200,7 @@ export default function ExerciseProgressionScreen() {
         </View>
       )}
 
-      {history.length === 0 && !bestPR && (
+      {history.length === 0 && !bestPR && !histLoading && (
         <View style={styles.empty}>
           <Text style={[styles.emptyText, { color: colors.textSecondary }]}>Aucune donnée pour cet exercice</Text>
         </View>
