@@ -153,6 +153,35 @@ export class WorkoutExerciseService {
     await this.setRepo.swap(siblings[idx].id, siblings[neighborIdx].id);
   }
 
+  async linkToNext(aId: number, bId: number): Promise<void> {
+    const a = await this.weRepo.findById(aId);
+    const b = await this.weRepo.findById(bId);
+    if (!a || !b) throw new Error(`linkToNext: workout_exercise introuvable`);
+
+    let newGroupId: number;
+    if (b.superset_group_id != null) {
+      newGroupId = b.superset_group_id;
+    } else if (a.superset_group_id != null) {
+      newGroupId = a.superset_group_id;
+    } else {
+      const all = await this.weRepo.findByWorkoutId(a.workout_id);
+      const max = Math.max(0, ...all.map(e => e.superset_group_id ?? 0));
+      newGroupId = max + 1;
+    }
+
+    await this.weRepo.updateSuperset(aId, newGroupId);
+    await this.weRepo.updateSuperset(bId, newGroupId);
+  }
+
+  async unlink(workoutExerciseId: number): Promise<void> {
+    const we = await this.weRepo.findById(workoutExerciseId);
+    if (!we || we.superset_group_id == null) return;
+    const groupId = we.superset_group_id;
+    const all = await this.weRepo.findByWorkoutId(we.workout_id);
+    const members = all.filter(e => e.superset_group_id === groupId);
+    await Promise.all(members.map(m => this.weRepo.updateSuperset(m.id, null)));
+  }
+
   private async loadDetail(we: WorkoutExercise, exercise: Exercise): Promise<WorkoutExerciseDetail> {
     const blocks = await this.blockRepo.findByWorkoutExerciseId(we.id);
     const blocksWithSets: BlockWithSets[] = await Promise.all(

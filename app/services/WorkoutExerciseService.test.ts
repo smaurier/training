@@ -287,3 +287,61 @@ describe('WorkoutExerciseService', () => {
     });
   });
 });
+
+describe('WorkoutExerciseService — supersets', () => {
+  async function seedTwo() {
+    const { service, exerciseRepo } = makeService();
+    const exA = await seedExercise(exerciseRepo);
+    const exB = await exerciseRepo.save({ ...exA, name: 'Triceps' });
+    const weA = await service.addToWorkout(1, exA.id);
+    const weB = await service.addToWorkout(1, exB.id);
+    return { service, weA, weB };
+  }
+
+  describe('linkToNext', () => {
+    it('assigne le même groupId non-null aux deux exercices', async () => {
+      const { service, weA, weB } = await seedTwo();
+      await service.linkToNext(weA.id, weB.id);
+      const details = await service.getWithDetails(1);
+      expect(details[0].superset_group_id).not.toBeNull();
+      expect(details[0].superset_group_id).toBe(details[1].superset_group_id);
+    });
+
+    it('ajoute un troisième exercice au groupe existant de B', async () => {
+      const { service, exerciseRepo } = makeService();
+      const exA = await seedExercise(exerciseRepo);
+      const exB = await exerciseRepo.save({ ...exA, name: 'B' });
+      const exC = await exerciseRepo.save({ ...exA, name: 'C' });
+      const weA = await service.addToWorkout(1, exA.id);
+      const weB = await service.addToWorkout(1, exB.id);
+      const weC = await service.addToWorkout(1, exC.id);
+      // B+C déjà dans le même groupe
+      await service.linkToNext(weB.id, weC.id);
+      // On lie A au groupe de B
+      await service.linkToNext(weA.id, weB.id);
+      const details = await service.getWithDetails(1);
+      const gids = details.map(d => d.superset_group_id);
+      expect(gids[0]).not.toBeNull();
+      expect(gids[0]).toBe(gids[1]);
+      expect(gids[1]).toBe(gids[2]);
+    });
+  });
+
+  describe('unlink', () => {
+    it('dissout tout le groupe — tous les membres repassent à null', async () => {
+      const { service, weA, weB } = await seedTwo();
+      await service.linkToNext(weA.id, weB.id);
+      await service.unlink(weA.id);
+      const details = await service.getWithDetails(1);
+      expect(details[0].superset_group_id).toBeNull();
+      expect(details[1].superset_group_id).toBeNull();
+    });
+
+    it('no-op sur un exercice standalone', async () => {
+      const { service, weA } = await seedTwo();
+      await expect(service.unlink(weA.id)).resolves.not.toThrow();
+      const details = await service.getWithDetails(1);
+      expect(details[0].superset_group_id).toBeNull();
+    });
+  });
+});
