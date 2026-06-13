@@ -4,6 +4,25 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 
 ---
 
+## S40 — 2026-06-13 — Historique exercice : voir tout + error state
+
+### Livré
+- **ExerciseHistoryService.getHistory** : signature `(exerciseId, limit = 10)` → `(exerciseId, limit?: number)`. Sans limit → retourne toutes les séances. Avec limit → comportement actuel préservé. TDD RED/GREEN, test existant `limit=2` non touché, nouveau test 15 sessions. Commit `b31de5d`.
+- **useLoggedExercises** : error state ajouté (`error: string | null`). Catch block expose l'erreur au lieu de la swallower. `setError(null)` au début de chaque refresh. Exposé dans le return. Commit `82f6965`.
+- **search.tsx** : affiche "Impossible de charger les exercices" si `error` truthy (priorité sur état vide). "Aucun exercice loggé" et "Aucun résultat" inchangés. Commit `82f6965`.
+- 447/447 tests, 0 erreurs TypeScript. Subagent-driven, 2 tâches, 2 reviewers chacune + 1 final reviewer.
+
+### Décisions
+- **Supprimer le cap plutôt qu'ajouter "Voir plus"** : l'écran détail exercice est une page de consultation intentionnelle — cacher des données derrière un tap est du paternalisme UX. Afficher tout dès le premier coup d'œil. Moins de code (pas d'état `expanded`), plus honnête.
+- **limit?: number plutôt que supprimer le paramètre** : rétrocompatibilité avec le test `limit=2` existant, et la signature reste utile pour d'éventuels appels ciblés futurs.
+- **Pas de test pour error state hook** : comportement observable en UI, pattern standard déjà couvert par `useExerciseHistory` (même implémentation).
+
+### Hors scope → backlog
+- Historique cardio (km/durée loggés en DB, pas affichés)
+- Temps moyen par séance (ended_at - started_at, jamais affiché)
+
+---
+
 ## S39 — 2026-06-13 — RPE moyen en SummaryPhase
 
 ### Livré
