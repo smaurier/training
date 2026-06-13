@@ -343,7 +343,36 @@ Le group container violet (bordure `#7c3aed`) entoure les cards du même groupe 
 
 Passe `onLinkToNext={() => linkToNext(item.id, exercises[index+1].id)}` et `onUnlink={() => unlink(item.id)}` à chaque `WorkoutExerciseCard`. `linkToNext` dans le hook a la même signature `(aId: number, bId: number)` que le service.
 
-Groupe visuellement les cards du même `superset_group_id` avec un `View` conteneur à bordure violette.
+**Rendu groupé :** Transformer `exercises: WorkoutExerciseDetail[]` en `renderItems` avant rendu :
+
+```typescript
+type RenderItem =
+  | { type: 'standalone'; exercise: WorkoutExerciseDetail; index: number }
+  | { type: 'superset'; members: { exercise: WorkoutExerciseDetail; index: number }[] };
+
+function buildRenderItems(exercises: WorkoutExerciseDetail[]): RenderItem[] {
+  const items: RenderItem[] = [];
+  let i = 0;
+  while (i < exercises.length) {
+    const ex = exercises[i];
+    const groupId = ex.superset_group_id;
+    if (groupId != null) {
+      const members: { exercise: WorkoutExerciseDetail; index: number }[] = [];
+      while (i < exercises.length && exercises[i].superset_group_id === groupId) {
+        members.push({ exercise: exercises[i], index: i });
+        i++;
+      }
+      items.push({ type: 'superset', members });
+    } else {
+      items.push({ type: 'standalone', exercise: ex, index: i });
+      i++;
+    }
+  }
+  return items;
+}
+```
+
+`FlatList` rend les deux cas. Les items `superset` sont enveloppés dans un `View` à bordure `#7c3aed`.
 
 ### `BottomSheet skip` dans `RunningPhase.tsx`
 
@@ -402,6 +431,7 @@ Calculé depuis la prop `supersetPosition` et les noms des exercices du groupe.
 
 ## Hors scope V1
 
+- **`skipSet` en superset :** Si l'utilisateur skip une série au milieu d'un round (ex : skip B1), `advancePosition` continue normalement vers C1. Désalignement silencieux accepté en V1 (A fait set 1, B saute set 1, C fait set 1). Pas de crash, comportement documenté.
 - Warmup par exercice dans un superset (le warmup ne s'applique qu'au premier exercice du groupe)
 - Superset avec exercices de types différents (cardio + musculation)
 - Visualisation superset dans SummaryPhase
