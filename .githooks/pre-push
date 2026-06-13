@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Vérifie lint + tests avant chaque push (miroir CI).
+# Activé automatiquement si core.hooksPath = .githooks
+
+set -e
+
+echo "→ ESLint..."
+cd app && npx eslint . --ext .ts,.tsx --max-warnings 0
+
+echo "→ Tests..."
+npx jest --no-coverage
+
+echo "✓ Lint + tests OK — push autorisé"
