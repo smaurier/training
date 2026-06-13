@@ -5,6 +5,72 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.7.0] — 2026-06-13
+
+bb62981 docs(journal): S34 échauffement auto — decisions + livraisons
+24cf549 fix(warmup): warmupWorkWeight depuis useSession + tests flow warmup
+ae1fb03 feat(warmup): seeds — supprimer bloc Échauffement hardcodé bench + DELETE cleanup
+9097c4e feat(warmup): [workoutId].tsx — render WarmupPhase entre transition et travail
+cd3a8dc fix(warmup): confirmTransition — guard phase + commentaire fallback
+2f1f05d feat(warmup): useSession — phase 'warmup' + confirmWarmup + confirmTransition check
+ae9a97b fix(warmup): WarmupPhase — clé stable + style setRowBorder extrait
+cb3ffbc feat(warmup): WarmupPhase — écran échauffement dédié
+10bbcee feat(warmup): computeWarmupSets + shouldShowWarmup — TDD 11 tests
+dd278f3 docs(plan): échauffement auto — 5 tasks, TDD, WarmupPhase, useSession, seeds cleanup
+953735b docs(spec): échauffement auto — phase dédiée, protocole 3 séries 40/60/80%
+63951c5 docs(journal): S33 — décharge automatique
+ec0b5d5 fix(deload): fallback global findAll + guard bar type + copy + reglages guard
+f388216 feat(reglages): config décharge automatique — segmented control 4/6/8 semaines
+9629443 feat(session): intégrer DeloadService — isDeloadSession + poids déchargés + record + bannière
+aa66b6f feat(SummaryPhase): card anticipation décharge — suggestion prochaine séance
+e42a675 feat(CheckInPhase): card décharge — suggestion + appliquer/passer
+1c11d0b fix(deload): tests applyDeloadToExercises + date comparison + MS_PER_DAY constant
+60689fc feat(deload): DeloadService TDD — shouldSuggestDeload + recordDeload + applyDeloadToExercises
+bf7229f docs(plan): décharge automatique — 5 tâches TDD + intégration
+7391b31 docs(spec): clarifier CheckInPhase callback onDeloadApplied — signature onStart inchangée
+791cbd1 docs(spec): décharge automatique — trigger calendaire + flow UX + architecture
+41c6a55 docs: journal S32 — détection plateau
+5717836 fix(session): gérer erreur detectPlateaus avec .catch
+b206347 feat(session): détecter et afficher plateaux en SummaryPhase
+6449cce feat(SummaryPhase): card plateau — même charge depuis 3 séances
+36d92bc fix(plateau): sessionsCount from map size, add exerciseId assertion
+b0371da feat(plateau): PlateauDetectionService TDD — détecte même poids × 3 séances
+282901f docs: plan implémentation détection plateau — 3 tasks
+ecad035 docs: spec détection plateau — PlateauDetectionService + SummaryPhase
+3ddede6 docs(philosophie): design doc + CLAUDE.md — entraînement sérieux sans mécaniques toxiques
+0e745a7 docs: journal S31 — double progression + suppression reps_max
+b4a2736 fix(UI): supprimer reps_max — ExerciseTransitionPhase, BlockCard, EditSetModal
+d55e061 fix(RunningPhase): supprimer reps_max — cible fixe reps_min
+09ff147 fix(types): 0 erreurs TypeScript hors UI (reps_max supprimé)
+dc3d3d5 test: supprimer reps_max résiduel dans WorkoutExerciseService.test.ts
+bbd936d test: supprimer reps_max des fixtures weightRatio + useSession
+4fbebde feat(SessionService): câbler calculateProgression avec exercise.progression_step
+09a88e1 refactor(WorkoutExerciseService): supprimer reps_max des DTOs
+88618d6 refactor(templates): supprimer reps_max — SetTemplate + helpers s()/work() + TemplateService
+4a11102 refactor(seeds): supprimer reps_max — SetSpec + helpers f/bw/barOnly/mob + call sites
+60a9697 refactor(repositories): supprimer reps_max — ISetRepository + SQLite + InMemory
+7611537 feat(db): migration v9 — suppression reps_max de la table sets
+fc3faca refactor(progression): supprimer applyProgression — remplacée par calculateProgression
+8e04e38 refactor(repsFeedback): supprimer paramètre repsMax — cible fixe unique
+2712ad8 docs(journal): S30 pause séance — décisions + architecture
+ab09c15 fix(pause): abandon nav, deload filter, pause error, null guard, cycle rotation
+5de731c feat(home): card reprise séance en pause
+8e2f8f7 feat(session): pause button + abandon sheet + mount check reprise
+9463a92 feat(ui): ResumeSessionCard + testMatch *.test.tsx
+19d565a feat(hook): useSession — initialSession prop + pauseSession
+ab81f7b feat(utils): shouldWarnAbandon — pure function TDD
+67f31dc feat(service): pauseSession, abandonSession, findAnyPausedSession — TDD
+a503534 test(repo): contrats pause/abandon/findAnyPaused + complete status
+51487ea feat(repo): SessionLogRepository — pause, abandon, findAnyPaused + complete → status=completed
+f4db4b3 feat(db): migration v8 — status + paused_position sur session_logs
+dd9c1fd docs(plan): pause séance — 8 tâches TDD, migration v8, SessionService, useSession, UI
+523ec8b docs(spec): pause séance — DB migration v8, SessionService, useSession, UI
+302df21 docs(journal): S29 post-review fixes + known limitation setStartingWeight
+c1df3a7 fix(session): badge nom exercice capturé avant await, rpeSection flex:1, cleanup timeout adjustSuccess
+ff10bdc chore(release): v1.6.0 — quick wins séance (PR badge, feedback reps, RPE chips, stepper poids)
+
+---
+
 ## [1.6.0] — 2026-06-11
 
 013bb2e fix(session): guard Confirmer poids contre double-tap async
