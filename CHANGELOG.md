@@ -5,6 +5,16 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.10.3] — 2026-06-13
+
+82f6965 feat(progression): useLoggedExercises — error state + affichage dans search
+b31de5d feat(progression): ExerciseHistoryService.getHistory — limit optionnel, retourne tout par défaut (TDD)
+08cc141 docs: plan historique exercice fixes — limit optionnel + error state
+77c19d3 docs: spec — ajouter test TDD manquant pour getHistory sans limit
+2d2e2cd docs: spec historique exercice — voir tout + error state useLoggedExercises
+
+---
+
 ## [1.10.2] — 2026-06-13
 
 193f38f docs: journal S39 — RPE moyen SummaryPhase
