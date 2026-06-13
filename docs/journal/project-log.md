@@ -4,6 +4,35 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 
 ---
 
+## S41 — 2026-06-13 — Objectifs personnels
+
+### Livré
+- **Migration v12** : table `goals` (id, exercise_id FK CASCADE, target_weight, target_date, achieved_at, created_at, UNIQUE exercise_id). Commit `d045eb6`.
+- **IGoalRepository + InMemoryGoalRepository + SQLiteGoalRepository** : CRUD avec `INSERT OR REPLACE` pour unicité par exercice. Commit `d045eb6`.
+- **computeETA** : fonction pure, régression linéaire OLS sur (jours, poids), fenêtre 12 sessions passée par l'appelant. Retourne `ETAResult` : `no_data` (< 3 sessions), `achieved` (dernier weight ≥ cible), `stagnant` (pente ≤ 0), `on_track` (etaDate, ratePerWeek, projectedAtTargetDate optionnel). 7 tests TDD. Commit `55e98d3`.
+- **GoalService** : setGoal, getGoal, getAllGoalsWithExercise (N+1 via IExerciseRepository), markAchieved, deleteGoal. 4 tests TDD. Commit `139401e`.
+- **useGoals** : hook `GoalWithExercise[]` avec mountedRef + refresh, même pattern que useLoggedExercises. Commit `93469ae`.
+- **[exerciseId].tsx** : section OBJECTIF après HISTORIQUE SÉANCES. 3 états : bouton "Définir", ETA affiché (on_track/stagnant/no_data), "✦ Atteint le …". Gate bodyweight (`recentSessions.every(s => bestSet.weight === 0)`). BottomSheet création : TextInput poids, chips date (1m/3m/6m/1y/aucune), aperçu ETA temps réel, bouton Enregistrer. Auto-détection achievement au chargement. Commit `1f928d0`.
+- **progression.tsx** : section OBJECTIFS dans Stats (avant "Rechercher un exercice"). Liste cliquable, navigue vers détail. `refreshGoals` branché au `useFocusEffect`. Commit `e86e0ba`.
+- 458/458 tests, 0 erreurs TypeScript. 6 tâches, subagent-driven.
+
+### Décisions
+- **Un seul objectif par exercice** (`UNIQUE exercise_id` + `INSERT OR REPLACE`) : simplifie l'UX, évite la prolifération.
+- **Poids de travail (bestSet.weight)** plutôt que 1RM estimé : plus naturel, moins abstrait, directement observable en séance.
+- **ETA factuel sans étiquette "irréaliste"** : pas de jugement. Si pente ≤ 0 → "stagnant". Si target déjà atteint → "achieved". Sinon → date estimée. Anti-perf philosophy.
+- **today injecté dans computeETA** : `today: Date = new Date()` — testable de façon déterministe sans mocker `Date.now()`.
+- **N+1 en service, pas de JOIN en repo** : GoalService prend IGoalRepository + IExerciseRepository, résout les noms en service layer. IGoalRepository reste simple (pas de JOIN). Testable avec InMemory.
+- **Pas d'ETA dans Stats** (progression.tsx) : trop coûteux en N queries history par goal. Stats affiche objectif + statut atteint ou non, le détail ETA est dans [exerciseId].tsx.
+- **Gate bodyweight par proxy** (`bestSet.weight === 0`) : pas de colonne `weight_type` sur exercises, seulement sur `sets`. Proxy fiable pour "cet exercice n'a jamais eu de poids enregistré".
+
+### Hors scope → backlog
+- Objectifs en reps (tractions bodyweight, etc.)
+- Notifications push à l'approche de l'objectif
+- Historique des objectifs accomplis (archive)
+- Plusieurs objectifs par exercice
+
+---
+
 ## S40 — 2026-06-13 — Historique exercice : voir tout + error state
 
 ### Livré
