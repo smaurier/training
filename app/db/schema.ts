@@ -180,4 +180,7 @@ export const MIGRATIONS: string[] = [
   DROP TABLE sets;
   ALTER TABLE sets_new RENAME TO sets;
   `,
+
+  // v10 — humeur après séance
+  `ALTER TABLE session_logs ADD COLUMN mood_after INTEGER CHECK(mood_after BETWEEN 1 AND 3);`,
 ];

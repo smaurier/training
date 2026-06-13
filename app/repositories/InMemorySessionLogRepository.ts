@@ -7,7 +7,7 @@ export class InMemorySessionLogRepository implements ISessionLogRepository {
 
   async save(dto: CreateSessionLogDto): Promise<SessionLog> {
     const item: SessionLog = {
-      ...dto, id: this.nextId++, ended_at: null, status: 'active', paused_position: null,
+      ...dto, id: this.nextId++, ended_at: null, status: 'active', paused_position: null, mood_after: null,
     };
     this.items.push(item);
     return item;
@@ -63,6 +63,11 @@ export class InMemorySessionLogRepository implements ISessionLogRepository {
 
   async findAll(): Promise<SessionLog[]> {
     return [...this.items].sort((a, b) => b.started_at.localeCompare(a.started_at));
+  }
+
+  async saveMoodAfter(id: number, mood: 1 | 2 | 3): Promise<void> {
+    const item = this.items.find(i => i.id === id);
+    if (item) { item.mood_after = mood; }
   }
 
   async getLastCompletedWorkoutId(workoutIds: number[]): Promise<number | null> {

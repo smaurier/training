@@ -70,6 +70,7 @@ export interface SessionLog {
   notes: string | null;
   status: SessionStatus;
   paused_position: string | null;
+  mood_after: 1 | 2 | 3 | null;
 }
 
 export interface SetLog {

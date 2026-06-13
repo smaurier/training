@@ -81,6 +81,10 @@ export class SQLiteSessionLogRepository implements ISessionLogRepository {
     );
   }
 
+  async saveMoodAfter(id: number, mood: 1 | 2 | 3): Promise<void> {
+    await this.db.runAsync('UPDATE session_logs SET mood_after = ? WHERE id = ?', [mood, id]);
+  }
+
   async getLastCompletedWorkoutId(workoutIds: number[]): Promise<number | null> {
     if (workoutIds.length === 0) return null;
     const placeholders = workoutIds.map(() => '?').join(',');
