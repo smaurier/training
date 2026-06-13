@@ -264,18 +264,26 @@ export function useSession(
         return isPR;
       }
 
+      // Superset forward: chain without rest or transition
+      if (isSupersetForward(position, next, workoutDetails)) {
+        setPosition(next);
+        setPhase('running');
+        return isPR;
+      }
+
+      const supersetNextRound = isSupersetNextRound(position, next, workoutDetails);
       const exerciseChanges = next.exerciseIdx !== position.exerciseIdx;
       if (exerciseChanges) setStartingWeightDone(false);
 
       if (completedRestDuration === 0) {
         setPosition(next);
-        setPhase(exerciseChanges ? 'exercise_transition' : 'running');
+        setPhase(exerciseChanges && !supersetNextRound ? 'exercise_transition' : 'running');
         return isPR;
       }
 
       setRestDuration(completedRestDuration);
-      setPendingPhase(exerciseChanges ? 'exercise_transition' : 'running');
-      setNextLabel(computeNextLabel(next, workoutDetails, exerciseChanges));
+      setPendingPhase(exerciseChanges && !supersetNextRound ? 'exercise_transition' : 'running');
+      setNextLabel(computeNextLabel(next, workoutDetails, exerciseChanges && !supersetNextRound));
       setPosition(next);
       setPhase('rest');
       return isPR;
@@ -345,7 +353,17 @@ export function useSession(
     if (!sessionLogId) return;
     positionHistory.current = [];
     setHistorySize(0);
-    const nextExerciseIdx = position.exerciseIdx + 1;
+    const currentGroupId = workoutDetails[position.exerciseIdx]?.superset_group_id;
+    let nextExerciseIdx: number;
+    if (currentGroupId != null) {
+      const groupIndices = workoutDetails
+        .map((d, i) => ({ d, i }))
+        .filter(({ d }) => d.superset_group_id === currentGroupId)
+        .map(({ i }) => i);
+      nextExerciseIdx = Math.max(...groupIndices) + 1;
+    } else {
+      nextExerciseIdx = position.exerciseIdx + 1;
+    }
     if (nextExerciseIdx >= workoutDetails.length) {
       await service.completeSession(sessionLogId);
       try {
