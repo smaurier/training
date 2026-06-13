@@ -29,6 +29,26 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 
 ---
 
+## S38 — 2026-06-13 — Présences ce mois (Stats)
+
+### Livré
+- **ProgressionService.getMonthlyPresences(now)** : compte les sessions `status === 'completed'` du mois calendaire courant via `monthPrefix = now.toISOString().slice(0, 7)` + `findAll()` + `startsWith`. TDD 4 tests (aucune session, sessions completed comptées, abandoned/active exclues, mois précédent exclu). Commit `4485993`.
+- **useProgression.ts** : `monthlyPresences: number` ajouté comme 6e slot dans `Promise.all`, exposé dans `UseProgressionReturn`, `useState(0)`. Commit `2596ac2`.
+- **progression.tsx** : `presencesCard` affiché avant `chipsRow` si `monthlyPresences > 0` — "1 séance ce mois" / "N séances ce mois". `accessible={true}` + `accessibilityLabel` WCAG 2.2. Fix a11y commit `156f08f`.
+- 441/441 tests, 0 erreurs TypeScript, 0 warnings ESLint. Subagent-driven, 2 tâches, 2 reviewers chacune + 1 final reviewer.
+
+### Décisions
+- **`status === 'completed'` uniquement** : une présence = séance terminée. Sessions abandonnées ou en cours non comptées. Sémantique délibérément plus stricte que `stats.sessionCount` (chip SÉANCES) qui compte toutes les sessions.
+- **Caché si 0** : pas d'état vide / "0 séance" — philosophie anti-streak, aucun élément de culpabilisation.
+- **Compteur additif uniquement** : pas de comparaison mois précédent, pas de streak, pas d'objectif.
+
+### Hors scope → backlog
+- Fusionner double `findAll()` : `getDashboardStats` + `getMonthlyPresences` appellent chacun `findAll()` — performance acceptable (<500 sessions), mais à consolider si DB croît
+- Test "mois suivant exclu" manquant dans `ProgressionService.test.ts` (implémentation correcte, test documentaire absent)
+- `accessibilityRole="text"` sur presencesCard (announced par VoiceOver mais sans rôle explicite)
+
+---
+
 ## S36 — 2026-06-13 — Volume par groupe musculaire (Stats)
 
 ### Livré
