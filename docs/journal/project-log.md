@@ -4,6 +4,29 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 
 ---
 
+## S36 — 2026-06-13 — Volume par groupe musculaire (Stats)
+
+### Livré
+- **muscleGroupUtils.ts** : `MacroCategory`, `MuscleDetail`, `MacroGroupVolume`, `MUSCLE_CATEGORY_MAP` (20 muscles → 4 catégories), `getMacroCategory`, `computeVolumeByMuscleGroup`. Attribution : volume une seule fois par catégorie distincte par set, volume complet par muscle individuel. TDD 13 tests. Commit `4ee1f3b`.
+- **ProgressionService.getVolumeByMuscleGroup** : fenêtre 4 semaines glissantes (lundi courant - 21 jours), `Promise.all` setLogs + exercises, délègue à `computeVolumeByMuscleGroup`. TDD 2 nouveaux tests (426/426 total). Commit `6782611`.
+- **MuscleGroupCard.tsx** : card expandable "VOLUME PAR STIMULUS", barre `width: \`${percentage}%\``, expand/collapse par `useState<Set<MacroCategory>>`, `accessibilityState={{ expanded }}`, volumes via `useUnits`. Retourne `null` si données vides. Commit `480357a`.
+- **useProgression.ts** : état `volumeByMuscleGroup: MacroGroupVolume[]`, 5e slot dans `Promise.all`, exposé dans `UseProgressionReturn`.
+- **progression.tsx** : `<MuscleGroupCard data={volumeByMuscleGroup} />` inséré après VolumeBarChart, avant PRs récents.
+- 426/426 tests, 0 erreurs TypeScript, 0 erreurs ESLint.
+
+### Décisions
+- **Règle attribution** : volume ajouté une seule fois par macro-catégorie par set (Bench → Push×1, pas ×3 muscles Push). Volume complet par muscle individuel pour le détail expandable. Conséquence : somme des catégories ≠ volume total VolumeBarChart → titre "VOLUME PAR STIMULUS" pour éviter confusion.
+- **Pas de réconciliation avec VolumeBarChart** : métriques différentes (stimulus musculaire vs tonnage total). Labels distincts suffisent.
+- **`MacroCategory`** inclut `'Autre'` pour muscles non mappés — affiché seulement si volume > 0.
+- **Subagent-driven** : 3 tâches, 2 reviewers chacune (spec + qualité), + 1 final reviewer.
+
+### Hors scope → backlog
+- Historique temporel de la répartition (stacked chart par semaine)
+- Configuration du mapping muscle → catégorie
+- Alertes déséquilibre automatiques
+
+---
+
 ## S35 — 2026-06-13 — Pack B : plate_step configurable (v1.8.1)
 
 ### Livré
