@@ -35,10 +35,10 @@ export function WarmupPhase({ exerciseName, workWeight, onStart }: WarmupPhasePr
         <View style={[styles.setsCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
           {sets.map((s, i) => (
             <View
-              key={i}
+              key={s.percent}
               style={[
                 styles.setRow,
-                i < sets.length - 1 && { borderBottomColor: colors.border, borderBottomWidth: 1 },
+                i < sets.length - 1 && [styles.setRowBorder, { borderBottomColor: colors.border }],
               ]}
             >
               <Text style={[styles.setWeight, { color: colors.text }]}>
@@ -99,6 +99,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 14,
   },
+  setRowBorder: { borderBottomWidth: 1 },
   setWeight: { fontSize: 17, fontWeight: '600' },
   setPercent: { fontSize: 14 },
   hint: { fontSize: 14 },
