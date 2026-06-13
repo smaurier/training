@@ -1,6 +1,8 @@
 import { SQLiteDatabase } from 'expo-sqlite';
 import type { SessionLog } from '../db/types';
 import { ISessionLogRepository, CreateSessionLogDto } from './ISessionLogRepository';
+import type { SessionTagSlug } from '../services/sessionTagsUtils';
+import { serializeTags } from '../services/sessionTagsUtils';
 
 export class SQLiteSessionLogRepository implements ISessionLogRepository {
   constructor(private db: SQLiteDatabase) {}
@@ -83,6 +85,14 @@ export class SQLiteSessionLogRepository implements ISessionLogRepository {
 
   async saveMoodAfter(id: number, mood: 1 | 2 | 3): Promise<void> {
     await this.db.runAsync('UPDATE session_logs SET mood_after = ? WHERE id = ?', [mood, id]);
+  }
+
+  async saveSessionMeta(id: number, tags: SessionTagSlug[], notes: string | null): Promise<void> {
+    const serialized = serializeTags(tags) || null;
+    await this.db.runAsync(
+      'UPDATE session_logs SET tags = ?, notes = ? WHERE id = ?',
+      [serialized, notes, id],
+    );
   }
 
   async getLastCompletedWorkoutId(workoutIds: number[]): Promise<number | null> {

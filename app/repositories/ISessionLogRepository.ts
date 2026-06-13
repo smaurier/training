@@ -1,6 +1,7 @@
 import type { SessionLog } from '../db/types';
+import type { SessionTagSlug } from '../services/sessionTagsUtils';
 
-export type CreateSessionLogDto = Omit<SessionLog, 'id' | 'ended_at' | 'status' | 'paused_position' | 'mood_after'>;
+export type CreateSessionLogDto = Omit<SessionLog, 'id' | 'ended_at' | 'status' | 'paused_position' | 'mood_after' | 'tags'>;
 
 export interface ISessionLogRepository {
   save(dto: CreateSessionLogDto): Promise<SessionLog>;
@@ -14,4 +15,5 @@ export interface ISessionLogRepository {
   findAnyPaused(): Promise<SessionLog | null>;
   findAll(): Promise<SessionLog[]>;
   saveMoodAfter(id: number, mood: 1 | 2 | 3): Promise<void>;
+  saveSessionMeta(id: number, tags: SessionTagSlug[], notes: string | null): Promise<void>;
 }

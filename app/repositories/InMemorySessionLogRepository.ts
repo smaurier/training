@@ -1,5 +1,7 @@
 import type { SessionLog } from '../db/types';
 import { ISessionLogRepository, CreateSessionLogDto } from './ISessionLogRepository';
+import type { SessionTagSlug } from '../services/sessionTagsUtils';
+import { serializeTags } from '../services/sessionTagsUtils';
 
 export class InMemorySessionLogRepository implements ISessionLogRepository {
   private items: SessionLog[] = [];
@@ -7,7 +9,7 @@ export class InMemorySessionLogRepository implements ISessionLogRepository {
 
   async save(dto: CreateSessionLogDto): Promise<SessionLog> {
     const item: SessionLog = {
-      ...dto, id: this.nextId++, ended_at: null, status: 'active', paused_position: null, mood_after: null,
+      ...dto, id: this.nextId++, ended_at: null, status: 'active', paused_position: null, mood_after: null, tags: null,
     };
     this.items.push(item);
     return item;
@@ -68,6 +70,14 @@ export class InMemorySessionLogRepository implements ISessionLogRepository {
   async saveMoodAfter(id: number, mood: 1 | 2 | 3): Promise<void> {
     const item = this.items.find(i => i.id === id);
     if (item) { item.mood_after = mood; }
+  }
+
+  async saveSessionMeta(id: number, tags: SessionTagSlug[], notes: string | null): Promise<void> {
+    const item = this.items.find(i => i.id === id);
+    if (item) {
+      item.tags = serializeTags(tags) || null;
+      item.notes = notes;
+    }
   }
 
   async getLastCompletedWorkoutId(workoutIds: number[]): Promise<number | null> {
