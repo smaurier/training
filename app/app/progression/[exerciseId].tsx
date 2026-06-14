@@ -322,7 +322,7 @@ export default function ExerciseProgressionScreen() {
           </View>
         )}
 
-        {!isBodyweight && (
+        {!isBodyweight && !isCardio && (
           <View style={[styles.section, { backgroundColor: colors.surface }]}>
             <Text style={[styles.sectionLabel, { color: colors.textSecondary }]}>OBJECTIF</Text>
 
