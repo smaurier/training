@@ -20,6 +20,7 @@ import { Radius } from '@/constants/Radius';
 import { useUnits } from '@/hooks/useUnits';
 import { lbsToKg } from '@/services/settingsUtils';
 import { computeRepsFeedback } from '@/services/repsFeedback';
+import { SubstituteSheet } from '@/components/session/SubstituteSheet';
 
 const SWIPE_UNDO_THRESHOLD = -60;
 
@@ -43,6 +44,8 @@ interface RunningPhaseProps {
   onAdjustWeight?: (kg: number) => Promise<void>;
   supersetPosition?: { current: number; total: number };
   supersetExerciseNames?: string[];
+  onSubstituteExercise?: (replacement: WorkoutExerciseDetail['exercise']) => void;
+  isSubstituted?: boolean;
 }
 
 function formatLastLog(log: LastSetLog, isCardio: boolean, isDuration: boolean, convert: (kg: number) => string, unitLabel: string): string {
@@ -67,7 +70,12 @@ function formatTime(seconds: number): string {
   return `${m}:${s.toString().padStart(2, '0')}`;
 }
 
-export function RunningPhase({ exercise, block, set, progressLabel, onValidate, onSkip, onSkipExercise, onUndo, canUndo, lastSetLog, onAdjustWeight, supersetPosition, supersetExerciseNames }: RunningPhaseProps) {
+function parseMuscleGroups(json: string): string[] {
+  try { return JSON.parse(json) as string[]; }
+  catch { return []; }
+}
+
+export function RunningPhase({ exercise, block, set, progressLabel, onValidate, onSkip, onSkipExercise, onUndo, canUndo, lastSetLog, onAdjustWeight, supersetPosition, supersetExerciseNames, onSubstituteExercise, isSubstituted }: RunningPhaseProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const { convert, label: unitLabel, resolved: unitResolved } = useUnits();
@@ -104,6 +112,7 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
   const [cardioDistance, setCardioDistance] = useState('');
 
   const adjustWeightSheetRef = useRef<BottomSheet>(null);
+  const substituteSheetRef = useRef<BottomSheet>(null);
   const adjustSuccessTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const adjustWeightSnapPoints = useMemo(() => ['45%'], []);
   const [adjustedWeight, setAdjustedWeight] = useState(set.weight ?? 0);
@@ -227,9 +236,18 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
       <View style={styles.header}>
         <View style={styles.headerRow}>
           <View style={styles.headerTextGroup}>
-            <Text style={[styles.exerciseName, { color: colors.text }]} numberOfLines={1}>
-              {exercise.exercise.name}
-            </Text>
+            <View style={styles.exerciseNameRow}>
+              {isSubstituted && (
+                <Ionicons name="swap-horizontal-outline" size={18} color={colors.textSecondary} />
+              )}
+              <Text
+                style={[styles.exerciseName, { color: colors.text }]}
+                numberOfLines={1}
+                accessibilityLabel={isSubstituted ? `Exercice remplacé : ${exercise.exercise.name}` : exercise.exercise.name}
+              >
+                {exercise.exercise.name}
+              </Text>
+            </View>
             <Text style={[styles.progressLabel, { color: colors.textSecondary }]}>{progressLabel}</Text>
             <View style={styles.blockBadge}>
               <Text style={[styles.blockBadgeText, { color: colors.primary }]}>{block.name.toUpperCase()}</Text>
@@ -518,6 +536,21 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
           >
             <Text style={[styles.sheetCancelText, { color: colors.text }]}>Passer cette série</Text>
           </PressableA11y>
+          {onSubstituteExercise && (
+            <PressableA11y
+              accessibilityLabel="Remplacer cet exercice par un autre"
+              onPress={() => {
+                skipExerciseSheetRef.current?.close();
+                substituteSheetRef.current?.expand();
+              }}
+              style={[styles.sheetCancelBtn, { borderColor: colors.border }]}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, justifyContent: 'center' }}>
+                <Ionicons name="swap-horizontal-outline" size={16} color={colors.text} />
+                <Text style={[styles.sheetCancelText, { color: colors.text }]}>Remplacer cet exercice</Text>
+              </View>
+            </PressableA11y>
+          )}
           <PressableA11y
             accessibilityLabel={supersetExerciseNames
               ? `Passer le superset entier : ${supersetExerciseNames.join(', ')}`
@@ -630,6 +663,15 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
           </PressableA11y>
         </BottomSheetView>
       </BottomSheet>
+
+      {onSubstituteExercise && (
+        <SubstituteSheet
+          sheetRef={substituteSheetRef}
+          currentMuscleGroups={parseMuscleGroups(exercise.exercise.muscle_groups)}
+          onSelect={onSubstituteExercise}
+          onClose={() => substituteSheetRef.current?.close()}
+        />
+      )}
     </>
   );
 }
@@ -641,6 +683,7 @@ const styles = StyleSheet.create({
   headerTextGroup: { flex: 1, gap: 2, marginTop: 16 },
   headerActions: { gap: 4, marginTop: 16 },
   actionBtn: { padding: 8 },
+  exerciseNameRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   exerciseName: { fontSize: 26, fontWeight: '700' },
   progressLabel: { fontSize: 13 },
   circularTimerWrapper: { alignItems: 'center' },

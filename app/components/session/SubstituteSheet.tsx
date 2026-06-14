@@ -18,7 +18,7 @@ import { Radius } from '@/constants/Radius';
 type ExerciseStub = WorkoutExerciseDetail['exercise'];
 
 interface SubstituteSheetProps {
-  sheetRef: React.RefObject<BottomSheet>;
+  sheetRef: React.RefObject<BottomSheet | null>;
   currentMuscleGroups: string[];
   onSelect: (exercise: ExerciseStub) => void;
   onClose: () => void;
