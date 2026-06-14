@@ -1,4 +1,6 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Swipeable } from 'react-native-gesture-handler';
+import { Ionicons } from '@expo/vector-icons';
 import { Exercise } from '@/db/types';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
@@ -6,9 +8,10 @@ import { Radius } from '@/constants/Radius';
 
 interface ExerciseCardProps {
   exercise: Exercise;
+  onDelete?: (id: number) => void;
 }
 
-export function ExerciseCard({ exercise }: ExerciseCardProps) {
+export function ExerciseCard({ exercise, onDelete }: ExerciseCardProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
 
@@ -19,21 +22,37 @@ export function ExerciseCard({ exercise }: ExerciseCardProps) {
     muscleGroups = [];
   }
 
+  function renderRightActions() {
+    if (!onDelete) return null;
+    return (
+      <TouchableOpacity
+        style={styles.deleteAction}
+        onPress={() => onDelete(exercise.id)}
+        accessibilityLabel={`Supprimer l'exercice ${exercise.name}`}
+        accessibilityRole="button"
+      >
+        <Ionicons name="trash-outline" size={22} color="#fff" />
+      </TouchableOpacity>
+    );
+  }
+
   return (
-    <View
-      style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}
-      accessibilityLabel={`Exercice ${exercise.name}`}
-    >
-      <View style={styles.row}>
-        <Text style={[styles.name, { color: colors.text }]}>{exercise.name}</Text>
-        <Text style={[styles.badge, { color: colors.primary }]}>{exercise.type}</Text>
+    <Swipeable renderRightActions={onDelete ? renderRightActions : undefined} overshootRight={false}>
+      <View
+        style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}
+        accessibilityLabel={`Exercice ${exercise.name}`}
+      >
+        <View style={styles.row}>
+          <Text style={[styles.name, { color: colors.text }]}>{exercise.name}</Text>
+          <Text style={[styles.badge, { color: colors.primary }]}>{exercise.type}</Text>
+        </View>
+        {muscleGroups.length > 0 && (
+          <Text style={[styles.muscles, { color: colors.textSecondary }]}>
+            {muscleGroups.join(' · ')}
+          </Text>
+        )}
       </View>
-      {muscleGroups.length > 0 && (
-        <Text style={[styles.muscles, { color: colors.textSecondary }]}>
-          {muscleGroups.join(' · ')}
-        </Text>
-      )}
-    </View>
+    </Swipeable>
   );
 }
 
@@ -63,5 +82,13 @@ const styles = StyleSheet.create({
   },
   muscles: {
     fontSize: 13,
+  },
+  deleteAction: {
+    backgroundColor: '#dc2626',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 80,
+    borderRadius: Radius.sm,
+    marginBottom: 10,
   },
 });
