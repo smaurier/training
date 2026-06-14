@@ -1,4 +1,4 @@
-import type { Set as TrainingSet, SetType } from '../db/types';
+import type { Set as TrainingSet } from '../db/types';
 import { ISetRepository, CreateSetDto, UpdateSetDto } from './ISetRepository';
 
 export class InMemorySetRepository implements ISetRepository {
