@@ -4,6 +4,33 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 
 ---
 
+## S46 — 2026-06-14 — Historique cardio + Suppression sécurisée (v1.15.0)
+
+### Livré
+
+- **Historique cardio** : `ExerciseSetRecord` étendu avec `duration_seconds?` + `distance_meters?`. `computeBestSet` branché sur `isCardio` : max distance → max durée → fallback premier set. Type predicates remplacent les `!` assertions. `formatCardioSet(s)` dans `[exerciseId].tsx` affiche km/durée pour sets et bestSet. Section OBJECTIF cachée si cardio (`!isBodyweight && !isCardio`). TDD 4 tests. Commits `7bf9851` + `50d7206` + `5bf1132` + `221e040`. 
+- **`findByExerciseId` WorkoutExerciseRepository** : interface + SQLite (`ORDER BY order_index`) + InMemory (filter + sort). 2 contrats TDD. Commits `a20ef97` + `a5da871`.
+- **`ExerciseService.safeDelete(id, force?)`** : `SafeDeleteConflict extends Error` exporté (`sessions`, `programs`, `this.name`). Guard `Promise.all([setLogRepo, weRepo].findByExerciseId)`. `remove()` supprimé (dead code). 5 tests TDD + spy `force=true`. Commits `fa441a0` + `84b48a4`.
+- **`useExercises.deleteExercise`** : retourne `SafeDeleteConflict | null`. `makeService()` à 3 repos. `export type { SafeDeleteConflict }`. Commit `1586d89`.
+- **`ExerciseCard` swipe-left** : `Swipeable` + `renderRightActions` → bouton rouge 80px (trash icon, `accessibilityLabel`, `accessibilityRole="button"`). Prop `onDelete?`. Commit `82f547f`.
+- **`exercices.tsx`** : `handleDeleteExercise` — dry-run → conflit → `Alert.alert` "Supprimer quand même ?" → force-delete. `onDelete={handleDeleteExercise}` sur `ExerciseCard`. Commit `ab3a52f`.
+- 492 tests, 0 erreurs TypeScript.
+
+### Décisions
+
+- **`temps moyen par séance` abandonné (YAGNI)** : use case = "est-ce que j'ai le temps ?", déjà couvert par la durée estimée au check-in.
+- **`SafeDeleteConflict.sessions` = nombre de set_log rows** (pas de sessions distinctes) — copy UI "série(s) enregistrée(s)" cohérente.
+- **`findByExerciseId` ORDER BY `order_index`** : cohérence SQLite/InMemory pour futurs callers dépendant de l'ordre.
+- **`this.name = 'SafeDeleteConflict'`** : requis pour sérialisation et debug correcte des subclasses d'Error en JS.
+
+### Problèmes rencontrés
+
+- **Quality review T2** : goal section visible pour cardio → `!isBodyweight && !isCardio` (fix `221e040`).
+- **Quality review T3** : `ORDER BY order_index` manquant dans SQLite, InMemory non trié → fix `a5da871`.
+- **Quality review T4** : revieweur a flaggé des items hors scope (validation create, rename weRepo) — ignorés. Seuls fix légitimes appliqués : `this.name` + spy test `force=true`.
+
+---
+
 ## S45 — 2026-06-14 — Substitution rapide d'exercice (v1.14.0)
 
 ### Livré
