@@ -9,4 +9,5 @@ export interface IWorkoutExerciseRepository {
   delete(id: number): Promise<void>;
   swap(idA: number, idB: number): Promise<void>;
   updateSuperset(id: number, groupId: number | null): Promise<void>;
+  findByExerciseId(exerciseId: number): Promise<WorkoutExercise[]>;
 }

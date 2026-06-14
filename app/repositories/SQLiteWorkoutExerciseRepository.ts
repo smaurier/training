@@ -55,4 +55,11 @@ export class SQLiteWorkoutExerciseRepository implements IWorkoutExerciseReposito
       [groupId, id]
     );
   }
+
+  async findByExerciseId(exerciseId: number): Promise<WorkoutExercise[]> {
+    return this.db.getAllAsync<WorkoutExercise>(
+      'SELECT * FROM workout_exercises WHERE exercise_id = ?',
+      [exerciseId],
+    );
+  }
 }

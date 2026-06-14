@@ -36,4 +36,8 @@ export class InMemoryWorkoutExerciseRepository implements IWorkoutExerciseReposi
     const item = this.items.find(i => i.id === id);
     if (item) item.superset_group_id = groupId;
   }
+
+  async findByExerciseId(exerciseId: number): Promise<WorkoutExercise[]> {
+    return this.items.filter(we => we.exercise_id === exerciseId);
+  }
 }

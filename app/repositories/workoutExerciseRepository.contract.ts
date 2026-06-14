@@ -92,4 +92,19 @@ export function runWorkoutExerciseRepositoryContractTests(
       await expect(repo.swap(999, a.id)).rejects.toThrow('999');
     });
   });
+
+  describe('findByExerciseId', () => {
+    it('retourne vide si aucun workout_exercise pour cet exercice', async () => {
+      expect(await repo.findByExerciseId(99)).toHaveLength(0);
+    });
+
+    it('retourne les workout_exercises de cet exercice', async () => {
+      await repo.save({ workout_id: 1, exercise_id: 7, order_index: 0 });
+      await repo.save({ workout_id: 2, exercise_id: 7, order_index: 0 });
+      await repo.save({ workout_id: 1, exercise_id: 8, order_index: 1 });
+      const result = await repo.findByExerciseId(7);
+      expect(result).toHaveLength(2);
+      expect(result.every(we => we.exercise_id === 7)).toBe(true);
+    });
+  });
 }
