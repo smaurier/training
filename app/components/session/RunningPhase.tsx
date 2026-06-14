@@ -183,7 +183,9 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
     }
   }
 
-  const setLabel = `${set.reps_min} rép`;
+  const setLabel = set.set_type === 'amrap'
+    ? (set.reps_min > 0 ? `${set.reps_min}+ rép` : 'MAX rép')
+    : `${set.reps_min} rép`;
   const weightLabel = set.weight_type === 'bodyweight'
     ? 'PC'
     : set.weight_type === 'bar'
@@ -197,11 +199,9 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
   const currentSetIndex = block.sets.findIndex(s => s.id === set.id);
   const restSets = currentSetIndex >= 0 ? block.sets.slice(currentSetIndex + 1) : [];
 
-  const repsFeedback = computeRepsFeedback(
-    reps,
-    set.reps_min,
-    set.weight_type === 'bodyweight',
-  );
+  const repsFeedback = (set.set_type === 'amrap' && set.reps_min === 0)
+    ? null
+    : computeRepsFeedback(reps, set.reps_min, set.weight_type === 'bodyweight');
 
   const undoSwipe = useMemo(
     () =>
@@ -239,6 +239,16 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
                 <Text style={styles.supersetBadgeText}>
                   SUPERSET · {supersetPosition.current}/{supersetPosition.total}
                 </Text>
+              </View>
+            )}
+            {set.set_type === 'amrap' && (
+              <View style={styles.amrapBadge}>
+                <Text style={styles.amrapBadgeText}>AMRAP</Text>
+              </View>
+            )}
+            {set.rest_duration === 0 && (
+              <View style={styles.dropsetBadge}>
+                <Text style={styles.dropsetBadgeText}>DROPSET</Text>
               </View>
             )}
             <GestureDetector gesture={undoSwipe}>
@@ -459,11 +469,15 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
       {restSets.length > 0 && (
         <View style={styles.restSection}>
           <Text style={[styles.restLabel, { color: colors.textSecondary }]}>SÉRIES RESTANTES</Text>
-          {restSets.map((s, i) => (
-            <Text key={s.id} style={[styles.restSet, { color: colors.textSecondary }]}>
-              {i + currentSetIndex + 2} ·{s.weight != null ? `${convert(s.weight)} ${unitLabel}` : 'PC'} × {s.reps_min}
-            </Text>
-          ))}
+          {restSets.map((s, i) => {
+            const prevSet = block.sets[currentSetIndex + i];
+            const isChained = prevSet?.rest_duration === 0;
+            return (
+              <Text key={s.id} style={[styles.restSet, { color: colors.textSecondary }]}>
+                {i + currentSetIndex + 2} · {s.weight != null ? `${convert(s.weight)} ${unitLabel}` : 'PC'} × {s.set_type === 'amrap' ? (s.reps_min > 0 ? `${s.reps_min}+` : 'MAX') : s.reps_min}{isChained ? ' ⚡' : ''}
+              </Text>
+            );
+          })}
         </View>
       )}
       {adjustSuccess && (
@@ -694,6 +708,34 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
   },
   supersetBadgeText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#fff',
+    letterSpacing: 0.5,
+  },
+  amrapBadge: {
+    alignSelf: 'flex-start',
+    marginTop: 2,
+    backgroundColor: '#ea580c',
+    borderRadius: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+  },
+  amrapBadgeText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#fff',
+    letterSpacing: 0.5,
+  },
+  dropsetBadge: {
+    alignSelf: 'flex-start',
+    marginTop: 2,
+    backgroundColor: '#2563eb',
+    borderRadius: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+  },
+  dropsetBadgeText: {
     fontSize: 11,
     fontWeight: '700',
     color: '#fff',
