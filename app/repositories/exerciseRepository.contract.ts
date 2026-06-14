@@ -94,4 +94,27 @@ export function runExerciseRepositoryContractTests(
       expect(remaining[0].id).toBe(b.id);
     });
   });
+
+  describe('findByName', () => {
+    it('retourne null si aucun exercice avec ce nom', async () => {
+      expect(await repo.findByName('Inconnu')).toBeNull();
+    });
+
+    it("retourne l'exercice si nom exact", async () => {
+      await repo.save(squat);
+      const found = await repo.findByName('Squat');
+      expect(found?.name).toBe('Squat');
+    });
+
+    it('est insensible à la casse', async () => {
+      await repo.save(squat);
+      expect((await repo.findByName('squat'))?.name).toBe('Squat');
+      expect((await repo.findByName('SQUAT'))?.name).toBe('Squat');
+    });
+
+    it('trim les espaces avant comparaison', async () => {
+      await repo.save(squat);
+      expect((await repo.findByName('  Squat  '))?.name).toBe('Squat');
+    });
+  });
 }

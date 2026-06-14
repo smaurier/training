@@ -6,6 +6,7 @@ export interface IExerciseRepository {
   findAll(): Promise<Exercise[]>;
   findById(id: number): Promise<Exercise | null>;
   findByType(type: ExerciseType): Promise<Exercise[]>;
+  findByName(name: string): Promise<Exercise | null>;
   save(data: CreateExerciseDto): Promise<Exercise>;
   delete(id: number): Promise<void>;
 }

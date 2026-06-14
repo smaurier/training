@@ -17,6 +17,12 @@ export class InMemoryExerciseRepository implements IExerciseRepository {
     return this.exercises.filter(e => e.type === type);
   }
 
+  async findByName(name: string): Promise<Exercise | null> {
+    return this.exercises.find(
+      e => e.name.toLowerCase() === name.toLowerCase().trim()
+    ) ?? null;
+  }
+
   async save(data: CreateExerciseDto): Promise<Exercise> {
     const exercise: Exercise = {
       ...data,

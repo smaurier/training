@@ -23,6 +23,13 @@ export class SQLiteExerciseRepository implements IExerciseRepository {
     );
   }
 
+  async findByName(name: string): Promise<Exercise | null> {
+    return this.db.getFirstAsync<Exercise>(
+      'SELECT * FROM exercises WHERE name = ? COLLATE NOCASE',
+      [name.trim()],
+    );
+  }
+
   async save(data: CreateExerciseDto): Promise<Exercise> {
     const result = await this.db.runAsync(
       `INSERT INTO exercises
