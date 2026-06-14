@@ -147,7 +147,7 @@ describe('applyDeloadToExercises', () => {
       exercise: { id: 10, name: 'Squat', type: 'musculation' as const, technical_notes: null, muscle_groups: '[]', description: null },
       blocks: [{
         id: 1, name: 'Travail', order_index: 0, is_work_block: 1 as const,
-        sets: [{ id: 1, block_id: 1, order_index: 0, reps_min: 5, rest_duration: 120, weight: 100, weight_type: 'fixed' as const, duration_seconds: null, weight_ratio: null }],
+        sets: [{ id: 1, block_id: 1, order_index: 0, reps_min: 5, rest_duration: 120, weight: 100, weight_type: 'fixed' as const, duration_seconds: null, weight_ratio: null, set_type: 'normal' as const }],
       }],
     }];
     const result = applyDeloadToExercises(exercises);
@@ -161,7 +161,7 @@ describe('applyDeloadToExercises', () => {
       exercise: { id: 10, name: 'Traction', type: 'musculation' as const, technical_notes: null, muscle_groups: '[]', description: null },
       blocks: [{
         id: 1, name: 'Travail', order_index: 0, is_work_block: 1 as const,
-        sets: [{ id: 1, block_id: 1, order_index: 0, reps_min: 8, rest_duration: 120, weight: 0, weight_type: 'bodyweight' as const, duration_seconds: null, weight_ratio: null }],
+        sets: [{ id: 1, block_id: 1, order_index: 0, reps_min: 8, rest_duration: 120, weight: 0, weight_type: 'bodyweight' as const, duration_seconds: null, weight_ratio: null, set_type: 'normal' as const }],
       }],
     }];
     const result = applyDeloadToExercises(exercises);
@@ -174,7 +174,7 @@ describe('applyDeloadToExercises', () => {
       exercise: { id: 10, name: 'Développé couché barre', type: 'musculation' as const, technical_notes: null, muscle_groups: '[]', description: null },
       blocks: [{
         id: 1, name: 'Travail', order_index: 0, is_work_block: 1 as const,
-        sets: [{ id: 1, block_id: 1, order_index: 0, reps_min: 5, rest_duration: 120, weight: 20, weight_type: 'bar' as const, duration_seconds: null, weight_ratio: null }],
+        sets: [{ id: 1, block_id: 1, order_index: 0, reps_min: 5, rest_duration: 120, weight: 20, weight_type: 'bar' as const, duration_seconds: null, weight_ratio: null, set_type: 'normal' as const }],
       }],
     }];
     const result = applyDeloadToExercises(exercises);
@@ -187,7 +187,7 @@ describe('applyDeloadToExercises', () => {
       exercise: { id: 10, name: 'Squat', type: 'musculation' as const, technical_notes: null, muscle_groups: '[]', description: null },
       blocks: [{
         id: 1, name: 'Travail', order_index: 0, is_work_block: 1 as const,
-        sets: [{ id: 1, block_id: 1, order_index: 0, reps_min: 5, rest_duration: 120, weight: 65, weight_type: 'fixed' as const, duration_seconds: null, weight_ratio: null }],
+        sets: [{ id: 1, block_id: 1, order_index: 0, reps_min: 5, rest_duration: 120, weight: 65, weight_type: 'fixed' as const, duration_seconds: null, weight_ratio: null, set_type: 'normal' as const }],
       }],
     }];
     const result = applyDeloadToExercises(exercises, 5);
@@ -201,7 +201,7 @@ describe('applyDeloadToExercises', () => {
       exercise: { id: 10, name: 'Squat', type: 'musculation' as const, technical_notes: null, muscle_groups: '[]', description: null },
       blocks: [{
         id: 1, name: 'Travail', order_index: 0, is_work_block: 1 as const,
-        sets: [{ id: 1, block_id: 1, order_index: 0, reps_min: 5, rest_duration: 120, weight: null, weight_type: 'fixed' as const, duration_seconds: null, weight_ratio: null }],
+        sets: [{ id: 1, block_id: 1, order_index: 0, reps_min: 5, rest_duration: 120, weight: null, weight_type: 'fixed' as const, duration_seconds: null, weight_ratio: null, set_type: 'normal' as const }],
       }],
     }];
     const result = applyDeloadToExercises(exercises);

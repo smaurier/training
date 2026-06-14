@@ -1,4 +1,4 @@
-import type { Set as TrainingSet } from '../db/types';
+import type { Set as TrainingSet, SetType } from '../db/types';
 import { ISetRepository, CreateSetDto, UpdateSetDto } from './ISetRepository';
 
 export class InMemorySetRepository implements ISetRepository {
@@ -14,7 +14,13 @@ export class InMemorySetRepository implements ISetRepository {
   }
 
   async save(dto: CreateSetDto): Promise<TrainingSet> {
-    const item: TrainingSet = { ...dto, id: this.nextId++, duration_seconds: dto.duration_seconds ?? null, weight_ratio: dto.weight_ratio ?? null };
+    const item: TrainingSet = {
+      ...dto,
+      id: this.nextId++,
+      duration_seconds: dto.duration_seconds ?? null,
+      weight_ratio: dto.weight_ratio ?? null,
+      set_type: 'normal',
+    };
     this.items.push(item);
     return item;
   }
@@ -22,8 +28,16 @@ export class InMemorySetRepository implements ISetRepository {
   async update(id: number, dto: UpdateSetDto): Promise<TrainingSet> {
     const idx = this.items.findIndex(i => i.id === id);
     if (idx === -1) throw new Error(`Set ${id} introuvable`);
-    this.items[idx] = { ...this.items[idx], ...dto };
-    return this.items[idx];
+    const updated: TrainingSet = {
+      ...this.items[idx],
+      reps_min: dto.reps_min,
+      weight: dto.weight,
+      weight_type: dto.weight_type,
+      rest_duration: dto.rest_duration,
+      ...(dto.set_type !== undefined ? { set_type: dto.set_type } : {}),
+    };
+    this.items[idx] = updated;
+    return updated;
   }
 
   async delete(id: number): Promise<void> {

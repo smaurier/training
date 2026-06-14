@@ -1,5 +1,6 @@
 export type ExerciseType = 'musculation' | 'etirement' | 'cardio';
 export type WeightType = 'fixed' | 'bodyweight' | 'bar';
+export type SetType = 'normal' | 'amrap';
 
 export interface Exercise {
   id: number;
@@ -56,6 +57,7 @@ export interface Set {
   order_index: number;
   duration_seconds: number | null;
   weight_ratio: number | null;
+  set_type: SetType;
 }
 
 export type SessionStatus = 'active' | 'paused' | 'completed' | 'abandoned';

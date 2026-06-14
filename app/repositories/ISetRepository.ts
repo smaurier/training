@@ -1,7 +1,10 @@
-import type { Set } from '../db/types';
+import type { Set, SetType } from '../db/types';
 
-export type CreateSetDto = Omit<Set, 'id' | 'duration_seconds' | 'weight_ratio'> & { duration_seconds?: number | null; weight_ratio?: number | null };
-export type UpdateSetDto = Pick<Set, 'reps_min' | 'weight' | 'weight_type' | 'rest_duration'>;
+export type CreateSetDto = Omit<Set, 'id' | 'duration_seconds' | 'weight_ratio' | 'set_type'>
+  & { duration_seconds?: number | null; weight_ratio?: number | null };
+
+export type UpdateSetDto = Pick<Set, 'reps_min' | 'weight' | 'weight_type' | 'rest_duration'>
+  & { set_type?: SetType };
 
 export interface ISetRepository {
   findByBlockId(blockId: number): Promise<Set[]>;

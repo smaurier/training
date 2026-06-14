@@ -202,4 +202,8 @@ export const MIGRATIONS: string[] = [
 
   // v13 — supersets : grouper des exercices en round-robin
   `ALTER TABLE workout_exercises ADD COLUMN superset_group_id INTEGER;`,
+
+  // v14 — AMRAP : type de série (normal par défaut, amrap pour les séries max-reps)
+  `ALTER TABLE sets ADD COLUMN set_type TEXT NOT NULL DEFAULT 'normal'
+  CHECK(set_type IN ('normal', 'amrap'));`,
 ];

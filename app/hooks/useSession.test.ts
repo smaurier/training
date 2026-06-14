@@ -3,12 +3,14 @@ import type { SessionPosition } from './useSession';
 import type { WorkoutExerciseDetail } from '../services/WorkoutExerciseService';
 import { renderHook, act } from '@testing-library/react-native';
 
+const mockDbInstance = {
+  runAsync: jest.fn().mockResolvedValue({ lastInsertRowId: 1 }),
+  getFirstAsync: jest.fn().mockResolvedValue(null),
+  getAllAsync: jest.fn().mockResolvedValue([]),
+};
+
 jest.mock('../db', () => ({
-  getDb: () => ({
-    runAsync: jest.fn().mockResolvedValue({ lastInsertRowId: 1 }),
-    getFirstAsync: jest.fn().mockResolvedValue(null),
-    getAllAsync: jest.fn().mockResolvedValue([]),
-  }),
+  getDb: () => mockDbInstance,
 }));
 
 function makeExercise(name: string, weight: number | null = 80, sets = 3): WorkoutExerciseDetail {
@@ -41,6 +43,7 @@ function makeExercise(name: string, weight: number | null = 80, sets = 3): Worko
           order_index: i,
           duration_seconds: null,
           weight_ratio: null,
+          set_type: 'normal' as const,
         })),
       },
     ],
@@ -97,7 +100,7 @@ describe('advancePosition', () => {
       ...makeExercise('A', 80, 1),
       blocks: [
         makeExercise('A', 80, 1).blocks[0],
-        { id: 2, name: 'Back-off', order_index: 1, is_work_block: 0, sets: [{ id: 10, block_id: 2, reps_min: 10, weight: 60, weight_type: 'fixed' as const, rest_duration: 60, order_index: 0, duration_seconds: null, weight_ratio: null }] },
+        { id: 2, name: 'Back-off', order_index: 1, is_work_block: 0, sets: [{ id: 10, block_id: 2, reps_min: 10, weight: 60, weight_type: 'fixed' as const, rest_duration: 60, order_index: 0, duration_seconds: null, weight_ratio: null, set_type: 'normal' as const }] },
       ],
     };
     const pos: SessionPosition = { exerciseIdx: 0, blockIdx: 0, setIdx: 0 };
@@ -196,6 +199,7 @@ describe('useSession — flow warmup', () => {
               order_index: 0,
               duration_seconds: null,
               weight_ratio: null,
+              set_type: 'normal' as const,
             },
           ],
         },
@@ -278,6 +282,7 @@ function makeDetail(exerciseIdx: number, groupId: number | null = null, numSets 
     order_index: i,
     duration_seconds: null,
     weight_ratio: null,
+    set_type: 'normal' as const,
   }));
   return {
     id: exerciseIdx + 1,
@@ -363,5 +368,108 @@ describe('isSupersetForward', () => {
       { exerciseIdx: 1, blockIdx: 0, setIdx: 1 },
       details
     )).toBe(false);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Dropset routing — régression
+// ---------------------------------------------------------------------------
+
+describe('useSession — dropset routing', () => {
+  // Override getFirstAsync pour retourner un SetLog valide, permettant validateSet de s'exécuter
+  beforeEach(() => {
+    mockDbInstance.getFirstAsync.mockResolvedValue({
+      id: 1, session_log_id: 1, set_id: 1, exercise_id: 1,
+      reps_done: 8, weight_done: 60, rpe: null,
+      completed_at: new Date().toISOString(),
+      duration_seconds: null, distance_meters: null,
+    });
+  });
+
+  afterEach(() => {
+    mockDbInstance.getFirstAsync.mockResolvedValue(null);
+  });
+
+  function makeDropsetExercise(): WorkoutExerciseDetail {
+    return {
+      id: 1,
+      workout_id: 1,
+      order_index: 0,
+      superset_group_id: null,
+      exercise: { id: 1, name: 'Curl biceps', type: 'musculation', technical_notes: null, muscle_groups: '[]', description: null },
+      blocks: [{
+        id: 1,
+        name: 'Travail',
+        order_index: 0,
+        is_work_block: 1,
+        sets: [
+          { id: 1, block_id: 1, reps_min: 8, weight: 60, weight_type: 'fixed' as const, rest_duration: 0, order_index: 0, duration_seconds: null, weight_ratio: null, set_type: 'normal' as const },
+          { id: 2, block_id: 1, reps_min: 8, weight: 50, weight_type: 'fixed' as const, rest_duration: 0, order_index: 1, duration_seconds: null, weight_ratio: null, set_type: 'normal' as const },
+          { id: 3, block_id: 1, reps_min: 8, weight: 40, weight_type: 'fixed' as const, rest_duration: 90, order_index: 2, duration_seconds: null, weight_ratio: null, set_type: 'normal' as const },
+        ],
+      }],
+    };
+  }
+
+  it('rest_duration=0 dans même bloc → phase running directement (pas de rest)', async () => {
+    const { result } = renderHook(() =>
+      useSession(1, [makeDropsetExercise()], {
+        sessionLogId: 1,
+        position: { exerciseIdx: 0, blockIdx: 0, setIdx: 0 },
+        phase: 'running',
+        startedAt: Date.now(),
+        setsLogged: 0,
+        volume: 0,
+      })
+    );
+    await act(async () => {
+      await result.current.validateSet({ repsDone: 8, weightDone: 60, rpe: null });
+    });
+    expect(result.current.phase).toBe('running');
+    expect(result.current.position.setIdx).toBe(1);
+  });
+
+  it('rest_duration>0 — séries après le dropset → phase rest normale', async () => {
+    // On valide la série du milieu (rest_duration=0) :
+    // setIdx:0 (rest=0) → setIdx:1 → running
+    // On valide setIdx:1 (rest_duration=0) → setIdx:2 → running (dropset chain)
+    // On veut vérifier que setIdx:1 (rest_duration=0) reste bien en running et non en rest
+    // => test complémentaire : valider setIdx:0 → reste en running (déjà couvert)
+    // Pour tester rest_duration>0 : on part de setIdx:1 dont le COMPLETED set a rest_duration=0
+    // mais le troisième set (setIdx:2, rest_duration=90) est le dernier → summary
+    // On ajoute une 4ème série après pour que next != null après setIdx:2
+    const exerciseWith4Sets: WorkoutExerciseDetail = {
+      id: 1,
+      workout_id: 1,
+      order_index: 0,
+      superset_group_id: null,
+      exercise: { id: 1, name: 'Curl biceps', type: 'musculation', technical_notes: null, muscle_groups: '[]', description: null },
+      blocks: [{
+        id: 1,
+        name: 'Travail',
+        order_index: 0,
+        is_work_block: 1,
+        sets: [
+          { id: 1, block_id: 1, reps_min: 8, weight: 60, weight_type: 'fixed' as const, rest_duration: 0, order_index: 0, duration_seconds: null, weight_ratio: null, set_type: 'normal' as const },
+          { id: 2, block_id: 1, reps_min: 8, weight: 50, weight_type: 'fixed' as const, rest_duration: 0, order_index: 1, duration_seconds: null, weight_ratio: null, set_type: 'normal' as const },
+          { id: 3, block_id: 1, reps_min: 8, weight: 40, weight_type: 'fixed' as const, rest_duration: 90, order_index: 2, duration_seconds: null, weight_ratio: null, set_type: 'normal' as const },
+          { id: 4, block_id: 1, reps_min: 8, weight: 40, weight_type: 'fixed' as const, rest_duration: 90, order_index: 3, duration_seconds: null, weight_ratio: null, set_type: 'normal' as const },
+        ],
+      }],
+    };
+    const { result } = renderHook(() =>
+      useSession(1, [exerciseWith4Sets], {
+        sessionLogId: 1,
+        position: { exerciseIdx: 0, blockIdx: 0, setIdx: 2 },
+        phase: 'running',
+        startedAt: Date.now(),
+        setsLogged: 2,
+        volume: 880,
+      })
+    );
+    await act(async () => {
+      await result.current.validateSet({ repsDone: 8, weightDone: 40, rpe: null });
+    });
+    expect(result.current.phase).toBe('rest');
   });
 });

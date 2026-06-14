@@ -109,6 +109,33 @@ export function runSetRepositoryContractTests(createRepo: () => ISetRepository) 
       };
       await expect(repo.update(999, dto)).rejects.toThrow('999');
     });
+
+    it('preserve set_type quand set_type absent du dto', async () => {
+      const saved = await repo.save(serie1);
+      // save() doit retourner set_type: 'normal'
+      expect(saved.set_type).toBe('normal');
+      const dto: UpdateSetDto = {
+        reps_min: 4,
+        weight: 80,
+        weight_type: 'fixed',
+        rest_duration: 90,
+      };
+      const updated = await repo.update(saved.id, dto);
+      expect(updated.set_type).toBe('normal'); // préservé
+    });
+
+    it('met à jour set_type vers amrap', async () => {
+      const saved = await repo.save(serie1);
+      const dto: UpdateSetDto = {
+        reps_min: 5,
+        weight: 80,
+        weight_type: 'fixed',
+        rest_duration: 120,
+        set_type: 'amrap',
+      };
+      const updated = await repo.update(saved.id, dto);
+      expect(updated.set_type).toBe('amrap');
+    });
   });
 
   describe('swap', () => {

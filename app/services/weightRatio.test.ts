@@ -13,6 +13,7 @@ function makeSet(overrides: Partial<TrainingSet>): TrainingSet {
     rest_duration: 120,
     order_index: 0,
     duration_seconds: null,
+    set_type: 'normal',
     ...overrides,
   };
 }

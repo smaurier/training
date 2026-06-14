@@ -28,8 +28,8 @@ export class SQLiteSetRepository implements ISetRepository {
 
   async update(id: number, dto: UpdateSetDto): Promise<TrainingSet> {
     await this.db.runAsync(
-      'UPDATE sets SET reps_min=?, weight=?, weight_type=?, rest_duration=? WHERE id=?',
-      [dto.reps_min, dto.weight, dto.weight_type, dto.rest_duration, id]
+      'UPDATE sets SET reps_min=?, weight=?, weight_type=?, rest_duration=?, set_type=COALESCE(?, set_type) WHERE id=?',
+      [dto.reps_min, dto.weight, dto.weight_type, dto.rest_duration, dto.set_type ?? null, id]
     );
     const updated = await this.findById(id);
     if (!updated) throw new Error(`Set ${id} introuvable`);
