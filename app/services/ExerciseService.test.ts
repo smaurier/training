@@ -1,4 +1,4 @@
-import { ExerciseService, SafeDeleteConflict } from './ExerciseService';
+import { ExerciseService, SafeDeleteConflict, DuplicateExerciseError } from './ExerciseService';
 import { InMemoryExerciseRepository } from '../repositories/InMemoryExerciseRepository';
 import { InMemorySetLogRepository } from '../repositories/InMemorySetLogRepository';
 import { InMemoryWorkoutExerciseRepository } from '../repositories/InMemoryWorkoutExerciseRepository';
@@ -117,6 +117,44 @@ describe('ExerciseService', () => {
       await service.safeDelete(ex.id, true);
       expect(await repo.findById(ex.id)).toBeNull();
       expect(findByExSpy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('ExerciseService.create — doublons', () => {
+    const baseInput = {
+      type: 'musculation' as const,
+      muscle_groups: [],
+      technical_notes: null,
+      progression_step: 2.5,
+      progression_threshold: 1,
+    };
+
+    it('throw DuplicateExerciseError si nom identique (exact)', async () => {
+      const { service } = makeService();
+      await service.create({ ...baseInput, name: 'Squat' });
+      await expect(service.create({ ...baseInput, name: 'Squat' }))
+        .rejects.toBeInstanceOf(DuplicateExerciseError);
+    });
+
+    it('throw DuplicateExerciseError si nom identique (casse différente)', async () => {
+      const { service } = makeService();
+      await service.create({ ...baseInput, name: 'Squat' });
+      await expect(service.create({ ...baseInput, name: 'squat' }))
+        .rejects.toBeInstanceOf(DuplicateExerciseError);
+    });
+
+    it('crée si nom différent', async () => {
+      const { service } = makeService();
+      await service.create({ ...baseInput, name: 'Squat' });
+      const result = await service.create({ ...baseInput, name: 'Deadlift' });
+      expect(result.name).toBe('Deadlift');
+    });
+
+    it('message erreur contient le nom', async () => {
+      const { service } = makeService();
+      await service.create({ ...baseInput, name: 'Squat' });
+      const err = await service.create({ ...baseInput, name: 'Squat' }).catch(e => e);
+      expect(err.message).toContain('Squat');
     });
   });
 });

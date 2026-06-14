@@ -23,6 +23,13 @@ export class SafeDeleteConflict extends Error {
   }
 }
 
+export class DuplicateExerciseError extends Error {
+  constructor(name: string) {
+    super(`Un exercice nommé "${name}" existe déjà`);
+    this.name = 'DuplicateExerciseError';
+  }
+}
+
 export class ExerciseService {
   constructor(
     private readonly repo: IExerciseRepository,
@@ -38,8 +45,12 @@ export class ExerciseService {
       throw new Error('Le pas de progression doit être positif');
     }
 
+    const trimmedName = input.name.trim();
+    const existing = await this.repo.findByName(trimmedName);
+    if (existing) throw new DuplicateExerciseError(trimmedName);
+
     const dto: CreateExerciseDto = {
-      name: input.name.trim(),
+      name: trimmedName,
       type: input.type,
       muscle_groups: JSON.stringify(input.muscle_groups),
       technical_notes: input.technical_notes ?? null,
