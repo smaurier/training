@@ -5,6 +5,20 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.14.0] — 2026-06-14
+
+ab0cefa fix(session): substitution — progression guard + BottomSheetTextInput + loading state + a11y
+253f3c9 feat(session): wiring substitution rapide dans SessionContent
+bad7616 feat(session): RunningPhase — bouton Remplacer + indicateur substitution
+d6d41df fix(session): SubstituteSheet — BottomSheetFlatList + catch sur findAll
+a024b49 feat(session): SubstituteSheet — picker exercice lazy avec filtre muscle group
+5013f6b feat(session): substituteCurrentExercise — effectiveDetails override dans useSession
+f23a112 docs(plan): substitution rapide — plan implémentation 4 tâches
+3b5437c docs(spec): fix hasLoaded useRef + empty state SubstituteSheet
+066ea46 docs(spec): substitution rapide exercice en séance — design v1
+
+---
+
 ## [1.13.0] — 2026-06-14
 
 92b4d40 docs(journal): S44 — sets spéciaux AMRAP + dropsets livré
