@@ -184,6 +184,8 @@ describe('ExerciseHistoryService — cardio', () => {
     const ex = await exerciseRepo.save(cardioExerciseDto);
     await setLogRepo.save({ session_log_id: 1, set_id: 1, exercise_id: ex.id, reps_done: 0, weight_done: 0, rpe: null, completed_at: '2026-06-01T10:00:00.000Z', duration_seconds: null, distance_meters: null });
     const result = await service.getHistory(ex.id);
-    expect(result.lastSession?.bestSet).toBeDefined();
+    expect(result.lastSession?.bestSet).toEqual(
+      expect.objectContaining({ reps: 0, weight: 0, duration_seconds: null, distance_meters: null })
+    );
   });
 });

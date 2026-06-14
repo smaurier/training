@@ -24,12 +24,16 @@ export interface ExerciseHistory {
 
 function computeBestSet(sets: ExerciseSetRecord[], isCardio: boolean): ExerciseSetRecord {
   if (isCardio) {
-    const withDistance = sets.filter(s => s.distance_meters != null && s.distance_meters > 0);
+    const withDistance = sets.filter((s): s is ExerciseSetRecord & { distance_meters: number } =>
+      s.distance_meters != null && s.distance_meters > 0
+    );
     if (withDistance.length > 0)
-      return withDistance.reduce((b, s) => s.distance_meters! > b.distance_meters! ? s : b);
-    const withDuration = sets.filter(s => s.duration_seconds != null && s.duration_seconds > 0);
+      return withDistance.reduce((b, s) => s.distance_meters > b.distance_meters ? s : b);
+    const withDuration = sets.filter((s): s is ExerciseSetRecord & { duration_seconds: number } =>
+      s.duration_seconds != null && s.duration_seconds > 0
+    );
     if (withDuration.length > 0)
-      return withDuration.reduce((b, s) => s.duration_seconds! > b.duration_seconds! ? s : b);
+      return withDuration.reduce((b, s) => s.duration_seconds > b.duration_seconds ? s : b);
     return sets[0];
   }
   const allBodyweight = sets.every(s => s.weight === 0);
