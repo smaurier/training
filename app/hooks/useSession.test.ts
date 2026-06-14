@@ -472,4 +472,27 @@ describe('useSession — dropset routing', () => {
     });
     expect(result.current.phase).toBe('rest');
   });
+
+  it('rest_duration=0 sur dernier set d\'un exercice → exercise_transition (pas dropset intra-bloc)', async () => {
+    const squatEx = makeExercise('Squat', 80, 1);
+    const setWithZeroRest = { ...squatEx.blocks[0].sets[0], rest_duration: 0 };
+    const squatExWithZeroRest: WorkoutExerciseDetail = {
+      ...squatEx,
+      blocks: [{ ...squatEx.blocks[0], sets: [setWithZeroRest] }],
+    };
+    const { result } = renderHook(() =>
+      useSession(1, [squatExWithZeroRest, makeExercise('Bench', 60, 1)], {
+        sessionLogId: 1,
+        position: { exerciseIdx: 0, blockIdx: 0, setIdx: 0 },
+        phase: 'running',
+        startedAt: Date.now(),
+        setsLogged: 0,
+        volume: 0,
+      })
+    );
+    await act(async () => {
+      await result.current.validateSet({ repsDone: 8, weightDone: 80, rpe: null });
+    });
+    expect(result.current.phase).toBe('exercise_transition');
+  });
 });

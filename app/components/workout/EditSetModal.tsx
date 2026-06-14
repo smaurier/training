@@ -43,7 +43,7 @@ export function EditSetModal({ set, onSave, onClose }: EditSetModalProps) {
 
   async function handleSave() {
     const dto: UpdateSetDto = {
-      reps_min: parseInt(repsMin, 10) || 0,
+      reps_min: isNaN(parseInt(repsMin, 10)) ? set.reps_min : parseInt(repsMin, 10),
       weight: weightDisabled ? null : (weight.trim() ? parseFloat(weight) : null),
       weight_type: weightType,
       rest_duration: parseInt(rest, 10) || 0,
