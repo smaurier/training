@@ -60,9 +60,16 @@ export interface Set {
 
 ### `ISetRepository`
 
+`CreateSetDto` utilise `Omit<Set, ...>` — ajouter `'set_type'` à la liste des omissions pour que `set_type` soit géré par le DEFAULT DB à la création (toujours 'normal') :
+
 ```typescript
+export type CreateSetDto = Omit<Set, 'id' | 'duration_seconds' | 'weight_ratio' | 'set_type'>
+  & { duration_seconds?: number | null; weight_ratio?: number | null };
+
 export type UpdateSetDto = Pick<Set, 'reps_min' | 'weight' | 'weight_type' | 'rest_duration' | 'set_type'>;
 ```
+
+`SQLiteSetRepository.save()` : ne pas modifier l'INSERT — `set_type` non inclus, DB DEFAULT `'normal'` s'applique. `SELECT *` dans `findById`/`findByBlockId` retrouve `set_type` automatiquement après migration.
 
 ---
 
@@ -230,10 +237,11 @@ Tous les fichiers de test qui construisent des objets `Set` devront ajouter `set
 |---|---|
 | `app/db/schema.ts` | Ajouter migration v14 |
 | `app/db/types.ts` | `SetType` + `Set.set_type` |
-| `app/repositories/ISetRepository.ts` | `UpdateSetDto` inclut `set_type` |
+| `app/repositories/ISetRepository.ts` | `CreateSetDto` omit `set_type`, `UpdateSetDto` inclut `set_type` |
 | `app/repositories/InMemorySetRepository.ts` | `save()` init `set_type: 'normal'`, `update()` spread |
-| `app/repositories/SQLiteSetRepository.ts` | `update()` inclut `set_type` |
+| `app/repositories/SQLiteSetRepository.ts` | `update()` inclut `set_type` (INSERT inchangé, DEFAULT gère) |
 | `app/components/workout/EditSetModal.tsx` | Toggle Normal/AMRAP + hint dropset |
+| `app/components/workout/BlockCard.tsx` | `reps` : `set_type === 'amrap' ? (reps_min > 0 ? \`${reps_min}+ rép\` : 'MAX rép') : \`${reps_min} rép\`` |
 | `app/components/session/RunningPhase.tsx` | Badge AMRAP + badge DROPSET + target card + repsFeedback + ⚡ restSets |
 | `app/hooks/useSession.ts` | `validateSet` dropset short-circuit |
 | `app/hooks/useSession.test.ts` | 3 nouveaux tests dropset routing |
