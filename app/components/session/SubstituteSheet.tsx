@@ -1,7 +1,8 @@
 import { useRef, useState, useMemo, useCallback } from 'react';
-import { Text, TextInput, FlatList, StyleSheet } from 'react-native';
+import { Text, TextInput, StyleSheet } from 'react-native';
 import BottomSheet, {
   BottomSheetBackdrop,
+  BottomSheetFlatList,
   BottomSheetView,
   type BottomSheetBackdropProps,
 } from '@gorhom/bottom-sheet';
@@ -42,9 +43,7 @@ export function SubstituteSheet({ sheetRef, currentMuscleGroups, onSelect, onClo
   function handleAnimate(_fromIndex: number, toIndex: number) {
     if (toIndex >= 0 && !hasLoaded.current) {
       hasLoaded.current = true;
-      new SQLiteExerciseRepository(getDb()).findAll().then(all => {
-        setExercises(all);
-      });
+      new SQLiteExerciseRepository(getDb()).findAll().then(setExercises).catch(console.error);
     }
   }
 
@@ -105,7 +104,7 @@ export function SubstituteSheet({ sheetRef, currentMuscleGroups, onSelect, onClo
           </Text>
         </BottomSheetView>
       ) : (
-        <FlatList
+        <BottomSheetFlatList
           data={filtered}
           keyExtractor={ex => String(ex.id)}
           contentContainerStyle={styles.list}
