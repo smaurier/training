@@ -4,6 +4,29 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 
 ---
 
+## S44 — 2026-06-14 — Sets spéciaux : AMRAP + Dropsets
+
+### Livré
+
+- **Migration v14** : `ALTER TABLE sets ADD COLUMN set_type TEXT NOT NULL DEFAULT 'normal' CHECK(set_type IN ('normal', 'amrap'))`. Commit `50b0a3b`.
+- **Types** : `SetType = 'normal' | 'amrap'`, `Set.set_type: SetType`. `CreateSetDto` exclut `set_type` (DB DEFAULT). `UpdateSetDto` a `set_type?: SetType` (optionnel — callers existants inchangés). Commit `50b0a3b`.
+- **Repos** : `InMemorySetRepository.save()` initialise `set_type: 'normal'` explicitement. `update()` spread conditionnel (pas `...dto` qui écraserait avec undefined). `SQLiteSetRepository.update()` utilise `COALESCE(?, set_type)`. Commit `50b0a3b`.
+- **TDD** : 2 tests contrat (`preserve set_type`, `met à jour set_type vers amrap`). 3 tests régression dropset routing dans `useSession.test.ts`. Commits `50b0a3b`, `4cbfe66`.
+- **Fixtures** : `DeloadService.test.ts` × 5, `weightRatio.test.ts` makeSet, `useSession.test.ts` × 4 — tous avec `set_type: 'normal' as const`. Commit `50b0a3b`.
+- **`EditSetModal`** : toggle Normal/AMRAP (entre reps et weightType). Label reps dynamique "Minimum (0 = open AMRAP)" si AMRAP. Hint "Enchaîner directement..." si `rest === '0'`. `reps_min` : `isNaN(parseInt) ? original : parsed` pour préserver si champ vide. `accessibilityRole="radio"` sur le toggle. Commits `251f903`, `3a9c05a`, `4cbfe66`.
+- **`BlockCard.formatSet`** : AMRAP → "5+ rép" (reps_min > 0) ou "MAX rép" (reps_min = 0). Commit `9cfd154`.
+- **`RunningPhase`** : `setLabel` AMRAP, `repsFeedback` null pour open AMRAP, badge AMRAP orange `#ea580c`, badge DROPSET bleu `#2563eb`, ⚡ dans restSets (sets précédés d'un `rest_duration=0`). Commit `88bedb3`.
+- 480/480 tests, 0 erreurs TypeScript.
+
+### Décisions
+
+- **Dropsets sans nouveau champ DB** : `rest_duration === 0` est le signal. Le routage session (skip repos → phase 'running') était déjà implémenté dans `useSession.validateSet` ligne 280 — aucun code de session à écrire.
+- **Pyramid hors scope** : le nom de bloc existant (`block.name`) suffit comme label visuel. Aucun code supplémentaire.
+- **`UpdateSetDto.set_type` optionnel** (déviation du spec) : évite de modifier ~10 callsites existants (SessionService × 3, contrats, tests). COALESCE côté SQLite préserve la valeur stockée quand non fourni.
+- **`reps_min: isNaN(parseInt) ? original : parsed`** : permet de sauvegarder 0 explicitement (open AMRAP) tout en préservant la valeur originale si le champ est vidé.
+
+---
+
 ## S43 — 2026-06-13/14 — Supersets (v1.12.0)
 
 ### Livré
