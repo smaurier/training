@@ -171,17 +171,19 @@ useEffect(() => {
 }, [session.phase, session.sessionLogId]);
 ```
 
-Handler (applique les mêmes valeurs à tous les set_logs cardio vides) :
+Handler (applique au **premier** set_log cardio vide uniquement — évite de multiplier les données si l'utilisateur a fait plusieurs intervalles) :
 ```typescript
 const handleSaveCardioData = useCallback(async (
   durationSeconds: number | null,
   distanceMeters: number | null,
   rpe: number | null,
 ) => {
-  await Promise.all(
-    emptyCardioSetLogIds.map(id =>
-      makeServiceForCheck().saveCardioData(id, durationSeconds, distanceMeters, rpe)
-    )
+  if (emptyCardioSetLogIds.length === 0) return;
+  await makeServiceForCheck().saveCardioData(
+    emptyCardioSetLogIds[0],
+    durationSeconds,
+    distanceMeters,
+    rpe,
   );
   setEmptyCardioSetLogIds([]);
 }, [emptyCardioSetLogIds]);
