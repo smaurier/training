@@ -19,7 +19,7 @@ export class InMemoryExerciseRepository implements IExerciseRepository {
 
   async findByName(name: string): Promise<Exercise | null> {
     return this.exercises.find(
-      e => e.name.toLowerCase() === name.toLowerCase().trim()
+      e => e.name.trim().toLowerCase() === name.trim().toLowerCase()
     ) ?? null;
   }
 
