@@ -408,6 +408,8 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
                 onAdjustWeight={session.setStartingWeight}
                 supersetPosition={getSupersetPosition(session.position, deloadedExercises)}
                 supersetExerciseNames={getSupersetExerciseNames(session.position, deloadedExercises)}
+                onSubstituteExercise={session.substituteCurrentExercise}
+                isSubstituted={session.isCurrentExerciseSubstituted}
               />
             )}
           </>
