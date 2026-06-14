@@ -1,13 +1,17 @@
-import { ExerciseService } from './ExerciseService';
+import { ExerciseService, SafeDeleteConflict } from './ExerciseService';
 import { InMemoryExerciseRepository } from '../repositories/InMemoryExerciseRepository';
+import { InMemorySetLogRepository } from '../repositories/InMemorySetLogRepository';
+import { InMemoryWorkoutExerciseRepository } from '../repositories/InMemoryWorkoutExerciseRepository';
 
-// On injecte un repo en mémoire — pas besoin de SQLite pour tester la logique métier.
+// On injecte des repos en mémoire — pas besoin de SQLite pour tester la logique métier.
 // C'est la force du pattern Repository : le service ne sait pas ce qu'il y a derrière.
 
 function makeService() {
   const repo = new InMemoryExerciseRepository();
-  const service = new ExerciseService(repo);
-  return { service, repo };
+  const setLogRepo = new InMemorySetLogRepository();
+  const weRepo = new InMemoryWorkoutExerciseRepository();
+  const service = new ExerciseService(repo, setLogRepo, weRepo);
+  return { service, repo, setLogRepo, weRepo };
 }
 
 describe('ExerciseService', () => {
@@ -69,17 +73,48 @@ describe('ExerciseService', () => {
     });
   });
 
-  describe('remove', () => {
-    it('supprime un exercice existant', async () => {
-      const { service } = makeService();
-      const created = await service.create({ name: 'Curl', type: 'musculation', muscle_groups: [], progression_step: 1.25, progression_threshold: 1 });
-      await service.remove(created.id);
-      expect(await service.getById(created.id)).toBeNull();
+  describe('ExerciseService.safeDelete', () => {
+    const exDto = { name: 'Squat', type: 'musculation' as const, muscle_groups: '[]', technical_notes: null, description: null, is_custom: 0 as const, progression_step: 2.5, progression_threshold: 1 };
+
+    it('supprime si aucun log ni programme', async () => {
+      const { service, repo } = makeService();
+      const ex = await repo.save(exDto);
+      await service.safeDelete(ex.id);
+      expect(await repo.findById(ex.id)).toBeNull();
     });
 
-    it('ne plante pas si l\'id n\'existe pas', async () => {
-      const { service } = makeService();
-      await expect(service.remove(999)).resolves.toBeUndefined();
+    it('throw SafeDeleteConflict si set_logs existent', async () => {
+      const { service, repo, setLogRepo } = makeService();
+      const ex = await repo.save(exDto);
+      await setLogRepo.save({ session_log_id: 1, set_id: 1, exercise_id: ex.id, reps_done: 5, weight_done: 80, rpe: null, completed_at: '2026-06-01T10:00:00.000Z' });
+      await expect(service.safeDelete(ex.id)).rejects.toBeInstanceOf(SafeDeleteConflict);
+    });
+
+    it('throw SafeDeleteConflict avec sessions > 0 si set_logs existent', async () => {
+      const { service, repo, setLogRepo } = makeService();
+      const ex = await repo.save(exDto);
+      await setLogRepo.save({ session_log_id: 1, set_id: 1, exercise_id: ex.id, reps_done: 5, weight_done: 80, rpe: null, completed_at: '2026-06-01T10:00:00.000Z' });
+      const err = await service.safeDelete(ex.id).catch(e => e);
+      expect(err.sessions).toBe(1);
+      expect(err.programs).toBe(0);
+    });
+
+    it('throw SafeDeleteConflict si workout_exercises existent', async () => {
+      const { service, repo, weRepo } = makeService();
+      const ex = await repo.save(exDto);
+      await weRepo.save({ workout_id: 1, exercise_id: ex.id, order_index: 0 });
+      const err = await service.safeDelete(ex.id).catch(e => e);
+      expect(err).toBeInstanceOf(SafeDeleteConflict);
+      expect(err.programs).toBe(1);
+    });
+
+    it('force=true supprime même avec logs et programmes', async () => {
+      const { service, repo, setLogRepo, weRepo } = makeService();
+      const ex = await repo.save(exDto);
+      await setLogRepo.save({ session_log_id: 1, set_id: 1, exercise_id: ex.id, reps_done: 5, weight_done: 80, rpe: null, completed_at: '2026-06-01T10:00:00.000Z' });
+      await weRepo.save({ workout_id: 1, exercise_id: ex.id, order_index: 0 });
+      await service.safeDelete(ex.id, true);
+      expect(await repo.findById(ex.id)).toBeNull();
     });
   });
 });

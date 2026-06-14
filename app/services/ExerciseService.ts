@@ -1,5 +1,7 @@
 import { Exercise } from '../db/types';
 import { IExerciseRepository, CreateExerciseDto } from '../repositories/IExerciseRepository';
+import { ISetLogRepository } from '../repositories/ISetLogRepository';
+import { IWorkoutExerciseRepository } from '../repositories/IWorkoutExerciseRepository';
 
 export interface CreateExerciseInput {
   name: string;
@@ -11,8 +13,21 @@ export interface CreateExerciseInput {
   progression_threshold: number;
 }
 
+export class SafeDeleteConflict extends Error {
+  constructor(
+    public readonly sessions: number,
+    public readonly programs: number,
+  ) {
+    super('SAFE_DELETE_CONFLICT');
+  }
+}
+
 export class ExerciseService {
-  constructor(private readonly repo: IExerciseRepository) {}
+  constructor(
+    private readonly repo: IExerciseRepository,
+    private readonly setLogRepo: ISetLogRepository,
+    private readonly weRepo: IWorkoutExerciseRepository,
+  ) {}
 
   async create(input: CreateExerciseInput): Promise<Exercise> {
     if (!input.name.trim()) {
@@ -44,7 +59,16 @@ export class ExerciseService {
     return this.repo.findById(id);
   }
 
-  async remove(id: number): Promise<void> {
-    return this.repo.delete(id);
+  async safeDelete(id: number, force = false): Promise<void> {
+    if (!force) {
+      const [logs, workoutExercises] = await Promise.all([
+        this.setLogRepo.findByExerciseId(id),
+        this.weRepo.findByExerciseId(id),
+      ]);
+      if (logs.length > 0 || workoutExercises.length > 0) {
+        throw new SafeDeleteConflict(logs.length, workoutExercises.length);
+      }
+    }
+    await this.repo.delete(id);
   }
 }
