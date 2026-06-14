@@ -108,6 +108,8 @@ export function advancePosition(
   const { exerciseIdx, blockIdx, setIdx } = position;
 
   // --- SUPERSET ROUTING ---
+  // Assumption: superset exercises use a single block (blockIdx always resets to 0 between members).
+  // Multi-block exercises in supersets are not supported — only blocks[0] sets are used for round counting.
   const currentGroupId = details[exerciseIdx]?.superset_group_id;
   if (currentGroupId != null) {
     const groupExercises = details

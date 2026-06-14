@@ -143,7 +143,7 @@ describe('DeloadService — getDeloadWeeks', () => {
 describe('applyDeloadToExercises', () => {
   it('réduit le poids des séries fixed de 10% arrondi au multiple de 2', () => {
     const exercises = [{
-      id: 1, workout_id: 1, order_index: 0,
+      id: 1, workout_id: 1, order_index: 0, superset_group_id: null,
       exercise: { id: 10, name: 'Squat', type: 'musculation' as const, technical_notes: null, muscle_groups: '[]', description: null },
       blocks: [{
         id: 1, name: 'Travail', order_index: 0, is_work_block: 1 as const,
@@ -157,7 +157,7 @@ describe('applyDeloadToExercises', () => {
 
   it('ne modifie pas les séries bodyweight', () => {
     const exercises = [{
-      id: 1, workout_id: 1, order_index: 0,
+      id: 1, workout_id: 1, order_index: 0, superset_group_id: null,
       exercise: { id: 10, name: 'Traction', type: 'musculation' as const, technical_notes: null, muscle_groups: '[]', description: null },
       blocks: [{
         id: 1, name: 'Travail', order_index: 0, is_work_block: 1 as const,
@@ -170,7 +170,7 @@ describe('applyDeloadToExercises', () => {
 
   it('ne modifie pas les séries bar', () => {
     const exercises = [{
-      id: 1, workout_id: 1, order_index: 0,
+      id: 1, workout_id: 1, order_index: 0, superset_group_id: null,
       exercise: { id: 10, name: 'Développé couché barre', type: 'musculation' as const, technical_notes: null, muscle_groups: '[]', description: null },
       blocks: [{
         id: 1, name: 'Travail', order_index: 0, is_work_block: 1 as const,
@@ -183,7 +183,7 @@ describe('applyDeloadToExercises', () => {
 
   it('utilise le plateStep fourni — 65 kg avec plateStep=5 → 55 kg', () => {
     const exercises = [{
-      id: 1, workout_id: 1, order_index: 0,
+      id: 1, workout_id: 1, order_index: 0, superset_group_id: null,
       exercise: { id: 10, name: 'Squat', type: 'musculation' as const, technical_notes: null, muscle_groups: '[]', description: null },
       blocks: [{
         id: 1, name: 'Travail', order_index: 0, is_work_block: 1 as const,
@@ -197,7 +197,7 @@ describe('applyDeloadToExercises', () => {
 
   it('passe les poids null inchangés', () => {
     const exercises = [{
-      id: 1, workout_id: 1, order_index: 0,
+      id: 1, workout_id: 1, order_index: 0, superset_group_id: null,
       exercise: { id: 10, name: 'Squat', type: 'musculation' as const, technical_notes: null, muscle_groups: '[]', description: null },
       blocks: [{
         id: 1, name: 'Travail', order_index: 0, is_work_block: 1 as const,

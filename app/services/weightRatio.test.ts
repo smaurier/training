@@ -22,6 +22,7 @@ function makeExercise(blocks: WorkoutExerciseDetail['blocks']): WorkoutExerciseD
     id: 1,
     workout_id: 1,
     order_index: 0,
+    superset_group_id: null,
     exercise: { id: 1, name: 'Test', type: 'musculation', technical_notes: null, muscle_groups: '[]', description: null },
     blocks,
   };
