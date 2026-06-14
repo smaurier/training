@@ -1,5 +1,4 @@
-// app/(tabs)/exercices.tsx
-import { FlatList, View, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import { FlatList, View, Text, ActivityIndicator, StyleSheet, Alert } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { useCallback, useRef } from 'react';
 import { Ionicons } from '@expo/vector-icons';
@@ -14,7 +13,7 @@ const SHADOW_COLOR = '#000' as const;
 const FAB_ICON_COLOR = '#fff' as const;
 
 export default function ExercicesScreen() {
-  const { exercises, loading, error, refresh } = useExercises();
+  const { exercises, loading, error, refresh, deleteExercise } = useExercises();
   const router = useRouter();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
@@ -29,6 +28,27 @@ export default function ExercicesScreen() {
       refresh();
     }, [refresh])
   );
+
+  const handleDeleteExercise = useCallback((id: number) => {
+    deleteExercise(id).then(conflict => {
+      if (!conflict) return;
+      const parts: string[] = [];
+      if (conflict.programs > 0) parts.push(`utilisé dans ${conflict.programs} programme(s)`);
+      if (conflict.sessions > 0) parts.push(`${conflict.sessions} série(s) enregistrée(s)`);
+      Alert.alert(
+        'Supprimer quand même ?',
+        `Cet exercice est ${parts.join(' et ')}. Cette action est irréversible.`,
+        [
+          { text: 'Annuler', style: 'cancel' },
+          {
+            text: 'Supprimer',
+            style: 'destructive',
+            onPress: () => { deleteExercise(id, true).catch(() => {}); },
+          },
+        ],
+      );
+    }).catch(() => {});
+  }, [deleteExercise]);
 
   if (loading) {
     return (
@@ -51,7 +71,9 @@ export default function ExercicesScreen() {
       <FlatList
         data={exercises}
         keyExtractor={(item) => String(item.id)}
-        renderItem={({ item }) => <ExerciseCard exercise={item} />}
+        renderItem={({ item }) => (
+          <ExerciseCard exercise={item} onDelete={handleDeleteExercise} />
+        )}
         contentContainerStyle={styles.list}
         ListEmptyComponent={
           <Text style={[styles.empty, { color: colors.textSecondary }]}>
