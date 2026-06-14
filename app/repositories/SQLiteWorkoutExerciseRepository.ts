@@ -58,7 +58,7 @@ export class SQLiteWorkoutExerciseRepository implements IWorkoutExerciseReposito
 
   async findByExerciseId(exerciseId: number): Promise<WorkoutExercise[]> {
     return this.db.getAllAsync<WorkoutExercise>(
-      'SELECT * FROM workout_exercises WHERE exercise_id = ?',
+      'SELECT * FROM workout_exercises WHERE exercise_id = ? ORDER BY order_index',
       [exerciseId],
     );
   }

@@ -38,6 +38,8 @@ export class InMemoryWorkoutExerciseRepository implements IWorkoutExerciseReposi
   }
 
   async findByExerciseId(exerciseId: number): Promise<WorkoutExercise[]> {
-    return this.items.filter(we => we.exercise_id === exerciseId);
+    return this.items
+      .filter(we => we.exercise_id === exerciseId)
+      .sort((a, b) => a.order_index - b.order_index);
   }
 }
