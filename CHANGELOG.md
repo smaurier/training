@@ -5,6 +5,25 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.12.0] — 2026-06-14
+
+37617c2 fix(supersets): superset_group_id dans fixtures DeloadService + weightRatio + doc limitation multi-block
+d4647e3 fix(supersets): onLinkToNext dans superset uniquement sur le dernier membre
+e7f5ad0 feat(supersets): éditeur workout — bouton Grouper + container violet + Délier
+9bfb190 feat(supersets): ExerciseTransitionPhase preview A→B→C
+6fe5b7e feat(supersets): badge SUPERSET session + texte skip groupe
+369cb3b fix(supersets): skipExercise dep array workoutDetails.length → workoutDetails
+49fceff feat(supersets): validateSet + skipExercise superset routing wiring
+93f7d3b feat(supersets): advancePosition superset routing + isSupersetForward/NextRound (TDD)
+1df3ed3 feat(supersets): useWorkoutExercises expose linkToNext + unlink
+825bd8e feat(supersets): WorkoutExerciseService.linkToNext + unlink (TDD)
+41b8a25 feat(supersets): updateSuperset — InMemory + SQLite (TDD)
+f1492fa feat(supersets): migration v13 + types superset_group_id + IWorkoutExerciseRepository.updateSuperset
+10ec139 docs(spec): supersets — fix FlatList grouping + skipSet hors-scope V1
+ff0dbba docs(spec): supersets — A+B+C, repos après dernier, badge SUPERSET session
+
+---
+
 ## [1.11.1] — 2026-06-13
 
 e95b2a4 docs(journal): S42 comparaison séance vs précédente
