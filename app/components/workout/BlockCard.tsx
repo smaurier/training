@@ -24,7 +24,9 @@ interface BlockCardProps {
 }
 
 function formatSet(set: TrainingSet): string {
-  const reps = `${set.reps_min} rép`;
+  const reps = set.set_type === 'amrap'
+    ? (set.reps_min > 0 ? `${set.reps_min}+ rép` : 'MAX rép')
+    : `${set.reps_min} rép`;
 
   let weight: string;
   if (set.weight_type === 'bodyweight') weight = 'PC';
