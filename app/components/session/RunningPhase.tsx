@@ -236,15 +236,20 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
       <View style={styles.header}>
         <View style={styles.headerRow}>
           <View style={styles.headerTextGroup}>
-            <View style={styles.exerciseNameRow}>
+            <View
+              style={styles.exerciseNameRow}
+              accessible={true}
+              accessibilityLabel={isSubstituted ? `Exercice remplacé : ${exercise.exercise.name}` : exercise.exercise.name}
+            >
               {isSubstituted && (
-                <Ionicons name="swap-horizontal-outline" size={18} color={colors.textSecondary} />
+                <Ionicons
+                  name="swap-horizontal-outline"
+                  size={18}
+                  color={colors.textSecondary}
+                  importantForAccessibility="no-hide-descendants"
+                />
               )}
-              <Text
-                style={[styles.exerciseName, { color: colors.text }]}
-                numberOfLines={1}
-                accessibilityLabel={isSubstituted ? `Exercice remplacé : ${exercise.exercise.name}` : exercise.exercise.name}
-              >
+              <Text style={[styles.exerciseName, { color: colors.text }]} numberOfLines={1}>
                 {exercise.exercise.name}
               </Text>
             </View>

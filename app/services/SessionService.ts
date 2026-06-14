@@ -224,6 +224,12 @@ export class SessionService {
       const currentLogs = setLogs.filter(sl => travailSetIds.includes(sl.set_id));
       const oldWeight = travailSets[0].weight;
 
+      // If any set was logged with a different exercise (substitution), skip progression — program unchanged
+      if (currentLogs.some(sl => sl.exercise_id !== we.exercise_id)) {
+        results.push({ exerciseId: exercise.id, exerciseName: exercise.name, oldWeight, newWeight: oldWeight, achieved: false, consecutiveSuccesses: 0, threshold: 1 });
+        continue;
+      }
+
       if (currentLogs.length === 0) {
         results.push({ exerciseId: exercise.id, exerciseName: exercise.name, oldWeight, newWeight: oldWeight, achieved: false, consecutiveSuccesses: 0, threshold: 1 });
         continue;

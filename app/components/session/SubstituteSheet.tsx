@@ -1,8 +1,9 @@
 import { useRef, useState, useMemo, useCallback } from 'react';
-import { Text, TextInput, StyleSheet } from 'react-native';
+import { Text, StyleSheet } from 'react-native';
 import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetFlatList,
+  BottomSheetTextInput,
   BottomSheetView,
   type BottomSheetBackdropProps,
 } from '@gorhom/bottom-sheet';
@@ -30,6 +31,7 @@ export function SubstituteSheet({ sheetRef, currentMuscleGroups, onSelect, onClo
 
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const hasLoaded = useRef(false);
   const snapPoints = useMemo(() => ['75%', '90%'], []);
 
@@ -43,7 +45,11 @@ export function SubstituteSheet({ sheetRef, currentMuscleGroups, onSelect, onClo
   function handleAnimate(_fromIndex: number, toIndex: number) {
     if (toIndex >= 0 && !hasLoaded.current) {
       hasLoaded.current = true;
-      new SQLiteExerciseRepository(getDb()).findAll().then(setExercises).catch(console.error);
+      setIsLoading(true);
+      new SQLiteExerciseRepository(getDb())
+        .findAll()
+        .then(all => { setExercises(all); setIsLoading(false); })
+        .catch(err => { console.error(err); setIsLoading(false); });
     }
   }
 
@@ -87,7 +93,7 @@ export function SubstituteSheet({ sheetRef, currentMuscleGroups, onSelect, onClo
     >
       <BottomSheetView style={styles.header}>
         <Text style={[styles.title, { color: colors.text }]}>Remplacer l'exercice</Text>
-        <TextInput
+        <BottomSheetTextInput
           style={[styles.search, { color: colors.text, borderColor: colors.border, backgroundColor: colors.background }]}
           value={searchQuery}
           onChangeText={setSearchQuery}
@@ -97,7 +103,11 @@ export function SubstituteSheet({ sheetRef, currentMuscleGroups, onSelect, onClo
           returnKeyType="search"
         />
       </BottomSheetView>
-      {filtered.length === 0 ? (
+      {isLoading ? (
+        <BottomSheetView style={styles.emptyContainer}>
+          <Text style={[styles.emptyText, { color: colors.textSecondary }]}>Chargement…</Text>
+        </BottomSheetView>
+      ) : filtered.length === 0 ? (
         <BottomSheetView style={styles.emptyContainer}>
           <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
             Aucun exercice — recherchez par nom
