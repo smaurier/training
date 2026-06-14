@@ -4,6 +4,44 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 
 ---
 
+## S43 — 2026-06-13/14 — Supersets (v1.12.0)
+
+### Livré
+
+- **Migration v13** : `ALTER TABLE workout_exercises ADD COLUMN superset_group_id INTEGER`. Commit `f1492fa`.
+- **Types propagés** : `WorkoutExercise.superset_group_id: number | null`, `WorkoutExerciseDetail.superset_group_id`, `CreateWorkoutExerciseDto` exclut le champ (NULL à la création). `IWorkoutExerciseRepository.updateSuperset(id, groupId)`.
+- **Repository TDD** : `InMemoryWorkoutExerciseRepository.save()` initialise `superset_group_id: null`. `updateSuperset` InMemory + SQLite. 2 tests TDD. Commit `41b8a25`.
+- **`WorkoutExerciseService.linkToNext(aId, bId)`** : priorité groupId B → A → MAX+1. **`unlink(id)`** : dissout tout le groupe. 4 tests TDD. Commit `825bd8e`.
+- **`useWorkoutExercises`** : expose `linkToNext(aId, bId)` et `unlink(id)` avec le pattern try/catch/refresh standard. Commit `1df3ed3`.
+- **`advancePosition` superset routing** : A→B→C round-robin (même setIdx), C→A tour suivant (setIdx+1), C→exercice suivant après tours épuisés. Helpers exportés : `isSupersetForward` (A→B, même groupe, ordre croissant) et `isSupersetNextRound` (C→A, même groupe, ordre décroissant). 8 tests TDD. Commit `93f7d3b`.
+- **`validateSet`** : `isSupersetForward` → setPhase('running') directement (pas de repos, pas de transition). `isSupersetNextRound` → repos autorisé mais pas d'`exercise_transition`. Commit `49fceff`.
+- **`skipExercise`** : saute tout le groupe (`max(groupIndices) + 1`). Fix dep array `workoutDetails.length → workoutDetails`. Commits `49fceff`, `369cb3b`.
+- **`RunningPhase`** : badge `SUPERSET · 1/2` (fond `#7c3aed`, 11px bold). Texte skip conditionnel : "Passer le superset entier (A · B)" quand en superset. Commits `6fe5b7e`.
+- **Helpers session** : `getSupersetPosition(position, details)` et `getSupersetExerciseNames(position, details)` dans `[workoutId].tsx`. Commit `6fe5b7e`.
+- **`ExerciseTransitionPhase`** : prop `supersetGroup?: string[]`. Preview "Tu vas enchaîner : A → B · repos après B" en bloc violet bordé. Commit `9bfb190`.
+- **`WorkoutExerciseCard`** : 4 nouvelles props optionnelles. Bouton "🔗 Grouper avec le suivant" (standalone, pas dernier). Badge "SUPERSET · A" + "✕ Délier" (en groupe). Commit `e7f5ad0`.
+- **`workout/[id].tsx`** : `buildRenderItems()` transforme le tableau flat en `RenderItem[]` (standalone | superset). FlatList utilise `buildRenderItems(exercises)`. Container violet bordé (`#7c3aed`) pour les groupes superset avec label absolu "SUPERSET". Commits `e7f5ad0`, `d4647e3`.
+- **Fixes post-review** : `onLinkToNext` sur superset uniquement sur le dernier membre (`d4647e3`). Fixtures `DeloadService.test.ts` + `weightRatio.test.ts` — `superset_group_id: null` ajouté. Doc limitation multi-block dans `advancePosition`. Commit `37617c2`.
+- 475/475 tests, 0 erreurs TypeScript. Tag `v1.12.0`.
+
+### Décisions
+
+- **`unlink` dissout tout le groupe** : pas de "délier un seul membre" — plus simple, pas d'états partiels orphelins.
+- **`isSupersetForward` compare la position dans le groupe ordonné** (pas les exerciseIdx bruts) — correct si les exercices sont réordonnés.
+- **`buildRenderItems` groupe les exercices contigus** avec le même `superset_group_id`. Si deux exercices du même groupe sont séparés (bug de données), ils forment deux containers distincts. Acceptable pour V1 (l'UI ne permet pas cet état).
+- **Supersets à un seul bloc** : limitation documentée dans un commentaire — `advancePosition` réinitialise toujours `blockIdx: 0` entre les membres, donc les blocs Back-off ne sont pas atteints dans un superset. Design intentionnel pour V1.
+- **Couleur superset `#7c3aed`** codée en dur dans 4 fichiers — refacto vers `Colors.ts` reporté au backlog.
+- **Subagent-driven development** : 9 tâches, 3 subagents par tâche (implémenteur + spec reviewer + quality reviewer). Review qualité T3 a demandé des tests supplémentaires non spécifiés → rejetés (scope plan). Review qualité T9 a trouvé un vrai bug (`onLinkToNext` sur tous les membres au lieu du dernier) → corrigé inline.
+
+### Hors scope → backlog
+
+- Supersets multi-blocs (Back-off dans un superset)
+- Couleur superset dans `Colors.ts`
+- Test d'intégration `validateSet` complet avec superset (hook renderHook)
+- Constante `SUPERSET_COLOR` dans `Colors.ts`
+
+---
+
 ## S42 — 2026-06-13 — Comparaison séance vs précédente
 
 ### Livré
