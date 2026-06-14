@@ -63,6 +63,8 @@ export interface UseSessionResult {
   totalSetsLogged: number;
   totalVolume: number;
   lastSetLog: LastSetLog | null;
+  substituteCurrentExercise: (replacement: WorkoutExerciseDetail['exercise']) => void;
+  isCurrentExerciseSubstituted: boolean;
   error: string | null;
   pauseSession: () => Promise<void>;
 }
@@ -208,12 +210,20 @@ export function useSession(
   const positionHistory = useRef<HistoryEntry[]>([]);
   const [historySize, setHistorySize] = useState(0);
   const [startingWeightDone, setStartingWeightDone] = useState(false);
+  const [substitutions, setSubstitutions] = useState<Record<number, WorkoutExerciseDetail['exercise']>>({});
 
-  const currentExercise = workoutDetails[position.exerciseIdx] ?? null;
+  const effectiveDetails = useMemo(
+    () => workoutDetails.map((d, i) =>
+      substitutions[i] ? { ...d, exercise: substitutions[i] } : d
+    ),
+    [workoutDetails, substitutions]
+  );
+
+  const currentExercise = effectiveDetails[position.exerciseIdx] ?? null;
   const currentBlock = currentExercise?.blocks[position.blockIdx] ?? null;
   const currentSet = currentBlock?.sets[position.setIdx] ?? null;
   const progressLabel = currentExercise
-    ? `${position.exerciseIdx + 1} / ${workoutDetails.length} exercices`
+    ? `${position.exerciseIdx + 1} / ${effectiveDetails.length} exercices`
     : '';
 
   useEffect(() => {
@@ -252,7 +262,7 @@ export function useSession(
       setTotalVolume(n => n + (actual.weightDone ?? 0) * (actual.repsDone ?? 0));
 
       const completedRestDuration = currentSet.rest_duration;
-      const next = advancePosition(position, workoutDetails);
+      const next = advancePosition(position, effectiveDetails);
 
       if (next === null) {
         await service.completeSession(sessionLogId);
@@ -267,13 +277,13 @@ export function useSession(
       }
 
       // Superset forward: chain without rest or transition
-      if (isSupersetForward(position, next, workoutDetails)) {
+      if (isSupersetForward(position, next, effectiveDetails)) {
         setPosition(next);
         setPhase('running');
         return isPR;
       }
 
-      const supersetNextRound = isSupersetNextRound(position, next, workoutDetails);
+      const supersetNextRound = isSupersetNextRound(position, next, effectiveDetails);
       const exerciseChanges = next.exerciseIdx !== position.exerciseIdx;
       if (exerciseChanges) setStartingWeightDone(false);
 
@@ -285,7 +295,7 @@ export function useSession(
 
       setRestDuration(completedRestDuration);
       setPendingPhase(exerciseChanges && !supersetNextRound ? 'exercise_transition' : 'running');
-      setNextLabel(computeNextLabel(next, workoutDetails, exerciseChanges && !supersetNextRound));
+      setNextLabel(computeNextLabel(next, effectiveDetails, exerciseChanges && !supersetNextRound));
       setPosition(next);
       setPhase('rest');
       return isPR;
@@ -293,7 +303,7 @@ export function useSession(
       setError(e instanceof Error ? e.message : 'Erreur validation série');
       return false;
     }
-  }, [service, sessionLogId, currentSet, currentExercise, position, workoutDetails, plateStep]);
+  }, [service, sessionLogId, currentSet, currentExercise, position, effectiveDetails, plateStep]);
 
   const confirmRest = useCallback(() => {
     setPhase(pendingPhase);
@@ -301,7 +311,7 @@ export function useSession(
 
   const confirmTransition = useCallback(() => {
     if (phase !== 'exercise_transition') return;
-    const exercise = workoutDetails[position.exerciseIdx];
+    const exercise = effectiveDetails[position.exerciseIdx];
     const travailBlock = exercise?.blocks.find(b => b.is_work_block === 1 && b.name === 'Travail');
     const firstSet = travailBlock?.sets[0];
     if (firstSet && shouldShowWarmup(firstSet.weight ?? 0, firstSet.weight_type)) {
@@ -311,7 +321,7 @@ export function useSession(
       // Pas de bloc Travail ou poids non qualifié → pas d'échauffement
       setPhase('running');
     }
-  }, [phase, workoutDetails, position.exerciseIdx]);
+  }, [phase, effectiveDetails, position.exerciseIdx]);
 
   const confirmWarmup = useCallback(() => {
     setPhase('running');
@@ -319,7 +329,7 @@ export function useSession(
 
   const skipSet = useCallback(async () => {
     if (!sessionLogId) return;
-    const next = advancePosition(position, workoutDetails);
+    const next = advancePosition(position, effectiveDetails);
     if (next === null) {
       await service.completeSession(sessionLogId);
       try {
@@ -332,7 +342,7 @@ export function useSession(
     } else {
       setPosition(next);
     }
-  }, [service, sessionLogId, position, workoutDetails, plateStep]);
+  }, [service, sessionLogId, position, effectiveDetails, plateStep]);
 
   const undoLastSet = useCallback(async () => {
     if (!sessionLogId || positionHistory.current.length === 0) return;
@@ -355,10 +365,10 @@ export function useSession(
     if (!sessionLogId) return;
     positionHistory.current = [];
     setHistorySize(0);
-    const currentGroupId = workoutDetails[position.exerciseIdx]?.superset_group_id;
+    const currentGroupId = effectiveDetails[position.exerciseIdx]?.superset_group_id;
     let nextExerciseIdx: number;
     if (currentGroupId != null) {
-      const groupIndices = workoutDetails
+      const groupIndices = effectiveDetails
         .map((d, i) => ({ d, i }))
         .filter(({ d }) => d.superset_group_id === currentGroupId)
         .map(({ i }) => i);
@@ -366,7 +376,7 @@ export function useSession(
     } else {
       nextExerciseIdx = position.exerciseIdx + 1;
     }
-    if (nextExerciseIdx >= workoutDetails.length) {
+    if (nextExerciseIdx >= effectiveDetails.length) {
       await service.completeSession(sessionLogId);
       try {
         const progs = await service.calculateProgressions(sessionLogId, plateStep);
@@ -379,7 +389,16 @@ export function useSession(
       setPosition({ exerciseIdx: nextExerciseIdx, blockIdx: 0, setIdx: 0 });
       setPhase('exercise_transition');
     }
-  }, [service, sessionLogId, position.exerciseIdx, workoutDetails, plateStep]);
+  }, [service, sessionLogId, position.exerciseIdx, effectiveDetails, plateStep]);
+
+  const substituteCurrentExercise = useCallback(
+    (replacement: WorkoutExerciseDetail['exercise']) => {
+      setSubstitutions(prev => ({ ...prev, [position.exerciseIdx]: replacement }));
+    },
+    [position.exerciseIdx]
+  );
+
+  const isCurrentExerciseSubstituted = substitutions[position.exerciseIdx] !== undefined;
 
   const setStartingWeight = useCallback(async (weight: number) => {
     if (!currentExercise) return;
@@ -410,6 +429,8 @@ export function useSession(
     startSession, validateSet, skipSet, skipExercise, undoLastSet, canUndo,
     setStartingWeight, startingWeightDone, markStartingWeightDone,
     warmupWorkWeight, confirmTransition, confirmRest, confirmWarmup, restDuration, nextLabel,
-    progressions, sessionStartedAt, totalSetsLogged, totalVolume, lastSetLog, error, pauseSession,
+    progressions, sessionStartedAt, totalSetsLogged, totalVolume, lastSetLog,
+    substituteCurrentExercise, isCurrentExerciseSubstituted,
+    error, pauseSession,
   };
 }

@@ -496,3 +496,60 @@ describe('useSession — dropset routing', () => {
     expect(result.current.phase).toBe('exercise_transition');
   });
 });
+
+describe('useSession — substituteCurrentExercise', () => {
+  const replacement: WorkoutExerciseDetail['exercise'] = {
+    id: 99,
+    name: 'Développé Haltères',
+    type: 'musculation',
+    technical_notes: null,
+    muscle_groups: '["poitrine"]',
+    description: null,
+  };
+
+  function makeSessionWithExercise() {
+    const exercises = [makeExercise('Développé Barre', 80, 3)];
+    return renderHook(() =>
+      useSession(1, exercises, {
+        sessionLogId: 1,
+        position: { exerciseIdx: 0, blockIdx: 0, setIdx: 0 },
+        phase: 'running',
+        startedAt: Date.now(),
+        setsLogged: 0,
+        volume: 0,
+      })
+    );
+  }
+
+  it('currentExercise.exercise.name retourne le remplaçant après substitution', () => {
+    const { result } = makeSessionWithExercise();
+    expect(result.current.currentExercise?.exercise.name).toBe('Développé Barre');
+    act(() => {
+      result.current.substituteCurrentExercise(replacement);
+    });
+    expect(result.current.currentExercise?.exercise.name).toBe('Développé Haltères');
+    expect(result.current.currentExercise?.exercise.id).toBe(99);
+  });
+
+  it('isCurrentExerciseSubstituted reflète l\'état de substitution', () => {
+    const { result } = makeSessionWithExercise();
+    expect(result.current.isCurrentExerciseSubstituted).toBe(false);
+    act(() => {
+      result.current.substituteCurrentExercise(replacement);
+    });
+    expect(result.current.isCurrentExerciseSubstituted).toBe(true);
+  });
+
+  it('currentSet reste inchangé après substitution — id, reps_min, weight identiques', () => {
+    const { result } = makeSessionWithExercise();
+    const setIdBefore = result.current.currentSet?.id;
+    const repsMinBefore = result.current.currentSet?.reps_min;
+    const weightBefore = result.current.currentSet?.weight;
+    act(() => {
+      result.current.substituteCurrentExercise(replacement);
+    });
+    expect(result.current.currentSet?.id).toBe(setIdBefore);
+    expect(result.current.currentSet?.reps_min).toBe(repsMinBefore);
+    expect(result.current.currentSet?.weight).toBe(weightBefore);
+  });
+});
