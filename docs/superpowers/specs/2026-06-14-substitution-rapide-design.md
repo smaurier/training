@@ -96,14 +96,14 @@ interface SubstituteSheetProps {
 **Chargement lazy** — exercices chargés au premier open du sheet uniquement (pas au mount de RunningPhase) :
 ```typescript
 const [exercises, setExercises] = useState<Exercise[]>([]);
-const [hasLoaded, setHasLoaded] = useState(false);
+const hasLoaded = useRef(false);
 
 // onAnimate du BottomSheet → déclenche le load au premier open
 function handleAnimate(fromIndex: number, toIndex: number) {
-  if (toIndex >= 0 && !hasLoaded) {
+  if (toIndex >= 0 && !hasLoaded.current) {
+    hasLoaded.current = true;
     new SQLiteExerciseRepository(getDb()).findAll().then(all => {
       setExercises(all);
-      setHasLoaded(true);
     });
   }
 }
@@ -126,7 +126,7 @@ const filtered = useMemo(() => {
 }, [exercises, currentMuscleGroups, searchQuery]);
 ```
 
-Si `currentMuscleGroups` est vide ou ne matche rien, la liste filtrée est vide → l'utilisateur utilise la recherche texte. Comportement attendu, pas d'erreur.
+Si `currentMuscleGroups` est vide ou ne matche rien, la liste filtrée est vide → afficher un message "Aucun exercice — recherchez par nom" et laisser le `TextInput` en focus. L'utilisateur bascule implicitement vers la recherche texte.
 
 **Sélection** — le sheet se ferme avant de remonter le choix :
 ```typescript
