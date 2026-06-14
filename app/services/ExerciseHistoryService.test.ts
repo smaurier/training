@@ -68,7 +68,7 @@ describe('ExerciseHistoryService.getHistory', () => {
     await setLogRepo.save({ session_log_id: 1, set_id: 1, exercise_id: ex.id, reps_done: 5, weight_done: 80, rpe: null, completed_at: '2026-06-01T10:00:00.000Z' });
     await setLogRepo.save({ session_log_id: 1, set_id: 2, exercise_id: ex.id, reps_done: 3, weight_done: 85, rpe: null, completed_at: '2026-06-01T10:05:00.000Z' });
     const result = await service.getHistory(ex.id);
-    expect(result.lastSession?.bestSet).toEqual({ reps: 3, weight: 85 });
+    expect(result.lastSession?.bestSet).toEqual(expect.objectContaining({ reps: 3, weight: 85 }));
   });
 
   it('bestSet = reps max si tous les sets sont weight=0 (bodyweight)', async () => {
@@ -77,7 +77,7 @@ describe('ExerciseHistoryService.getHistory', () => {
     await setLogRepo.save({ session_log_id: 1, set_id: 1, exercise_id: ex.id, reps_done: 8, weight_done: 0, rpe: null, completed_at: '2026-06-01T10:00:00.000Z' });
     await setLogRepo.save({ session_log_id: 1, set_id: 2, exercise_id: ex.id, reps_done: 12, weight_done: 0, rpe: null, completed_at: '2026-06-01T10:05:00.000Z' });
     const result = await service.getHistory(ex.id);
-    expect(result.lastSession?.bestSet).toEqual({ reps: 12, weight: 0 });
+    expect(result.lastSession?.bestSet).toEqual(expect.objectContaining({ reps: 12, weight: 0 }));
   });
 
   it('respecte la limite — limit=2 retourne max 2 sessions', async () => {
@@ -131,5 +131,59 @@ describe('ExerciseHistoryService.getLoggedExercises', () => {
     await setLogRepo.save({ session_log_id: 2, set_id: 2, exercise_id: ex.id, reps_done: 5, weight_done: 80, rpe: null, completed_at: '2026-06-08T10:00:00.000Z' });
     const result = await service.getLoggedExercises();
     expect(result).toHaveLength(1);
+  });
+});
+
+describe('ExerciseHistoryService — cardio', () => {
+  const cardioExerciseDto = {
+    name: 'Course',
+    type: 'cardio' as const,
+    muscle_groups: '[]',
+    technical_notes: null,
+    description: null,
+    is_custom: 0 as const,
+    progression_step: 0,
+    progression_threshold: 1,
+  };
+
+  it('propage duration_seconds et distance_meters dans ExerciseSetRecord', async () => {
+    const { service, setLogRepo, exerciseRepo } = makeService();
+    const ex = await exerciseRepo.save(cardioExerciseDto);
+    await setLogRepo.save({
+      session_log_id: 1, set_id: 1, exercise_id: ex.id,
+      reps_done: 0, weight_done: 0, rpe: null,
+      completed_at: '2026-06-01T10:00:00.000Z',
+      duration_seconds: 1800,
+      distance_meters: 5000,
+    });
+    const result = await service.getHistory(ex.id);
+    expect(result.lastSession?.sets[0].duration_seconds).toBe(1800);
+    expect(result.lastSession?.sets[0].distance_meters).toBe(5000);
+  });
+
+  it('bestSet cardio — choisit la distance max quand distance_meters > 0', async () => {
+    const { service, setLogRepo, exerciseRepo } = makeService();
+    const ex = await exerciseRepo.save(cardioExerciseDto);
+    await setLogRepo.save({ session_log_id: 1, set_id: 1, exercise_id: ex.id, reps_done: 0, weight_done: 0, rpe: null, completed_at: '2026-06-01T10:00:00.000Z', duration_seconds: 1800, distance_meters: 5000 });
+    await setLogRepo.save({ session_log_id: 1, set_id: 2, exercise_id: ex.id, reps_done: 0, weight_done: 0, rpe: null, completed_at: '2026-06-01T10:30:00.000Z', duration_seconds: 2100, distance_meters: 8000 });
+    const result = await service.getHistory(ex.id);
+    expect(result.lastSession?.bestSet.distance_meters).toBe(8000);
+  });
+
+  it('bestSet cardio — fallback durée max si aucune distance', async () => {
+    const { service, setLogRepo, exerciseRepo } = makeService();
+    const ex = await exerciseRepo.save(cardioExerciseDto);
+    await setLogRepo.save({ session_log_id: 1, set_id: 1, exercise_id: ex.id, reps_done: 0, weight_done: 0, rpe: null, completed_at: '2026-06-01T10:00:00.000Z', duration_seconds: 1800, distance_meters: null });
+    await setLogRepo.save({ session_log_id: 1, set_id: 2, exercise_id: ex.id, reps_done: 0, weight_done: 0, rpe: null, completed_at: '2026-06-01T10:30:00.000Z', duration_seconds: 2700, distance_meters: null });
+    const result = await service.getHistory(ex.id);
+    expect(result.lastSession?.bestSet.duration_seconds).toBe(2700);
+  });
+
+  it('bestSet cardio — fallback premier set si tout null', async () => {
+    const { service, setLogRepo, exerciseRepo } = makeService();
+    const ex = await exerciseRepo.save(cardioExerciseDto);
+    await setLogRepo.save({ session_log_id: 1, set_id: 1, exercise_id: ex.id, reps_done: 0, weight_done: 0, rpe: null, completed_at: '2026-06-01T10:00:00.000Z', duration_seconds: null, distance_meters: null });
+    const result = await service.getHistory(ex.id);
+    expect(result.lastSession?.bestSet).toBeDefined();
   });
 });

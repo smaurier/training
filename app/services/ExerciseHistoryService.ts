@@ -5,6 +5,8 @@ import type { Exercise } from '../db/types';
 export interface ExerciseSetRecord {
   reps: number;
   weight: number;
+  duration_seconds?: number | null;
+  distance_meters?: number | null;
 }
 
 export interface ExerciseSession {
@@ -20,6 +22,22 @@ export interface ExerciseHistory {
   recentSessions: ExerciseSession[];
 }
 
+function computeBestSet(sets: ExerciseSetRecord[], isCardio: boolean): ExerciseSetRecord {
+  if (isCardio) {
+    const withDistance = sets.filter(s => s.distance_meters != null && s.distance_meters > 0);
+    if (withDistance.length > 0)
+      return withDistance.reduce((b, s) => s.distance_meters! > b.distance_meters! ? s : b);
+    const withDuration = sets.filter(s => s.duration_seconds != null && s.duration_seconds > 0);
+    if (withDuration.length > 0)
+      return withDuration.reduce((b, s) => s.duration_seconds! > b.duration_seconds! ? s : b);
+    return sets[0];
+  }
+  const allBodyweight = sets.every(s => s.weight === 0);
+  return allBodyweight
+    ? sets.reduce((b, s) => s.reps > b.reps ? s : b, sets[0])
+    : sets.reduce((b, s) => s.weight > b.weight ? s : b, sets[0]);
+}
+
 export class ExerciseHistoryService {
   constructor(
     private setLogRepo: ISetLogRepository,
@@ -31,10 +49,16 @@ export class ExerciseHistoryService {
     if (!exercise) throw new Error(`Exercise ${exerciseId} not found`);
 
     const setLogs = await this.setLogRepo.findByExerciseId(exerciseId);
+    const isCardio = exercise.type === 'cardio';
 
     const groupMap = new Map<number, { date: string; sets: ExerciseSetRecord[] }>();
     for (const log of setLogs) {
-      const record: ExerciseSetRecord = { reps: log.reps_done, weight: log.weight_done };
+      const record: ExerciseSetRecord = {
+        reps: log.reps_done,
+        weight: log.weight_done,
+        duration_seconds: log.duration_seconds,
+        distance_meters: log.distance_meters,
+      };
       const existing = groupMap.get(log.session_log_id);
       if (!existing) {
         groupMap.set(log.session_log_id, { date: log.completed_at, sets: [record] });
@@ -43,13 +67,12 @@ export class ExerciseHistoryService {
       }
     }
 
-    const sessions: ExerciseSession[] = [...groupMap.entries()].map(([id, { date, sets }]) => {
-      const allBodyweight = sets.every(s => s.weight === 0);
-      const bestSet = allBodyweight
-        ? sets.reduce((b, s) => s.reps > b.reps ? s : b, sets[0])
-        : sets.reduce((b, s) => s.weight > b.weight ? s : b, sets[0]);
-      return { sessionLogId: id, date, sets, bestSet };
-    }).sort((a, b) => b.date.localeCompare(a.date));
+    const sessions: ExerciseSession[] = [...groupMap.entries()].map(([id, { date, sets }]) => ({
+      sessionLogId: id,
+      date,
+      sets,
+      bestSet: computeBestSet(sets, isCardio),
+    })).sort((a, b) => b.date.localeCompare(a.date));
 
     return {
       exercise,
