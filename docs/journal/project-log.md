@@ -4,6 +4,34 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 
 ---
 
+## S45 — 2026-06-14 — Substitution rapide d'exercice (v1.14.0)
+
+### Livré
+
+- **`useSession` — état substitution** : `substitutions: Record<number, ExerciseStub>` + `effectiveDetails` (useMemo overlay — remplace uniquement `exercise`, jamais les blocks/sets). `substituteCurrentExercise(replacement)` + `isCurrentExerciseSubstituted`. Tous les callbacks (`validateSet`, `skipSet`, `skipExercise`, `confirmTransition`) consomment `effectiveDetails`. 3 tests TDD. Commit `5013f6b`.
+- **`SubstituteSheet`** : picker lazy (chargé au premier open via `onAnimate` + `hasLoaded` ref), `BottomSheetFlatList`, `BottomSheetTextInput`, filtre muscle group (JSON.parse) puis fallback recherche nom, état `isLoading` pendant fetch DB, empty state "Aucun exercice — recherchez par nom", `accessibilityLabel` sur chaque row. Commits `a024b49`, `d6d41df`.
+- **`RunningPhase`** : bouton "Remplacer cet exercice" dans skip sheet (conditionnel `onSubstituteExercise`), `substituteSheetRef`, indicateur ⇄ dans le header, `View accessible={true}` groupant icon+text pour TalkBack. Commit `bad7616`.
+- **`[workoutId].tsx`** : `onSubstituteExercise` + `isSubstituted` passés à `RunningPhase`. Commit `253f3c9`.
+- **Fix progression** : `SessionService.calculateProgressions` — si `set_log.exercise_id !== workout_exercise.exercise_id`, skip progression (neutral push, no weight advance, no deload). Commit `ab0cefa`.
+- 483/483 tests, 0 erreurs TypeScript.
+
+### Décisions
+
+- **Overlay `effectiveDetails` (pas de mutation `workoutDetails`)** : préserve la structure programme intacte. Substitution = couche visuelle au-dessus des données.
+- **`ExerciseStub` = `WorkoutExerciseDetail['exercise']`** : pas de nouveau type. Réutilise le pick existant (`id | name | type | technical_notes | muscle_groups | description`).
+- **Clé = `exerciseIdx`** (pas `exercise_id`) : unique, stable pendant la séance, naturellement aligné avec `effectiveDetails`.
+- **Fix progression par comparaison `exercise_id`** : pas de migration DB ni de paramètre supplémentaire. `set_logs.exercise_id` est déjà loggé avec l'id du remplaçant — un simple `some(sl => sl.exercise_id !== we.exercise_id)` suffit.
+- **V1 hors scope** : persistance pause/resume, substitution per-série, historique/annulation.
+
+### Problèmes rencontrés
+
+- **`FlatList` cassait pan-down-to-close Android** : `@gorhom/bottom-sheet` v5 exige `BottomSheetFlatList` (découvert en code quality review).
+- **`TextInput` clavier Android** : `BottomSheetTextInput` requis pour gérer le focus correctement dans un sheet — fix post-review.
+- **`toIndex > 0` bug spec** : manquait snap index 0 (hauteur 75%) — corrigé avant écriture du plan.
+- **Final reviewer** : "No — with fixes" → 1 critique (progression) + 3 importants (TextInput, loading state, a11y grouping). Tous fixés avant push.
+
+---
+
 ## S44 — 2026-06-14 — Sets spéciaux : AMRAP + Dropsets
 
 ### Livré
