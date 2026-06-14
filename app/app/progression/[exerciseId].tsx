@@ -15,7 +15,7 @@ import { Radius } from '@/constants/Radius';
 import { useUnits } from '@/hooks/useUnits';
 import { getDb } from '@/db';
 import { useExerciseHistory } from '@/hooks/useExerciseHistory';
-import type { ExerciseSession } from '@/services/ExerciseHistoryService';
+import type { ExerciseSession, ExerciseSetRecord } from '@/services/ExerciseHistoryService';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import { GoalService } from '@/services/GoalService';
 import { SQLiteGoalRepository } from '@/repositories/SQLiteGoalRepository';
@@ -33,6 +33,19 @@ function formatDateLong(iso: string): string {
 
 function formatDateShort(iso: string): string {
   return new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+}
+
+function formatCardioSet(s: ExerciseSetRecord): string {
+  const parts: string[] = [];
+  if (s.distance_meters != null && s.distance_meters > 0) {
+    parts.push(`${(s.distance_meters / 1000).toFixed(1)} km`);
+  }
+  if (s.duration_seconds != null && s.duration_seconds > 0) {
+    const min = Math.floor(s.duration_seconds / 60);
+    const sec = s.duration_seconds % 60;
+    parts.push(sec > 0 ? `${min}min ${sec}s` : `${min}min`);
+  }
+  return parts.length > 0 ? parts.join(' · ') : '—';
 }
 
 function getTargetDateFromChip(chip: '1m' | '3m' | '6m' | '1y' | 'none'): string | null {
@@ -187,6 +200,7 @@ export default function ExerciseProgressionScreen() {
   }));
 
   const isBodyweight = exerciseHistory?.recentSessions.every(s => s.bestSet.weight === 0) ?? false;
+  const isCardio = exerciseHistory?.exercise.type === 'cardio';
 
   const etaSessions = (exerciseHistory?.recentSessions ?? [])
     .slice(-12)
@@ -274,7 +288,9 @@ export default function ExerciseProgressionScreen() {
             </Text>
             {exerciseHistory.lastSession.sets.map((s, i) => (
               <Text key={`${s.weight}-${s.reps}-${i}`} style={[styles.setRow, { color: colors.text }]}>
-                · {s.weight > 0 ? `${convert(s.weight)} ${unitLabel}` : 'Poids de corps'} × {s.reps} reps
+                · {isCardio
+                  ? formatCardioSet(s)
+                  : s.weight > 0 ? `${convert(s.weight)} ${unitLabel} × ${s.reps} reps` : `Poids de corps × ${s.reps} reps`}
               </Text>
             ))}
           </View>
@@ -295,9 +311,11 @@ export default function ExerciseProgressionScreen() {
                   {formatDateShort(session.date)}
                 </Text>
                 <Text style={[styles.prRowValue, { color: colors.text }]}>
-                  {session.bestSet.weight > 0
-                    ? `${convert(session.bestSet.weight)} ${unitLabel} × ${session.bestSet.reps}`
-                    : `${session.bestSet.reps} reps`}
+                  {isCardio
+                    ? formatCardioSet(session.bestSet)
+                    : session.bestSet.weight > 0
+                      ? `${convert(session.bestSet.weight)} ${unitLabel} × ${session.bestSet.reps}`
+                      : `${session.bestSet.reps} reps`}
                 </Text>
               </View>
             ))}
