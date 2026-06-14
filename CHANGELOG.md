@@ -5,6 +5,23 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.13.0] — 2026-06-14
+
+92b4d40 docs(journal): S44 — sets spéciaux AMRAP + dropsets livré
+4cbfe66 fix(sets): reps_min empty field garde original + 3ème test régression dropset cross-bloc
+88bedb3 feat(sets): RunningPhase — badges AMRAP/DROPSET + target + repsFeedback + ⚡
+9cfd154 feat(sets): BlockCard — affichage AMRAP dans formatSet
+3a9c05a fix(sets): EditSetModal — reps_min 0 valid pour open AMRAP + accessibilityRole radio
+251f903 feat(sets): EditSetModal — toggle AMRAP + hint dropset
+cf58a52 chore(sets): remove unused SetType import in InMemorySetRepository
+50b0a3b feat(sets): migration v14 + SetType + repo set_type (TDD)
+27ca2cf docs(plan): sets spéciaux — AMRAP + dropsets — plan d'implémentation (4 tâches TDD)
+d1cb032 docs(spec): sets spéciaux — fix CreateSetDto + BlockCard + SELECT *
+70c05b7 docs(spec): sets spéciaux — AMRAP + dropsets
+eef8691 docs(journal): S43 — Supersets feature (v1.12.0)
+
+---
+
 ## [1.12.0] — 2026-06-14
 
 37617c2 fix(supersets): superset_group_id dans fixtures DeloadService + weightRatio + doc limitation multi-block
