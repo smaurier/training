@@ -113,8 +113,10 @@ describe('ExerciseService', () => {
       const ex = await repo.save(exDto);
       await setLogRepo.save({ session_log_id: 1, set_id: 1, exercise_id: ex.id, reps_done: 5, weight_done: 80, rpe: null, completed_at: '2026-06-01T10:00:00.000Z' });
       await weRepo.save({ workout_id: 1, exercise_id: ex.id, order_index: 0 });
+      const findByExSpy = jest.spyOn(setLogRepo, 'findByExerciseId');
       await service.safeDelete(ex.id, true);
       expect(await repo.findById(ex.id)).toBeNull();
+      expect(findByExSpy).not.toHaveBeenCalled();
     });
   });
 });

@@ -19,6 +19,7 @@ export class SafeDeleteConflict extends Error {
     public readonly programs: number,
   ) {
     super('SAFE_DELETE_CONFLICT');
+    this.name = 'SafeDeleteConflict';
   }
 }
 
