@@ -5,6 +5,25 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.15.0] — 2026-06-14
+
+ab3a52f feat(ui): suppression exercice — swipe + guard sessions/programmes
+82f547f feat(ui): ExerciseCard — swipe-left pour supprimer
+1586d89 feat(hook): useExercises — expose deleteExercise avec SafeDeleteConflict
+84b48a4 fix(service): SafeDeleteConflict.name + spy test force=true
+fa441a0 feat(service): ExerciseService.safeDelete + SafeDeleteConflict
+a5da871 fix(repo): findByExerciseId — ORDER BY order_index (SQLite + InMemory)
+a20ef97 feat(repo): findByExerciseId sur WorkoutExerciseRepository
+221e040 fix(progression): hide goal section for cardio exercises
+5bf1132 feat(history): affichage cardio km/durée dans historique exercice
+50d7206 fix(history): computeBestSet — type predicate narrowing + test assertion
+7bf9851 feat(history): ExerciseHistoryService — cardio fields + computeBestSet
+d8dba08 docs(plan): historique cardio + suppression sécurisée exercice
+94249f4 docs(spec): historique cardio + suppression sécurisée exercice
+d09778f docs(journal): S45 — substitution rapide + post-review fixes
+
+---
+
 ## [1.14.0] — 2026-06-14
 
 ab0cefa fix(session): substitution — progression guard + BottomSheetTextInput + loading state + a11y
