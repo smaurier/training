@@ -1,20 +1,29 @@
-// hooks/useExercises.ts
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Exercise } from '../db/types';
-import { ExerciseService, CreateExerciseInput } from '../services/ExerciseService';
+import { ExerciseService, SafeDeleteConflict, CreateExerciseInput } from '../services/ExerciseService';
 import { SQLiteExerciseRepository } from '../repositories/SQLiteExerciseRepository';
+import { SQLiteSetLogRepository } from '../repositories/SQLiteSetLogRepository';
+import { SQLiteWorkoutExerciseRepository } from '../repositories/SQLiteWorkoutExerciseRepository';
 import { getDb } from '../db';
+
+export type { SafeDeleteConflict };
 
 export interface UseExercisesResult {
   exercises: Exercise[];
   loading: boolean;
   error: string | null;
   create: (input: CreateExerciseInput) => Promise<void>;
+  deleteExercise: (id: number, force?: boolean) => Promise<SafeDeleteConflict | null>;
   refresh: () => Promise<void>;
 }
 
 function makeService(): ExerciseService {
-  return new ExerciseService(new SQLiteExerciseRepository(getDb()));
+  const db = getDb();
+  return new ExerciseService(
+    new SQLiteExerciseRepository(db),
+    new SQLiteSetLogRepository(db),
+    new SQLiteWorkoutExerciseRepository(db),
+  );
 }
 
 export function useExercises(): UseExercisesResult {
@@ -63,5 +72,16 @@ export function useExercises(): UseExercisesResult {
     }
   }, [service, refresh]);
 
-  return { exercises, loading, error, create, refresh };
+  const deleteExercise = useCallback(async (id: number, force = false): Promise<SafeDeleteConflict | null> => {
+    try {
+      await service.safeDelete(id, force);
+      await refresh();
+      return null;
+    } catch (e) {
+      if (e instanceof SafeDeleteConflict) return e;
+      throw e;
+    }
+  }, [service, refresh]);
+
+  return { exercises, loading, error, create, deleteExercise, refresh };
 }
