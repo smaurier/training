@@ -1,6 +1,7 @@
 import { FlatList, View, Text, ActivityIndicator, StyleSheet, Alert } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { useCallback, useRef, useState, useEffect } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { usePrograms } from '@/hooks/usePrograms';
 import { PressableA11y } from '@/components/ui/PressableA11y';
@@ -19,11 +20,27 @@ const SHADOW_COLOR = '#000' as const;
 export default function ProgrammesScreen() {
   const { programs, loading, error, remove, setActive, refresh } = usePrograms();
   const router = useRouter();
+  const navigation = useNavigation();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
 
   const [workoutCounts, setWorkoutCounts] = useState<Record<number, number>>({});
   const [bottomSheetOpen, setBottomSheetOpen] = useState(false);
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <PressableA11y
+          onPress={() => router.push('/scan-programme' as any)}
+          style={{ padding: 8 }}
+          accessibilityLabel="Scanner un programme partagé"
+          accessibilityRole="button"
+        >
+          <Ionicons name="qr-code-outline" size={24} color={colors.text} />
+        </PressableA11y>
+      ),
+    });
+  }, [navigation, router, colors.text]);
 
   useEffect(() => {
     if (programs.length === 0) return;

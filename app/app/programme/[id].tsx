@@ -13,6 +13,13 @@ import { Workout } from '@/db/types';
 import { SQLiteWorkoutExerciseRepository } from '@/repositories/SQLiteWorkoutExerciseRepository';
 import { SQLiteSessionLogRepository } from '@/repositories/SQLiteSessionLogRepository';
 import { getDb } from '@/db';
+import { ShareProgramService } from '@/services/ShareProgramService';
+import { SQLiteProgramRepository } from '@/repositories/SQLiteProgramRepository';
+import { SQLiteWorkoutRepository } from '@/repositories/SQLiteWorkoutRepository';
+import { SQLiteBlockRepository } from '@/repositories/SQLiteBlockRepository';
+import { SQLiteSetRepository } from '@/repositories/SQLiteSetRepository';
+import { SQLiteExerciseRepository } from '@/repositories/SQLiteExerciseRepository';
+import { ShareQRModal } from '@/components/programme/ShareQRModal';
 
 const FAB_ICON_COLOR = '#fff' as const;
 const SHADOW_COLOR = '#000' as const;
@@ -61,6 +68,35 @@ export default function ProgrammeDetailScreen() {
       .catch(() => {});
     return () => { cancelled = true; };
   }, [workouts]);
+
+  const [shareBase64, setShareBase64] = useState<string | null>(null);
+  const [isSharing, setIsSharing] = useState(false);
+
+  const handleShare = useCallback(async () => {
+    if (isSharing || !program) return;
+    setIsSharing(true);
+    try {
+      const db = getDb();
+      const svc = new ShareProgramService(
+        new SQLiteProgramRepository(db),
+        new SQLiteWorkoutRepository(db),
+        new SQLiteWorkoutExerciseRepository(db),
+        new SQLiteBlockRepository(db),
+        new SQLiteSetRepository(db),
+        new SQLiteExerciseRepository(db),
+      );
+      const { base64, sizeBytes } = await svc.generatePayload(programId);
+      if (sizeBytes <= 2048) {
+        setShareBase64(base64);
+      } else {
+        console.warn('Programme trop grand pour QR:', sizeBytes);
+      }
+    } catch (e) {
+      console.error('Share failed:', e);
+    } finally {
+      setIsSharing(false);
+    }
+  }, [isSharing, program, programId]);
 
   const isFirstFocus = useRef(true);
   useFocusEffect(
@@ -130,15 +166,26 @@ export default function ProgrammeDetailScreen() {
         options={{
           title: program?.name ?? 'Programme',
           headerRight: () => (
-            <PressableA11y
-              onPress={() =>
-                router.push({ pathname: '/add-programme', params: { id: String(programId) } })
-              }
-              style={styles.headerBtn}
-              accessibilityLabel="Modifier le programme"
-            >
-              <Ionicons name="create-outline" size={22} color={colors.primary} />
-            </PressableA11y>
+            <View style={styles.headerBtns}>
+              <PressableA11y
+                onPress={handleShare}
+                disabled={isSharing}
+                style={styles.headerBtn}
+                accessibilityLabel="Partager ce programme"
+                accessibilityRole="button"
+              >
+                <Ionicons name="share-outline" size={24} color={colors.text} />
+              </PressableA11y>
+              <PressableA11y
+                onPress={() =>
+                  router.push({ pathname: '/add-programme', params: { id: String(programId) } })
+                }
+                style={styles.headerBtn}
+                accessibilityLabel="Modifier le programme"
+              >
+                <Ionicons name="create-outline" size={22} color={colors.primary} />
+              </PressableA11y>
+            </View>
           ),
         }}
       />
@@ -176,6 +223,14 @@ export default function ProgrammeDetailScreen() {
           <Ionicons name="add" size={28} color={FAB_ICON_COLOR} />
         </PressableA11y>
       </View>
+      {shareBase64 && program && (
+        <ShareQRModal
+          visible={!!shareBase64}
+          base64={shareBase64}
+          programName={program.name}
+          onClose={() => setShareBase64(null)}
+        />
+      )}
     </>
   );
 }
@@ -186,6 +241,7 @@ const styles = StyleSheet.create({
   list: { padding: 16, paddingBottom: 100 },
   empty: { textAlign: 'center', marginTop: 48, fontSize: 15 },
   errorText: { fontSize: 15, textAlign: 'center', paddingHorizontal: 24 },
+  headerBtns: { flexDirection: 'row', alignItems: 'center' },
   headerBtn: { padding: 8 },
   fab: {
     position: 'absolute',
