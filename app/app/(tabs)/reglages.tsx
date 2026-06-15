@@ -1,5 +1,5 @@
 import { useContext, useState, useCallback, useEffect } from 'react';
-import { View, Text, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, ActivityIndicator, Switch, TextInput, Pressable } from 'react-native';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import { useColorScheme } from '@/components/useColorScheme';
 import { ThemeContext } from '@/contexts/ThemeContext';
@@ -10,6 +10,33 @@ import type { ThemePreference, UnitsPreference, PlateStepValue } from '@/service
 import { getDb } from '@/db';
 import { ExportService } from '@/services/ExportService';
 import { SQLiteSettingsRepository } from '@/repositories/SQLiteSettingsRepository';
+import { ExpoNotificationScheduler } from '@/services/ExpoNotificationScheduler';
+import { NotificationService } from '@/services/NotificationService';
+import type { NotifSettings } from '@/services/NotificationService';
+
+const NOTIF_KEY = 'notif_settings';
+
+async function loadNotifSettings(): Promise<NotifSettings | null> {
+  const repo = new SQLiteSettingsRepository(getDb());
+  const raw = await repo.get(NOTIF_KEY);
+  return raw ? JSON.parse(raw) as NotifSettings : null;
+}
+
+async function persistNotifSettings(s: NotifSettings): Promise<void> {
+  const repo = new SQLiteSettingsRepository(getDb());
+  await repo.set(NOTIF_KEY, JSON.stringify(s));
+}
+
+const notifScheduler = new ExpoNotificationScheduler();
+const notifService = new NotificationService(notifScheduler, loadNotifSettings, persistNotifSettings);
+
+const DEFAULT_NOTIF: NotifSettings = {
+  enabled: false,
+  isoWeekday: 1,
+  hour: 9,
+  minute: 0,
+  inactivityDays: 7,
+};
 
 const THEME_OPTIONS: { value: ThemePreference; label: string }[] = [
   { value: 'system', label: 'Système' },
@@ -85,6 +112,18 @@ export default function ReglagesScreen() {
   const [isExporting, setIsExporting] = useState(false);
   const [exportError, setExportError] = useState<string | null>(null);
   const [deloadWeeksStr, setDeloadWeeksStr] = useState<'4' | '6' | '8'>('4');
+
+  const [notifSettings, setNotifSettings] = useState<NotifSettings>(DEFAULT_NOTIF);
+
+  useEffect(() => {
+    loadNotifSettings().then(s => { if (s) setNotifSettings(s); }).catch(console.error);
+  }, []);
+
+  const handleNotifChange = useCallback(async (patch: Partial<NotifSettings>) => {
+    const next = { ...notifSettings, ...patch };
+    setNotifSettings(next);
+    await notifService.saveAndReschedule(next);
+  }, [notifSettings]);
 
   useEffect(() => {
     const repo = new SQLiteSettingsRepository(getDb());
@@ -221,6 +260,90 @@ export default function ReglagesScreen() {
           <Text style={[styles.exportError, { color: '#dc2626' }]}>{exportError}</Text>
         )}
       </View>
+
+      <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>NOTIFICATIONS</Text>
+      <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+        <View style={styles.row}>
+          <Text style={[styles.label, { color: colors.text }]}>Activer les rappels</Text>
+          <Switch
+            value={notifSettings.enabled}
+            onValueChange={(v) => { void handleNotifChange({ enabled: v }); }}
+            accessibilityLabel="Activer les rappels de séance"
+          />
+        </View>
+
+        {notifSettings.enabled && (
+          <>
+            <Text style={[styles.subLabel, { color: colors.textSecondary }]}>Jour du rappel</Text>
+            <View style={styles.chips}>
+              {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map((label, i) => {
+                const iso = i + 1;
+                const selected = notifSettings.isoWeekday === iso;
+                return (
+                  <Pressable
+                    key={iso}
+                    style={[
+                      styles.chip,
+                      { borderColor: selected ? colors.primary : colors.border },
+                      selected && { backgroundColor: colors.primary },
+                    ]}
+                    onPress={() => { void handleNotifChange({ isoWeekday: iso }); }}
+                    accessibilityLabel={label}
+                    accessibilityRole="button"
+                    accessibilityState={{ selected }}
+                  >
+                    <Text style={[styles.chipText, { color: selected ? '#fff' : colors.textSecondary }]}>{label}</Text>
+                  </Pressable>
+                );
+              })}
+            </View>
+
+            <Text style={[styles.subLabel, { color: colors.textSecondary }]}>Heure</Text>
+            <View style={styles.timeRow}>
+              <TextInput
+                style={[styles.timeInput, { color: colors.text, borderColor: colors.border }]}
+                value={String(notifSettings.hour).padStart(2, '0')}
+                onChangeText={(v) => { const n = parseInt(v, 10); if (!isNaN(n) && n >= 0 && n <= 23) void handleNotifChange({ hour: n }); }}
+                keyboardType="numeric"
+                maxLength={2}
+                accessibilityLabel="Heure de rappel"
+              />
+              <Text style={[styles.timeSep, { color: colors.text }]}>:</Text>
+              <TextInput
+                style={[styles.timeInput, { color: colors.text, borderColor: colors.border }]}
+                value={String(notifSettings.minute).padStart(2, '0')}
+                onChangeText={(v) => { const n = parseInt(v, 10); if (!isNaN(n) && n >= 0 && n <= 59) void handleNotifChange({ minute: n }); }}
+                keyboardType="numeric"
+                maxLength={2}
+                accessibilityLabel="Minute de rappel"
+              />
+            </View>
+
+            <Text style={[styles.subLabel, { color: colors.textSecondary }]}>Rappel d'inactivité</Text>
+            <View style={styles.chips}>
+              {[3, 5, 7, 14].map((days) => {
+                const selected = notifSettings.inactivityDays === days;
+                return (
+                  <Pressable
+                    key={days}
+                    style={[
+                      styles.chip,
+                      { borderColor: selected ? colors.primary : colors.border },
+                      selected && { backgroundColor: colors.primary },
+                    ]}
+                    onPress={() => { void handleNotifChange({ inactivityDays: days }); }}
+                    accessibilityLabel={`${days} jours`}
+                    accessibilityRole="button"
+                    accessibilityState={{ selected }}
+                  >
+                    <Text style={[styles.chipText, { color: selected ? '#fff' : colors.textSecondary }]}>{days}j</Text>
+                  </Pressable>
+                );
+              })}
+            </View>
+          </>
+        )}
+      </View>
     </ScrollView>
   );
 }
@@ -239,4 +362,13 @@ const styles = StyleSheet.create({
   exportMeta: { fontSize: 12 },
   exportArrow: { fontSize: 18, fontWeight: '600', marginLeft: 8 },
   exportError: { fontSize: 13, marginTop: 4 },
+  row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  label: { fontSize: 15, fontWeight: '500' },
+  subLabel: { fontSize: 13, marginTop: 12, marginBottom: 6 },
+  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  chip: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16, borderWidth: 1 },
+  chipText: { fontSize: 13 },
+  timeRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  timeInput: { width: 48, textAlign: 'center', fontSize: 16, borderWidth: 1, borderRadius: 8, padding: 8 },
+  timeSep: { fontSize: 20 },
 });
