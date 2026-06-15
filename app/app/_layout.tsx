@@ -7,7 +7,8 @@ import {
   Inter_900Black,
 } from '@expo-google-fonts/inter';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
+import { useURL } from 'expo-linking';
+import { Stack, useRouter } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useContext, useEffect, useState } from 'react';
 import 'react-native-reanimated';
@@ -15,8 +16,15 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { initDatabase, getDb } from '@/db';
 import { SQLiteSettingsRepository } from '@/repositories/SQLiteSettingsRepository';
+import { SQLiteBlockRepository } from '@/repositories/SQLiteBlockRepository';
+import { SQLiteExerciseRepository } from '@/repositories/SQLiteExerciseRepository';
+import { SQLiteProgramRepository } from '@/repositories/SQLiteProgramRepository';
+import { SQLiteSetRepository } from '@/repositories/SQLiteSetRepository';
+import { SQLiteWorkoutExerciseRepository } from '@/repositories/SQLiteWorkoutExerciseRepository';
+import { SQLiteWorkoutRepository } from '@/repositories/SQLiteWorkoutRepository';
 import { ThemeContext, ThemeContextProvider } from '@/contexts/ThemeContext';
 import { UnitsContextProvider } from '@/contexts/UnitsContext';
+import { ShareProgramService } from '@/services/ShareProgramService';
 import type { ThemePreference, UnitsPreference } from '@/services/settingsUtils';
 
 export {
@@ -82,6 +90,33 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   const themeCtx = useContext(ThemeContext)!;
+  const url = useURL();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!url) return;
+    try {
+      const parsed = new URL(url);
+      if (parsed.hostname === 'import') {
+        const data = parsed.searchParams.get('data');
+        if (!data) return;
+        const db = getDb();
+        const svc = new ShareProgramService(
+          new SQLiteProgramRepository(db),
+          new SQLiteWorkoutRepository(db),
+          new SQLiteWorkoutExerciseRepository(db),
+          new SQLiteBlockRepository(db),
+          new SQLiteSetRepository(db),
+          new SQLiteExerciseRepository(db),
+        );
+        svc.importPayload(data).then(programId => {
+          router.push(`/programme/${programId}`);
+        }).catch(console.error);
+      }
+    } catch {
+      // URL non parseable — ignorer
+    }
+  }, [url, router]);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
