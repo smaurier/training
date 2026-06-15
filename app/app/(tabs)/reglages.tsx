@@ -319,7 +319,7 @@ export default function ReglagesScreen() {
               />
             </View>
 
-            <Text style={[styles.subLabel, { color: colors.textSecondary }]}>Rappel d'inactivité</Text>
+            <Text style={[styles.subLabel, { color: colors.textSecondary }]}>{"Rappel d'inactivité"}</Text>
             <View style={styles.chips}>
               {[3, 5, 7, 14].map((days) => {
                 const selected = notifSettings.inactivityDays === days;

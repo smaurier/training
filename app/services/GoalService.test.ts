@@ -2,17 +2,6 @@ import { GoalService } from './GoalService';
 import { InMemoryGoalRepository } from '../repositories/InMemoryGoalRepository';
 import { InMemoryExerciseRepository } from '../repositories/InMemoryExerciseRepository';
 
-const baseExerciseDto = {
-  name: 'Squat',
-  type: 'musculation' as const,
-  muscle_groups: '[]',
-  technical_notes: null,
-  description: null,
-  is_custom: 0 as const,
-  progression_step: 2.5,
-  progression_threshold: 1,
-};
-
 function makeService() {
   const goalRepo = new InMemoryGoalRepository();
   const exerciseRepo = new InMemoryExerciseRepository();

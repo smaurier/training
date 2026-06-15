@@ -1,4 +1,4 @@
-import { computeNextLabel, advancePosition, isSupersetForward, isSupersetNextRound, useSession } from './useSession';
+import { computeNextLabel, advancePosition, isSupersetForward, useSession } from './useSession';
 import type { SessionPosition } from './useSession';
 import type { WorkoutExerciseDetail } from '../services/WorkoutExerciseService';
 import { renderHook, act } from '@testing-library/react-native';

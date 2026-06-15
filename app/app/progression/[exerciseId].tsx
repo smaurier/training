@@ -114,6 +114,7 @@ export default function ExerciseProgressionScreen() {
 
   const goalServiceRef = useRef<GoalService | null>(null);
   if (goalServiceRef.current == null) goalServiceRef.current = makeGoalService();
+  // eslint-disable-next-line react-hooks/refs
   const goalService = goalServiceRef.current;
 
   const [goal, setGoal] = useState<Goal | null>(null);

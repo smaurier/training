@@ -1,4 +1,4 @@
-import pako from 'pako';
+import { deflate, inflate } from 'pako';
 import type { IProgramRepository } from '../repositories/IProgramRepository';
 import type { IWorkoutRepository } from '../repositories/IWorkoutRepository';
 import type { IWorkoutExerciseRepository } from '../repositories/IWorkoutExerciseRepository';
@@ -53,7 +53,7 @@ export class ShareProgramService {
   ) {}
 
   compressPayload(json: string): string {
-    const compressed = pako.deflate(json);
+    const compressed = deflate(json);
     // Convert Uint8Array to base64 safely, handling potential stack overflow
     // by processing in chunks if needed
     const binary = Array.from(compressed).map(b => String.fromCharCode(b)).join('');
@@ -63,7 +63,7 @@ export class ShareProgramService {
   decompressPayload(base64: string): string {
     const binary = atob(base64);
     const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
-    return pako.inflate(bytes, { to: 'string' });
+    return inflate(bytes, { to: 'string' });
   }
 
   async generatePayload(programId: number): Promise<{ base64: string; sizeBytes: number }> {

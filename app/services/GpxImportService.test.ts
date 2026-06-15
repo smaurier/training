@@ -112,7 +112,7 @@ describe('GpxImportService.importGpx', () => {
   });
 
   it('crée un set_log avec duration_seconds et distance_meters', async () => {
-    const { service, setLogRepo, sessionLogRepo } = makeGpxService();
+    const { service, setLogRepo } = makeGpxService();
     const { sessionLogId } = await service.importGpx(GPX_MINIMAL);
     const logs = await setLogRepo.findBySessionLogId(sessionLogId);
     expect(logs).toHaveLength(1);
@@ -137,7 +137,7 @@ describe('GpxImportService.importGpx', () => {
 
 describe('GpxImportService.findOrCreateFootingSetup', () => {
   it('crée program + workout + exercise + we + block + set si tout absent', async () => {
-    const { service, programRepo, workoutRepo, exerciseRepo, setRepo } = makeGpxService();
+    const { service, programRepo, workoutRepo, exerciseRepo } = makeGpxService();
     const { workoutId, exerciseId, setId } = await (service as any).findOrCreateFootingSetup();
 
     const programs = await programRepo.findAll();

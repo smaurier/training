@@ -1,6 +1,5 @@
 import * as Notifications from 'expo-notifications';
 import type {
-  NotificationTrigger,
   WeeklyNotificationTrigger,
   CalendarNotificationTrigger,
 } from 'expo-notifications';

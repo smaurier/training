@@ -28,9 +28,9 @@ export function ShareQRModal({ visible, base64, programName, onClose }: Props) {
     >
       <View style={styles.backdrop}>
         <View style={[styles.card, { backgroundColor: colors.surface }]}>
-          <Text style={[styles.title, { color: colors.text }]}>Partager "{programName}"</Text>
+          <Text style={[styles.title, { color: colors.text }]}>{`Partager "${programName}"`}</Text>
           <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
-            L'autre personne scanne ce QR avec sa caméra ou l'app
+            {"L'autre personne scanne ce QR avec sa caméra ou l'app"}
           </Text>
 
           <View

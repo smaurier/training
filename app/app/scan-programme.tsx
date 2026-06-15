@@ -60,7 +60,7 @@ export default function ScanProgrammeScreen() {
     return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
         <Text style={[styles.msg, { color: colors.text }]}>
-          Autorise l'accès à la caméra dans les Réglages de ton téléphone.
+          {"Autorise l'accès à la caméra dans les Réglages de ton téléphone."}
         </Text>
       </View>
     );

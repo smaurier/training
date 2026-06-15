@@ -92,7 +92,7 @@ export function SubstituteSheet({ sheetRef, currentMuscleGroups, onSelect, onClo
       handleIndicatorStyle={{ backgroundColor: colors.border }}
     >
       <BottomSheetView style={styles.header}>
-        <Text style={[styles.title, { color: colors.text }]}>Remplacer l'exercice</Text>
+        <Text style={[styles.title, { color: colors.text }]}>{"Remplacer l'exercice"}</Text>
         <BottomSheetTextInput
           style={[styles.search, { color: colors.text, borderColor: colors.border, backgroundColor: colors.background }]}
           value={searchQuery}
