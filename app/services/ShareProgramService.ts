@@ -127,10 +127,15 @@ export class ShareProgramService {
 
     // Résoudre le nom (conflit)
     const existing = await this.programRepo.findAll();
-    const names = existing.map(p => p.name);
-    const programName = names.includes(payload.program.name)
-      ? `${payload.program.name} (importé)`
-      : payload.program.name;
+    const names = new Set(existing.map(p => p.name));
+    let programName = payload.program.name;
+    if (names.has(programName)) {
+      programName = `${payload.program.name} (importé)`;
+      let counter = 2;
+      while (names.has(programName)) {
+        programName = `${payload.program.name} (importé-${counter++})`;
+      }
+    }
 
     const program = await this.programRepo.save({
       name: programName,

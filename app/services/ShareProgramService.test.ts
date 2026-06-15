@@ -105,6 +105,26 @@ describe('importPayload', () => {
     expect(importedWorkouts).toHaveLength(1);
     expect(importedWorkouts[0].name).toBe('Push');
   });
+
+  it('noms uniques si importé plusieurs fois', async () => {
+    const svc = makeService();
+    const payload: SharePayload = {
+      v: 1,
+      program: { name: 'PPL', description: null },
+      workouts: [],
+    };
+    const base64 = svc.compressPayload(JSON.stringify(payload));
+    await svc.importPayload(base64);  // crée "PPL"
+    await svc.importPayload(base64);  // crée "PPL (importé)"
+    await svc.importPayload(base64);  // doit créer "PPL (importé-2)"
+
+    const programs = await (svc as any).programRepo.findAll();
+    const names = programs.map((p: { name: string }) => p.name);
+    expect(names).toContain('PPL');
+    expect(names).toContain('PPL (importé)');
+    expect(names).toContain('PPL (importé-2)');
+    expect(programs).toHaveLength(3);
+  });
 });
 
 describe('generatePayload', () => {
