@@ -5,6 +5,30 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.16.0] — 2026-06-15
+
+59cd866 docs(journal): S47 — pack doublons + recueil cardio + import GPX
+2f72665 feat(gpx): bouton 'Importer un footing' dans progression.tsx
+636852a feat(gpx): écran import-gpx.tsx
+50d4496 feat(gpx): GpxImportService.importGpx + importParsed TDD
+7768124 feat(gpx): GpxImportService + findOrCreateFootingSetup TDD
+728c492 feat(gpx): parseGpxFile TDD avec fast-xml-parser
+788edb8 feat(gpx): haversine TDD + install fast-xml-parser + expo-document-picker
+3c83fd8 fix(session): add .catch on cardio detection useEffect
+27fd59f feat(session): détection sets cardio vides + câblage recueil post-séance
+cdbddbd feat(session): card recueil cardio dans SummaryPhase
+f7991ce feat(service): SessionService.saveCardioData
+2f0f149 feat(repo): updateCardioData sur ISetLogRepository
+17aa974 feat(service): DuplicateExerciseError + guard doublons dans ExerciseService.create
+d65db81 fix(repo): trim both sides in InMemoryExerciseRepository.findByName
+aae147d feat(repo): findByName sur ExerciseRepository (COLLATE NOCASE)
+9df7ce2 docs(plans): pack doublons-exercices + recueil-cardio + import-gpx
+0a5f408 docs(spec): fix recueil cardio — premier set_log uniquement
+cf03f70 docs(spec): pack doublons + recueil cardio + import GPX
+b93b831 docs(journal): S46 — historique cardio + suppression sécurisée v1.15.0
+
+---
+
 ## [1.15.0] — 2026-06-14
 
 ab3a52f feat(ui): suppression exercice — swipe + guard sessions/programmes
