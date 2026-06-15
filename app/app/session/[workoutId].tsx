@@ -298,7 +298,7 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
              l.distance_meters == null
       );
       setEmptyCardioSetLogIds(empty.map(l => l.id));
-    });
+    }).catch(console.error);
   }, [session.phase, session.sessionLogId, exercises]);
 
   const [prBadge, setPrBadge] = useState<string | null>(null);
