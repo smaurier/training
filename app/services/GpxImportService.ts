@@ -1,4 +1,12 @@
 import { XMLParser } from 'fast-xml-parser';
+import type { IProgramRepository } from '../repositories/IProgramRepository';
+import type { IWorkoutRepository } from '../repositories/IWorkoutRepository';
+import type { IExerciseRepository } from '../repositories/IExerciseRepository';
+import type { IWorkoutExerciseRepository } from '../repositories/IWorkoutExerciseRepository';
+import type { IBlockRepository } from '../repositories/IBlockRepository';
+import type { ISetRepository } from '../repositories/ISetRepository';
+import type { ISessionLogRepository } from '../repositories/ISessionLogRepository';
+import type { ISetLogRepository } from '../repositories/ISetLogRepository';
 
 export interface GpxData {
   startedAt: string;
@@ -49,4 +57,78 @@ export function parseGpxFile(xmlContent: string): GpxData {
   const distanceMeters = haversine(points);
 
   return { startedAt: first.time, durationSeconds, distanceMeters, points };
+}
+
+export class GpxImportService {
+  constructor(
+    private readonly programRepo: IProgramRepository,
+    private readonly workoutRepo: IWorkoutRepository,
+    private readonly exerciseRepo: IExerciseRepository,
+    private readonly weRepo: IWorkoutExerciseRepository,
+    private readonly blockRepo: IBlockRepository,
+    private readonly setRepo: ISetRepository,
+    private readonly sessionLogRepo: ISessionLogRepository,
+    private readonly setLogRepo: ISetLogRepository,
+  ) {}
+
+  private async findOrCreateFootingSetup(): Promise<{ workoutId: number; exerciseId: number; setId: number }> {
+    // 1. Program
+    const programs = await this.programRepo.findAll();
+    let program = programs.find(p => p.name === 'Activités libres') ?? null;
+    if (!program) {
+      program = await this.programRepo.save({ name: 'Activités libres', description: null, is_active: 1 });
+    }
+
+    // 2. Workout
+    const workouts = await this.workoutRepo.findByProgramId(program.id);
+    let workout = workouts.find(w => w.name === 'Sorties libres') ?? null;
+    if (!workout) {
+      workout = await this.workoutRepo.save({ program_id: program.id, name: 'Sorties libres', order_index: 0 });
+    }
+
+    // 3. Exercise
+    let exercise = await this.exerciseRepo.findByName('Course à pied');
+    if (!exercise) {
+      exercise = await this.exerciseRepo.save({
+        name: 'Course à pied',
+        type: 'cardio',
+        muscle_groups: '[]',
+        technical_notes: null,
+        description: null,
+        is_custom: 0,
+        progression_step: 0,
+        progression_threshold: 1,
+      });
+    }
+
+    // 4. WorkoutExercise
+    const wes = await this.weRepo.findByWorkoutId(workout.id);
+    let we = wes.find(w => w.exercise_id === exercise!.id) ?? null;
+    if (!we) {
+      we = await this.weRepo.save({ workout_id: workout.id, exercise_id: exercise.id, order_index: 0 });
+    }
+
+    // 5. Block
+    const blocks = await this.blockRepo.findByWorkoutExerciseId(we.id);
+    let block = blocks[0] ?? null;
+    if (!block) {
+      block = await this.blockRepo.save({ workout_exercise_id: we.id, name: 'Cardio', order_index: 0, is_work_block: 0 });
+    }
+
+    // 6. Set
+    const sets = await this.setRepo.findByBlockId(block.id);
+    let set = sets[0] ?? null;
+    if (!set) {
+      set = await this.setRepo.save({
+        block_id: block.id,
+        reps_min: 0,
+        weight: null,
+        weight_type: 'bodyweight',
+        rest_duration: 0,
+        order_index: 0,
+      });
+    }
+
+    return { workoutId: workout.id, exerciseId: exercise.id, setId: set.id };
+  }
 }

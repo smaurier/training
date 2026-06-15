@@ -1,4 +1,28 @@
-import { haversine, parseGpxFile } from './GpxImportService';
+import { haversine, parseGpxFile, GpxImportService } from './GpxImportService';
+import { InMemoryProgramRepository } from '../repositories/InMemoryProgramRepository';
+import { InMemoryWorkoutRepository } from '../repositories/InMemoryWorkoutRepository';
+import { InMemoryExerciseRepository } from '../repositories/InMemoryExerciseRepository';
+import { InMemoryWorkoutExerciseRepository } from '../repositories/InMemoryWorkoutExerciseRepository';
+import { InMemoryBlockRepository } from '../repositories/InMemoryBlockRepository';
+import { InMemorySetRepository } from '../repositories/InMemorySetRepository';
+import { InMemorySessionLogRepository } from '../repositories/InMemorySessionLogRepository';
+import { InMemorySetLogRepository } from '../repositories/InMemorySetLogRepository';
+
+function makeGpxService() {
+  const programRepo = new InMemoryProgramRepository();
+  const workoutRepo = new InMemoryWorkoutRepository();
+  const exerciseRepo = new InMemoryExerciseRepository();
+  const weRepo = new InMemoryWorkoutExerciseRepository();
+  const blockRepo = new InMemoryBlockRepository();
+  const setRepo = new InMemorySetRepository();
+  const sessionLogRepo = new InMemorySessionLogRepository();
+  const setLogRepo = new InMemorySetLogRepository();
+  const service = new GpxImportService(
+    programRepo, workoutRepo, exerciseRepo, weRepo,
+    blockRepo, setRepo, sessionLogRepo, setLogRepo,
+  );
+  return { service, programRepo, workoutRepo, exerciseRepo, weRepo, blockRepo, setRepo, sessionLogRepo, setLogRepo };
+}
 
 const GPX_MINIMAL = `<?xml version="1.0"?>
 <gpx version="1.1">
@@ -74,5 +98,39 @@ describe('parseGpxFile', () => {
   it('throw si aucun trackpoint', () => {
     const empty = `<?xml version="1.0"?><gpx version="1.1"><trk><trkseg></trkseg></trk></gpx>`;
     expect(() => parseGpxFile(empty)).toThrow('Aucun trackpoint trouvé');
+  });
+});
+
+describe('GpxImportService.findOrCreateFootingSetup', () => {
+  it('crée program + workout + exercise + we + block + set si tout absent', async () => {
+    const { service, programRepo, workoutRepo, exerciseRepo, setRepo } = makeGpxService();
+    const { workoutId, exerciseId, setId } = await (service as any).findOrCreateFootingSetup();
+
+    const programs = await programRepo.findAll();
+    expect(programs).toHaveLength(1);
+    expect(programs[0].name).toBe('Activités libres');
+
+    const workouts = await workoutRepo.findByProgramId(programs[0].id);
+    expect(workouts).toHaveLength(1);
+    expect(workouts[0].name).toBe('Sorties libres');
+    expect(workouts[0].id).toBe(workoutId);
+
+    const ex = await exerciseRepo.findByName('Course à pied');
+    expect(ex).not.toBeNull();
+    expect(ex?.id).toBe(exerciseId);
+    expect(ex?.type).toBe('cardio');
+
+    expect(setId).toBeGreaterThan(0);
+  });
+
+  it('réutilise les structures existantes si déjà présentes', async () => {
+    const { service, programRepo, workoutRepo } = makeGpxService();
+    await (service as any).findOrCreateFootingSetup();
+    await (service as any).findOrCreateFootingSetup();
+
+    expect(await programRepo.findAll()).toHaveLength(1);
+    const programs = await programRepo.findAll();
+    const workouts = await workoutRepo.findByProgramId(programs[0].id);
+    expect(workouts).toHaveLength(1);
   });
 });
