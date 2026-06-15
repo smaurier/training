@@ -66,8 +66,59 @@ export class ShareProgramService {
     return pako.inflate(bytes, { to: 'string' });
   }
 
-  async generatePayload(_programId: number): Promise<{ base64: string; sizeBytes: number }> {
-    throw new Error('not implemented');
+  async generatePayload(programId: number): Promise<{ base64: string; sizeBytes: number }> {
+    const program = await this.programRepo.findById(programId);
+    if (!program) throw new Error(`Programme ${programId} introuvable`);
+
+    const workouts = await this.workoutRepo.findByProgramId(programId);
+
+    const shareWorkouts: ShareWorkout[] = await Promise.all(
+      workouts.map(async (w) => {
+        const wes = await this.workoutExerciseRepo.findByWorkoutId(w.id);
+        const exercises: ShareExercise[] = await Promise.all(
+          wes.map(async (we) => {
+            const exercise = await this.exerciseRepo.findById(we.exercise_id);
+            const blocks = await this.blockRepo.findByWorkoutExerciseId(we.id);
+            const shareBlocks: ShareBlock[] = await Promise.all(
+              blocks.map(async (b) => {
+                const sets = await this.setRepo.findByBlockId(b.id);
+                return {
+                  name: b.name,
+                  is_work_block: b.is_work_block,
+                  order_index: b.order_index,
+                  sets: sets.map(s => ({
+                    reps_min: s.reps_min,
+                    weight: s.weight,
+                    weight_type: s.weight_type,
+                    rest_duration: s.rest_duration,
+                    order_index: s.order_index,
+                    duration_seconds: s.duration_seconds,
+                    set_type: s.set_type,
+                  })),
+                };
+              }),
+            );
+            return {
+              name: exercise?.name ?? '',
+              type: exercise?.type ?? 'musculation',
+              muscle_groups: exercise?.muscle_groups ?? '[]',
+              blocks: shareBlocks,
+            };
+          }),
+        );
+        return { name: w.name, order_index: w.order_index, exercises };
+      }),
+    );
+
+    const payload: SharePayload = {
+      v: 1,
+      program: { name: program.name, description: program.description },
+      workouts: shareWorkouts,
+    };
+
+    const json = JSON.stringify(payload);
+    const base64 = this.compressPayload(json);
+    return { base64, sizeBytes: base64.length };
   }
 
   async importPayload(_base64: string): Promise<number> {
