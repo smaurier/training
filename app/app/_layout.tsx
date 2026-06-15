@@ -13,6 +13,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useContext, useEffect, useRef, useState } from 'react';
 import 'react-native-reanimated';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 import { initDatabase, getDb } from '@/db';
 import { SQLiteSettingsRepository } from '@/repositories/SQLiteSettingsRepository';
@@ -153,6 +154,7 @@ function RootLayoutNav() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+      <BottomSheetModalProvider>
       <ThemeProvider value={themeCtx.resolved === 'dark' ? DarkTheme : DefaultTheme}>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
@@ -170,6 +172,7 @@ function RootLayoutNav() {
           <Stack.Screen name="scan-programme" options={{ title: 'Scanner un programme', headerShown: true }} />
         </Stack>
       </ThemeProvider>
+      </BottomSheetModalProvider>
     </GestureHandlerRootView>
   );
 }
