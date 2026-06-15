@@ -206,4 +206,18 @@ export const MIGRATIONS: string[] = [
   // v14 — AMRAP : type de série (normal par défaut, amrap pour les séries max-reps)
   `ALTER TABLE sets ADD COLUMN set_type TEXT NOT NULL DEFAULT 'normal'
   CHECK(set_type IN ('normal', 'amrap'));`,
+
+  // v15 — mesures corporelles : poids + circonférences (toutes optionnelles)
+  `
+  CREATE TABLE IF NOT EXISTS body_measurements (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    date        TEXT NOT NULL UNIQUE,
+    weight_kg   REAL,
+    waist_cm    REAL,
+    arm_cm      REAL,
+    thigh_cm    REAL,
+    hip_cm      REAL,
+    created_at  TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+  `,
 ];

@@ -119,3 +119,16 @@ export interface GoalWithExercise {
   goal: Goal;
   exerciseName: string;
 }
+
+export interface BodyMeasurement {
+  id: number;
+  date: string;             // 'YYYY-MM-DD'
+  weight_kg: number | null;
+  waist_cm: number | null;
+  arm_cm: number | null;
+  thigh_cm: number | null;
+  hip_cm: number | null;
+  created_at: string;
+}
+
+export type CreateBodyMeasurementDto = Omit<BodyMeasurement, 'id' | 'created_at'>;
