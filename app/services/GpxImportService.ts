@@ -131,4 +131,68 @@ export class GpxImportService {
 
     return { workoutId: workout.id, exerciseId: exercise.id, setId: set.id };
   }
+
+  async importGpx(xmlContent: string): Promise<{ sessionLogId: number }> {
+    const gpxData = parseGpxFile(xmlContent);
+    const { workoutId, exerciseId, setId } = await this.findOrCreateFootingSetup();
+
+    const endedAt = new Date(
+      Date.parse(gpxData.startedAt) + gpxData.durationSeconds * 1000,
+    ).toISOString();
+
+    const sessionLog = await this.sessionLogRepo.save({
+      workout_id: workoutId,
+      started_at: gpxData.startedAt,
+      checkin_energy: null,
+      checkin_fatigue: null,
+      checkin_sleep: null,
+      notes: null,
+    });
+    await this.sessionLogRepo.complete(sessionLog.id, endedAt);
+
+    await this.setLogRepo.save({
+      session_log_id: sessionLog.id,
+      set_id: setId,
+      exercise_id: exerciseId,
+      reps_done: 0,
+      weight_done: 0,
+      rpe: null,
+      completed_at: endedAt,
+      duration_seconds: gpxData.durationSeconds,
+      distance_meters: gpxData.distanceMeters,
+    });
+
+    return { sessionLogId: sessionLog.id };
+  }
+
+  async importParsed(
+    data: GpxData,
+    rpe: 3 | 6 | 9 | null,
+  ): Promise<{ sessionLogId: number }> {
+    const { workoutId, exerciseId, setId } = await this.findOrCreateFootingSetup();
+    const endedAt = new Date(
+      Date.parse(data.startedAt) + data.durationSeconds * 1000,
+    ).toISOString();
+    const sessionLog = await this.sessionLogRepo.save({
+      workout_id: workoutId,
+      started_at: data.startedAt,
+      checkin_energy: null,
+      checkin_fatigue: null,
+      checkin_sleep: null,
+      notes: null,
+    });
+    await this.sessionLogRepo.complete(sessionLog.id, endedAt);
+    await this.setLogRepo.save({
+      session_log_id: sessionLog.id,
+      set_id: setId,
+      exercise_id: exerciseId,
+      reps_done: 0,
+      weight_done: 0,
+      rpe,
+      completed_at: endedAt,
+      duration_seconds: data.durationSeconds,
+      distance_meters: data.distanceMeters,
+    });
+    return { sessionLogId: sessionLog.id };
+  }
 }

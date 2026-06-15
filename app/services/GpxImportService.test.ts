@@ -101,6 +101,40 @@ describe('parseGpxFile', () => {
   });
 });
 
+describe('GpxImportService.importGpx', () => {
+  it('crée un session_log complété avec workout_id correct', async () => {
+    const { service, sessionLogRepo } = makeGpxService();
+    const { sessionLogId } = await service.importGpx(GPX_MINIMAL);
+    const log = await sessionLogRepo.findById(sessionLogId);
+    expect(log).not.toBeNull();
+    expect(log!.status).toBe('completed');
+    expect(log!.ended_at).not.toBeNull();
+  });
+
+  it('crée un set_log avec duration_seconds et distance_meters', async () => {
+    const { service, setLogRepo, sessionLogRepo } = makeGpxService();
+    const { sessionLogId } = await service.importGpx(GPX_MINIMAL);
+    const logs = await setLogRepo.findBySessionLogId(sessionLogId);
+    expect(logs).toHaveLength(1);
+    expect(logs[0].duration_seconds).toBe(30 * 60);
+    expect(logs[0].distance_meters).toBeGreaterThan(110000);
+  });
+
+  it('réutilise le même workout si importGpx appelé deux fois', async () => {
+    const { service, programRepo } = makeGpxService();
+    await service.importGpx(GPX_MINIMAL);
+    await service.importGpx(GPX_MINIMAL);
+    expect(await programRepo.findAll()).toHaveLength(1);
+  });
+
+  it('started_at correspond au premier trackpoint', async () => {
+    const { service, sessionLogRepo } = makeGpxService();
+    const { sessionLogId } = await service.importGpx(GPX_MINIMAL);
+    const log = await sessionLogRepo.findById(sessionLogId);
+    expect(log!.started_at).toBe('2026-01-01T08:00:00Z');
+  });
+});
+
 describe('GpxImportService.findOrCreateFootingSetup', () => {
   it('crée program + workout + exercise + we + block + set si tout absent', async () => {
     const { service, programRepo, workoutRepo, exerciseRepo, setRepo } = makeGpxService();
