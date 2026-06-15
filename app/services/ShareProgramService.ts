@@ -121,7 +121,77 @@ export class ShareProgramService {
     return { base64, sizeBytes: base64.length };
   }
 
-  async importPayload(_base64: string): Promise<number> {
-    throw new Error('not implemented');
+  async importPayload(base64: string): Promise<number> {
+    const json = this.decompressPayload(base64);
+    const payload: SharePayload = JSON.parse(json);
+
+    // Résoudre le nom (conflit)
+    const existing = await this.programRepo.findAll();
+    const names = existing.map(p => p.name);
+    const programName = names.includes(payload.program.name)
+      ? `${payload.program.name} (importé)`
+      : payload.program.name;
+
+    const program = await this.programRepo.save({
+      name: programName,
+      description: payload.program.description,
+      is_active: 0,
+    });
+
+    for (const sw of payload.workouts) {
+      const workout = await this.workoutRepo.save({
+        program_id: program.id,
+        name: sw.name,
+        order_index: sw.order_index,
+      });
+
+      for (let exIdx = 0; exIdx < sw.exercises.length; exIdx++) {
+        const se = sw.exercises[exIdx];
+
+        // Réutiliser exercice existant ou créer
+        let exercise = await this.exerciseRepo.findByName(se.name);
+        if (!exercise) {
+          exercise = await this.exerciseRepo.save({
+            name: se.name,
+            type: se.type as any,
+            muscle_groups: se.muscle_groups,
+            technical_notes: null,
+            description: null,
+            is_custom: 0,
+            progression_step: 2.5,
+            progression_threshold: 1,
+          });
+        }
+
+        const we = await this.workoutExerciseRepo.save({
+          workout_id: workout.id,
+          exercise_id: exercise.id,
+          order_index: exIdx,
+        });
+
+        for (const sb of se.blocks) {
+          const block = await this.blockRepo.save({
+            workout_exercise_id: we.id,
+            name: sb.name,
+            order_index: sb.order_index,
+            is_work_block: sb.is_work_block,
+          });
+
+          for (const ss of sb.sets) {
+            await this.setRepo.save({
+              block_id: block.id,
+              reps_min: ss.reps_min,
+              weight: ss.weight,
+              weight_type: ss.weight_type as any,
+              rest_duration: ss.rest_duration,
+              order_index: ss.order_index,
+              duration_seconds: ss.duration_seconds,
+            });
+          }
+        }
+      }
+    }
+
+    return program.id;
   }
 }

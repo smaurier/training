@@ -41,6 +41,72 @@ describe('ShareProgramService — helpers purs', () => {
   });
 });
 
+describe('importPayload', () => {
+  it('crée programme + workouts + exercises + sets depuis le payload', async () => {
+    const svc = makeService();
+    const payload: SharePayload = {
+      v: 1,
+      program: { name: 'PPL', description: 'Push Pull Legs' },
+      workouts: [{
+        name: 'Push', order_index: 0,
+        exercises: [{
+          name: 'Développé couché', type: 'musculation', muscle_groups: '["pectoraux"]',
+          blocks: [{
+            name: 'Travail', is_work_block: 1, order_index: 0,
+            sets: [{ reps_min: 5, weight: 60, weight_type: 'fixed', rest_duration: 180, order_index: 0, duration_seconds: null, set_type: 'normal' }],
+          }],
+        }],
+      }],
+    };
+    const base64 = svc.compressPayload(JSON.stringify(payload));
+    const newId = await svc.importPayload(base64);
+    expect(newId).toBeGreaterThan(0);
+
+    const programs = await (svc as any).programRepo.findAll();
+    expect(programs).toHaveLength(1);
+    expect(programs[0].name).toBe('PPL');
+  });
+
+  it('suffixe "(importé)" si nom de programme déjà existant', async () => {
+    const svc = makeService();
+    await (svc as any).programRepo.save({ name: 'PPL', description: null, is_active: 1 });
+
+    const payload: SharePayload = {
+      v: 1,
+      program: { name: 'PPL', description: null },
+      workouts: [],
+    };
+    const base64 = svc.compressPayload(JSON.stringify(payload));
+    await svc.importPayload(base64);
+
+    const programs = await (svc as any).programRepo.findAll();
+    const names = programs.map((p: { name: string }) => p.name);
+    expect(names).toContain('PPL (importé)');
+  });
+
+  it('round-trip : generatePayload → importPayload → structure identique', async () => {
+    const svc = makeService();
+    const program = await (svc as any).programRepo.save({ name: 'PPL', description: null, is_active: 1 });
+    const workout = await (svc as any).workoutRepo.save({ program_id: program.id, name: 'Push', order_index: 0 });
+    const exercise = await (svc as any).exerciseRepo.save({
+      name: 'Développé couché', type: 'musculation', muscle_groups: '[]',
+      technical_notes: null, description: null, is_custom: 0, progression_step: 2.5, progression_threshold: 1,
+    });
+    const we = await (svc as any).workoutExerciseRepo.save({ workout_id: workout.id, exercise_id: exercise.id, order_index: 0 });
+    const block = await (svc as any).blockRepo.save({ workout_exercise_id: we.id, name: 'Travail', order_index: 0, is_work_block: 1 });
+    await (svc as any).setRepo.save({ block_id: block.id, reps_min: 5, weight: 60, weight_type: 'fixed', rest_duration: 180, order_index: 0, set_type: 'normal' });
+
+    const { base64 } = await svc.generatePayload(program.id);
+    const newId = await svc.importPayload(base64);
+
+    const imported = await (svc as any).programRepo.findById(newId);
+    expect(imported.name).toBe('PPL (importé)');
+    const importedWorkouts = await (svc as any).workoutRepo.findByProgramId(newId);
+    expect(importedWorkouts).toHaveLength(1);
+    expect(importedWorkouts[0].name).toBe('Push');
+  });
+});
+
 describe('generatePayload', () => {
   it('sérialise un programme complet et retourne base64 + sizeBytes', async () => {
     const svc = makeService();
