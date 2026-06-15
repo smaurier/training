@@ -3,9 +3,9 @@ import type { IBodyMeasurementRepository } from './IBodyMeasurementRepository';
 const dto1 = { date: '2026-06-01', weight_kg: 75.5, waist_cm: 80, arm_cm: null, thigh_cm: null, hip_cm: null };
 const dto2 = { date: '2026-06-08', weight_kg: 75.0, waist_cm: 79, arm_cm: 35, thigh_cm: null, hip_cm: null };
 
-export function runBodyMeasurementRepositoryContractTests(createRepo: () => IBodyMeasurementRepository) {
+export function runBodyMeasurementRepositoryContractTests(createRepo: () => IBodyMeasurementRepository | Promise<IBodyMeasurementRepository>) {
   let repo: IBodyMeasurementRepository;
-  beforeEach(() => { repo = createRepo(); });
+  beforeEach(async () => { repo = await createRepo(); });
 
   describe('save', () => {
     it('crée une mesure avec id généré', async () => {
