@@ -4,6 +4,31 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 
 ---
 
+## S47 — 2026-06-15 — Pack doublons exercices + Recueil cardio + Import GPX
+
+### Livré
+
+- **Doublons exercices** : `findByName(name): Promise<Exercise | null>` ajouté à `IExerciseRepository` (COLLATE NOCASE SQLite, trim+toLowerCase InMemory). `DuplicateExerciseError extends Error` exporté depuis `ExerciseService`. Guard dans `create()` après validation nom. 4 contrats TDD + 4 tests service. Commits `aae147d`, `d65db81`, `17aa974`.
+- **Recueil cardio post-séance** : `updateCardioData(id, duration_seconds, distance_meters, rpe)` sur `ISetLogRepository` (InMemory mutation + SQLite UPDATE). `SessionService.saveCardioData` délègue. `SummaryPhase` reçoit `emptyCardioSetLogCount?` + `onSaveCardioData?` — card avec TextInput min/sec/km + chips Léger/Normal/Difficile + boutons Enregistrer/Ignorer. `[workoutId].tsx` : useEffect détecte sets cardio vides au passage en phase `summary`, câble `handleSaveCardioData` (apply sur premier set_log cardio seulement). Commits `2f0f149`, `f7991ce`, `cdbddbd`, `27fd59f`, `3c83fd8`.
+- **Import GPX** : `fast-xml-parser` + `expo-document-picker` installés. `haversine(points)` TDD (R=6371000, Math.round). `parseGpxFile(xmlContent)` : XMLParser isArray trkpt/trkseg, tri chronologique, durée premier→dernier, distance Haversine. `GpxImportService` : `findOrCreateFootingSetup` find-or-create chain (Program "Activités libres" → Workout "Sorties libres" → Exercise "Course à pied" cardio → WorkoutExercise → Block → Set). `importGpx(xml)` + `importParsed(data, rpe)` (UI path sans re-parse). Écran `import-gpx.tsx` : picker → résumé (date/durée/distance éditable/sensation) → importParsed → navigation `/progression`. Bouton "Importer un footing" dans `progression.tsx` après "Rechercher un exercice". Commits `788edb8`, `728c492`, `7768124`, `50d4496`, `636852a`, `2f72665`.
+- 521 tests, 0 erreurs TypeScript.
+
+### Décisions
+
+- **Pas de contrainte UNIQUE sur exercises.name** : des doublons peuvent exister en DB (données historiques). Guard applicatif uniquement, pas de migration.
+- **Recueil cardio appliqué au premier set_log cardio vide seulement** : évite de multiplier les valeurs si plusieurs intervals cardio.
+- **`importParsed` vs `importGpx`** : `importGpx` = chemin TDD (parse XML), `importParsed` = chemin UI (data pré-parsée, distance éditable + rpe choisi).
+- **`findOrCreateFootingSetup` privée + testée via `(service as any)`** : méthode interne, accès via cast pour les tests.
+
+### Problèmes rencontrés
+
+- **T120 trim asymétrique** : quality reviewer a détecté `e.name.toLowerCase()` sans `.trim()` côté stored — fix `d65db81`.
+- **Plan GPX T5 `handleImport` brisé** : plan initial appelait `importGpx(JSON.stringify(...))` — corrigé avant exécution en `importParsed(data, rpe)`.
+- **`workoutDetails?.exercises` vs `exercises`** : dans `[workoutId].tsx`, le hook retourne `exercises` directement (pas de wrapper `workoutDetails`). Adaptation correcte.
+- **`@/db/database` vs `@/db`** : `getDb` est exporté depuis `db/index.ts` — corrigé dans `import-gpx.tsx`.
+
+---
+
 ## S46 — 2026-06-14 — Historique cardio + Suppression sécurisée (v1.15.0)
 
 ### Livré
