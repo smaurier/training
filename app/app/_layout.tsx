@@ -10,7 +10,7 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { useURL } from 'expo-linking';
 import { Stack, useRouter } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import 'react-native-reanimated';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -92,9 +92,11 @@ function RootLayoutNav() {
   const themeCtx = useContext(ThemeContext)!;
   const url = useURL();
   const router = useRouter();
+  const lastImportedUrl = useRef<string | null>(null);
 
   useEffect(() => {
-    if (!url) return;
+    if (!url || url === lastImportedUrl.current) return;
+    lastImportedUrl.current = url;
     try {
       const parsed = new URL(url);
       if (parsed.hostname === 'import') {
