@@ -199,6 +199,15 @@ export default function ProgressionScreen() {
           <Text style={[styles.searchEntryChevron, { color: colors.textSecondary }]}>›</Text>
         </PressableA11y>
 
+        <PressableA11y
+          accessibilityLabel="Importer un footing GPX"
+          onPress={() => router.push('/import-gpx' as any)}
+          style={[styles.searchEntry, { backgroundColor: colors.surface }]}
+        >
+          <Text style={[styles.searchEntryText, { color: colors.textSecondary }]}>Importer un footing</Text>
+          <Text style={[styles.searchEntryChevron, { color: colors.textSecondary }]}>›</Text>
+        </PressableA11y>
+
         {recentPRs.length > 0 && (
           <View style={[styles.card, { backgroundColor: colors.surface }]}>
             <Text style={[styles.cardLabel, { color: colors.textSecondary }]}>PRs RÉCENTS</Text>
