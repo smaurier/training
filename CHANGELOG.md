@@ -5,6 +5,39 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.17.0] — 2026-06-15
+
+d927951 docs(journal): S48 — Partage programme + Mesures corporelles + Notifications
+6b4afb5 feat(notifications): reschedule inactivité après fin de séance
+47f4e08 feat(notifications): vérification inactivité au lancement
+95751cf feat(notifications): section notifications dans réglages
+4a673d6 feat(notifications): ExpoNotificationScheduler — prod impl
+54efd64 feat(notifications): NotificationService TDD — 7 tests
+ed5d07a feat(notifications): INotificationScheduler + InMemoryNotificationScheduler
+519e8bf chore(deps): install expo-notifications
+e6ac995 feat(progression): segment Corps — mesures corporelles avec graphiques
+884bf99 feat(progression): LatestMeasurementsCard + BodyMeasurementChart
+7269585 feat(AddMeasurementSheet): BottomSheet saisie mesures corporelles
+2d87a38 feat(useBodyMeasurements): hook — measurements + latest + save + refresh
+2a7e110 feat(BodyMeasurementService): TDD — save/getHistory/getLatest
+660f0f0 fix(repo): contract async factory + SQLiteBodyMeasurementRepository tests passants
+891185c feat(repo): SQLiteBodyMeasurementRepository — upsert par date
+53116ac feat(repo): IBodyMeasurementRepository + InMemory + contrats TDD
+6483750 feat(db): migration v15 — table body_measurements
+8c94774 feat(partage-programme): bouton Partager + scanner QR intégrés
+e9d5c90 fix(_layout): deep link import guard — évite les imports doublons
+0fd3ef1 feat(_layout): deep link handler app://import pour importer programme via QR
+19ac880 feat(scan-programme): scanner QR code pour importer un programme
+4eaba16 fix(ShareQRModal): correct directory path from programmes/ to programme/
+c5bc8a9 feat(ShareQRModal): modal QR code partage programme
+1152cdf fix(ShareProgramService): importPayload — noms uniques pour imports multiples
+efead2c feat(ShareProgramService): importPayload TDD — round-trip + conflit nom
+59cb845 feat(ShareProgramService): generatePayload — sérialise programme complet
+e15402c feat(ShareProgramService): compressPayload/decompressPayload TDD
+6ef293f chore(deps): install pako + react-native-qrcode-svg + expo-camera
+
+---
+
 ## [1.16.0] — 2026-06-15
 
 59cd866 docs(journal): S47 — pack doublons + recueil cardio + import GPX
