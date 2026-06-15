@@ -39,6 +39,25 @@ import { shouldWarnAbandon } from '@/services/sessionUtils';
 import { Ionicons } from '@expo/vector-icons';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import { Radius } from '@/constants/Radius';
+import { ExpoNotificationScheduler } from '@/services/ExpoNotificationScheduler';
+import { NotificationService } from '@/services/NotificationService';
+import type { NotifSettings } from '@/services/NotificationService';
+
+const NOTIF_KEY = 'notif_settings';
+
+async function loadNotifSettings(): Promise<NotifSettings | null> {
+  const repo = new SQLiteSettingsRepository(getDb());
+  const raw = await repo.get(NOTIF_KEY);
+  return raw ? JSON.parse(raw) as NotifSettings : null;
+}
+
+async function persistNotifSettings(s: NotifSettings): Promise<void> {
+  const repo = new SQLiteSettingsRepository(getDb());
+  await repo.set(NOTIF_KEY, JSON.stringify(s));
+}
+
+const notifScheduler = new ExpoNotificationScheduler();
+const notifService = new NotificationService(notifScheduler, loadNotifSettings, persistNotifSettings);
 
 function makeServiceForCheck(): SessionService {
   const db = getDb();
@@ -221,8 +240,11 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
         .saveSessionMeta(session.sessionLogId, selectedTags, sessionNotes.trim() || null)
         .catch(console.error);
     }
+    if (session.phase === 'summary') {
+      await notifService.scheduleInactivityCheck(new Date()).catch(console.error);
+    }
     router.back();
-  }, [session.sessionLogId, selectedTags, sessionNotes, router]);
+  }, [session.sessionLogId, session.phase, selectedTags, sessionNotes, router]);
 
   const [summaryDurationSeconds, setSummaryDurationSeconds] = useState(0);
   useEffect(() => {
