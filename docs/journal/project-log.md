@@ -28,10 +28,19 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 - **`ShareQRModal` dans `components/programmes/` (pluriel)** au lieu de `components/programme/` — détecté par spec reviewer, déplacé.
 - **`ExpoNotificationScheduler.getScheduled()`** : type `NotificationTrigger` union complexe, trigger `null` possible, iOS retourne `CalendarNotificationTrigger` — type guards `unknown` requis.
 
+### Livré (suite — fin session)
+
+- **eslint-plugin-react-native-a11y en CI** : `has-valid-accessibility-descriptors` (error) + `no-nested-touchables` (warn). 14 problèmes pré-existants corrigés au passage (unescaped entities, unused vars, import order, pako named imports). CI lint exit 0. Commit `3e60249`.
+- **v1.17.0** pushé (3 features majeures).
+
+### Décisions (suite)
+
+- **`has-accessibility-hint` désactivé** : 120 violations pré-existantes — à activer lors de l'audit RAAM 1.1 avec contexte VoiceOver/TalkBack réel. Hints écrits sans contexte = mauvaise qualité.
+- **Ordre backlog finalisé** : 1. Onboarding → 2. Philosophie/UX → 3. Design pass (Claude Design, manuel) → 4. Audit fonctionnel → 5. RAAM 1.1 → 6. Audit global. Design avant audit fonctionnel : auditer sur la version designée finale.
+
 ### Prochaine étape
 
-- Bump version v1.17.0 (3 features majeures)
-- Features restantes backlog : `plate_step` (plan écrit), onboarding, audits (fonctionnel, RAAM 1.1, design pass Claude Design, eslint-plugin-react-native-a11y CI)
+- **Onboarding** : wizard premier lancement (objectifs → programme → première séance), écran 0 philosophique, "Revoir l'onboarding" depuis Réglages.
 
 ---
 
