@@ -280,6 +280,27 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
     service.recordDeload(new Date().toISOString()).catch(console.error);
   }, [session.phase, session.sessionLogId, isDeloadSession]);
 
+  const [emptyCardioSetLogIds, setEmptyCardioSetLogIds] = useState<number[]>([]);
+
+  useEffect(() => {
+    if (session.phase !== 'summary' || !session.sessionLogId) return;
+    const cardioExerciseIds = new Set(
+      exercises
+        .filter(we => we.exercise.type === 'cardio')
+        .map(we => we.exercise.id) ?? []
+    );
+    if (cardioExerciseIds.size === 0) return;
+    const setLogRepo = new SQLiteSetLogRepository(getDb());
+    setLogRepo.findBySessionLogId(session.sessionLogId).then(logs => {
+      const empty = logs.filter(
+        l => cardioExerciseIds.has(l.exercise_id) &&
+             l.duration_seconds == null &&
+             l.distance_meters == null
+      );
+      setEmptyCardioSetLogIds(empty.map(l => l.id));
+    });
+  }, [session.phase, session.sessionLogId, exercises]);
+
   const [prBadge, setPrBadge] = useState<string | null>(null);
   const prBadgeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -305,6 +326,21 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
     if (!session.sessionLogId) return;
     await makeServiceForCheck().saveMoodAfter(session.sessionLogId, mood);
   }, [session.sessionLogId]);
+
+  const handleSaveCardioData = useCallback(async (
+    durationSeconds: number | null,
+    distanceMeters: number | null,
+    rpe: number | null,
+  ) => {
+    if (emptyCardioSetLogIds.length === 0) return;
+    await makeServiceForCheck().saveCardioData(
+      emptyCardioSetLogIds[0],
+      durationSeconds,
+      distanceMeters,
+      rpe,
+    );
+    setEmptyCardioSetLogIds([]);
+  }, [emptyCardioSetLogIds]);
 
   const handlePause = useCallback(async () => {
     try {
@@ -441,6 +477,8 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
             notes={sessionNotes}
             onNotesChange={setSessionNotes}
             onClose={handleBack}
+            emptyCardioSetLogCount={emptyCardioSetLogIds.length}
+            onSaveCardioData={handleSaveCardioData}
           />
         )}
       </View>
