@@ -4,6 +4,37 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 
 ---
 
+## S48 — 2026-06-15 — Partage programme + Mesures corporelles + Notifications
+
+### Livré
+
+- **Partage programme (8 tasks)** : `pako` + `react-native-qrcode-svg` + `expo-camera` installés. `ShareProgramService` : `compressPayload`/`decompressPayload` (deflate + base64, fix stack overflow via `Array.from`), `generatePayload(programId)` sérialise arbre complet (Programme → Workouts → Exercises → Blocks → Sets), `importPayload(base64)` reconstruit en DB avec gestion conflits noms (loop `" (importé-N)"`). `ShareQRModal` QR code. `scan-programme.tsx` scanner `CameraView` + guard `scanned`. Deep link `app://import?data=` dans `_layout.tsx` avec `lastImportedUrl` ref anti-doublon. Bouton partage dans `programme/[id].tsx`, bouton scanner dans `programmes.tsx`. Commits `34ebc31` → `0fd3ef1`.
+- **Mesures corporelles (8 tasks)** : migration v15 `body_measurements` (UNIQUE date, metrics REAL nullable). `IBodyMeasurementRepository` + `InMemoryBodyMeasurementRepository` (upsert par date) + `SQLiteBodyMeasurementRepository` (ON CONFLICT DO UPDATE). Contract tests avec **factory async** (`createRepo: () => Repo | Promise<Repo>` + `beforeEach async`) — pattern requis car `runMigrations` est async. `BodyMeasurementService` thin delegation. `useBodyMeasurements` hook (serviceRef + mountedRef). `AddMeasurementSheet` (`forwardRef<AddMeasurementSheetRef>`, 6 champs optionnels). `LatestMeasurementsCard` (filtre nulls). `BodyMeasurementChart` (LineChart, ≥2 points, ordre ASC). Segment "Corps" dans `progression.tsx`. Commits sessions précédentes.
+- **Notifications (7 tasks)** : `expo-notifications` installé. `INotificationScheduler` interface + `InMemoryNotificationScheduler` (Map + `setPermission`). `NotificationService` TDD 7 tests : `saveAndReschedule` (save → cancelAll → gate enabled/permission → `scheduleWeekly`), `scheduleInactivityCheck` (null → cancel, récente → once future, overdue → cancel). Conversion ISO→Expo weekday : `(isoDay % 7) + 1`. `ExpoNotificationScheduler` prod (type guards `isWeeklyTrigger` pour iOS `CalendarNotificationTrigger`). Section NOTIFICATIONS dans `reglages.tsx` (toggle, chips jours, HH:MM, chips 3/5/7/14j, `SQLiteSettingsRepository` JSON). `_layout.tsx` : `findMostRecent()` sur `SQLiteSessionLogRepository` (nouvelle méthode, TDD 3 tests) → `scheduleInactivityCheck`. `[workoutId].tsx` : `scheduleInactivityCheck(new Date())` à la fin de séance (gate `phase === 'summary'`). 557 tests, 0 TS errors.
+
+### Décisions
+
+- **`set_type` exclu du `CreateSetDto`** : DEFAULT DB géré par SQLite — `ShareProgramService.importPayload` ne passe pas `set_type` pour les sets importés.
+- **`InMemoryNotificationScheduler.getScheduled()` sur l'interface** : méthode de test exposée sur l'interface pour permettre les assertions — pattern acceptable pour testabilité.
+- **notifService singleton local par fichier** : `_layout.tsx`, `reglages.tsx`, `[workoutId].tsx` instancient chacun leur singleton local (pas de module partagé) — simple, pas d'over-engineering.
+- **`SQLiteSettingsRepository` à la place d'AsyncStorage pour notif settings** : AsyncStorage non installé, `SQLiteSettingsRepository` KV déjà en place — zéro nouvelle dépendance.
+- **axe-core ne tourne pas en RN** : pour CI accessibilité → `eslint-plugin-react-native-a11y` (statique RN-natif). Audit RAAM 1.1 reste manuel en fin de backlog.
+
+### Problèmes rencontrés
+
+- **`runMigrations` async → contract tests sync** : `beforeEach` synchrone ne complétait pas les migrations. Fix : factory `() => Promise<Repo>` + `beforeEach(async () => { repo = await createRepo(); })`. **Pattern obligatoire pour tous les futurs tests SQLite.**
+- **`btoa(String.fromCharCode(...compressed))` stack overflow** sur large Uint8Array : fix `Array.from(compressed).map(b => String.fromCharCode(b)).join('')`.
+- **Importation programme x3** : `includes()` simple ne gérait que le 1er doublon — fix loop `while (names.has(name))` + counter.
+- **`ShareQRModal` dans `components/programmes/` (pluriel)** au lieu de `components/programme/` — détecté par spec reviewer, déplacé.
+- **`ExpoNotificationScheduler.getScheduled()`** : type `NotificationTrigger` union complexe, trigger `null` possible, iOS retourne `CalendarNotificationTrigger` — type guards `unknown` requis.
+
+### Prochaine étape
+
+- Bump version v1.17.0 (3 features majeures)
+- Features restantes backlog : `plate_step` (plan écrit), onboarding, audits (fonctionnel, RAAM 1.1, design pass Claude Design, eslint-plugin-react-native-a11y CI)
+
+---
+
 ## S47 — 2026-06-15 — Pack doublons exercices + Recueil cardio + Import GPX
 
 ### Livré
