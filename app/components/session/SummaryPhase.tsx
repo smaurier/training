@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { View, Text, ScrollView, TextInput, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { PressableA11y } from '@/components/ui/PressableA11y';
@@ -26,6 +27,12 @@ interface SummaryPhaseProps {
   notes?: string;
   onNotesChange?: (text: string) => void;
   onClose: () => void | Promise<void>;
+  emptyCardioSetLogCount?: number;
+  onSaveCardioData?: (
+    durationSeconds: number | null,
+    distanceMeters: number | null,
+    rpe: number | null,
+  ) => Promise<void>;
 }
 
 function formatDuration(seconds: number): string {
@@ -34,10 +41,31 @@ function formatDuration(seconds: number): string {
   return m > 0 ? `${m} min ${s > 0 ? `${s} s` : ''}`.trim() : `${s} s`;
 }
 
-export function SummaryPhase({ progressions, totalSets, durationSeconds, totalVolumeKg, plateaus, rpeLabel, previousSession, suggestNextDeload, onMoodSelect, selectedMood, selectedTags = [], onTagToggle, notes = '', onNotesChange, onClose }: SummaryPhaseProps) {
+export function SummaryPhase({ progressions, totalSets, durationSeconds, totalVolumeKg, plateaus, rpeLabel, previousSession, suggestNextDeload, onMoodSelect, selectedMood, selectedTags = [], onTagToggle, notes = '', onNotesChange, onClose, emptyCardioSetLogCount, onSaveCardioData }: SummaryPhaseProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const { convert, label: unitLabel } = useUnits();
+
+  const [cardioDismissed, setCardioDismissed] = useState(false);
+  const [cardioMinutes, setCardioMinutes] = useState('');
+  const [cardioSeconds, setCardioSeconds] = useState('');
+  const [cardioDistanceKm, setCardioDistanceKm] = useState('');
+  const [cardioRpe, setCardioRpe] = useState<3 | 6 | 9 | null>(null);
+
+  const showCardioCard = (emptyCardioSetLogCount ?? 0) > 0 && !cardioDismissed;
+
+  const handleCardioSubmit = async () => {
+    const mins = parseInt(cardioMinutes || '0', 10);
+    const secs = parseInt(cardioSeconds || '0', 10);
+    const totalSeconds = mins * 60 + secs;
+    const km = parseFloat(cardioDistanceKm || '0');
+    await onSaveCardioData?.(
+      totalSeconds > 0 ? totalSeconds : null,
+      km > 0 ? Math.round(km * 1000) : null,
+      cardioRpe,
+    );
+    setCardioDismissed(true);
+  };
 
   const progressionCount = progressions.filter(p => p.achieved).length;
 
@@ -134,6 +162,90 @@ export function SummaryPhase({ progressions, totalSets, durationSeconds, totalVo
           <Text style={[styles.deloadHintBody, { color: colors.textSecondary }]}>
             {"Tu t'entraînes depuis plusieurs semaines. À la prochaine séance, pense à décharger — les poids seront réduits de 10% pour que tes muscles récupèrent."}
           </Text>
+        </View>
+      )}
+
+      {showCardioCard && (
+        <View style={[styles.cardioCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Tu as fait du cardio ?</Text>
+          <View style={styles.cardioRow}>
+            <View style={styles.cardioField}>
+              <Text style={[styles.cardioFieldLabel, { color: colors.textSecondary }]}>Min</Text>
+              <TextInput
+                style={[styles.cardioInput, { backgroundColor: colors.background, borderColor: colors.border, color: colors.text }]}
+                value={cardioMinutes}
+                onChangeText={setCardioMinutes}
+                keyboardType="number-pad"
+                maxLength={3}
+                placeholder="0"
+                placeholderTextColor={colors.textSecondary}
+                accessibilityLabel="Durée en minutes"
+              />
+            </View>
+            <View style={styles.cardioField}>
+              <Text style={[styles.cardioFieldLabel, { color: colors.textSecondary }]}>Sec</Text>
+              <TextInput
+                style={[styles.cardioInput, { backgroundColor: colors.background, borderColor: colors.border, color: colors.text }]}
+                value={cardioSeconds}
+                onChangeText={setCardioSeconds}
+                keyboardType="number-pad"
+                maxLength={2}
+                placeholder="0"
+                placeholderTextColor={colors.textSecondary}
+                accessibilityLabel="Durée en secondes"
+              />
+            </View>
+            <View style={styles.cardioField}>
+              <Text style={[styles.cardioFieldLabel, { color: colors.textSecondary }]}>km</Text>
+              <TextInput
+                style={[styles.cardioInput, { backgroundColor: colors.background, borderColor: colors.border, color: colors.text }]}
+                value={cardioDistanceKm}
+                onChangeText={setCardioDistanceKm}
+                keyboardType="decimal-pad"
+                maxLength={6}
+                placeholder="0.0"
+                placeholderTextColor={colors.textSecondary}
+                accessibilityLabel="Distance en kilomètres"
+              />
+            </View>
+          </View>
+          <View style={styles.cardioRpeRow}>
+            {([
+              { rpe: 3 as const, label: 'Léger' },
+              { rpe: 6 as const, label: 'Normal' },
+              { rpe: 9 as const, label: 'Difficile' },
+            ] as const).map(({ rpe, label }) => (
+              <PressableA11y
+                key={rpe}
+                accessibilityLabel={`Sensation : ${label}`}
+                accessibilityState={{ selected: cardioRpe === rpe }}
+                onPress={() => setCardioRpe(cardioRpe === rpe ? null : rpe)}
+                style={[
+                  styles.cardioRpeChip,
+                  { borderColor: colors.border },
+                  cardioRpe === rpe ? { backgroundColor: colors.primary } : { backgroundColor: colors.surface },
+                ]}
+              >
+                <Text style={[styles.cardioRpeLabel, { color: cardioRpe === rpe ? '#fff' : colors.text }]}>{label}</Text>
+              </PressableA11y>
+            ))}
+          </View>
+          <View style={styles.cardioBtnRow}>
+            <PressableA11y
+              accessibilityLabel="Enregistrer les données cardio"
+              onPress={handleCardioSubmit}
+              style={[styles.cardioSaveBtn, { backgroundColor: colors.primary }]}
+            >
+              <Text style={styles.cardioSaveBtnText}>Enregistrer</Text>
+            </PressableA11y>
+            <PressableA11y
+              accessibilityLabel="Ignorer le recueil cardio"
+              onPress={() => setCardioDismissed(true)}
+              style={[styles.cardioIgnoreBtn, { borderColor: colors.border }]}
+            >
+              <Text style={[styles.cardioIgnoreBtnText, { color: colors.textSecondary }]}>Ignorer</Text>
+            </PressableA11y>
+          </View>
         </View>
       )}
 
@@ -254,4 +366,17 @@ const styles = StyleSheet.create({
   notesInput: { borderWidth: 1, borderRadius: Radius.sm, padding: 12, fontSize: 14, minHeight: 72, textAlignVertical: 'top' },
   closeBtn: { paddingVertical: 16, borderRadius: Radius.sm, alignItems: 'center', marginTop: 8 },
   closeBtnText: { color: '#fff', fontSize: 17, fontWeight: '600' },
+  cardioCard: { borderWidth: 1, borderRadius: Radius.sm, padding: 16, gap: 12 },
+  cardioRow: { flexDirection: 'row', gap: 8 },
+  cardioField: { flex: 1, gap: 4 },
+  cardioFieldLabel: { fontSize: 11, fontWeight: '600', textAlign: 'center' },
+  cardioInput: { borderWidth: 1, borderRadius: Radius.sm, padding: 10, fontSize: 16, textAlign: 'center' },
+  cardioRpeRow: { flexDirection: 'row', gap: 8 },
+  cardioRpeChip: { flex: 1, borderWidth: 1, borderRadius: Radius.sm, paddingVertical: 10, alignItems: 'center' },
+  cardioRpeLabel: { fontSize: 13, fontWeight: '500' },
+  cardioBtnRow: { flexDirection: 'row', gap: 8 },
+  cardioSaveBtn: { flex: 2, paddingVertical: 14, borderRadius: Radius.sm, alignItems: 'center' },
+  cardioSaveBtnText: { color: '#fff', fontSize: 15, fontWeight: '600' },
+  cardioIgnoreBtn: { flex: 1, paddingVertical: 14, borderRadius: Radius.sm, alignItems: 'center', borderWidth: 1 },
+  cardioIgnoreBtnText: { fontSize: 15 },
 });
