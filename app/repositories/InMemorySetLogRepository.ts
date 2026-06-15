@@ -53,4 +53,18 @@ export class InMemorySetLogRepository implements ISetLogRepository {
       i => !(i.set_id === setId && i.session_log_id === sessionLogId)
     );
   }
+
+  async updateCardioData(
+    id: number,
+    duration_seconds: number | null,
+    distance_meters: number | null,
+    rpe: number | null,
+  ): Promise<void> {
+    const item = this.items.find(s => s.id === id);
+    if (item) {
+      item.duration_seconds = duration_seconds;
+      item.distance_meters = distance_meters;
+      item.rpe = rpe;
+    }
+  }
 }

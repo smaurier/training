@@ -139,4 +139,35 @@ export function runSetLogRepositoryContractTests(createRepo: () => ISetLogReposi
       await expect(repo.deleteBySetAndSession(10, 1)).resolves.toBeUndefined();
     });
   });
+
+  describe('updateCardioData', () => {
+    it('met à jour duration_seconds, distance_meters et rpe', async () => {
+      const saved = await repo.save(dto1);
+      await repo.updateCardioData(saved.id, 1800, 5000, 6);
+      const logs = await repo.findBySessionLogId(dto1.session_log_id);
+      const updated = logs.find(l => l.id === saved.id)!;
+      expect(updated.duration_seconds).toBe(1800);
+      expect(updated.distance_meters).toBe(5000);
+      expect(updated.rpe).toBe(6);
+    });
+
+    it('accepte null pour tous les champs', async () => {
+      const saved = await repo.save({ ...dto1, rpe: 8 });
+      await repo.updateCardioData(saved.id, null, null, null);
+      const logs = await repo.findBySessionLogId(dto1.session_log_id);
+      const updated = logs.find(l => l.id === saved.id)!;
+      expect(updated.duration_seconds).toBeNull();
+      expect(updated.distance_meters).toBeNull();
+      expect(updated.rpe).toBeNull();
+    });
+
+    it('ne modifie pas les autres set_logs', async () => {
+      const s1 = await repo.save(dto1);
+      const s2 = await repo.save({ ...dto1, set_id: 11, completed_at: '2026-01-01T10:06:00.000Z' });
+      await repo.updateCardioData(s1.id, 600, 2000, 3);
+      const logs = await repo.findBySessionLogId(dto1.session_log_id);
+      const other = logs.find(l => l.id === s2.id)!;
+      expect(other.duration_seconds).toBeNull();
+    });
+  });
 }

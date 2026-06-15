@@ -70,4 +70,16 @@ export class SQLiteSetLogRepository implements ISetLogRepository {
       [setId, sessionLogId]
     );
   }
+
+  async updateCardioData(
+    id: number,
+    duration_seconds: number | null,
+    distance_meters: number | null,
+    rpe: number | null,
+  ): Promise<void> {
+    await this.db.runAsync(
+      'UPDATE set_logs SET duration_seconds = ?, distance_meters = ?, rpe = ? WHERE id = ?',
+      [duration_seconds, distance_meters, rpe, id],
+    );
+  }
 }
