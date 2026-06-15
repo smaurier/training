@@ -26,7 +26,7 @@ import { SQLiteSessionLogRepository } from '@/repositories/SQLiteSessionLogRepos
 import { ThemeContext, ThemeContextProvider } from '@/contexts/ThemeContext';
 import { UnitsContextProvider } from '@/contexts/UnitsContext';
 import { ShareProgramService } from '@/services/ShareProgramService';
-import { ExpoNotificationScheduler } from '@/services/ExpoNotificationScheduler';
+import { createNotificationScheduler } from '@/services/createNotificationScheduler';
 import { NotificationService } from '@/services/NotificationService';
 import type { NotifSettings } from '@/services/NotificationService';
 import type { ThemePreference, UnitsPreference } from '@/services/settingsUtils';
@@ -44,7 +44,7 @@ async function persistNotifSettings(s: NotifSettings): Promise<void> {
   await repo.set(NOTIF_KEY, JSON.stringify(s));
 }
 
-const notifScheduler = new ExpoNotificationScheduler();
+const notifScheduler = createNotificationScheduler();
 const notifService = new NotificationService(notifScheduler, loadNotifSettings, persistNotifSettings);
 
 export {

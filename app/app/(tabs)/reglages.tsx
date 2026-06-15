@@ -10,7 +10,7 @@ import type { ThemePreference, UnitsPreference, PlateStepValue } from '@/service
 import { getDb } from '@/db';
 import { ExportService } from '@/services/ExportService';
 import { SQLiteSettingsRepository } from '@/repositories/SQLiteSettingsRepository';
-import { ExpoNotificationScheduler } from '@/services/ExpoNotificationScheduler';
+import { createNotificationScheduler } from '@/services/createNotificationScheduler';
 import { NotificationService } from '@/services/NotificationService';
 import type { NotifSettings } from '@/services/NotificationService';
 
@@ -27,7 +27,7 @@ async function persistNotifSettings(s: NotifSettings): Promise<void> {
   await repo.set(NOTIF_KEY, JSON.stringify(s));
 }
 
-const notifScheduler = new ExpoNotificationScheduler();
+const notifScheduler = createNotificationScheduler();
 const notifService = new NotificationService(notifScheduler, loadNotifSettings, persistNotifSettings);
 
 const DEFAULT_NOTIF: NotifSettings = {
