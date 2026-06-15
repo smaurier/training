@@ -5,6 +5,10 @@ import { useCallback, useRef, useState } from 'react';
 import { useHistory } from '@/hooks/useHistory';
 import { useProgression } from '@/hooks/useProgression';
 import { useGoals } from '@/hooks/useGoals';
+import { useBodyMeasurements } from '@/hooks/useBodyMeasurements';
+import { LatestMeasurementsCard } from '@/components/progression/LatestMeasurementsCard';
+import { BodyMeasurementChart } from '@/components/progression/BodyMeasurementChart';
+import { AddMeasurementSheet, type AddMeasurementSheetRef } from '@/components/progression/AddMeasurementSheet';
 import { SessionCard } from '@/components/history/SessionCard';
 import { VolumeBarChart } from '@/components/progression/VolumeBarChart';
 import { Exercise1RMCard } from '@/components/progression/Exercise1RMCard';
@@ -15,13 +19,15 @@ import { Radius } from '@/constants/Radius';
 import type { SessionSummary } from '@/services/HistoryService';
 import type { Exercise1RM } from '@/services/ProgressionService';
 
-type Segment = 'historique' | 'stats';
+type Segment = 'historique' | 'stats' | 'corps';
 
 export default function ProgressionScreen() {
   const { sections, isLoading: histLoading, error: histError, refresh: refreshHist } = useHistory();
   const { stats, volumeByWeek, recentPRs, exercise1RMList, volumeByMuscleGroup, monthlyPresences, isLoading: statsLoading, error: statsError, refresh: refreshStats } = useProgression();
   const router = useRouter();
   const { goals, refresh: refreshGoals } = useGoals();
+  const { measurements, latest, save: saveMeasurement } = useBodyMeasurements();
+  const addSheetRef = useRef<AddMeasurementSheetRef>(null);
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
 
@@ -43,17 +49,20 @@ export default function ProgressionScreen() {
   const segmentControl = (
     <View style={[styles.segmentContainer, { backgroundColor: colors.background }]} accessibilityRole="tablist">
       <View style={[styles.segmentTrack, { backgroundColor: colors.surface }]}>
-        {(['historique', 'stats'] as Segment[]).map(seg => (
+        {(['historique', 'stats', 'corps'] as Segment[]).map(seg => (
           <PressableA11y
             key={seg}
             style={activeSegment === seg ? [styles.segmentButton, { backgroundColor: colors.primary }] : styles.segmentButton}
             onPress={() => setActiveSegment(seg)}
-            accessibilityLabel={seg === 'historique' ? 'Historique' : 'Stats'}
+            accessibilityLabel={
+              seg === 'historique' ? 'Historique' :
+              seg === 'stats' ? 'Stats' : 'Corps'
+            }
             accessibilityRole="tab"
             accessibilityState={{ selected: activeSegment === seg }}
           >
             <Text style={[styles.segmentText, { color: activeSegment === seg ? '#fff' : colors.textSecondary }]}>
-              {seg === 'historique' ? 'Historique' : 'Stats'}
+              {seg === 'historique' ? 'Historique' : seg === 'stats' ? 'Stats' : 'Corps'}
             </Text>
           </PressableA11y>
         ))}
@@ -105,6 +114,44 @@ export default function ProgressionScreen() {
           contentContainerStyle={sections.length === 0 ? styles.emptyContainer : undefined}
           stickySectionHeadersEnabled
         />
+      </View>
+    );
+  }
+
+  // Corps segment
+  if (activeSegment === 'corps') {
+    return (
+      <View style={[styles.flex, { backgroundColor: colors.background }]}>
+        {segmentControl}
+        <ScrollView contentContainerStyle={styles.scrollContent}>
+          <LatestMeasurementsCard latest={latest} />
+
+          {(['weight_kg', 'waist_cm', 'arm_cm', 'thigh_cm', 'hip_cm'] as const).map(metric => (
+            <BodyMeasurementChart
+              key={metric}
+              measurements={measurements}
+              metric={metric}
+              unit={metric === 'weight_kg' ? 'kg' : 'cm'}
+            />
+          ))}
+
+          {measurements.length === 0 && (
+            <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
+              Aucune mesure enregistrée. Appuie sur + pour commencer.
+            </Text>
+          )}
+
+          <PressableA11y
+            onPress={() => addSheetRef.current?.expand()}
+            style={[styles.addBtn, { backgroundColor: colors.primary }]}
+            accessibilityLabel="Ajouter une mesure corporelle"
+            accessibilityRole="button"
+          >
+            <Text style={styles.addBtnText}>+ Ajouter une mesure</Text>
+          </PressableA11y>
+
+          <AddMeasurementSheet ref={addSheetRef} onSave={saveMeasurement} />
+        </ScrollView>
       </View>
     );
   }
@@ -267,6 +314,10 @@ const styles = StyleSheet.create({
   sectionHeader: { paddingHorizontal: 16, paddingVertical: 8 },
   sectionTitle: { fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1 },
   statsContent: { paddingVertical: 12, paddingHorizontal: 16, gap: 12 },
+  scrollContent: { paddingVertical: 12, paddingHorizontal: 16, gap: 12 },
+  emptyText: { fontSize: 14, textAlign: 'center', paddingVertical: 24 },
+  addBtn: { borderRadius: Radius.sm, paddingVertical: 14, alignItems: 'center', marginTop: 8 },
+  addBtnText: { color: '#fff', fontSize: 15, fontWeight: '600' },
   chipsRow: { flexDirection: 'row', gap: 8 },
   chip: { flex: 1, borderRadius: Radius.sm, padding: 10, alignItems: 'center', gap: 2 },
   chipLabel: { fontSize: 9, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5 },
