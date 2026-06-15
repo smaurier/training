@@ -99,6 +99,7 @@ function RootLayoutNav() {
           <Stack.Screen name="history/[sessionLogId]" options={{ title: 'Détail séance' }} />
           <Stack.Screen name="progression/[exerciseId]" options={{ title: 'Progression' }} />
           <Stack.Screen name="progression/search" options={{ title: 'Rechercher un exercice' }} />
+          <Stack.Screen name="scan-programme" options={{ title: 'Scanner un programme', headerShown: true }} />
         </Stack>
       </ThemeProvider>
     </GestureHandlerRootView>
