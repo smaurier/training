@@ -80,6 +80,13 @@ export class InMemorySessionLogRepository implements ISessionLogRepository {
     }
   }
 
+  async findMostRecent(): Promise<SessionLog | null> {
+    const completed = this.items
+      .filter(i => i.status === 'completed')
+      .sort((a, b) => b.started_at.localeCompare(a.started_at));
+    return completed[0] ?? null;
+  }
+
   async getLastCompletedWorkoutId(workoutIds: number[]): Promise<number | null> {
     if (workoutIds.length === 0) return null;
     const row = this.items

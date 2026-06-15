@@ -149,6 +149,25 @@ export function runSessionLogRepositoryContractTests(createRepo: () => ISessionL
     });
   });
 
+  describe('findMostRecent', () => {
+    it('retourne null si aucune session', async () => {
+      expect(await repo.findMostRecent()).toBeNull();
+    });
+    it('retourne la session completed la plus récente', async () => {
+      const a = await repo.save({ ...dto1, started_at: '2026-01-01T10:00:00.000Z' });
+      const b = await repo.save({ ...dto1, started_at: '2026-01-03T10:00:00.000Z' });
+      await repo.complete(a.id, '2026-01-01T11:00:00.000Z');
+      await repo.complete(b.id, '2026-01-03T11:00:00.000Z');
+      const result = await repo.findMostRecent();
+      expect(result?.started_at).toBe('2026-01-03T10:00:00.000Z');
+    });
+    it('ignore les sessions non completed', async () => {
+      const a = await repo.save({ ...dto1, started_at: '2026-01-01T10:00:00.000Z' });
+      await repo.pause(a.id, '{}');
+      expect(await repo.findMostRecent()).toBeNull();
+    });
+  });
+
   describe('findLatestDatesPerWorkout', () => {
     it('retourne null pour chaque workout sans sessions', async () => {
       const map = await repo.findLatestDatesPerWorkout([1, 2]);

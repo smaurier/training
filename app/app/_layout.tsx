@@ -22,10 +22,30 @@ import { SQLiteProgramRepository } from '@/repositories/SQLiteProgramRepository'
 import { SQLiteSetRepository } from '@/repositories/SQLiteSetRepository';
 import { SQLiteWorkoutExerciseRepository } from '@/repositories/SQLiteWorkoutExerciseRepository';
 import { SQLiteWorkoutRepository } from '@/repositories/SQLiteWorkoutRepository';
+import { SQLiteSessionLogRepository } from '@/repositories/SQLiteSessionLogRepository';
 import { ThemeContext, ThemeContextProvider } from '@/contexts/ThemeContext';
 import { UnitsContextProvider } from '@/contexts/UnitsContext';
 import { ShareProgramService } from '@/services/ShareProgramService';
+import { ExpoNotificationScheduler } from '@/services/ExpoNotificationScheduler';
+import { NotificationService } from '@/services/NotificationService';
+import type { NotifSettings } from '@/services/NotificationService';
 import type { ThemePreference, UnitsPreference } from '@/services/settingsUtils';
+
+const NOTIF_KEY = 'notif_settings';
+
+async function loadNotifSettings(): Promise<NotifSettings | null> {
+  const repo = new SQLiteSettingsRepository(getDb());
+  const raw = await repo.get(NOTIF_KEY);
+  return raw ? JSON.parse(raw) as NotifSettings : null;
+}
+
+async function persistNotifSettings(s: NotifSettings): Promise<void> {
+  const repo = new SQLiteSettingsRepository(getDb());
+  await repo.set(NOTIF_KEY, JSON.stringify(s));
+}
+
+const notifScheduler = new ExpoNotificationScheduler();
+const notifService = new NotificationService(notifScheduler, loadNotifSettings, persistNotifSettings);
 
 export {
   ErrorBoundary,
@@ -74,6 +94,17 @@ export default function RootLayout() {
       SplashScreen.hideAsync();
     }
   }, [loaded, dbReady]);
+
+  useEffect(() => {
+    if (!dbReady) return;
+    const sessionLogRepo = new SQLiteSessionLogRepository(getDb());
+    sessionLogRepo.findMostRecent()
+      .then(session => {
+        const lastDate = session ? new Date(session.started_at) : null;
+        return notifService.scheduleInactivityCheck(lastDate);
+      })
+      .catch(console.error);
+  }, [dbReady]);
 
   if (!loaded || !dbReady) {
     return null;

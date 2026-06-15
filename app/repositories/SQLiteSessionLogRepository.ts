@@ -95,6 +95,12 @@ export class SQLiteSessionLogRepository implements ISessionLogRepository {
     );
   }
 
+  async findMostRecent(): Promise<SessionLog | null> {
+    return this.db.getFirstAsync<SessionLog>(
+      "SELECT * FROM session_logs WHERE status = 'completed' ORDER BY started_at DESC LIMIT 1"
+    );
+  }
+
   async getLastCompletedWorkoutId(workoutIds: number[]): Promise<number | null> {
     if (workoutIds.length === 0) return null;
     const placeholders = workoutIds.map(() => '?').join(',');
