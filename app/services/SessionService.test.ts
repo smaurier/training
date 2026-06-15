@@ -631,3 +631,33 @@ describe('SessionService.getPreviousSessionSummary', () => {
     expect(result!.sets).toBe(1);
   });
 });
+
+describe('SessionService.saveCardioData', () => {
+  it('délègue à setLogRepo.updateCardioData avec les bonnes valeurs', async () => {
+    const ctx = makeService();
+    const service = ctx.build();
+    const log = await service.startSession(1, { checkin_energy: null, checkin_fatigue: null, checkin_sleep: null });
+    const setLog = await ctx.setLogRepo.save({
+      session_log_id: log.id, set_id: 1, exercise_id: 1,
+      reps_done: 1, weight_done: 0, rpe: null,
+      completed_at: new Date().toISOString(),
+    });
+    await service.saveCardioData(setLog.id, 1800, 5000, 6);
+    const updated = (await ctx.setLogRepo.findBySessionLogId(log.id))[0];
+    expect(updated.duration_seconds).toBe(1800);
+    expect(updated.distance_meters).toBe(5000);
+    expect(updated.rpe).toBe(6);
+  });
+
+  it('accepte null pour tous les champs', async () => {
+    const ctx = makeService();
+    const service = ctx.build();
+    const log = await service.startSession(1, { checkin_energy: null, checkin_fatigue: null, checkin_sleep: null });
+    const setLog = await ctx.setLogRepo.save({
+      session_log_id: log.id, set_id: 1, exercise_id: 1,
+      reps_done: 1, weight_done: 0, rpe: null,
+      completed_at: new Date().toISOString(),
+    });
+    await expect(service.saveCardioData(setLog.id, null, null, null)).resolves.toBeUndefined();
+  });
+});

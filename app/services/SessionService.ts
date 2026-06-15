@@ -147,6 +147,15 @@ export class SessionService {
     await this.sessionLogRepo.saveSessionMeta(sessionLogId, tags, notes);
   }
 
+  async saveCardioData(
+    setLogId: number,
+    duration_seconds: number | null,
+    distance_meters: number | null,
+    rpe: number | null,
+  ): Promise<void> {
+    await this.setLogRepo.updateCardioData(setLogId, duration_seconds, distance_meters, rpe);
+  }
+
   async findAnyPausedSession(): Promise<PausedSessionInfo | null> {
     const sessionLog = await this.sessionLogRepo.findAnyPaused();
     if (!sessionLog) return null;
