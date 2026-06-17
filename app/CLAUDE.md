@@ -84,6 +84,47 @@ Trois ✓ = go. Un ✗ = revoir avant d'implémenter.
 
 ---
 
+## Directives UI — Design system
+
+Spec complète : `../docs/superpowers/specs/2026-06-17-design-system-directives.md`
+
+### Direction : Tactique / Data
+Dark-first (tester dark en priorité), chiffres en avant, feeling tableau de bord athlète. Zéro décoration sans fonction.
+
+### Accent — Lime `#84CC16`
+Règle d'or : **1 seul élément lime visible par écran en état de repos.**
+Usages : barre de progression active, CTA principal (fond lime / texte noir), chip sélectionné, PR badge, état success.
+Interdit : texte courant, bordures décoratives, icônes nav, fond de section.
+
+### Typographie clé
+- Chiffres héros (poids, timer, stats) → `Inter_900Black` 48px+ (hors scale)
+- Labels structurels → `Inter_600SemiBold` uppercase + `letterSpacing: 1-2`
+- CTA → `Inter_700Bold` uppercase + `letterSpacing: 2`
+
+### Radius
+`xs:2` chips/badges — `sm:4` cards/boutons — `md:8` modales uniquement. Rester flat.
+
+### Par écran
+| Écran | Point clé |
+|---|---|
+| Home | Barre cycle (segments lime/`#2A2A2A`) + CTA fond lime |
+| Session Running | Poids en 48px+ Black centré, VALIDER pleine largeur fond lime minH 64 |
+| Session Rest | Arc circulaire lime, bouton Passer en outline blanc (pas lime) |
+| Session Summary | Stats factuelles, PR en lime, zéro score global ni comparaison |
+| Programmes | Programme actif = bord gauche lime 3px uniquement |
+| Exercices | **Exception light autorisée** — seul écran fond `background` light |
+| Progression | Barres chart `#444444`, barre actuelle lime, tendances factuelles |
+| Réglages | Full B&W, zéro lime |
+
+### Checklist PR UI
+- [ ] Testé dark mode en premier
+- [ ] Max 1 élément lime au repos
+- [ ] Zéro couleur hardcodée (toujours `colors.xxx`)
+- [ ] Chiffres clés en `Inter_900Black`
+- [ ] Labels structurels en uppercase + letterSpacing
+
+---
+
 ## Règles importantes
 
 - **Début de session** : annoncer le scope explicitement + lire `../docs/journal/project-log.md`
