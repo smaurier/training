@@ -1,2 +1,86 @@
-import type { ScreenProps } from '@/app/onboarding';
-export function ObjectiveScreen(_: ScreenProps) { return null; }
+// app/components/onboarding/ObjectiveScreen.tsx
+import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { PressableA11y } from '@/components/ui/PressableA11y';
+import { useColorScheme } from '@/components/useColorScheme';
+import Colors from '@/constants/Colors';
+import type { ScreenProps, Objective } from '@/app/onboarding';
+
+const OBJECTIVES: { value: Objective; label: string; description: string }[] = [
+  { value: 'force',        label: 'Force',              description: 'Soulever plus lourd. Progresser sur les grands mouvements.' },
+  { value: 'hypertrophie', label: 'Hypertrophie',       description: 'Développer le volume musculaire. Plus de séries, plus de reps.' },
+  { value: 'maintien',     label: 'Maintien',           description: 'Garder ce que tu as construit. Entraînement régulier et équilibré.' },
+  { value: 'cardio',       label: 'Cardio / Endurance', description: 'Améliorer ton souffle et ta condition physique.' },
+];
+
+export function ObjectiveScreen({ wizardState, setWizardState, onNext, onBack }: ScreenProps) {
+  const colorScheme = useColorScheme();
+  const colors = Colors[colorScheme ?? 'light'];
+  const selected = wizardState.objective;
+
+  return (
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <View style={styles.header}>
+        <PressableA11y onPress={onBack} accessibilityLabel="Retour" accessibilityRole="button">
+          <Text style={{ color: colors.textSecondary }}>← Retour</Text>
+        </PressableA11y>
+        <Text style={[styles.title, { color: colors.text }]}>Quel est ton objectif principal ?</Text>
+        <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+          Pour te suggérer un programme adapté. Modifiable à tout moment.
+        </Text>
+      </View>
+
+      <ScrollView contentContainerStyle={styles.list}>
+        {OBJECTIVES.map(obj => {
+          const isSelected = selected === obj.value;
+          return (
+            <PressableA11y
+              key={obj.value}
+              onPress={() => setWizardState({ objective: obj.value })}
+              style={[
+                styles.card,
+                { borderColor: colors.border, backgroundColor: colors.surface },
+                isSelected && { borderColor: colors.primary },
+              ]}
+              accessibilityLabel={`${obj.label} — ${obj.description}`}
+              accessibilityRole="radio"
+              accessibilityState={{ selected: isSelected }}
+            >
+              <Text style={[styles.cardLabel, { color: colors.text }]}>{obj.label}</Text>
+              <Text style={[styles.cardDesc, { color: colors.textSecondary }]}>{obj.description}</Text>
+            </PressableA11y>
+          );
+        })}
+      </ScrollView>
+
+      <View style={[styles.footer, { borderTopColor: colors.border }]}>
+        <PressableA11y
+          onPress={onNext}
+          disabled={!selected}
+          style={[
+            styles.button,
+            { backgroundColor: colors.primary },
+            !selected && { opacity: 0.4 },
+          ]}
+          accessibilityLabel="Continuer"
+          accessibilityRole="button"
+        >
+          <Text style={[styles.buttonText, { color: colors.background }]}>Continuer</Text>
+        </PressableA11y>
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+  header: { padding: 24, gap: 8 },
+  title: { fontSize: 24, fontFamily: 'Inter_700Bold' },
+  subtitle: { fontSize: 14, fontFamily: 'Inter_400Regular' },
+  list: { paddingHorizontal: 24, gap: 12, paddingBottom: 24 },
+  card: { borderWidth: 1.5, borderRadius: 12, padding: 16, gap: 4 },
+  cardLabel: { fontSize: 16, fontFamily: 'Inter_700Bold' },
+  cardDesc: { fontSize: 13, fontFamily: 'Inter_400Regular' },
+  footer: { padding: 24, borderTopWidth: 1 },
+  button: { borderRadius: 12, padding: 16, alignItems: 'center' },
+  buttonText: { fontSize: 16, fontFamily: 'Inter_700Bold' },
+});
