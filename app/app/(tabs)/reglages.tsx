@@ -1,5 +1,6 @@
 import { useContext, useState, useCallback, useEffect } from 'react';
 import { View, Text, ScrollView, StyleSheet, ActivityIndicator, Switch, TextInput, Pressable } from 'react-native';
+import { useRouter } from 'expo-router';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import { useColorScheme } from '@/components/useColorScheme';
 import { ThemeContext } from '@/contexts/ThemeContext';
@@ -102,12 +103,45 @@ function SegmentedControl<T extends string,>({
   );
 }
 
+function SectionHeader({
+  title, helpId, helpText, expandedHelp, onToggleHelp, colors,
+}: {
+  title: string; helpId: string; helpText: string;
+  expandedHelp: string | null; onToggleHelp: (id: string) => void;
+  colors: typeof Colors.light;
+}) {
+  const isOpen = expandedHelp === helpId;
+  return (
+    <View style={{ marginBottom: 4 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+        <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>{title}</Text>
+        <PressableA11y
+          onPress={() => onToggleHelp(helpId)}
+          accessibilityLabel={`Aide — ${title}`}
+          accessibilityRole="button"
+        >
+          <Text style={{ color: colors.textSecondary, fontSize: 12 }}>(?)</Text>
+        </PressableA11y>
+      </View>
+      {isOpen && (
+        <Text style={{ color: colors.textSecondary, fontSize: 13, fontFamily: 'Inter_400Regular', marginTop: 4, marginBottom: 4 }}>
+          {helpText}
+        </Text>
+      )}
+    </View>
+  );
+}
+
 export default function ReglagesScreen() {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme];
   const isDark = colorScheme === 'dark';
   const themeCtx = useContext(ThemeContext)!;
   const { preference: unitsPref, resolved: resolvedUnits, setUnit } = useUnits();
+  const router = useRouter();
+
+  const [expandedHelp, setExpandedHelp] = useState<string | null>(null);
+  const toggleHelp = (id: string) => setExpandedHelp(prev => (prev === id ? null : id));
 
   const [isExporting, setIsExporting] = useState(false);
   const [exportError, setExportError] = useState<string | null>(null);
@@ -174,7 +208,14 @@ export default function ReglagesScreen() {
       style={{ backgroundColor: colors.background }}
       contentContainerStyle={styles.container}
     >
-      <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>APPARENCE</Text>
+      <SectionHeader
+        title="APPARENCE"
+        helpId="apparence"
+        helpText="L'app s'adapte automatiquement à ton système, ou tu choisis manuellement Clair ou Sombre."
+        expandedHelp={expandedHelp}
+        onToggleHelp={toggleHelp}
+        colors={colors}
+      />
       <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
         <SegmentedControl
           options={THEME_OPTIONS}
@@ -190,7 +231,14 @@ export default function ReglagesScreen() {
         )}
       </View>
 
-      <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>UNITÉS</Text>
+      <SectionHeader
+        title="UNITÉS"
+        helpId="unites"
+        helpText="Choisis entre kilogrammes et livres. Tous les poids s'adaptent."
+        expandedHelp={expandedHelp}
+        onToggleHelp={toggleHelp}
+        colors={colors}
+      />
       <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
         <SegmentedControl
           options={UNITS_OPTIONS}
@@ -206,7 +254,14 @@ export default function ReglagesScreen() {
         )}
       </View>
 
-      <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>DÉCHARGE AUTOMATIQUE</Text>
+      <SectionHeader
+        title="DÉCHARGE AUTOMATIQUE"
+        helpId="decharge"
+        helpText="Après X semaines consécutives, une semaine allégée est suggérée automatiquement."
+        expandedHelp={expandedHelp}
+        onToggleHelp={toggleHelp}
+        colors={colors}
+      />
       <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
         <Text style={[styles.hint, { color: colors.textSecondary, marginBottom: 8 }]}>
           {"Semaines d'entraînement avant de suggérer une semaine de décharge"}
@@ -224,7 +279,14 @@ export default function ReglagesScreen() {
         />
       </View>
 
-      <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>PROGRESSION</Text>
+      <SectionHeader
+        title="PROGRESSION"
+        helpId="progression"
+        helpText="Le pas de plaque détermine l'incrément de poids automatique à chaque progression réussie."
+        expandedHelp={expandedHelp}
+        onToggleHelp={toggleHelp}
+        colors={colors}
+      />
       <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
         <Text style={[styles.hint, { color: colors.textSecondary, marginBottom: 8 }]}>
           Incrément minimal lors des calculs de poids (décharge, échauffement)
@@ -238,7 +300,14 @@ export default function ReglagesScreen() {
         />
       </View>
 
-      <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>DONNÉES</Text>
+      <SectionHeader
+        title="DONNÉES"
+        helpId="donnees"
+        helpText="Exporte l'ensemble de tes données en JSON pour sauvegarde personnelle."
+        expandedHelp={expandedHelp}
+        onToggleHelp={toggleHelp}
+        colors={colors}
+      />
       <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
         <PressableA11y
           accessibilityLabel="Exporter toutes mes données d'entraînement au format JSON"
@@ -261,7 +330,14 @@ export default function ReglagesScreen() {
         )}
       </View>
 
-      <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>NOTIFICATIONS</Text>
+      <SectionHeader
+        title="NOTIFICATIONS"
+        helpId="notifications"
+        helpText="Un rappel hebdomadaire optionnel. Jamais d'alerte pour une séance manquée."
+        expandedHelp={expandedHelp}
+        onToggleHelp={toggleHelp}
+        colors={colors}
+      />
       <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
         <View style={styles.row}>
           <Text style={[styles.label, { color: colors.text }]}>Activer les rappels</Text>
@@ -343,6 +419,19 @@ export default function ReglagesScreen() {
             </View>
           </>
         )}
+      </View>
+
+      <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>À PROPOS</Text>
+      <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+        <PressableA11y
+          onPress={() => router.push('/onboarding?review=true' as any)}
+          style={styles.exportRow}
+          accessibilityLabel="Revoir l'onboarding"
+          accessibilityRole="button"
+        >
+          <Text style={[styles.label, { color: colors.text }]}>Revoir l'introduction</Text>
+          <Text style={{ color: colors.textSecondary, fontSize: 18 }}>›</Text>
+        </PressableA11y>
       </View>
     </ScrollView>
   );
