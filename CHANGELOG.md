@@ -5,6 +5,17 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.17.1] — 2026-06-17
+
+ab542e5 chore(deps): eslint-config-expo 56 → 10.x (SDK 54 compatible)
+e78a9f3 fix(session): BottomSheetModalProvider manquant dans _layout
+d4fa531 fix(notifications): createNotificationScheduler — fallback InMemory dans Expo Go
+0323a52 docs(journal): S48 fin — eslint-a11y CI + ordre backlog
+3e60249 fix(lint): eslint-plugin-react-native-a11y + fix 0 warnings
+c365cde ci(a11y): add eslint-plugin-react-native-a11y to ESLint config
+
+---
+
 ## [1.17.0] — 2026-06-15
 
 d927951 docs(journal): S48 — Partage programme + Mesures corporelles + Notifications
