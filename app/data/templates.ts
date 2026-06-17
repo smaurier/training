@@ -147,6 +147,48 @@ export const TEMPLATES: TemplateDefinition[] = [
     ],
   },
   {
+    id: 'ppl-3j',
+    name: 'PPL — Push / Pull / Legs',
+    level: 'intermédiaire',
+    frequency: '3–6j/sem',
+    description: 'Push, Pull, Legs. 3 séances distinctes répétables 1× ou 2× par semaine selon la fréquence souhaitée.',
+    workouts: [
+      {
+        name: 'Push — Poussé',
+        exercises: [
+          work('Développé couché barre', 4, 6, 150),
+          work('Développé incliné haltères', 3, 8, 120),
+          work('Développé militaire barre', 3, 8, 120),
+          work('Élévations latérales', 3, 15, 60),
+          work('Dips', 3, 10, 90),
+          work('Skull crusher', 3, 12, 60),
+        ],
+      },
+      {
+        name: 'Pull — Tiré',
+        exercises: [
+          work('Tractions lestées', 4, 6, 150),
+          work('Rowing barre', 4, 8, 120),
+          work('Tirage poitrine', 3, 10, 90),
+          work('Face pull', 3, 15, 60),
+          work('Curl biceps barre', 3, 10, 90),
+          work('Curl marteau haltères', 3, 12, 60),
+        ],
+      },
+      {
+        name: 'Legs — Jambes',
+        exercises: [
+          work('Squat barre', 4, 6, 150),
+          work('Soulevé de terre jambes tendues', 3, 10, 90),
+          work('Presse à cuisses', 3, 10, 90),
+          work('Extensions quadriceps', 3, 15, 60),
+          work('Leg curl couché', 3, 12, 60),
+          work('Mollets debout', 4, 15, 60),
+        ],
+      },
+    ],
+  },
+  {
     id: 'bro-split-5j',
     name: 'Bro Split 5j',
     level: 'intermédiaire',
