@@ -71,6 +71,7 @@ export default function RootLayout() {
   const [dbReady, setDbReady] = useState(false);
   const [initialTheme, setInitialTheme] = useState<ThemePreference>('system');
   const [initialUnits, setInitialUnits] = useState<UnitsPreference>('system');
+  const [onboardingDone, setOnboardingDone] = useState(false);
 
   useEffect(() => {
     if (error) throw error;
@@ -79,12 +80,14 @@ export default function RootLayout() {
   useEffect(() => {
     initDatabase()
       .then(async () => {
-        const [theme, units] = await Promise.all([
+        const [theme, units, onbDone] = await Promise.all([
           settingsRepo.get('theme'),
           settingsRepo.get('units'),
+          settingsRepo.get('onboarding_done'),
         ]);
         setInitialTheme((theme as ThemePreference | null) ?? 'system');
         setInitialUnits((units as UnitsPreference | null) ?? 'system');
+        setOnboardingDone(onbDone === 'true');
         setDbReady(true);
       })
       .catch((e) => { throw e; });
@@ -114,13 +117,13 @@ export default function RootLayout() {
   return (
     <ThemeContextProvider initialPreference={initialTheme} repo={settingsRepo}>
       <UnitsContextProvider initialPreference={initialUnits} repo={settingsRepo}>
-        <RootLayoutNav />
+        <RootLayoutNav onboardingDone={onboardingDone} />
       </UnitsContextProvider>
     </ThemeContextProvider>
   );
 }
 
-function RootLayoutNav() {
+function RootLayoutNav({ onboardingDone }: { onboardingDone: boolean }) {
   const themeCtx = useContext(ThemeContext)!;
   const url = useURL();
   const router = useRouter();
@@ -152,6 +155,13 @@ function RootLayoutNav() {
     }
   }, [url, router]);
 
+  useEffect(() => {
+    if (!onboardingDone) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      router.replace('/onboarding' as any);
+    }
+  }, [onboardingDone, router]);
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <BottomSheetModalProvider>
@@ -170,6 +180,7 @@ function RootLayoutNav() {
           <Stack.Screen name="progression/[exerciseId]" options={{ title: 'Progression' }} />
           <Stack.Screen name="progression/search" options={{ title: 'Rechercher un exercice' }} />
           <Stack.Screen name="scan-programme" options={{ title: 'Scanner un programme', headerShown: true }} />
+          <Stack.Screen name="onboarding" options={{ headerShown: false, gestureEnabled: false }} />
         </Stack>
       </ThemeProvider>
       </BottomSheetModalProvider>
