@@ -1,6 +1,6 @@
 // app/app/onboarding.tsx
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useColorScheme } from '@/components/useColorScheme';
 import Colors from '@/constants/Colors';
@@ -67,6 +67,12 @@ export default function OnboardingScreen() {
     [programs, isReview],
   );
 
+  useEffect(() => {
+    if (step >= activeScreens.length) {
+      setStep(Math.max(0, activeScreens.length - 1));
+    }
+  }, [activeScreens.length, step]);
+
   const handleNext = async () => {
     if (step < activeScreens.length - 1) {
       setStep(s => s + 1);
@@ -88,7 +94,7 @@ export default function OnboardingScreen() {
 
   const current = activeScreens[step];
   const Component = current.component;
-  const showDots = current.id !== 'philosophy';
+  const showDots = step > 0 || current.id !== 'philosophy';
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
