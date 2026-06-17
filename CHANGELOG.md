@@ -5,6 +5,27 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.18.0] — 2026-06-17
+
+7bc8cf5 fix(a11y): accessibilityLabel Revoir l'introduction dans réglages
+49c02b7 feat(onboarding): Réglages — aide contextuelle (?) + bouton revoir l'introduction
+037c860 feat(onboarding): ReadyScreen — résumé wizard + CTA
+4891b76 feat(onboarding): ProgressionScreen — aperçu onglet progression
+0da04a1 feat(onboarding): SettingsIntroScreen — unités + pas de plaque configurables inline
+66d4dea feat(onboarding): SessionDemoScreen — démo séance interactive (replica autonome)
+cba4256 feat(onboarding): ProgramScreen — templates filtrés par objectif, import inline
+23b7ed6 feat(onboarding): ObjectiveScreen — 4 chips objectif
+edbece3 feat(onboarding): PhilosophyScreen — manifeste valeurs
+6944da0 fix(onboarding): showDots condition + step clamp on activeScreens change
+cb30d46 feat(onboarding): wizard shell + screen stubs
+a012d65 feat(onboarding): redirect to /onboarding if flag absent
+66b3bbf feat(onboarding): shouldSkip pure function TDD
+5999284 docs(plan): onboarding — 11 tasks TDD, wizard 7 écrans
+416a7d9 docs(spec): onboarding wizard — 7 screens, single-route, living demo
+62f59d8 feat(templates): add PPL Push/Pull/Legs template
+
+---
+
 ## [1.17.1] — 2026-06-17
 
 ab542e5 chore(deps): eslint-config-expo 56 → 10.x (SDK 54 compatible)
