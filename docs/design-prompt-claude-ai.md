@@ -1,9 +1,9 @@
-# Prompt — Directives graphiques Training App
+# Prompt — Directives graphiques Trace
 # À copier-coller dans claude.ai/design
 
 ---
 
-Tu travailles sur une application mobile React Native de suivi d'entraînement musculaire. Voici les directives graphiques strictes à respecter pour tout travail de design ou de code UI.
+Tu travailles sur **Trace**, une application mobile React Native de suivi d'entraînement musculaire (nom provisoire). Voici les directives graphiques strictes à respecter pour tout travail de design ou de code UI.
 
 ## Direction esthétique : Tactique / Data
 

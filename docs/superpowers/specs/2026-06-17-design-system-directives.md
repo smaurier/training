@@ -1,8 +1,10 @@
-# Design System — Directives graphiques
+# Design System — Directives graphiques — Trace
 
 **Date :** 2026-06-17  
 **Statut :** Approuvé  
 **Scope :** Direction visuelle globale + directives par écran clé
+
+**Nom de l'app :** Trace *(provisoire — susceptible d'évoluer)*
 
 ---
 
