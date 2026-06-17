@@ -426,7 +426,7 @@ export default function ReglagesScreen() {
         <PressableA11y
           onPress={() => router.push('/onboarding?review=true' as any)}
           style={styles.exportRow}
-          accessibilityLabel="Revoir l'onboarding"
+          accessibilityLabel="Revoir l'introduction"
           accessibilityRole="button"
         >
           <Text style={[styles.label, { color: colors.text }]}>Revoir l'introduction</Text>
