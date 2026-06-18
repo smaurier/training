@@ -16,6 +16,8 @@ import { getDb } from '@/db';
 const CHECKIN_ENERGY: Record<number, string> = { 1: '😴', 2: '😐', 3: '💪' };
 const CHECKIN_FATIGUE: Record<number, string> = { 1: '💪', 2: '😐', 3: '😴' };
 const CHECKIN_SLEEP: Record<number, string> = { 1: '😴', 2: '😐', 3: '🌙' };
+const MOOD_AFTER: Record<number, string> = { 1: '😓', 2: '😌', 3: '⚡' };
+const MOOD_AFTER_LABEL: Record<number, string> = { 1: 'Épuisé', 2: 'Bien', 3: 'En forme' };
 
 function formatDuration(seconds: number): string {
   if (seconds === 0) return '--';
@@ -129,6 +131,20 @@ export default function SessionDetailScreen() {
         </View>
       )}
 
+      {detail.moodAfter !== null && (
+        <View
+          style={[styles.moodRow, { borderBottomColor: colors.border, backgroundColor: colors.surface }]}
+          accessible
+          accessibilityLabel={`Ressenti après séance : ${MOOD_AFTER_LABEL[detail.moodAfter]}`}
+        >
+          <Text style={styles.moodEmoji}>{MOOD_AFTER[detail.moodAfter]}</Text>
+          <View style={styles.moodTexte}>
+            <Text style={[styles.moodLabel, { color: colors.textSecondary }]}>RESSENTI</Text>
+            <Text style={[styles.moodValue, { color: colors.text }]}>{MOOD_AFTER_LABEL[detail.moodAfter]}</Text>
+          </View>
+        </View>
+      )}
+
       {detail.exercises.map(exercise => (
         <ExerciseHistorySection key={exercise.exerciseId} exercise={exercise} />
       ))}
@@ -173,4 +189,16 @@ const styles = StyleSheet.create({
     fontSize: 11,
   },
   message: { fontSize: 15, textAlign: 'center' },
+  moodRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.lg,
+    gap: Spacing.lg,
+  },
+  moodEmoji: { fontSize: 28 },
+  moodTexte: { gap: 2 },
+  moodLabel: { fontSize: 10, fontFamily: FontFamily.semibold, textTransform: 'uppercase', letterSpacing: 1 },
+  moodValue: { fontSize: 15, fontFamily: FontFamily.semibold },
 });

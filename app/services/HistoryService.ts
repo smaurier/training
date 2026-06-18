@@ -32,6 +32,7 @@ export interface SessionDetail {
   checkinEnergy: 1 | 2 | 3 | null;
   checkinFatigue: 1 | 2 | 3 | null;
   checkinSleep: 1 | 2 | 3 | null;
+  moodAfter: 1 | 2 | 3 | null;
   exercises: ExerciseHistory[];
 }
 
@@ -116,6 +117,7 @@ export class HistoryService {
       checkinEnergy: session.checkin_energy,
       checkinFatigue: session.checkin_fatigue,
       checkinSleep: session.checkin_sleep,
+      moodAfter: session.mood_after,
       exercises: exerciseHistories,
     };
   }

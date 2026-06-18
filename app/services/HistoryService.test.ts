@@ -99,6 +99,24 @@ describe('HistoryService', () => {
       expect(detail!.totalSets).toBe(2);
     });
 
+    it('expose moodAfter de la session', async () => {
+      const { service, sessionLogRepo, workoutRepo } = makeService();
+      const workout = await workoutRepo.save({ program_id: 1, name: 'Push A', order_index: 0 });
+      const session = await sessionLogRepo.save({ ...baseSessionDto, workout_id: workout.id });
+      await sessionLogRepo.saveMoodAfter(session.id, 3);
+      const detail = await service.getSessionDetail(session.id);
+      expect(detail!.moodAfter).toBe(3);
+    });
+
+    it('expose moodAfter null si non renseigné', async () => {
+      const { service, sessionLogRepo, workoutRepo } = makeService();
+      const workout = await workoutRepo.save({ program_id: 1, name: 'Push A', order_index: 0 });
+      await sessionLogRepo.save({ ...baseSessionDto, workout_id: workout.id });
+      const sessions = await sessionLogRepo.findAll();
+      const detail = await service.getSessionDetail(sessions[0].id);
+      expect(detail!.moodAfter).toBeNull();
+    });
+
     it('ordonne les sets par completed_at ASC dans chaque exercice', async () => {
       const { service, sessionLogRepo, setLogRepo, workoutRepo, exerciseRepo } = makeService();
       const workout = await workoutRepo.save({ program_id: 1, name: 'Push A', order_index: 0 });
