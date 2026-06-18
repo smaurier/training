@@ -4,6 +4,26 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 
 ---
 
+## S50 — 2026-06-19 — Suppression séance + lime harmonisation + setup EAS Build
+
+### Livré
+
+- **Supprimer une séance** : cascade complète PRs → set_logs → session. `HistoryService.deleteSession()` TDD 5 tests (RED→GREEN). `SQLiteSetLogRepository.deleteBySessionLogId` + `SQLitePersonalRecordRepository.deleteBySessionLogId`. PRs `session_log_id=null` préservés. UI : bouton destructif en bas de `[sessionLogId].tsx` + `Alert.alert` confirmation. `HistoryService` 5e arg `IPersonalRecordRepository`. Callsites `useHistory.ts` + `[sessionLogId].tsx` mis à jour. Commit `b69c858`.
+- **Lime harmonisation** : `ExerciseTransitionPhase` — suppression cas spécial étirement (`#16a34a`), tous non-cardio → `colors.primary`. `workout/[id].tsx` — bouton "Démarrer la séance" corrigé (`SemanticColors.stretch` → `colors.primary`, était un bug affectant tous les programmes). Même commit `b69c858`.
+- **Setup EAS Build** : `app.json` → `android.package: "com.sylvain.trace"` + plugins `expo-notifications`/`expo-camera` manquants. `eas.json` créé avec profiles `preview`/`production` (buildType: apk). Commit `f510c42` (avec bump v1.21.2).
+
+### Décisions
+
+- **`eas.json` buildType apk** : APK direct (pas AAB) pour installation manuelle sur Android sans Play Store — usage personnel.
+- **`deleteSession` ordre cascade** : PRs en premier (référencent session_log_id), puis set_logs, puis session_log. Ordre inverse des foreign keys.
+- **PRs null préservés** : `deleteBySessionLogId` ne supprime que `session_log_id = ?` (pas null). Garantit que les anciens PRs sans lien de session ne sont pas effacés.
+
+### Prochaine étape
+
+Semaine de test terrain avec l'APK buildé via EAS. Retour : corrections ciblées → audit fonctionnel → audit RAAM 1.1 → audit Code Craft → v2.0.0.
+
+---
+
 ## S49g — 2026-06-18 — Design polish : plan 5 tâches exécuté (subagent-driven)
 
 ### Livré

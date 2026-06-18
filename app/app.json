@@ -11,6 +11,7 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.sylvain.trace",
       "adaptiveIcon": {
         "backgroundColor": "#0D0D0D",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -38,7 +39,9 @@
       "expo-web-browser",
       "expo-asset",
       "expo-font",
-      "expo-localization"
+      "expo-localization",
+      "expo-notifications",
+      "expo-camera"
     ],
     "experiments": {
       "typedRoutes": true
