@@ -1,5 +1,5 @@
 import { Spacing } from '@/constants/Spacing';
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
 import type { StyleProp, ViewStyle } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter, useFocusEffect } from 'expo-router';
@@ -72,7 +72,11 @@ export default function HomeScreen() {
   const hasExercises = previewExercises.length > 0;
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <ScrollView
+      style={{ flex: 1, backgroundColor: colors.background }}
+      contentContainerStyle={styles.container}
+      keyboardShouldPersistTaps="handled"
+    >
       {pausedSession && (
         <ResumeSessionCard
           workoutName={pausedSession.workoutName}
@@ -237,12 +241,12 @@ export default function HomeScreen() {
           )}
         </View>
       ) : null}
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: Spacing.xl, gap: Spacing.lg },
+  container: { padding: Spacing.xl, gap: Spacing.lg, flexGrow: 1 },
   card: { borderWidth: 1, borderRadius: Radius.sm, padding: Spacing.xl, gap: Spacing.md },
   cardLabel: { fontSize: 11, fontFamily: FontFamily.semibold, textTransform: 'uppercase', letterSpacing: LetterSpacing.spaced },
   workoutName: { fontSize: 22, fontFamily: FontFamily.bold, letterSpacing: LetterSpacing.tight },
