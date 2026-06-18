@@ -360,7 +360,7 @@ export default function ExerciseProgressionScreen() {
                 <Text style={[styles.goalText, { color: colors.text }]}>
                   {convert(goal.target_weight)} {unitLabel}
                   {eta.status === 'on_track' && ` · ETA : ${formatEtaDate(eta.etaDate)} (+${eta.ratePerWeek} kg/sem)`}
-                  {eta.status === 'stagnant' && ' · Progression stagnante — ETA non calculable'}
+                  {eta.status === 'stagnant' && ' · ETA non calculable'}
                   {eta.status === 'no_data' && ' · Trop peu de séances pour estimer'}
                 </Text>
                 {eta.status === 'on_track' && eta.projectedAtTargetDate !== undefined && goal.target_date && (
@@ -432,7 +432,7 @@ export default function ExerciseProgressionScreen() {
             <Text style={[styles.sheetPreview, { color: colors.textSecondary }]}>
               {previewEta.status === 'on_track' && `ETA : ${formatEtaDate(previewEta.etaDate)} (+${previewEta.ratePerWeek} kg/sem)`}
               {previewEta.status === 'achieved' && '✦ Objectif déjà atteint !'}
-              {previewEta.status === 'stagnant' && 'Progression stagnante — ETA non calculable'}
+              {previewEta.status === 'stagnant' && 'ETA non calculable'}
               {previewEta.status === 'no_data' && 'Trop peu de séances pour estimer'}
             </Text>
           )}
