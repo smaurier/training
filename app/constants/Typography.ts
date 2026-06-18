@@ -7,6 +7,8 @@ export const FontFamily = {
 } as const;
 
 export const LetterSpacing = {
+  display: -3,    // hero 96px+ (timer, weight display géant)
+  hero:    -2,    // large 48-72px (titres onboarding, grands chiffres)
   tighter: -1,   // hero title
   tight:   -0.3, // body dense
   wide:     0.5, // structural labels

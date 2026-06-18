@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
   },
   button: { borderRadius: Radius.lg, padding: Spacing.lg, alignItems: 'center' },
   buttonText: { fontSize: 16, fontFamily: FontFamily.bold },
-  restTitle: { fontSize: 32, fontFamily: FontFamily.black },
-  restTimer: { fontSize: 64, fontFamily: FontFamily.black },
+  restTitle: { fontSize: 32, fontFamily: FontFamily.black, letterSpacing: LetterSpacing.tighter },
+  restTimer: { fontSize: 64, fontFamily: FontFamily.black, letterSpacing: LetterSpacing.hero },
   doneTitle: { fontSize: 24, fontFamily: FontFamily.bold },
 });
