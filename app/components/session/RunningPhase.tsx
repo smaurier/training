@@ -18,6 +18,7 @@ import type { SetActual, LastSetLog } from '@/services/SessionService';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
+import { SemanticColors } from '@/constants/SemanticColors';
 import { useUnits } from '@/hooks/useUnits';
 import { lbsToKg } from '@/services/settingsUtils';
 import { computeRepsFeedback } from '@/services/repsFeedback';
@@ -554,7 +555,7 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
               skipExerciseSheetRef.current?.close();
               onSkipExercise();
             }}
-            style={[styles.sheetDestructiveBtn, { backgroundColor: '#dc2626' }]}
+            style={[styles.sheetDestructiveBtn, { backgroundColor: SemanticColors.destructive }]}
           >
             <Text style={styles.sheetBtnText}>
               {supersetExerciseNames
@@ -742,7 +743,7 @@ const styles = StyleSheet.create({
   supersetBadge: {
     alignSelf: 'flex-start',
     marginTop: 2,
-    backgroundColor: '#7c3aed',
+    backgroundColor: SemanticColors.superset,
     borderRadius: 4,
     paddingHorizontal: 8,
     paddingVertical: 2,
@@ -756,7 +757,7 @@ const styles = StyleSheet.create({
   amrapBadge: {
     alignSelf: 'flex-start',
     marginTop: 2,
-    backgroundColor: '#ea580c',
+    backgroundColor: SemanticColors.cardio,
     borderRadius: 4,
     paddingHorizontal: 8,
     paddingVertical: 2,
@@ -770,7 +771,7 @@ const styles = StyleSheet.create({
   dropsetBadge: {
     alignSelf: 'flex-start',
     marginTop: 2,
-    backgroundColor: '#2563eb',
+    backgroundColor: SemanticColors.dropset,
     borderRadius: 4,
     paddingHorizontal: 8,
     paddingVertical: 2,

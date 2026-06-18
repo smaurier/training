@@ -11,6 +11,7 @@ import { PressableA11y } from '@/components/ui/PressableA11y';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
+import { SemanticColors } from '@/constants/SemanticColors';
 
 interface WorkoutExerciseCardProps {
   detail: WorkoutExerciseDetail;
@@ -98,9 +99,9 @@ export function WorkoutExerciseCard({
   }
 
   const typeColor = detail.exercise.type === 'etirement'
-    ? '#16a34a'
+    ? SemanticColors.stretch
     : detail.exercise.type === 'cardio'
-    ? '#ea580c'
+    ? SemanticColors.cardio
     : colors.primary;
 
   return (
@@ -194,8 +195,8 @@ export function WorkoutExerciseCard({
       <View style={styles.supersetRow}>
         {supersetGroupLabel ? (
           <>
-            <View style={[styles.supersetBadge, { backgroundColor: '#7c3aed20', borderColor: '#7c3aed', borderWidth: 1 }]}>
-              <Text style={[styles.supersetBadgeText, { color: '#7c3aed' }]}>
+            <View style={[styles.supersetBadge, { backgroundColor: SemanticColors.supersetAlpha, borderColor: SemanticColors.superset, borderWidth: 1 }]}>
+              <Text style={[styles.supersetBadgeText, { color: SemanticColors.superset }]}>
                 SUPERSET · {supersetGroupLabel}
               </Text>
             </View>

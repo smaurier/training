@@ -5,6 +5,7 @@ import { Exercise } from '@/db/types';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
+import { SemanticColors } from '@/constants/SemanticColors';
 
 interface ExerciseCardProps {
   exercise: Exercise;
@@ -84,7 +85,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
   },
   deleteAction: {
-    backgroundColor: '#dc2626',
+    backgroundColor: SemanticColors.destructive,
     justifyContent: 'center',
     alignItems: 'center',
     width: 80,

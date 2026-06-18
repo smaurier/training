@@ -4,6 +4,7 @@ import type { WorkoutExerciseDetail } from '@/services/WorkoutExerciseService';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
+import { SemanticColors } from '@/constants/SemanticColors';
 
 interface ExerciseTransitionPhaseProps {
   exercise: WorkoutExerciseDetail;
@@ -14,8 +15,8 @@ interface ExerciseTransitionPhaseProps {
 }
 
 function getTypeColor(type: string, primaryColor: string): string {
-  if (type === 'etirement') return '#16a34a';
-  if (type === 'cardio') return '#ea580c';
+  if (type === 'etirement') return SemanticColors.stretch;
+  if (type === 'cardio') return SemanticColors.cardio;
   return primaryColor;
 }
 
@@ -74,8 +75,8 @@ export function ExerciseTransitionPhase({
         ) : null}
 
         {supersetGroup && supersetGroup.length > 1 && (
-          <View style={[styles.supersetPreview, { backgroundColor: '#7c3aed20', borderColor: '#7c3aed', borderWidth: 1, borderRadius: 8, padding: 12 }]}>
-            <Text style={[styles.supersetPreviewLabel, { color: '#7c3aed' }]}>
+          <View style={[styles.supersetPreview, { backgroundColor: SemanticColors.supersetAlpha, borderColor: SemanticColors.superset, borderWidth: 1, borderRadius: 8, padding: 12 }]}>
+            <Text style={[styles.supersetPreviewLabel, { color: SemanticColors.superset }]}>
               {'Tu vas enchaîner :'}
             </Text>
             <Text style={[styles.supersetPreviewChain, { color: colors.text }]}>

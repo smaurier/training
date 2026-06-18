@@ -5,6 +5,7 @@ import type { WorkoutExerciseDetail } from '@/services/WorkoutExerciseService';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
+import { SemanticColors } from '@/constants/SemanticColors';
 
 interface ExerciseStartingWeightPhaseProps {
   exercise: WorkoutExerciseDetail;
@@ -85,7 +86,7 @@ export function ExerciseStartingWeightPhase({
           </Text>
         </PressableA11y>
         {error && (
-          <Text style={[styles.errorText, { color: '#dc2626' }]}>{error}</Text>
+          <Text style={[styles.errorText, { color: SemanticColors.destructive }]}>{error}</Text>
         )}
       </View>
     </View>
