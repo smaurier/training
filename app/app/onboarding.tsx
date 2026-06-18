@@ -2,7 +2,7 @@
 import { Spacing } from '@/constants/Spacing';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState, useMemo, useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useColorScheme } from '@/components/useColorScheme';
 import Colors from '@/constants/Colors';
 import { usePrograms } from '@/hooks/usePrograms';
@@ -74,6 +74,12 @@ export default function OnboardingScreen() {
     }
   }, [activeScreens.length, step]);
 
+  const handleSkip = async () => {
+    const repo = new SQLiteSettingsRepository(getDb());
+    await repo.set('onboarding_done', 'true');
+    router.replace('/(tabs)');
+  };
+
   const handleNext = async () => {
     if (step < activeScreens.length - 1) {
       setStep(s => s + 1);
@@ -99,6 +105,16 @@ export default function OnboardingScreen() {
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
+      {!isReview && step === 0 && (
+        <TouchableOpacity
+          onPress={handleSkip}
+          style={styles.skipBtn}
+          accessibilityLabel="Passer l'introduction"
+          accessibilityRole="button"
+        >
+          <Text style={[styles.skipText, { color: colors.textSecondary }]}>Passer</Text>
+        </TouchableOpacity>
+      )}
       {showDots && (
         <View style={styles.dotsRow}>
           {activeScreens.map((_, i) => (
@@ -127,6 +143,16 @@ export default function OnboardingScreen() {
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
+  skipBtn: {
+    position: 'absolute',
+    top: 56,
+    right: 24,
+    zIndex: 10,
+    padding: 8,
+  },
+  skipText: {
+    fontSize: 15,
+  },
   dotsRow: {
     flexDirection: 'row',
     justifyContent: 'center',
