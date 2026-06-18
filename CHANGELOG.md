@@ -5,6 +5,22 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.21.0] — 2026-06-18
+
+01cdb57 feat(onboarding): bouton Passer sur premier écran
+29a9d6e fix(home): ScrollView sur écran Séance — contenu plus jamais coupé
+d8082e2 fix(a11y): status bar light-content dark mode + tab bar contrast RGAA AA
+3dc6469 docs(claude): LetterSpacing scale complète + règle fontWeight interdit
+968b31e fix(tokens): fontWeight strings → FontFamily tokens (32 fichiers)
+8c9e51a feat(tokens): LetterSpacing display/hero négatifs + appliquer sur éléments Black
+ff29f4a fix(design): prBadge → lime #84CC16 + texte noir (directive accent unique)
+c3f9ad8 fix(tokens): barres historiques exercice → colors.textDisabled (dark-first)
+55cd716 fix(tokens): SemanticColors positive/negative/prBadgeTint + appliquer dans composants
+9a3b8a6 fix(tokens): borderRadius 16/20 → Radius.md / Radius.xs
+3773e03 docs: CLAUDE.md tokens + journal S49f (v1.20.0 tokenisation)
+
+---
+
 ## [1.20.0] — 2026-06-18
 
 abb4a9c refactor(tokens): borderRadius 4 → Radius.sm (manqué en T1)
