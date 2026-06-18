@@ -137,8 +137,8 @@ export function ProgramScreen({ wizardState, setWizardState, onNext, onBack, isR
               accessibilityRole="button"
             >
               {importing
-                ? <ActivityIndicator color={colors.background} />
-                : <Text style={[styles.buttonText, { color: colors.background }]}>Importer et continuer</Text>
+                ? <ActivityIndicator color={colors.onPrimary} />
+                : <Text style={[styles.buttonText, { color: colors.onPrimary }]}>Importer et continuer</Text>
               }
             </PressableA11y>
           </>

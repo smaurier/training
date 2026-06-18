@@ -46,6 +46,7 @@ export function ExerciseTransitionPhase({
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const typeColor = getTypeColor(exercise.exercise.type, colors.primary);
+  const onTypeColor = typeColor === colors.primary ? colors.onPrimary : '#fff';
   const workSummary = getWorkSummary(exercise);
   const description = exercise.exercise.description;
 
@@ -97,7 +98,7 @@ export function ExerciseTransitionPhase({
           onPress={onContinue}
           style={[styles.continueBtn, { backgroundColor: typeColor }]}
         >
-          <Text style={styles.continueBtnText}>C&apos;est parti →</Text>
+          <Text style={[styles.continueBtnText, { color: onTypeColor }]}>C&apos;est parti →</Text>
         </PressableA11y>
       </ScrollView>
     </View>
@@ -150,8 +151,7 @@ const styles = StyleSheet.create({
     marginTop: 24,
   },
   continueBtnText: {
-    color: '#fff',
     fontSize: 17,
-    fontWeight: '600',
+    fontFamily: 'Inter_600SemiBold',
   },
 });

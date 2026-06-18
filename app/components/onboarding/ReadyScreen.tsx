@@ -47,7 +47,7 @@ export function ReadyScreen({ wizardState, onNext, isReview }: ScreenProps) {
           accessibilityLabel={isReview ? "Retour aux réglages" : "Commencer"}
           accessibilityRole="button"
         >
-          <Text style={[styles.buttonText, { color: colors.background }]}>
+          <Text style={[styles.buttonText, { color: colors.onPrimary }]}>
             {isReview ? "Retour aux réglages" : "Commencer →"}
           </Text>
         </PressableA11y>

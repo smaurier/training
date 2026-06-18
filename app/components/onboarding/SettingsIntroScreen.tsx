@@ -16,13 +16,11 @@ function SegmentedControl<T extends string>({
   selected,
   onSelect,
   colors,
-  isDark,
 }: {
   options: { value: T; label: string }[];
   selected: T;
   onSelect: (v: T) => void;
   colors: typeof Colors.light;
-  isDark: boolean;
 }) {
   return (
     <View style={[sc.container, { borderColor: colors.border, backgroundColor: colors.background }]}>
@@ -40,7 +38,7 @@ function SegmentedControl<T extends string>({
         >
           <Text style={[
             sc.segmentText,
-            { color: selected === opt.value ? (isDark ? '#000' : '#fff') : colors.text },
+            { color: selected === opt.value ? colors.onPrimary : colors.text },
           ]}>
             {opt.label}
           </Text>
@@ -78,7 +76,6 @@ const PLATE_STEP_OPTIONS_LBS: { value: PlateStepValue; label: string }[] = [
 export function SettingsIntroScreen({ onNext, onBack }: ScreenProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
-  const isDark = colorScheme === 'dark';
   const { preference: unitsPref, resolved: resolvedUnits, setUnit } = useUnits();
   const [plateStep, setPlateStepState] = useState<PlateStepValue>('2.5');
 
@@ -112,7 +109,6 @@ export function SettingsIntroScreen({ onNext, onBack }: ScreenProps) {
             selected={unitsPref}
             onSelect={setUnit}
             colors={colors}
-            isDark={isDark}
           />
         </View>
 
@@ -126,7 +122,6 @@ export function SettingsIntroScreen({ onNext, onBack }: ScreenProps) {
             selected={plateStep}
             onSelect={handlePlateStep}
             colors={colors}
-            isDark={isDark}
           />
         </View>
 
@@ -144,7 +139,7 @@ export function SettingsIntroScreen({ onNext, onBack }: ScreenProps) {
           accessibilityLabel="Continuer"
           accessibilityRole="button"
         >
-          <Text style={[styles.buttonText, { color: colors.background }]}>Continuer</Text>
+          <Text style={[styles.buttonText, { color: colors.onPrimary }]}>Continuer</Text>
         </PressableA11y>
       </View>
     </View>

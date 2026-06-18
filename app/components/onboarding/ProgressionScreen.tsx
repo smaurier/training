@@ -59,7 +59,7 @@ export function ProgressionScreen({ onNext, onBack }: ScreenProps) {
           accessibilityLabel="Continuer"
           accessibilityRole="button"
         >
-          <Text style={[styles.buttonText, { color: colors.background }]}>Continuer</Text>
+          <Text style={[styles.buttonText, { color: colors.onPrimary }]}>Continuer</Text>
         </PressableA11y>
       </View>
     </View>

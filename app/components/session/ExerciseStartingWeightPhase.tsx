@@ -77,7 +77,7 @@ export function ExerciseStartingWeightPhase({
         accessibilityLabel="Confirmer le poids de départ"
         disabled={!isValid || loading}
       >
-        <Text style={styles.btnText}>
+        <Text style={[styles.btnText, { color: colors.onPrimary }]}>
           {loading ? 'Enregistrement…' : 'Confirmer →'}
         </Text>
       </PressableA11y>
@@ -122,9 +122,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   btnText: {
-    color: '#fff',
     fontSize: 18,
-    fontWeight: '600',
+    fontFamily: 'Inter_600SemiBold',
   },
   errorText: {
     fontSize: 14,

@@ -89,7 +89,7 @@ export function SessionDemoScreen({ onNext, onBack }: ScreenProps) {
             accessibilityLabel="Valider la série"
             accessibilityRole="button"
           >
-            <Text style={[styles.buttonText, { color: colors.background }]}>Valider ✓</Text>
+            <Text style={[styles.buttonText, { color: colors.onPrimary }]}>Valider ✓</Text>
           </PressableA11y>
         </View>
       )}
@@ -117,7 +117,7 @@ export function SessionDemoScreen({ onNext, onBack }: ScreenProps) {
             accessibilityLabel="Continuer"
             accessibilityRole="button"
           >
-            <Text style={[styles.buttonText, { color: colors.background }]}>Continuer</Text>
+            <Text style={[styles.buttonText, { color: colors.onPrimary }]}>Continuer</Text>
           </PressableA11y>
         </View>
       )}
