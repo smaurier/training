@@ -5,6 +5,7 @@ import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
 import { SemanticColors } from '@/constants/SemanticColors';
+import { FontFamily } from '@/constants/Typography';
 
 interface ExerciseTransitionPhaseProps {
   exercise: WorkoutExerciseDetail;
@@ -75,7 +76,7 @@ export function ExerciseTransitionPhase({
         ) : null}
 
         {supersetGroup && supersetGroup.length > 1 && (
-          <View style={[styles.supersetPreview, { backgroundColor: SemanticColors.supersetAlpha, borderColor: SemanticColors.superset, borderWidth: 1, borderRadius: 8, padding: 12 }]}>
+          <View style={[styles.supersetPreview, { backgroundColor: SemanticColors.supersetAlpha, borderColor: SemanticColors.superset, borderWidth: 1, borderRadius: Radius.md, padding: 12 }]}>
             <Text style={[styles.supersetPreviewLabel, { color: SemanticColors.superset }]}>
               {'Tu vas enchaîner :'}
             </Text>
@@ -123,12 +124,12 @@ const styles = StyleSheet.create({
   },
   exerciseLabel: {
     fontSize: 11,
-    fontFamily: 'Inter_700Bold',
+    fontFamily: FontFamily.bold,
     letterSpacing: 1.5,
   },
   exerciseName: {
     fontSize: 28,
-    fontFamily: 'Inter_700Bold',
+    fontFamily: FontFamily.bold,
     lineHeight: 34,
   },
   workSummary: {
@@ -143,8 +144,8 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   supersetPreview: { marginTop: 4 },
-  supersetPreviewLabel: { fontSize: 11, fontFamily: 'Inter_700Bold', letterSpacing: 0.5, marginBottom: 4 },
-  supersetPreviewChain: { fontSize: 14, fontFamily: 'Inter_400Regular' },
+  supersetPreviewLabel: { fontSize: 11, fontFamily: FontFamily.bold, letterSpacing: 0.5, marginBottom: 4 },
+  supersetPreviewChain: { fontSize: 14, fontFamily: FontFamily.regular },
   continueBtn: {
     paddingVertical: 14,
     borderRadius: Radius.sm,
@@ -153,6 +154,6 @@ const styles = StyleSheet.create({
   },
   continueBtnText: {
     fontSize: 17,
-    fontFamily: 'Inter_600SemiBold',
+    fontFamily: FontFamily.semibold,
   },
 });

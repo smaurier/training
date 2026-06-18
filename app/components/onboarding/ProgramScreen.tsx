@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import { useColorScheme } from '@/components/useColorScheme';
 import Colors from '@/constants/Colors';
+import { Radius } from '@/constants/Radius';
+import { FontFamily } from '@/constants/Typography';
 import { usePrograms } from '@/hooks/usePrograms';
 import { TEMPLATES } from '@/data/templates';
 import { importTemplate, isTemplateImported } from '@/services/TemplateService';
@@ -160,19 +162,19 @@ export function ProgramScreen({ wizardState, setWizardState, onNext, onBack, isR
 const styles = StyleSheet.create({
   container: { flex: 1 },
   header: { padding: 24, gap: 8 },
-  title: { fontSize: 24, fontFamily: 'Inter_700Bold' },
-  subtitle: { fontSize: 13, fontFamily: 'Inter_400Regular' },
+  title: { fontSize: 24, fontFamily: FontFamily.bold },
+  subtitle: { fontSize: 13, fontFamily: FontFamily.regular },
   list: { paddingHorizontal: 24, gap: 12, paddingBottom: 24 },
-  card: { borderWidth: 1.5, borderRadius: 12, padding: 16, gap: 4 },
+  card: { borderWidth: 1.5, borderRadius: Radius.lg, padding: 16, gap: 4 },
   cardRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  cardTitle: { fontSize: 15, fontFamily: 'Inter_700Bold' },
-  badge: { fontSize: 11, fontFamily: 'Inter_500Medium' },
-  cardMeta: { fontSize: 12, fontFamily: 'Inter_500Medium' },
-  cardDesc: { fontSize: 13, fontFamily: 'Inter_400Regular' },
+  cardTitle: { fontSize: 15, fontFamily: FontFamily.bold },
+  badge: { fontSize: 11, fontFamily: FontFamily.medium },
+  cardMeta: { fontSize: 12, fontFamily: FontFamily.medium },
+  cardDesc: { fontSize: 13, fontFamily: FontFamily.regular },
   footer: { padding: 16, borderTopWidth: 1, gap: 8 },
-  input: { borderWidth: 1, borderRadius: 10, padding: 12, fontSize: 15, fontFamily: 'Inter_400Regular' },
-  button: { borderRadius: 12, padding: 16, alignItems: 'center' },
-  buttonText: { fontSize: 16, fontFamily: 'Inter_700Bold' },
+  input: { borderWidth: 1, borderRadius: 10, padding: 12, fontSize: 15, fontFamily: FontFamily.regular },
+  button: { borderRadius: Radius.lg, padding: 16, alignItems: 'center' },
+  buttonText: { fontSize: 16, fontFamily: FontFamily.bold },
   buttonSecondary: { padding: 16, alignItems: 'center' },
-  errorText: { color: '#ef4444', fontSize: 13, fontFamily: 'Inter_400Regular' },
+  errorText: { color: '#ef4444', fontSize: 13, fontFamily: FontFamily.regular },
 });

@@ -3,6 +3,8 @@ import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import { useColorScheme } from '@/components/useColorScheme';
 import Colors from '@/constants/Colors';
+import { Radius } from '@/constants/Radius';
+import { FontFamily } from '@/constants/Typography';
 import type { ScreenProps } from '@/app/onboarding';
 
 const SECTIONS = [
@@ -69,12 +71,12 @@ export function ProgressionScreen({ onNext, onBack }: ScreenProps) {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   content: { padding: 24, gap: 20 },
-  title: { fontSize: 24, fontFamily: 'Inter_700Bold' },
-  subtitle: { fontSize: 14, fontFamily: 'Inter_400Regular', lineHeight: 20 },
+  title: { fontSize: 24, fontFamily: FontFamily.bold },
+  subtitle: { fontSize: 14, fontFamily: FontFamily.regular, lineHeight: 20 },
   row: { borderBottomWidth: 1, paddingBottom: 16, gap: 4 },
-  rowLabel: { fontSize: 11, fontFamily: 'Inter_700Bold', letterSpacing: 0.8 },
-  rowDesc: { fontSize: 14, fontFamily: 'Inter_400Regular', lineHeight: 20 },
+  rowLabel: { fontSize: 11, fontFamily: FontFamily.bold, letterSpacing: 0.8 },
+  rowDesc: { fontSize: 14, fontFamily: FontFamily.regular, lineHeight: 20 },
   footer: { padding: 24, borderTopWidth: 1 },
-  button: { borderRadius: 12, padding: 16, alignItems: 'center' },
-  buttonText: { fontSize: 16, fontFamily: 'Inter_700Bold' },
+  button: { borderRadius: Radius.lg, padding: 16, alignItems: 'center' },
+  buttonText: { fontSize: 16, fontFamily: FontFamily.bold },
 });

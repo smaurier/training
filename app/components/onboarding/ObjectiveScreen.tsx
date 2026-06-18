@@ -3,6 +3,8 @@ import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import { useColorScheme } from '@/components/useColorScheme';
 import Colors from '@/constants/Colors';
+import { Radius } from '@/constants/Radius';
+import { FontFamily } from '@/constants/Typography';
 import type { ScreenProps, Objective } from '@/app/onboarding';
 
 const OBJECTIVES: { value: Objective; label: string; description: string }[] = [
@@ -74,13 +76,13 @@ export function ObjectiveScreen({ wizardState, setWizardState, onNext, onBack }:
 const styles = StyleSheet.create({
   container: { flex: 1 },
   header: { padding: 24, gap: 8 },
-  title: { fontSize: 24, fontFamily: 'Inter_700Bold' },
-  subtitle: { fontSize: 14, fontFamily: 'Inter_400Regular' },
+  title: { fontSize: 24, fontFamily: FontFamily.bold },
+  subtitle: { fontSize: 14, fontFamily: FontFamily.regular },
   list: { paddingHorizontal: 24, gap: 12, paddingBottom: 24 },
-  card: { borderWidth: 1.5, borderRadius: 12, padding: 16, gap: 4 },
-  cardLabel: { fontSize: 16, fontFamily: 'Inter_700Bold' },
-  cardDesc: { fontSize: 13, fontFamily: 'Inter_400Regular' },
+  card: { borderWidth: 1.5, borderRadius: Radius.lg, padding: 16, gap: 4 },
+  cardLabel: { fontSize: 16, fontFamily: FontFamily.bold },
+  cardDesc: { fontSize: 13, fontFamily: FontFamily.regular },
   footer: { padding: 24, borderTopWidth: 1 },
-  button: { borderRadius: 12, padding: 16, alignItems: 'center' },
-  buttonText: { fontSize: 16, fontFamily: 'Inter_700Bold' },
+  button: { borderRadius: Radius.lg, padding: 16, alignItems: 'center' },
+  buttonText: { fontSize: 16, fontFamily: FontFamily.bold },
 });

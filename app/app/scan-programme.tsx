@@ -11,6 +11,7 @@ import { SQLiteBlockRepository } from '@/repositories/SQLiteBlockRepository';
 import { SQLiteSetRepository } from '@/repositories/SQLiteSetRepository';
 import { SQLiteExerciseRepository } from '@/repositories/SQLiteExerciseRepository';
 import Colors from '@/constants/Colors';
+import { Radius } from '@/constants/Radius';
 import { useColorScheme } from '@/components/useColorScheme';
 
 function makeService() {
@@ -89,7 +90,7 @@ const styles = StyleSheet.create({
   },
   hint: {
     color: '#fff', fontSize: 15, textAlign: 'center',
-    backgroundColor: 'rgba(0,0,0,0.6)', paddingHorizontal: 16, paddingVertical: 10, borderRadius: 8,
+    backgroundColor: 'rgba(0,0,0,0.6)', paddingHorizontal: 16, paddingVertical: 10, borderRadius: Radius.md,
   },
   msg: { fontSize: 16, textAlign: 'center', margin: 32 },
 });

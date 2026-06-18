@@ -4,6 +4,8 @@ import { useState, useEffect, useRef } from 'react';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import { useColorScheme } from '@/components/useColorScheme';
 import Colors from '@/constants/Colors';
+import { Radius } from '@/constants/Radius';
+import { FontFamily } from '@/constants/Typography';
 import type { ScreenProps } from '@/app/onboarding';
 
 // ⚠️ Replica simplifiée de RunningPhase/RestPhase — découplée intentionnellement.
@@ -128,18 +130,18 @@ export function SessionDemoScreen({ onNext, onBack }: ScreenProps) {
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 24 },
   topRow: { gap: 16, marginBottom: 32 },
-  label: { fontSize: 11, fontFamily: 'Inter_700Bold', letterSpacing: 1 },
+  label: { fontSize: 11, fontFamily: FontFamily.bold, letterSpacing: 1 },
   content: { gap: 16 },
-  exerciseName: { fontSize: 26, fontFamily: 'Inter_700Bold' },
-  setInfo: { fontSize: 14, fontFamily: 'Inter_500Medium' },
-  hint: { fontSize: 14, fontFamily: 'Inter_400Regular', lineHeight: 20 },
+  exerciseName: { fontSize: 26, fontFamily: FontFamily.bold },
+  setInfo: { fontSize: 14, fontFamily: FontFamily.medium },
+  hint: { fontSize: 14, fontFamily: FontFamily.regular, lineHeight: 20 },
   repsInput: {
-    borderWidth: 2, borderRadius: 12, padding: 16,
-    fontSize: 28, fontFamily: 'Inter_700Bold', textAlign: 'center',
+    borderWidth: 2, borderRadius: Radius.lg, padding: 16,
+    fontSize: 28, fontFamily: FontFamily.bold, textAlign: 'center',
   },
-  button: { borderRadius: 12, padding: 16, alignItems: 'center' },
-  buttonText: { fontSize: 16, fontFamily: 'Inter_700Bold' },
-  restTitle: { fontSize: 32, fontFamily: 'Inter_900Black' },
-  restTimer: { fontSize: 64, fontFamily: 'Inter_900Black' },
-  doneTitle: { fontSize: 24, fontFamily: 'Inter_700Bold' },
+  button: { borderRadius: Radius.lg, padding: 16, alignItems: 'center' },
+  buttonText: { fontSize: 16, fontFamily: FontFamily.bold },
+  restTitle: { fontSize: 32, fontFamily: FontFamily.black },
+  restTimer: { fontSize: 64, fontFamily: FontFamily.black },
+  doneTitle: { fontSize: 24, fontFamily: FontFamily.bold },
 });

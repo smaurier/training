@@ -124,7 +124,7 @@ function SectionHeader({
         </PressableA11y>
       </View>
       {isOpen && (
-        <Text style={{ color: colors.textSecondary, fontSize: 13, fontFamily: 'Inter_400Regular', marginTop: 4, marginBottom: 4 }}>
+        <Text style={{ color: colors.textSecondary, fontSize: 13, fontFamily: FontFamily.regular, marginTop: 4, marginBottom: 4 }}>
           {helpText}
         </Text>
       )}
@@ -439,25 +439,25 @@ export default function ReglagesScreen() {
 
 const styles = StyleSheet.create({
   container: { padding: 20, gap: 8 },
-  sectionTitle: { fontSize: 11, fontFamily: 'Inter_600SemiBold', letterSpacing: 0.5, marginTop: 8, marginBottom: 4 },
+  sectionTitle: { fontSize: 11, fontFamily: FontFamily.semibold, letterSpacing: 0.5, marginTop: 8, marginBottom: 4 },
   card: { borderWidth: 1, borderRadius: Radius.sm, padding: 16, gap: 10 },
   segmented: { flexDirection: 'row', borderWidth: 1, borderRadius: Radius.sm, overflow: 'hidden' },
   segment: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 10 },
-  segmentText: { fontSize: 14, fontFamily: 'Inter_400Regular' },
+  segmentText: { fontSize: 14, fontFamily: FontFamily.regular },
   hint: { fontSize: 12, textAlign: 'center' },
   exportRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   exportInfo: { flex: 1, gap: 2 },
-  exportLabel: { fontSize: 15, fontFamily: 'Inter_400Regular' },
+  exportLabel: { fontSize: 15, fontFamily: FontFamily.regular },
   exportMeta: { fontSize: 12 },
-  exportArrow: { fontSize: 18, fontFamily: 'Inter_600SemiBold', marginLeft: 8 },
+  exportArrow: { fontSize: 18, fontFamily: FontFamily.semibold, marginLeft: 8 },
   exportError: { fontSize: 13, marginTop: 4 },
   row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  label: { fontSize: 15, fontFamily: 'Inter_400Regular' },
+  label: { fontSize: 15, fontFamily: FontFamily.regular },
   subLabel: { fontSize: 13, marginTop: 12, marginBottom: 6 },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   chip: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16, borderWidth: 1 },
   chipText: { fontSize: 13 },
   timeRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  timeInput: { width: 48, textAlign: 'center', fontSize: 16, borderWidth: 1, borderRadius: 8, padding: 8 },
+  timeInput: { width: 48, textAlign: 'center', fontSize: 16, borderWidth: 1, borderRadius: Radius.md, padding: 8 },
   timeSep: { fontSize: 20 },
 });

@@ -3,6 +3,7 @@ import { View, Text, TextInput, StyleSheet } from 'react-native';
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import Colors from '@/constants/Colors';
+import { Radius } from '@/constants/Radius';
 import { useColorScheme } from '@/components/useColorScheme';
 import type { CreateBodyMeasurementDto } from '@/db/types';
 
@@ -193,7 +194,7 @@ const styles = StyleSheet.create({
     flex: 0,
     width: 110,
     borderWidth: 1,
-    borderRadius: 8,
+    borderRadius: Radius.md,
     padding: 10,
     fontSize: 14,
     textAlign: 'right',

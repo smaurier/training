@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { LineChart } from 'react-native-gifted-charts';
 import Colors from '@/constants/Colors';
+import { Radius } from '@/constants/Radius';
 import { useColorScheme } from '@/components/useColorScheme';
 import type { BodyMeasurement } from '@/db/types';
 
@@ -60,7 +61,7 @@ export function BodyMeasurementChart({ measurements, metric, unit }: Props) {
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 12,
+    borderRadius: Radius.lg,
     padding: 16,
     marginBottom: 16,
     borderWidth: 1,

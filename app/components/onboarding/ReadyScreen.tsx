@@ -3,6 +3,8 @@ import { View, Text, StyleSheet } from 'react-native';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import { useColorScheme } from '@/components/useColorScheme';
 import Colors from '@/constants/Colors';
+import { Radius } from '@/constants/Radius';
+import { FontFamily } from '@/constants/Typography';
 import type { ScreenProps } from '@/app/onboarding';
 
 export function ReadyScreen({ wizardState, onNext, isReview }: ScreenProps) {
@@ -59,13 +61,13 @@ export function ReadyScreen({ wizardState, onNext, isReview }: ScreenProps) {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   content: { flex: 1, padding: 24, justifyContent: 'center', gap: 24 },
-  title: { fontSize: 32, fontFamily: 'Inter_900Black' },
-  subtitle: { fontSize: 16, fontFamily: 'Inter_400Regular', lineHeight: 22 },
-  summary: { borderWidth: 1, borderRadius: 12, padding: 16, gap: 12 },
+  title: { fontSize: 32, fontFamily: FontFamily.black },
+  subtitle: { fontSize: 16, fontFamily: FontFamily.regular, lineHeight: 22 },
+  summary: { borderWidth: 1, borderRadius: Radius.lg, padding: 16, gap: 12 },
   summaryRow: { flexDirection: 'row', justifyContent: 'space-between' },
-  summaryKey: { fontSize: 13, fontFamily: 'Inter_500Medium' },
-  summaryVal: { fontSize: 13, fontFamily: 'Inter_700Bold' },
+  summaryKey: { fontSize: 13, fontFamily: FontFamily.medium },
+  summaryVal: { fontSize: 13, fontFamily: FontFamily.bold },
   footer: { padding: 24, borderTopWidth: 1 },
-  button: { borderRadius: 12, padding: 16, alignItems: 'center' },
-  buttonText: { fontSize: 16, fontFamily: 'Inter_700Bold' },
+  button: { borderRadius: Radius.lg, padding: 16, alignItems: 'center' },
+  buttonText: { fontSize: 16, fontFamily: FontFamily.bold },
 });

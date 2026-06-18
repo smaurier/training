@@ -3,6 +3,7 @@ import { View, Text, Modal, StyleSheet } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import Colors from '@/constants/Colors';
+import { Radius } from '@/constants/Radius';
 import { useColorScheme } from '@/components/useColorScheme';
 
 interface Props {
@@ -60,7 +61,7 @@ const styles = StyleSheet.create({
   card: { borderRadius: 16, padding: 24, alignItems: 'center', width: '100%', maxWidth: 340 },
   title: { fontSize: 18, fontWeight: '700', textAlign: 'center', marginBottom: 8 },
   subtitle: { fontSize: 13, textAlign: 'center', marginBottom: 24 },
-  qrWrapper: { padding: 16, backgroundColor: '#fff', borderRadius: 12, marginBottom: 24 },
+  qrWrapper: { padding: 16, backgroundColor: '#fff', borderRadius: Radius.lg, marginBottom: 24 },
   closeBtn: { paddingVertical: 12, paddingHorizontal: 32, borderRadius: 10 },
   closeBtnText: { fontWeight: '700', fontSize: 16 },
 });

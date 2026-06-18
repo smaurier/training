@@ -4,6 +4,8 @@ import { useState, useCallback } from 'react';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import { useColorScheme } from '@/components/useColorScheme';
 import Colors from '@/constants/Colors';
+import { Radius } from '@/constants/Radius';
+import { FontFamily } from '@/constants/Typography';
 import { useUnits } from '@/hooks/useUnits';
 import { SQLiteSettingsRepository } from '@/repositories/SQLiteSettingsRepository';
 import { getDb } from '@/db';
@@ -51,7 +53,7 @@ function SegmentedControl<T extends string>({
 const sc = StyleSheet.create({
   container: { flexDirection: 'row', borderWidth: 1, borderRadius: 10, overflow: 'hidden' },
   segment: { flex: 1, paddingVertical: 8, alignItems: 'center' },
-  segmentText: { fontSize: 14, fontFamily: 'Inter_500Medium' },
+  segmentText: { fontSize: 14, fontFamily: FontFamily.medium },
 });
 
 const UNITS_OPTIONS = [
@@ -149,14 +151,14 @@ export function SettingsIntroScreen({ onNext, onBack }: ScreenProps) {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   content: { padding: 24, gap: 24 },
-  title: { fontSize: 24, fontFamily: 'Inter_700Bold' },
-  subtitle: { fontSize: 14, fontFamily: 'Inter_400Regular' },
+  title: { fontSize: 24, fontFamily: FontFamily.bold },
+  subtitle: { fontSize: 14, fontFamily: FontFamily.regular },
   section: { gap: 8 },
-  sectionTitle: { fontSize: 14, fontFamily: 'Inter_700Bold' },
-  sectionHint: { fontSize: 13, fontFamily: 'Inter_400Regular' },
+  sectionTitle: { fontSize: 14, fontFamily: FontFamily.bold },
+  sectionHint: { fontSize: 13, fontFamily: FontFamily.regular },
   infoBlock: { borderWidth: 1, borderRadius: 10, padding: 12 },
-  infoText: { fontSize: 13, fontFamily: 'Inter_400Regular', lineHeight: 18 },
+  infoText: { fontSize: 13, fontFamily: FontFamily.regular, lineHeight: 18 },
   footer: { padding: 24, borderTopWidth: 1 },
-  button: { borderRadius: 12, padding: 16, alignItems: 'center' },
-  buttonText: { fontSize: 16, fontFamily: 'Inter_700Bold' },
+  button: { borderRadius: Radius.lg, padding: 16, alignItems: 'center' },
+  buttonText: { fontSize: 16, fontFamily: FontFamily.bold },
 });
