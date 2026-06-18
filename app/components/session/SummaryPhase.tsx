@@ -81,37 +81,40 @@ export function SummaryPhase({ progressions, totalSets, durationSeconds, totalVo
   return (
     <ScrollView contentContainerStyle={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.hero}>
-        <Text style={styles.emoji}>🎉</Text>
-        <Text style={[styles.heroTitle, { color: colors.text }]}>Séance terminée !</Text>
+        <Text style={[styles.heroLabel, { color: colors.textSecondary }]}>SÉANCE TERMINÉE</Text>
         <Text style={[styles.heroDuration, { color: colors.textSecondary }]}>
           {formatDuration(durationSeconds)}{rpeLabel ? ` · Effort : ${rpeLabel}` : ''}
         </Text>
       </View>
 
-      <View style={styles.statsRow}>
-        <View style={[styles.statCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+      <View style={[styles.statsRow, { borderColor: colors.border }]}>
+        <View style={styles.statCell}>
           <Text style={[styles.statValue, { color: colors.text }]}>{totalSets}</Text>
           <Text style={[styles.statLabel, { color: colors.textSecondary }]}>SÉRIES</Text>
         </View>
-        <View style={[styles.statCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-          <Text style={[styles.statValue, { color: progressionCount > 0 ? '#16a34a' : colors.text }]}>↑ {progressionCount}</Text>
-          <Text style={[styles.statLabel, { color: colors.textSecondary }]}>PROGRESSIONS</Text>
+        <View style={[styles.statCell, styles.statCellBorder, { borderColor: colors.border }]}>
+          <Text style={[styles.statValue, { color: colors.text }]}>{formatDuration(durationSeconds)}</Text>
+          <Text style={[styles.statLabel, { color: colors.textSecondary }]}>DURÉE</Text>
         </View>
+        {totalVolumeKg != null && totalVolumeKg > 0 && (
+          <View style={[styles.statCell, styles.statCellBorder, { borderColor: colors.border }]}>
+            <Text style={[styles.statValue, { color: colors.text }]}>
+              {Math.round(parseFloat(convert(totalVolumeKg))).toLocaleString()}
+            </Text>
+            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>{unitLabel.toUpperCase()}</Text>
+          </View>
+        )}
       </View>
 
-      {totalVolumeKg != null && totalVolumeKg > 0 && (
-        <View style={[styles.volumeCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-          <Text style={[styles.statLabel, { color: colors.textSecondary }]}>VOLUME TOTAL</Text>
-          <Text style={[styles.volumeValue, { color: colors.text }]}>
-            {Math.round(parseFloat(convert(totalVolumeKg))).toLocaleString()} {unitLabel}
-          </Text>
-          {showDelta && (
-            <Text style={[styles.volumeDelta, { color: deltaVolume! >= 0 ? colors.primary : colors.textSecondary }]}>
-              {deltaVolume! >= 0 ? '+' : ''}{Math.round(parseFloat(convert(deltaVolume!))).toLocaleString()} {unitLabel}
-              {' · '}
-              {deltaSets! >= 0 ? '+' : ''}{deltaSets} série{Math.abs(deltaSets!) > 1 ? 's' : ''} vs séance préc.
+      {progressionCount > 0 && (
+        <View style={[styles.prCard, { borderColor: colors.border }]}>
+          <Text style={[styles.prGlyph, { color: colors.primary }]}>✦</Text>
+          <View style={styles.prContent}>
+            <Text style={[styles.prTitle, { color: colors.primary }]}>Nouvelle meilleure marque</Text>
+            <Text style={[styles.prSub, { color: colors.textSecondary }]}>
+              {progressions.filter(p => p.achieved).map(p => p.exerciseName).join(', ')}
             </Text>
-          )}
+          </View>
         </View>
       )}
 
@@ -223,10 +226,10 @@ export function SummaryPhase({ progressions, totalSets, durationSeconds, totalVo
                 style={[
                   styles.cardioRpeChip,
                   { borderColor: colors.border },
-                  cardioRpe === rpe ? { backgroundColor: colors.primary } : { backgroundColor: colors.surface },
+                  cardioRpe === rpe ? { backgroundColor: colors.surfaceElevated } : { backgroundColor: colors.surface },
                 ]}
               >
-                <Text style={[styles.cardioRpeLabel, { color: cardioRpe === rpe ? '#fff' : colors.text }]}>{label}</Text>
+                <Text style={[styles.cardioRpeLabel, { color: colors.text }]}>{label}</Text>
               </PressableA11y>
             ))}
           </View>
@@ -236,7 +239,7 @@ export function SummaryPhase({ progressions, totalSets, durationSeconds, totalVo
               onPress={handleCardioSubmit}
               style={[styles.cardioSaveBtn, { backgroundColor: colors.primary }]}
             >
-              <Text style={styles.cardioSaveBtnText}>Enregistrer</Text>
+              <Text style={[styles.cardioSaveBtnText, { color: colors.onPrimary }]}>Enregistrer</Text>
             </PressableA11y>
             <PressableA11y
               accessibilityLabel="Ignorer le recueil cardio"
@@ -266,12 +269,12 @@ export function SummaryPhase({ progressions, totalSets, durationSeconds, totalVo
                 styles.moodChip,
                 { borderColor: colors.border },
                 selectedMood === mood
-                  ? { backgroundColor: colors.primary }
+                  ? { backgroundColor: colors.surfaceElevated }
                   : { backgroundColor: colors.surface },
               ]}
             >
               <Text style={styles.moodEmoji}>{emoji}</Text>
-              <Text style={[styles.moodLabel, { color: selectedMood === mood ? '#fff' : colors.text }]}>{label}</Text>
+              <Text style={[styles.moodLabel, { color: colors.text }]}>{label}</Text>
             </PressableA11y>
           ))}
         </View>
@@ -290,13 +293,13 @@ export function SummaryPhase({ progressions, totalSets, durationSeconds, totalVo
                 styles.tagChip,
                 { borderColor: colors.border },
                 selectedTags.includes(tag.slug)
-                  ? { backgroundColor: colors.primary }
+                  ? { backgroundColor: colors.surfaceElevated }
                   : { backgroundColor: colors.surface },
               ]}
             >
               <Text style={[
                 styles.tagLabel,
-                { color: selectedTags.includes(tag.slug) ? '#fff' : colors.text },
+                { color: colors.text },
               ]}>
                 {tag.label}
               </Text>
@@ -320,7 +323,7 @@ export function SummaryPhase({ progressions, totalSets, durationSeconds, totalVo
         onPress={onClose}
         style={[styles.closeBtn, { backgroundColor: colors.primary }]}
       >
-        <Text style={styles.closeBtnText}>Retour au programme</Text>
+        <Text style={[styles.closeBtnText, { color: colors.onPrimary }]}>RETOUR AU PROGRAMME</Text>
       </PressableA11y>
     </ScrollView>
   );
@@ -328,17 +331,19 @@ export function SummaryPhase({ progressions, totalSets, durationSeconds, totalVo
 
 const styles = StyleSheet.create({
   container: { flexGrow: 1, padding: 24, gap: 20 },
-  hero: { alignItems: 'center', paddingVertical: 16, gap: 6 },
-  emoji: { fontSize: 48 },
-  heroTitle: { fontSize: 26, fontWeight: '700' },
-  heroDuration: { fontSize: 16 },
-  statsRow: { flexDirection: 'row', gap: 12 },
-  statCard: { flex: 1, borderWidth: 1, borderRadius: Radius.sm, padding: 16, alignItems: 'center', gap: 4 },
-  statValue: { fontSize: 24, fontWeight: '700' },
-  statLabel: { fontSize: 10, fontWeight: '600', letterSpacing: 0.5 },
-  volumeCard: { borderWidth: 1, borderRadius: Radius.sm, padding: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  volumeValue: { fontSize: 22, fontWeight: '700' },
-  volumeDelta: { fontSize: 13, marginTop: 4 },
+  hero: { paddingVertical: 8, gap: 4 },
+  heroLabel: { fontSize: 11, fontFamily: 'Inter_600SemiBold', textTransform: 'uppercase', letterSpacing: 1.6 },
+  heroDuration: { fontSize: 13, fontFamily: 'Inter_400Regular' },
+  statsRow: { flexDirection: 'row', borderWidth: 1, borderRadius: Radius.sm, overflow: 'hidden' },
+  statCell: { flex: 1, padding: 16, gap: 4 },
+  statCellBorder: { borderLeftWidth: 1 },
+  prCard: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, borderWidth: 1, borderRadius: Radius.sm, padding: 14 },
+  prGlyph: { fontSize: 18, lineHeight: 22 },
+  prContent: { flex: 1, gap: 2 },
+  prTitle: { fontSize: 14, fontFamily: 'Inter_600SemiBold' },
+  prSub: { fontSize: 12, fontFamily: 'Inter_400Regular' },
+  statValue: { fontSize: 22, fontFamily: 'Inter_700Bold', letterSpacing: -0.3 },
+  statLabel: { fontSize: 10, fontFamily: 'Inter_600SemiBold', letterSpacing: 1.2, textTransform: 'uppercase' },
   progressionSection: { borderWidth: 1, borderRadius: Radius.sm, padding: 16, gap: 12 },
   sectionTitle: { fontSize: 15, fontWeight: '600' },
   progressionRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 8, borderBottomWidth: 1 },
@@ -365,7 +370,7 @@ const styles = StyleSheet.create({
   tagLabel: { fontSize: 13, fontWeight: '500' },
   notesInput: { borderWidth: 1, borderRadius: Radius.sm, padding: 12, fontSize: 14, minHeight: 72, textAlignVertical: 'top' },
   closeBtn: { paddingVertical: 16, borderRadius: Radius.sm, alignItems: 'center', marginTop: 8 },
-  closeBtnText: { color: '#fff', fontSize: 17, fontWeight: '600' },
+  closeBtnText: { fontSize: 15, fontFamily: 'Inter_700Bold', letterSpacing: 2, textTransform: 'uppercase' },
   cardioCard: { borderWidth: 1, borderRadius: Radius.sm, padding: 16, gap: 12 },
   cardioRow: { flexDirection: 'row', gap: 8 },
   cardioField: { flex: 1, gap: 4 },
@@ -376,7 +381,7 @@ const styles = StyleSheet.create({
   cardioRpeLabel: { fontSize: 13, fontWeight: '500' },
   cardioBtnRow: { flexDirection: 'row', gap: 8 },
   cardioSaveBtn: { flex: 2, paddingVertical: 14, borderRadius: Radius.sm, alignItems: 'center' },
-  cardioSaveBtnText: { color: '#fff', fontSize: 15, fontWeight: '600' },
+  cardioSaveBtnText: { fontSize: 15, fontFamily: 'Inter_600SemiBold' },
   cardioIgnoreBtn: { flex: 1, paddingVertical: 14, borderRadius: Radius.sm, alignItems: 'center', borderWidth: 1 },
   cardioIgnoreBtnText: { fontSize: 15 },
 });
