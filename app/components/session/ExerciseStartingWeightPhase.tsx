@@ -70,7 +70,7 @@ export function ExerciseStartingWeightPhase({
         style={[
           styles.btn,
           {
-            backgroundColor: colors.tint,
+            backgroundColor: colors.primary,
             opacity: !isValid || loading ? 0.5 : 1,
           },
         ]}
@@ -97,11 +97,11 @@ const styles = StyleSheet.create({
   },
   exerciseName: {
     fontSize: 18,
-    fontWeight: '500',
+    fontFamily: 'Inter_400Regular',
   },
   title: {
     fontSize: 28,
-    fontWeight: '700',
+    fontFamily: 'Inter_700Bold',
   },
   subtitle: {
     fontSize: 16,
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     borderRadius: Radius.sm,
     paddingHorizontal: 16,
     fontSize: 28,
-    fontWeight: '600',
+    fontFamily: 'Inter_600SemiBold',
   },
   btn: {
     height: 56,

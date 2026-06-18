@@ -122,12 +122,12 @@ const styles = StyleSheet.create({
   },
   exerciseLabel: {
     fontSize: 11,
-    fontWeight: '700',
+    fontFamily: 'Inter_700Bold',
     letterSpacing: 1.5,
   },
   exerciseName: {
     fontSize: 28,
-    fontWeight: '700',
+    fontFamily: 'Inter_700Bold',
     lineHeight: 34,
   },
   workSummary: {
@@ -142,8 +142,8 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   supersetPreview: { marginTop: 4 },
-  supersetPreviewLabel: { fontSize: 11, fontWeight: '700', letterSpacing: 0.5, marginBottom: 4 },
-  supersetPreviewChain: { fontSize: 14, fontWeight: '500' },
+  supersetPreviewLabel: { fontSize: 11, fontFamily: 'Inter_700Bold', letterSpacing: 0.5, marginBottom: 4 },
+  supersetPreviewChain: { fontSize: 14, fontFamily: 'Inter_400Regular' },
   continueBtn: {
     paddingVertical: 14,
     borderRadius: Radius.sm,
