@@ -5,6 +5,13 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.21.1] — 2026-06-18
+
+cd29365 feat(history): afficher ressenti post-séance (moodAfter) dans le détail séance
+a59287c docs(journal): session 12 — RGAA audit + Brzycki 1RM + WelcomeScreen
+
+---
+
 ## [1.21.0] — 2026-06-18
 
 01cdb57 feat(onboarding): bouton Passer sur premier écran
