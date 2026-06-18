@@ -67,6 +67,8 @@ export default function HomeScreen() {
     service.findAnyPausedSession().then(setPausedSession).catch(() => setPausedSession(null));
   }, [refresh]));
 
+  const hasExercises = previewExercises.length > 0;
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       {pausedSession && (
@@ -215,13 +217,21 @@ export default function HomeScreen() {
 
           {/* CTA */}
           <PressableA11y
-            accessibilityLabel={`Démarrer ${selectedWorkout.name}`}
-            onPress={() => router.push({ pathname: '/session/[workoutId]' as any, params: { workoutId: String(selectedWorkout.id) } })}
-            style={[styles.startBtn, { backgroundColor: colors.primary }]}
+            accessibilityLabel={hasExercises ? `Démarrer ${selectedWorkout.name}` : 'Aucun exercice dans cette séance'}
+            accessibilityState={{ disabled: !hasExercises }}
+            onPress={hasExercises
+              ? () => router.push({ pathname: '/session/[workoutId]' as any, params: { workoutId: String(selectedWorkout.id) } })
+              : undefined}
+            style={[styles.startBtn, { backgroundColor: colors.primary, opacity: hasExercises ? 1 : 0.4 }]}
           >
             <Ionicons name="play" size={16} color={colors.onPrimary} importantForAccessibility="no" accessibilityElementsHidden={true} />
             <Text style={[styles.startBtnText, { color: colors.onPrimary }]}>DÉMARRER</Text>
           </PressableA11y>
+          {!hasExercises && (
+            <Text style={[styles.emptyHint, { color: colors.textSecondary }]}>
+              Cette séance n'a pas encore d'exercices.
+            </Text>
+          )}
         </View>
       ) : null}
     </View>
@@ -259,6 +269,7 @@ const styles = StyleSheet.create({
     gap: 8, minHeight: 60, borderRadius: Radius.sm,
   },
   startBtnText: { fontSize: 14, fontFamily: 'Inter_700Bold', letterSpacing: 2, textTransform: 'uppercase' },
+  emptyHint: { fontSize: 12, fontFamily: 'Inter_400Regular', textAlign: 'center', marginTop: 8 },
   linkBtn: { paddingVertical: 4 },
   linkText: { fontSize: 15, fontFamily: 'Inter_500Medium' },
 });
