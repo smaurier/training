@@ -5,6 +5,14 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.19.2] — 2026-06-18
+
+1c825ad fix(a11y): accessibilityHint sur DÉMARRER désactivé; renforcer test session fantôme
+16d7c8e fix(session): masquer ResumeCard si workout supprimé, abandonner session fantôme
+a833d10 fix(home): désactiver DÉMARRER si workout sans exercices
+
+---
+
 ## [1.19.1] — 2026-06-18
 
 0b158d5 feat(onboarding): PhilosophyScreen — copy manifeste validé, titre 40px Black
