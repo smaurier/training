@@ -25,7 +25,7 @@ export function VolumeBarChart({ data }: VolumeBarChartProps) {
   const barData = data.map((week, i) => ({
     value: week.volume,
     label: week.weekLabel,
-    frontColor: i === data.length - 1 ? colors.primary : (colorScheme === 'dark' ? '#1E40AF' : '#BFDBFE'),
+    frontColor: i === data.length - 1 ? colors.primary : colors.textDisabled,
     labelTextStyle: {
       color: i === data.length - 1 ? colors.primary : colors.textSecondary,
       fontSize: 10,

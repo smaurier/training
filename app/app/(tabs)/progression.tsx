@@ -61,7 +61,7 @@ export default function ProgressionScreen() {
             accessibilityRole="tab"
             accessibilityState={{ selected: activeSegment === seg }}
           >
-            <Text style={[styles.segmentText, { color: activeSegment === seg ? '#fff' : colors.textSecondary }]}>
+            <Text style={[styles.segmentText, { color: activeSegment === seg ? colors.onPrimary : colors.textSecondary }]}>
               {seg === 'historique' ? 'Historique' : seg === 'stats' ? 'Stats' : 'Corps'}
             </Text>
           </PressableA11y>
