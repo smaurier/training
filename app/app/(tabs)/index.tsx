@@ -128,7 +128,7 @@ export default function HomeScreen() {
                     styles.cycleDot,
                     i < cycleDoneCount
                       ? { backgroundColor: colors.primary }
-                      : { backgroundColor: 'transparent', borderWidth: 1.5, borderColor: colors.border },
+                      : { borderWidth: 1.5, borderColor: colors.border },
                   ]}
                 />
               ))}
