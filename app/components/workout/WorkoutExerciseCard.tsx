@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
   addBlockBtn: { marginTop: Spacing.xs, paddingVertical: Spacing.sm },
   addBlockText: { fontSize: 13, fontWeight: '500' },
   supersetRow: { marginTop: Spacing.sm, flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
-  supersetBadge: { borderRadius: 4, paddingHorizontal: Spacing.sm, paddingVertical: 2 },
+  supersetBadge: { borderRadius: Radius.sm, paddingHorizontal: Spacing.sm, paddingVertical: 2 },
   supersetBadgeText: { fontSize: 11, fontWeight: '700' },
   linkBtn: { borderWidth: 1, borderRadius: 6, paddingHorizontal: Spacing.md, paddingVertical: Spacing.xs },
   linkBtnText: { fontSize: 12 },
