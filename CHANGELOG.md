@@ -5,6 +5,12 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.21.2] — 2026-06-19
+
+b69c858 feat(history): supprimer une séance + harmonisation couleur lime
+
+---
+
 ## [1.21.1] — 2026-06-18
 
 cd29365 feat(history): afficher ressenti post-séance (moodAfter) dans le détail séance
