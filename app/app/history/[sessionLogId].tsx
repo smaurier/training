@@ -1,4 +1,5 @@
 import { Spacing } from '@/constants/Spacing';
+import { FontFamily } from '@/constants/Typography';
 import { View, Text, ScrollView, ActivityIndicator, StyleSheet } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
@@ -150,7 +151,7 @@ const styles = StyleSheet.create({
   },
   statValue: {
     fontSize: 17,
-    fontWeight: '700',
+    fontFamily: FontFamily.bold,
   },
   statLabel: {
     fontSize: 11,

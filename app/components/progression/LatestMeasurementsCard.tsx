@@ -1,4 +1,5 @@
 import { Spacing } from '@/constants/Spacing';
+import { FontFamily } from '@/constants/Typography';
 import { View, Text, StyleSheet } from 'react-native';
 import Colors from '@/constants/Colors';
 import { Radius } from '@/constants/Radius';
@@ -60,7 +61,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    fontWeight: '700',
+    fontFamily: FontFamily.bold,
     marginBottom: Spacing.xs,
   },
   date: {
@@ -77,6 +78,6 @@ const styles = StyleSheet.create({
   },
   value: {
     fontSize: 14,
-    fontWeight: '600',
+    fontFamily: FontFamily.semibold,
   },
 });

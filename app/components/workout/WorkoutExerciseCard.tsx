@@ -1,4 +1,5 @@
 import { Spacing } from '@/constants/Spacing';
+import { FontFamily } from '@/constants/Typography';
 import { useState } from 'react';
 import { View, Text, StyleSheet, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -242,16 +243,16 @@ const styles = StyleSheet.create({
   headerMain: { flex: 1, flexDirection: 'row', alignItems: 'center', paddingLeft: Spacing.lg, paddingVertical: Spacing.lg, paddingRight: Spacing.sm, gap: Spacing.sm },
   headerContent: { flex: 1, gap: 2 },
   reorderBtn: { alignItems: 'center', justifyContent: 'center' },
-  name: { fontSize: 16, fontWeight: '600' },
+  name: { fontSize: 16, fontFamily: FontFamily.semibold },
   muscles: { fontSize: 12 },
   blocks: { padding: Spacing.md, paddingTop: 0, gap: Spacing.sm },
   empty: { fontSize: 13, fontStyle: 'italic', paddingVertical: Spacing.xs },
   hint: { fontSize: 12, fontStyle: 'italic', paddingVertical: Spacing.xs, lineHeight: 18 },
   addBlockBtn: { marginTop: Spacing.xs, paddingVertical: Spacing.sm },
-  addBlockText: { fontSize: 13, fontWeight: '500' },
+  addBlockText: { fontSize: 13, fontFamily: FontFamily.medium },
   supersetRow: { marginTop: Spacing.sm, flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
   supersetBadge: { borderRadius: Radius.sm, paddingHorizontal: Spacing.sm, paddingVertical: 2 },
-  supersetBadgeText: { fontSize: 11, fontWeight: '700' },
+  supersetBadgeText: { fontSize: 11, fontFamily: FontFamily.bold },
   linkBtn: { borderWidth: 1, borderRadius: 6, paddingHorizontal: Spacing.md, paddingVertical: Spacing.xs },
   linkBtnText: { fontSize: 12 },
   unlinkBtn: { paddingHorizontal: Spacing.sm, paddingVertical: Spacing.xs },

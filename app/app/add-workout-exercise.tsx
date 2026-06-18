@@ -1,4 +1,5 @@
 import { Spacing } from '@/constants/Spacing';
+import { FontFamily } from '@/constants/Typography';
 import { useState, useCallback, useRef } from 'react';
 import { View, Text, FlatList, TextInput, ActivityIndicator, StyleSheet, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack, useFocusEffect } from 'expo-router';
@@ -113,10 +114,10 @@ const styles = StyleSheet.create({
   search: { margin: Spacing.lg, padding: Spacing.md, borderRadius: Radius.sm, borderWidth: 1, fontSize: 15 },
   loader: { marginTop: 48 },
   item: { padding: Spacing.lg, borderBottomWidth: 1, gap: 2 },
-  itemName: { fontSize: 15, fontWeight: '500' },
+  itemName: { fontSize: 15, fontFamily: FontFamily.medium },
   itemMuscles: { fontSize: 13 },
   emptyContainer:  { alignItems: 'center', marginTop: 48, gap: Spacing.lg },
   empty:           { textAlign: 'center', fontSize: 15 },
   createBtn:       { borderWidth: 1, borderRadius: Radius.sm, paddingHorizontal: Spacing.xl, paddingVertical: Spacing.md },
-  createBtnText:   { fontSize: 15, fontWeight: '500' },
+  createBtnText:   { fontSize: 15, fontFamily: FontFamily.medium },
 });

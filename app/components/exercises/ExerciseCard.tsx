@@ -1,6 +1,6 @@
 import { Spacing } from '@/constants/Spacing';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { LetterSpacing } from '@/constants/Typography';
+import { LetterSpacing, FontFamily} from '@/constants/Typography';
 import { Swipeable } from 'react-native-gesture-handler';
 import { Ionicons } from '@expo/vector-icons';
 import { Exercise } from '@/db/types';
@@ -74,12 +74,12 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 16,
-    fontWeight: '600',
+    fontFamily: FontFamily.semibold,
     flex: 1,
   },
   badge: {
     fontSize: 12,
-    fontWeight: '500',
+    fontFamily: FontFamily.medium,
     textTransform: 'uppercase',
     letterSpacing: LetterSpacing.wide,
   },

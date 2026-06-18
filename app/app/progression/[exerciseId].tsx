@@ -1,6 +1,6 @@
 import { Spacing } from '@/constants/Spacing';
 import { View, Text, ScrollView, ActivityIndicator, StyleSheet, TextInput } from 'react-native';
-import { LetterSpacing } from '@/constants/Typography';
+import { LetterSpacing, FontFamily} from '@/constants/Typography';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import { BarChart } from 'react-native-gifted-charts';
@@ -454,32 +454,32 @@ export default function ExerciseProgressionScreen() {
 const styles = StyleSheet.create({
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: Spacing.xxxl },
   content: { padding: Spacing.lg, gap: Spacing.md, paddingBottom: Spacing.xxxl },
-  title: { fontSize: 20, fontWeight: '700', marginBottom: Spacing.xs },
+  title: { fontSize: 20, fontFamily: FontFamily.bold, marginBottom: Spacing.xs },
   section: { borderRadius: Radius.sm, padding: Spacing.lg, gap: Spacing.sm },
-  sectionLabel: { fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: LetterSpacing.wide },
-  prValue: { fontSize: 18, fontWeight: '700' },
+  sectionLabel: { fontSize: 10, fontFamily: FontFamily.bold, textTransform: 'uppercase', letterSpacing: LetterSpacing.wide },
+  prValue: { fontSize: 18, fontFamily: FontFamily.bold },
   prMeta: { fontSize: 13 },
   prRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: Spacing.sm },
-  prRowValue: { fontSize: 14, fontWeight: '500' },
+  prRowValue: { fontSize: 14, fontFamily: FontFamily.medium },
   prRowDate: { fontSize: 12 },
   setRow: { fontSize: 14 },
   empty: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: 60 },
   emptyText: { fontSize: 15, textAlign: 'center' },
   goalButton: { borderWidth: 1, borderRadius: Radius.md, paddingVertical: Spacing.md, paddingHorizontal: Spacing.lg, alignSelf: 'flex-start' },
-  goalButtonText: { fontSize: 14, fontWeight: '600' },
-  goalText: { fontSize: 15, fontWeight: '500' },
+  goalButtonText: { fontSize: 14, fontFamily: FontFamily.semibold },
+  goalText: { fontSize: 15, fontFamily: FontFamily.medium },
   goalProjection: { fontSize: 13, marginTop: Spacing.xs },
-  goalAchieved: { fontSize: 15, fontWeight: '600' },
+  goalAchieved: { fontSize: 15, fontFamily: FontFamily.semibold },
   goalDeleteBtn: { marginTop: Spacing.sm, alignSelf: 'flex-start' },
   goalDeleteText: { fontSize: 13 },
   sheetContent: { padding: Spacing.xl, gap: Spacing.md },
-  sheetTitle: { fontSize: 17, fontWeight: '700' },
+  sheetTitle: { fontSize: 17, fontFamily: FontFamily.bold },
   sheetInput: { borderWidth: 1, borderRadius: Radius.md, padding: Spacing.md, fontSize: 16 },
-  sheetLabel: { fontSize: 12, fontWeight: '600', textTransform: 'uppercase', letterSpacing: LetterSpacing.wide },
+  sheetLabel: { fontSize: 12, fontFamily: FontFamily.semibold, textTransform: 'uppercase', letterSpacing: LetterSpacing.wide },
   chipsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
   chip: { borderWidth: 1, borderRadius: Radius.xs, paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm },
-  chipText: { fontSize: 13, fontWeight: '500' },
+  chipText: { fontSize: 13, fontFamily: FontFamily.medium },
   sheetPreview: { fontSize: 13, fontStyle: 'italic' },
   sheetSaveBtn: { borderRadius: Radius.md, paddingVertical: Spacing.md, alignItems: 'center', marginTop: Spacing.xs },
-  sheetSaveBtnText: { fontSize: 15, fontWeight: '600' },
+  sheetSaveBtnText: { fontSize: 15, fontFamily: FontFamily.semibold },
 });

@@ -1,6 +1,6 @@
 import { Spacing } from '@/constants/Spacing';
 import { useState, useCallback } from 'react';
-import { LetterSpacing } from '@/constants/Typography';
+import { LetterSpacing, FontFamily} from '@/constants/Typography';
 import { View, Text, TextInput, ScrollView, StyleSheet, Alert } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
@@ -185,19 +185,19 @@ export default function ImportGpxScreen() {
 
 const styles = StyleSheet.create({
   container: { padding: Spacing.xxl, gap: Spacing.lg },
-  title: { fontSize: 22, fontWeight: '700', marginBottom: Spacing.sm },
+  title: { fontSize: 22, fontFamily: FontFamily.bold, marginBottom: Spacing.sm },
   pickBtn: { paddingVertical: Spacing.lg, borderRadius: Radius.sm, alignItems: 'center' },
-  pickBtnText: { fontSize: 17, fontWeight: '600' },
+  pickBtnText: { fontSize: 17, fontFamily: FontFamily.semibold },
   preview: { gap: Spacing.md },
   previewCard: { borderWidth: 1, borderRadius: Radius.sm, padding: Spacing.lg, gap: Spacing.sm },
-  previewLabel: { fontSize: 11, fontWeight: '600', letterSpacing: LetterSpacing.wide },
-  previewValue: { fontSize: 18, fontWeight: '600' },
-  distanceInput: { borderWidth: 1, borderRadius: Radius.sm, padding: Spacing.md, fontSize: 18, fontWeight: '600' },
+  previewLabel: { fontSize: 11, fontFamily: FontFamily.semibold, letterSpacing: LetterSpacing.wide },
+  previewValue: { fontSize: 18, fontFamily: FontFamily.semibold },
+  distanceInput: { borderWidth: 1, borderRadius: Radius.sm, padding: Spacing.md, fontSize: 18, fontFamily: FontFamily.semibold },
   rpeRow: { flexDirection: 'row', gap: Spacing.sm },
   rpeChip: { flex: 1, borderWidth: 1, borderRadius: Radius.sm, paddingVertical: Spacing.md, alignItems: 'center' },
-  rpeLabel: { fontSize: 13, fontWeight: '500' },
+  rpeLabel: { fontSize: 13, fontFamily: FontFamily.medium },
   importBtn: { paddingVertical: Spacing.lg, borderRadius: Radius.sm, alignItems: 'center', marginTop: Spacing.sm },
-  importBtnText: { fontSize: 17, fontWeight: '600' },
+  importBtnText: { fontSize: 17, fontFamily: FontFamily.semibold },
   cancelBtn: { paddingVertical: Spacing.lg, borderRadius: Radius.sm, alignItems: 'center', borderWidth: 1 },
   cancelBtnText: { fontSize: 15 },
 });

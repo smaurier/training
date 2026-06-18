@@ -1,6 +1,6 @@
 import { Spacing } from '@/constants/Spacing';
 import { View, Text, StyleSheet } from 'react-native';
-import { LetterSpacing } from '@/constants/Typography';
+import { LetterSpacing, FontFamily} from '@/constants/Typography';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import type { ExerciseHistory } from '@/services/HistoryService';
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
   },
   exerciseName: {
     fontSize: 12,
-    fontWeight: '700',
+    fontFamily: FontFamily.bold,
     textTransform: 'uppercase',
     letterSpacing: LetterSpacing.wider,
     marginBottom: Spacing.sm,

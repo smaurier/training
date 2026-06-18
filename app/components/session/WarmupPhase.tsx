@@ -1,6 +1,6 @@
 import { Spacing } from '@/constants/Spacing';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
-import { LetterSpacing } from '@/constants/Typography';
+import { LetterSpacing, FontFamily} from '@/constants/Typography';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import { useUnits } from '@/hooks/useUnits';
 import Colors from '@/constants/Colors';
@@ -82,12 +82,12 @@ const styles = StyleSheet.create({
   },
   phaseLabel: {
     fontSize: 11,
-    fontWeight: '700',
+    fontFamily: FontFamily.bold,
     letterSpacing: LetterSpacing.spaced,
   },
   exerciseName: {
     fontSize: 28,
-    fontWeight: '700',
+    fontFamily: FontFamily.bold,
     lineHeight: 34,
   },
   setsCard: {
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.lg,
   },
   setRowBorder: { borderBottomWidth: 1 },
-  setWeight: { fontSize: 17, fontWeight: '600' },
+  setWeight: { fontSize: 17, fontFamily: FontFamily.semibold },
   setPercent: { fontSize: 14 },
   hint: { fontSize: 14 },
   startBtn: {
@@ -112,5 +112,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: Spacing.sm,
   },
-  startBtnText: { fontSize: 17, fontWeight: '600' },
+  startBtnText: { fontSize: 17, fontFamily: FontFamily.semibold },
 });

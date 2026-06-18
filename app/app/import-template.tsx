@@ -1,6 +1,6 @@
 import { Spacing } from '@/constants/Spacing';
 import { View, Text, TextInput, ScrollView, StyleSheet, Alert, ActivityIndicator } from 'react-native';
-import { LetterSpacing } from '@/constants/Typography';
+import { LetterSpacing, FontFamily} from '@/constants/Typography';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { PressableA11y } from '@/components/ui/PressableA11y';
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
   scroll: { padding: Spacing.lg, paddingBottom: Spacing.xxl, gap: Spacing.sm },
   sectionTitle: {
     fontSize: 12,
-    fontWeight: '600',
+    fontFamily: FontFamily.semibold,
     textTransform: 'uppercase',
     letterSpacing: LetterSpacing.wide,
     marginBottom: Spacing.xs,
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
   },
   cardSelected: { borderWidth: 2 },
   cardRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  cardName: { fontSize: 15, fontWeight: '600' },
+  cardName: { fontSize: 15, fontFamily: FontFamily.semibold },
   cardFreq: { fontSize: 13 },
   cardLevel: { fontSize: 12 },
   cardDesc: { fontSize: 12 },
@@ -208,5 +208,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  submitText: { fontSize: 16, fontWeight: '600' },
+  submitText: { fontSize: 16, fontFamily: FontFamily.semibold },
 });

@@ -1,4 +1,5 @@
 import { Spacing } from '@/constants/Spacing';
+import { FontFamily } from '@/constants/Typography';
 import { useState } from 'react';
 import { Modal, View, Text, TextInput, StyleSheet } from 'react-native';
 import type { Set as TrainingSet, WeightType, SetType } from '@/db/types';
@@ -165,8 +166,8 @@ export function EditSetModal({ set, onSave, onClose }: EditSetModalProps) {
 const styles = StyleSheet.create({
   overlay: { flex: 1, justifyContent: 'flex-end' },
   sheet: { borderTopLeftRadius: 16, borderTopRightRadius: 16, padding: Spacing.xl, gap: Spacing.lg },
-  title: { fontSize: 17, fontWeight: '600' },
-  fieldLabel: { fontSize: 12, fontWeight: '500', marginBottom: -8 },
+  title: { fontSize: 17, fontFamily: FontFamily.semibold },
+  fieldLabel: { fontSize: 12, fontFamily: FontFamily.medium, marginBottom: -8 },
   segmented: { flexDirection: 'row', gap: Spacing.sm },
   segment: { flex: 1, alignItems: 'center', paddingVertical: Spacing.md, borderRadius: Radius.sm, borderWidth: 1 },
   inputFull: { borderWidth: 1, borderRadius: Radius.sm, padding: Spacing.md, fontSize: 16 },

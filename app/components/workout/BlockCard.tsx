@@ -1,6 +1,6 @@
 import { Spacing } from '@/constants/Spacing';
 import { useState } from 'react';
-import { LetterSpacing } from '@/constants/Typography';
+import { LetterSpacing, FontFamily} from '@/constants/Typography';
 import { View, Text, StyleSheet, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import type { BlockWithSets } from '@/services/WorkoutExerciseService';
@@ -174,14 +174,14 @@ const styles = StyleSheet.create({
   blockNameRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, marginBottom: 2 },
   blockName: {
     fontSize: 11,
-    fontWeight: '600',
+    fontFamily: FontFamily.semibold,
     textTransform: 'uppercase',
     letterSpacing: LetterSpacing.wide,
   },
   badge: { borderRadius: Radius.xs, paddingHorizontal: 5, paddingVertical: 1 },
-  badgeText: { fontSize: 9, fontWeight: '700', letterSpacing: LetterSpacing.wide },
+  badgeText: { fontSize: 9, fontFamily: FontFamily.bold, letterSpacing: LetterSpacing.wide },
   set: { fontSize: 14, lineHeight: 20, paddingVertical: 2 },
   reorderBtn: { alignItems: 'center', justifyContent: 'center' },
   addBtn: { marginTop: Spacing.xs },
-  addBtnText: { fontSize: 13, fontWeight: '500' },
+  addBtnText: { fontSize: 13, fontFamily: FontFamily.medium },
 });

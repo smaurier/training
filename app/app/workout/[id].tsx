@@ -1,4 +1,5 @@
 import { Spacing } from '@/constants/Spacing';
+import { FontFamily } from '@/constants/Typography';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { View, Text, FlatList, ActivityIndicator, StyleSheet, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack, useFocusEffect } from 'expo-router';
@@ -249,7 +250,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
   },
-  startBtnText: { color: '#fff', fontSize: 15, fontWeight: '600' },
+  startBtnText: { color: '#fff', fontSize: 15, fontFamily: FontFamily.semibold },
   supersetContainer: {
     borderWidth: 2,
     borderColor: SemanticColors.superset,
@@ -268,5 +269,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.sm,
     paddingVertical: 2,
   },
-  supersetLabelText: { color: '#fff', fontSize: 10, fontWeight: '700' },
+  supersetLabelText: { color: '#fff', fontSize: 10, fontFamily: FontFamily.bold },
 });

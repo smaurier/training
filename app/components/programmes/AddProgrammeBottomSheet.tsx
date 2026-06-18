@@ -1,3 +1,4 @@
+import { FontFamily } from '@/constants/Typography';
 import { Spacing } from '@/constants/Spacing';
 import { Radius } from '@/constants/Radius';
 import BottomSheet, {
@@ -116,6 +117,6 @@ const styles = StyleSheet.create({
   },
   optionText: {
     fontSize: 16,
-    fontWeight: '500',
+    fontFamily: FontFamily.medium,
   },
 });

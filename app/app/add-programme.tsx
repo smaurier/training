@@ -1,4 +1,5 @@
 import { Spacing } from '@/constants/Spacing';
+import { FontFamily } from '@/constants/Typography';
 import {
   Text, TextInput,
   StyleSheet, ScrollView, Alert, ActivityIndicator
@@ -102,7 +103,7 @@ export default function AddProgrammeModal() {
 
 const styles = StyleSheet.create({
   container: { padding: Spacing.xxl, gap: Spacing.sm },
-  label: { fontSize: 14, fontWeight: '600', marginTop: Spacing.sm },
+  label: { fontSize: 14, fontFamily: FontFamily.semibold, marginTop: Spacing.sm },
   input: {
     height: 48,
     borderWidth: 1,
@@ -123,5 +124,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: Spacing.xxl,
   },
-  submitText: { fontSize: 16, fontWeight: '600' },
+  submitText: { fontSize: 16, fontFamily: FontFamily.semibold },
 });

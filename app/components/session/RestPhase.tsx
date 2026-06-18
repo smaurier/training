@@ -1,6 +1,6 @@
 import { Spacing } from '@/constants/Spacing';
 import { View, Text, StyleSheet } from 'react-native';
-import { LetterSpacing } from '@/constants/Typography';
+import { LetterSpacing, FontFamily} from '@/constants/Typography';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import { CircularTimer } from '@/components/ui/CircularTimer';
 import type { UseTimerResult } from '@/hooks/useTimer';
@@ -67,10 +67,10 @@ const styles = StyleSheet.create({
     gap: Spacing.xl,
   },
   nextSection: { alignItems: 'center', gap: Spacing.xs },
-  nextSectionLabel: { fontSize: 10, fontWeight: '700', letterSpacing: LetterSpacing.widest },
+  nextSectionLabel: { fontSize: 10, fontFamily: FontFamily.bold, letterSpacing: LetterSpacing.widest },
   nextLabel: {
     fontSize: 17,
-    fontWeight: '600',
+    fontFamily: FontFamily.semibold,
     textAlign: 'center',
   },
   continueBtn: {
@@ -82,6 +82,6 @@ const styles = StyleSheet.create({
   },
   continueBtnText: {
     fontSize: 17,
-    fontWeight: '600',
+    fontFamily: FontFamily.semibold,
   },
 });

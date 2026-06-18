@@ -1,4 +1,5 @@
 import { Spacing } from '@/constants/Spacing';
+import { FontFamily } from '@/constants/Typography';
 import { useRef, useState, useMemo, useCallback } from 'react';
 import { Text, StyleSheet } from 'react-native';
 import BottomSheet, {
@@ -137,7 +138,7 @@ export function SubstituteSheet({ sheetRef, currentMuscleGroups, onSelect, onClo
 
 const styles = StyleSheet.create({
   header: { paddingHorizontal: Spacing.xl, paddingBottom: Spacing.md, gap: Spacing.md },
-  title: { fontSize: 17, fontWeight: '600' },
+  title: { fontSize: 17, fontFamily: FontFamily.semibold },
   search: { borderWidth: 1, borderRadius: Radius.sm, padding: Spacing.md, fontSize: 16 },
   emptyContainer: { paddingHorizontal: Spacing.xl, paddingTop: Spacing.xxl, alignItems: 'center' },
   emptyText: { fontSize: 14, fontStyle: 'italic', textAlign: 'center' },

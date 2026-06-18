@@ -1,3 +1,4 @@
+import { FontFamily } from '@/constants/Typography';
 import { Spacing } from '@/constants/Spacing';
 import { View, Text, StyleSheet, ViewStyle } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -60,8 +61,8 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.md,
   },
   info: { flex: 1, gap: 2 },
-  name: { fontSize: 15, fontWeight: '500' },
+  name: { fontSize: 15, fontFamily: FontFamily.medium },
   delta: { fontSize: 12 },
   right: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
-  value: { fontSize: 16, fontWeight: '700' },
+  value: { fontSize: 16, fontFamily: FontFamily.bold },
 });

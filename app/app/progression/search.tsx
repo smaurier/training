@@ -1,4 +1,5 @@
 import { Spacing } from '@/constants/Spacing';
+import { FontFamily } from '@/constants/Typography';
 import { useState } from 'react';
 import { View, Text, TextInput, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
@@ -77,5 +78,5 @@ const styles = StyleSheet.create({
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   empty: { fontSize: 14 },
   row: { paddingHorizontal: Spacing.lg, paddingVertical: Spacing.lg, borderBottomWidth: StyleSheet.hairlineWidth },
-  name: { fontSize: 15, fontWeight: '500' },
+  name: { fontSize: 15, fontFamily: FontFamily.medium },
 });

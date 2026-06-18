@@ -1,6 +1,6 @@
 import { Spacing } from '@/constants/Spacing';
 import { useState } from 'react';
-import { LetterSpacing } from '@/constants/Typography';
+import { LetterSpacing, FontFamily} from '@/constants/Typography';
 import { View, Text, StyleSheet } from 'react-native';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import type { MacroGroupVolume, MacroCategory } from '@/services/muscleGroupUtils';
@@ -74,13 +74,13 @@ export function MuscleGroupCard({ data }: MuscleGroupCardProps) {
 
 const styles = StyleSheet.create({
   card: { borderRadius: Radius.sm, padding: Spacing.lg, gap: Spacing.md },
-  title: { fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: LetterSpacing.wide, marginBottom: 2 },
+  title: { fontSize: 10, fontFamily: FontFamily.bold, textTransform: 'uppercase', letterSpacing: LetterSpacing.wide, marginBottom: 2 },
   row: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, paddingVertical: Spacing.xs },
-  catLabel: { fontSize: 13, fontWeight: '600', width: 64 },
+  catLabel: { fontSize: 13, fontFamily: FontFamily.semibold, width: 64 },
   barTrack: { flex: 1, height: 6, borderRadius: 3, overflow: 'hidden' },
   barFill: { height: 6, borderRadius: 3 },
   pct: { fontSize: 11, width: 30, textAlign: 'right' },
-  vol: { fontSize: 12, fontWeight: '600', width: 80, textAlign: 'right' },
+  vol: { fontSize: 12, fontFamily: FontFamily.semibold, width: 80, textAlign: 'right' },
   chevron: { fontSize: 10, width: 14, textAlign: 'center' },
   muscleRow: { flexDirection: 'row', justifyContent: 'space-between', paddingLeft: 72, paddingVertical: 2 },
   muscleLabel: { fontSize: 12 },

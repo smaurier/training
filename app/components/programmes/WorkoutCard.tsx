@@ -1,4 +1,5 @@
 import { Spacing } from '@/constants/Spacing';
+import { FontFamily } from '@/constants/Typography';
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Workout } from '@/db/types';
@@ -84,7 +85,7 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 16,
-    fontWeight: '600',
+    fontFamily: FontFamily.semibold,
   },
   meta: {
     fontSize: 12,
@@ -98,7 +99,7 @@ const styles = StyleSheet.create({
   },
   nextBadgeText: {
     fontSize: 11,
-    fontWeight: '600',
+    fontFamily: FontFamily.semibold,
   },
   reorderCol: {
     paddingRight: Spacing.sm,

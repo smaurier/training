@@ -2,7 +2,7 @@
 // app/app/session/[workoutId].tsx
 import { Spacing } from '@/constants/Spacing';
 import { useEffect, useCallback, useMemo, useState, useRef } from 'react';
-import { LetterSpacing } from '@/constants/Typography';
+import { LetterSpacing, FontFamily} from '@/constants/Typography';
 import { View, Text, StyleSheet, AccessibilityInfo, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
@@ -582,7 +582,7 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   prBadgeIcon: { fontSize: 24 },
-  prBadgeTitle: { color: '#000', fontSize: 16, fontWeight: '700' },
+  prBadgeTitle: { color: '#000', fontSize: 16, fontFamily: FontFamily.bold },
   prBadgeSub: { color: SemanticColors.prBadgeTint, fontSize: 13, maxWidth: 200 },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   pauseButtonContainer: {
@@ -595,19 +595,19 @@ const styles = StyleSheet.create({
     padding: Spacing.sm,
   },
   abandonSheet: { padding: Spacing.xl, gap: Spacing.md },
-  abandonTitle: { fontSize: 17, fontWeight: '700' },
+  abandonTitle: { fontSize: 17, fontFamily: FontFamily.bold },
   abandonBody: { fontSize: 14, lineHeight: 20 },
   abandonButtons: { flexDirection: 'row', gap: Spacing.md, marginTop: Spacing.sm },
   abandonBtn: {
     flex: 1, paddingVertical: Spacing.md, borderRadius: Radius.sm,
     alignItems: 'center', borderWidth: 1,
   },
-  abandonBtnText: { fontSize: 15, fontWeight: '600' },
+  abandonBtnText: { fontSize: 15, fontFamily: FontFamily.semibold },
   deloadBanner: {
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.sm,
     borderBottomWidth: 1,
     alignItems: 'center',
   },
-  deloadBannerText: { fontSize: 12, fontWeight: '500', letterSpacing: LetterSpacing.wide },
+  deloadBannerText: { fontSize: 12, fontFamily: FontFamily.medium, letterSpacing: LetterSpacing.wide },
 });
