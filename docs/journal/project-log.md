@@ -4,6 +4,107 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 
 ---
 
+## S49f — 2026-06-18 — Tokenisation design system complète (v1.20.0)
+
+### Livré
+
+- **`LetterSpacing` token** (`constants/Typography.ts`) : 7 clés (tighter/tight/wide/wider/widest/spaced/max). 41 occurrences remplacées dans 22 fichiers. Harmonisations : 0.4→wide, 1.2→widest, 1.5→spaced (delta ≤0.1).
+- **`borderRadius: 10` → `Radius.lg`** (9 occurrences, 7 fichiers). `borderRadius: 4` → `Radius.sm` (5 occurrences, 3 fichiers).
+- **Spacing rétroactif** : 54 fichiers, ~350 occurrences padding/margin/gap remplacées. Harmonisations hors-scale (multiples de 4) : 6→sm, 10→md, 14→lg, 18→xl.
+
+### Décisions
+
+- **Multiples de 4** : règle imposée par l'utilisateur. Tous les tokens Spacing sont des multiples de 4. Les valeurs hors-scale (6, 10, 14, 18) harmonisées vers le multiple de 4 le plus proche.
+- **Typography hors ×4** : `fontSize` et `letterSpacing` ne suivent PAS la règle ×4 — ils obéissent à une échelle typographique modulaire. Exception justifiée par nature différente (pas des unités spatiales).
+- **Exceptions documentées** : `Radius.xs=2` (micro-badge, 4px trop rond), micro-spacing 1-3px (barres progression), offsets layout 40/48/60/80/100px (hors design system, intentionnels).
+- **`borderRadius: 16/20`** restent en raw — hors scale "rester flat", à harmoniser lors d'une prochaine passe design.
+- **Bug regex Node.js** : `(?!\d)` dans template literal heredoc bash perdait le backslash → `(?!d)`. Contournement : utiliser `([^0-9]|$)` avec fonction de remplacement qui capture le char trailing.
+
+### Version
+
+`v1.20.0` — bump minor (tokenisation systématique = refactoring significatif), poussé avec tag.
+
+---
+
+## S49c — 2026-06-18 — Audit fonctionnel réel : 2 bugs corrigés
+
+### Livré
+
+- **T1 — DÉMARRER disabled si 0 exercices** (`app/(tabs)/index.tsx`) : bouton opacity 0.4, `accessibilityState.disabled`, `onPress=undefined`, hint text "Cette séance n'a pas encore d'exercices." sous le bouton. `accessibilityHint` pour screen readers. Commits `a833d10` + `1c825ad`.
+- **T2 — ResumeSessionCard masquée si workout supprimé** (`services/SessionService.ts`) : `findAnyPausedSession()` abandonne la session fantôme (`sessionLogRepo.abandon(...)`) et retourne `null` si le workout lié n'existe plus. TDD : test RED/GREEN avec assertion `status === 'abandoned'`. Commits `16d7c8e` + `1c825ad`.
+
+### Décisions
+
+- **Session fantôme → abandon** : plutôt que simplement ignorer, on abandonne la session pour nettoyer l'état DB. Pas de boucle sur plusieurs sessions — invariant déjà garanti par `startSession` (throw si session en pause).
+- **DÉMARRER toujours visible** : on choisit opacity 0.4 plutôt que masquer le bouton — l'utilisateur voit qu'il peut démarrer, comprend que quelque chose manque. Action disponible mais bloquée = meilleure affordance que bouton absent.
+- **accessibilityLabel constant** : `"Démarrer [nom]"` toujours, raison dans `accessibilityHint` (pattern WCAG).
+
+### Version
+
+`v1.19.2` — bump patch, poussé avec tag.
+
+---
+
+## S49b — 2026-06-18 — Audit philosophie anti-perf + correctifs UX
+
+### Livré
+
+- **Audit anti-perf 6 axes** : aucun anti-pattern supplémentaire trouvé dans le code (copy PR/marques, présences ce mois, onglet Progression données tirées, home sans stats poussées, helpText reglages.tsx excellent). 3 violations identifiées et corrigées.
+- **T1 — Notification inactivité** : `"Tu n'as pas fait de séance depuis X jours. C'est le moment de reprendre 💪"` → `"Prêt pour une séance ? Ton programme t'attend."`. TDD : test ajouté vérifiant que le body ne contient pas de pattern punitif. `InMemoryNotificationScheduler.getScheduled()` expose désormais `body`. Commit `39a0c86`.
+- **T2 — Copy "Progression stagnante"** : `"Progression stagnante — ETA non calculable"` → `"ETA non calculable"` (deux occurrences dans `progression/[exerciseId].tsx`). Retire le jugement de valeur sur la progression. Commit `e368d31`.
+- **T3 — PhilosophyScreen écran 0** : copy mise à jour avec le texte exact du manifeste validé — "Bienvenue." 40px Black, intro "Elle n'est pas là pour te juger", deux blocs neutres. Suppression des blocs "Ce que tu ne trouveras pas / Ce que tu vas trouver". CTA `colors.onPrimary`, `Inter_900Black`. Commit `0b158d5`.
+
+### Décisions
+
+- **PhilosophyScreen = écran 0** : le spec a été écrit avant l'implémentation du wizard. La PhilosophyScreen existante est l'écran 0 — update copy plutôt qu'ajout d'un 8e écran (YAGNI).
+- **Weekly notif `"C'est l'heure de t'entraîner 💪"` conservée** : notification opt-in explicite (utilisateur a choisi jour+heure) — pas un anti-pattern.
+- **`#22C55E`/`#EF4444` dans VolumeBarChart** : couleurs sémantiques data viz (delta ↑↓), conservées — déjà décidé session précédente.
+
+### Résultats audit
+
+- Axe 1 Architecture de l'information : ✅ home = action uniquement, Progression = données tirées
+- Axe 2 Nommage : ✅ "MARQUES", "Présences ce mois", copy factuelle
+- Axe 3 Mécanismes punition : ❌→✅ notification inactivité corrigée
+- Axe 4 Flèche : ✅ PR célébré, absence ignorée, présences additives
+- Axe 5 Onboarding : ❌→✅ PhilosophyScreen copy alignée avec manifeste
+- Axe 6 Filtre décision : ✅ dans CLAUDE.md
+
+---
+
+## S49 — 2026-06-18 — Passe design : système Tactique/Data, lime accent, Inter
+
+### Livré
+
+- **Colors.ts foundation** : `primary` dark `#FFFFFF` → `#84CC16`, `primary` light `#0D0D0D` → `#84CC16`, token `onPrimary: '#0D0D0D'` ajouté aux deux palettes, `tint` aligné. Commit `7dce2e0`.
+- **Home** : suppression hero barbell + titre. `CycleDots` inline (8px, lime=done, border=upcoming). Prévisualisation "AU PROGRAMME" (5 premiers exercices). Chips sélection séance : `surfaceElevated` inactive, `primary`/`onPrimary` active. CTA `DÉMARRER` pleine largeur, uppercase, `letterSpacing:2`, `minHeight:60`, `onPrimary`. Commits `82ae7a7` + `02d95b8`.
+- **`SeriesProgressBar`** : nouveau composant `components/ui/SeriesProgressBar.tsx` — segments flex, lime=done, border=upcoming. Remplace les dots GestureDetector dans `RunningPhase`. Commit `f84fec5`.
+- **RunningPhase** : `SeriesProgressBar` à la place des dots. `VALIDER` : `colors.primary` bg, `onPrimary` text, `minHeight:64`, uppercase `letterSpacing:2`. Cardio + durée : même traitement. RPE chips sélectionné : `onPrimary`. `blockBadge` text → `textSecondary`. Badges non-lime (`#7c3aed` superset, `#ea580c` AMRAP, `#2563eb` dropset, `#dc2626` destructif) **conservés intentionnellement** (couleurs sémantiques). Commit `f84fec5`.
+- **CircularTimer + RestPhase** : suppression `arcColor()` traffic-light (vert/ambre/rouge). Arc toujours `colors.primary`. Texte timer toujours `colors.text`. RestPhase : suppression `phaseLabel` standalone ("REPOS"), fond toujours `background`, bouton toujours outline, timer 200→220. Commit `ce0c719`.
+- **SummaryPhase** : hero compact (`heroLabel` uppercase + `heroDuration`). Grid 3 stats (Séries / Durée / Volume). PR card (`✦` lime, titre lime, sous-titre `textSecondary`, gate `progressionCount > 0`). Chips humeur/tags/RPE cardio → `surfaceElevated` sélectionné (non-lime). CTA `RETOUR AU PROGRAMME` `onPrimary`. Stats en `Inter_900Black`. Commits `7abf696` + `6d95041` + `46543a0` + `a030db7` + `11815dc`.
+- **ProgramCard** : suppression badge "actif" lime + `ACTIVE_BADGE_TEXT_COLOR`. Programme actif = `borderLeftWidth:3, borderLeftColor:colors.primary`. Commits `7d8696c` + `432840b`.
+- **Progression** : segment sélectionné `colors.onPrimary` (remplace `'#fff'`). Barres passées chart `colors.textDisabled` (remplace `#1E40AF`/`#BFDBFE`). Commits `0e411ca` + `18cc3bb`.
+- **Réglages** : zéro lime. `SegmentedControl` sélectionné → `surfaceElevated`. Chips jours notif → `surfaceElevated`. `ActivityIndicator` + flèche export → `textSecondary`. Commits `013c0ec` + `1364c51`.
+- **Audit global (T9)** : ~30 fichiers audités. Haiku pass → Opus repass (bugs haiku manqués). Onboarding CTAs utilisaient `colors.background`-on-lime (cassé light mode) → `onPrimary`. `ExerciseStartingWeightPhase` `#fff`-on-lime → `onPrimary`. `ExerciseTransitionPhase` texte dynamique (lime→`onPrimary`, orange/vert→`'#fff'` intentionnel). `colors.tint` → `colors.primary` (canonique). Session transition components : `fontWeight` strings → Inter fontFamily. Commits `bed2cb6` + `6b14312` + `55444d1`.
+
+### Décisions
+
+- **`colors.onPrimary` jamais `'#fff'`** : token dédié (`#0D0D0D`) sur fond lime. Raison : dark mode `'#fff'`-sur-lime fonctionne, light mode aussi, mais `onPrimary` est explicite et theme-aware.
+- **Chips humeur/tags/RPE → `surfaceElevated` (non-lime)** : règle "1 seul élément lime par écran au repos" — libère le lime pour la CTA principale uniquement.
+- **Traffic-light supprimé dans `CircularTimer`** : couleur rouge countdown = anxiogène, contraire à la philosophie anti-perf. Arc toujours lime.
+- **`phaseLabel` "REPOS" supprimé** : redondant avec le label dans le timer circulaire. Réduction du bruit visuel.
+- **Badges sémantiques conservés** : `#7c3aed` superset, `#ea580c` AMRAP/cardio, `#2563eb` dropset, `#dc2626` destructif — couleurs sémantiques intentionnelles, hors design system lime.
+- **`#22C55E`/`#EF4444` dans VolumeBarChart** : couleurs data viz (delta ↑↓), pas de token équivalent dans Colors.ts — conservées.
+- **`#dc2626` dans reglages.tsx** : message d'erreur export — couleur sémantique erreur, hors directive B&W.
+- **Subagent-Driven Development** : T9 initialement confié à Haiku → Haiku a manqué `colors.background`-on-lime (pattern non-évident). Opus a détecté et corrigé. Règle : T9-type global audit = Sonnet minimum, Opus préférable.
+
+### Problèmes rencontrés
+
+- **Limite hebdomadaire Sonnet** : atteinte en cours de session sur T9. Workaround : Opus pour le repass critique. Haiku acceptable pour reviews mécaniques (spec/quality sur 1-2 fichiers).
+- **Haiku T9 incomplet** : cherchait `'#fff'` littéral, n'a pas vu `colors.background` utilisé comme couleur de texte sur fond lime (cassé en light mode). Pattern subtil, nécessite compréhension sémantique.
+- **Typecheck depuis mauvais répertoire** : les agents lançaient parfois `npm run typecheck` depuis la racine du monorepo au lieu de `app/`. Corriger en précisant `cd app/` dans chaque prompt.
+
+---
+
 ## S48 — 2026-06-15 — Partage programme + Mesures corporelles + Notifications
 
 ### Livré

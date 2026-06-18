@@ -102,7 +102,14 @@ Interdit : texte courant, bordures décoratives, icônes nav, fond de section.
 - CTA → `Inter_700Bold` uppercase + `letterSpacing: 2`
 
 ### Radius
-`xs:2` chips/badges — `sm:4` cards/boutons — `md:8` modales uniquement. Rester flat.
+`xs:2` chips/badges — `sm:4` cards/boutons — `md:8` modales — `lg:12` éléments plus larges. Rester flat. `full:999` pill/capsule.
+
+### Tokens centralisés (`constants/`)
+- `Colors.ts` — couleurs thème (dark/light), `SemanticColors.ts` — couleurs sémantiques (superset/cardio/dropset/destructive…)
+- `Spacing.ts` — `{ xs:4, sm:8, md:12, lg:16, xl:20, xxl:24, xxxl:32 }` — **multiples de 4 obligatoires**
+- `Radius.ts` — `{ xs:2, sm:4, md:8, lg:12, full:999 }`
+- `Typography.ts` — `FontFamily` (black/bold/semibold/medium/regular) + `LetterSpacing` (tighter/tight/wide/wider/widest/spaced/max) + `Typography` scale
+- **Zéro valeur hardcodée** : toujours utiliser un token. Exceptions documentées : micro-spacing 1-3px (barres), offsets layout 40+px.
 
 ### Par écran
 | Écran | Point clé |
