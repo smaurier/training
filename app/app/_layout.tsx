@@ -14,6 +14,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import 'react-native-reanimated';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { StatusBar } from 'expo-status-bar';
 
 import { initDatabase, getDb } from '@/db';
 import { SQLiteSettingsRepository } from '@/repositories/SQLiteSettingsRepository';
@@ -166,6 +167,7 @@ function RootLayoutNav({ onboardingDone }: { onboardingDone: boolean }) {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <BottomSheetModalProvider>
       <ThemeProvider value={themeCtx.resolved === 'dark' ? DarkTheme : DefaultTheme}>
+        <StatusBar style={themeCtx.resolved === 'dark' ? 'light' : 'dark'} />
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="add-exercise" options={{ presentation: 'modal', title: 'Nouvel exercice' }} />
