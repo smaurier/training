@@ -5,6 +5,13 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.19.3] — 2026-06-18
+
+3cf5deb fix(ux): Confirmer footer fixe — bouton visible quand clavier ouvert
+2924f61 fix(ux): Passer → footer fixe en séance, actionBtn padding 12
+
+---
+
 ## [1.19.2] — 2026-06-18
 
 1c825ad fix(a11y): accessibilityHint sur DÉMARRER désactivé; renforcer test session fantôme
