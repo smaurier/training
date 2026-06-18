@@ -5,8 +5,8 @@ export const SemanticColors = {
   cardio: '#ea580c',
   dropset: '#2563eb',
   stretch: '#16a34a',
-  prBadge: '#ca8a04',
+  prBadge:     '#84CC16',
   positive:    '#22c55e',
   negative:    '#ef4444',
-  prBadgeTint: '#fef3c7',
+  prBadgeTint: 'rgba(0,0,0,0.65)',
 } as const;

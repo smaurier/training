@@ -582,7 +582,7 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   prBadgeIcon: { fontSize: 24 },
-  prBadgeTitle: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  prBadgeTitle: { color: '#000', fontSize: 16, fontWeight: '700' },
   prBadgeSub: { color: SemanticColors.prBadgeTint, fontSize: 13, maxWidth: 200 },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   pauseButtonContainer: {
