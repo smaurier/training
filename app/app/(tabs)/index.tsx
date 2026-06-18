@@ -6,6 +6,7 @@ import { useState, useCallback } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import { useHomeWorkout } from '@/hooks/useHomeWorkout';
+import { useWorkoutExercises } from '@/hooks/useWorkoutExercises';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
@@ -45,6 +46,11 @@ export default function HomeScreen() {
     isSuggestion, loading, hasActiveProgram, selectWorkout, refresh,
   } = useHomeWorkout();
 
+  const { exercises: previewExercises } = useWorkoutExercises(selectedWorkout?.id ?? 0);
+  const cycleDoneCount = suggestedWorkout
+    ? workouts.findIndex(w => w.id === suggestedWorkout.id)
+    : 0;
+
   useFocusEffect(useCallback(() => {
     refresh();
     const db = getDb();
@@ -63,11 +69,6 @@ export default function HomeScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={styles.hero}>
-        <Ionicons name="barbell-outline" size={52} color={colors.primary} importantForAccessibility="no" accessibilityElementsHidden={true} />
-        <Text style={[styles.title, { color: colors.text }]} accessibilityRole="header">Prêt à s&apos;entraîner ?</Text>
-      </View>
-
       {pausedSession && (
         <ResumeSessionCard
           workoutName={pausedSession.workoutName}
@@ -111,14 +112,61 @@ export default function HomeScreen() {
         </View>
       ) : selectedWorkout ? (
         <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          {/* Label + name */}
           <Text style={[styles.cardLabel, { color: colors.textSecondary }]}>
             {isSuggestion ? 'PROCHAINE SÉANCE' : 'SÉANCE CHOISIE'}
           </Text>
           <Text style={[styles.workoutName, { color: colors.text }]}>{selectedWorkout.name}</Text>
+
+          {/* CycleDots */}
+          {workouts.length > 1 && (
+            <View style={styles.cycleDots}>
+              {workouts.map((_, i) => (
+                <View
+                  key={i}
+                  style={[
+                    styles.cycleDot,
+                    i < cycleDoneCount
+                      ? { backgroundColor: colors.primary }
+                      : { backgroundColor: 'transparent', borderWidth: 1.5, borderColor: colors.border },
+                  ]}
+                />
+              ))}
+            </View>
+          )}
+
           <Text style={[styles.lastDate, { color: colors.textSecondary }]}>
             {formatRelativeDate(lastDates.get(selectedWorkout.id))}
           </Text>
 
+          {/* Exercise preview */}
+          {previewExercises.length > 0 && (
+            <View style={styles.exercisePreview}>
+              <Text style={[styles.cardLabel, { color: colors.textSecondary, marginBottom: 4 }]}>AU PROGRAMME</Text>
+              {previewExercises.slice(0, 5).map((we, i) => {
+                const workBlock = we.blocks.find(b => b.is_work_block === 1);
+                const setCount = workBlock ? workBlock.sets.length : 0;
+                const repsMin = workBlock?.sets[0]?.reps_min ?? 0;
+                const setLabel = setCount > 0 && repsMin > 0 ? `${setCount} × ${repsMin}` : `${setCount} séries`;
+                return (
+                  <View
+                    key={we.id}
+                    style={[
+                      styles.exerciseRow,
+                      i > 0 && { borderTopWidth: 1, borderTopColor: colors.border },
+                    ]}
+                  >
+                    <Text style={[styles.exerciseRowName, { color: colors.text }]} numberOfLines={1}>
+                      {we.exercise.name}
+                    </Text>
+                    <Text style={[styles.exerciseRowSets, { color: colors.textSecondary }]}>{setLabel}</Text>
+                  </View>
+                );
+              })}
+            </View>
+          )}
+
+          {/* Chips */}
           <View style={styles.chipsWrapper}>
             <ScrollView
               horizontal
@@ -139,7 +187,7 @@ export default function HomeScreen() {
                       onPress={() => selectWorkout(w)}
                       style={[
                         styles.chip,
-                        { borderColor: colors.border },
+                        { borderColor: colors.border, backgroundColor: colors.surfaceElevated },
                         isSelected && { backgroundColor: colors.primary, borderColor: colors.primary },
                         !isSelected && isSug && { borderColor: colors.primary, opacity: 0.7 },
                       ] as StyleProp<ViewStyle>}
@@ -147,7 +195,7 @@ export default function HomeScreen() {
                       <Text style={[
                         styles.chipText,
                         { color: colors.textSecondary },
-                        isSelected && styles.chipTextSelected,
+                        isSelected && { color: colors.onPrimary },
                       ]}>
                         {w.name}
                       </Text>
@@ -165,13 +213,14 @@ export default function HomeScreen() {
             />
           </View>
 
+          {/* CTA */}
           <PressableA11y
             accessibilityLabel={`Démarrer ${selectedWorkout.name}`}
             onPress={() => router.push({ pathname: '/session/[workoutId]' as any, params: { workoutId: String(selectedWorkout.id) } })}
             style={[styles.startBtn, { backgroundColor: colors.primary }]}
           >
-            <Ionicons name="play" size={18} color="#fff" importantForAccessibility="no" accessibilityElementsHidden={true} />
-            <Text style={styles.startBtnText}>Démarrer</Text>
+            <Ionicons name="play" size={16} color={colors.onPrimary} importantForAccessibility="no" accessibilityElementsHidden={true} />
+            <Text style={[styles.startBtnText, { color: colors.onPrimary }]}>DÉMARRER</Text>
           </PressableA11y>
         </View>
       ) : null}
@@ -180,13 +229,17 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 24, gap: 24 },
-  hero: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12 },
-  title: { fontSize: 24, fontWeight: '700', textAlign: 'center' },
-  card: { borderWidth: 1, borderRadius: Radius.sm, padding: 20, gap: 10 },
-  cardLabel: { fontSize: 11, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.5 },
-  workoutName: { fontSize: 20, fontWeight: '700' },
-  lastDate: { fontSize: 12 },
+  container: { flex: 1, padding: 20, gap: 16 },
+  card: { borderWidth: 1, borderRadius: Radius.sm, padding: 20, gap: 12 },
+  cardLabel: { fontSize: 11, fontFamily: 'Inter_600SemiBold', textTransform: 'uppercase', letterSpacing: 1.6 },
+  workoutName: { fontSize: 22, fontFamily: 'Inter_700Bold', letterSpacing: -0.3 },
+  lastDate: { fontSize: 11, fontFamily: 'Inter_400Regular' },
+  cycleDots: { flexDirection: 'row', gap: 8, alignItems: 'center' },
+  cycleDot: { width: 8, height: 8, borderRadius: 999 },
+  exercisePreview: { gap: 0, marginTop: 4 },
+  exerciseRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 10 },
+  exerciseRowName: { flex: 1, fontSize: 14, fontFamily: 'Inter_400Regular', marginRight: 12 },
+  exerciseRowSets: { fontSize: 12, fontFamily: 'Inter_500Medium' },
   chipsWrapper: { position: 'relative' },
   chipsScroll: { marginHorizontal: -4 },
   chipsRow: { paddingHorizontal: 4 },
@@ -195,18 +248,17 @@ const styles = StyleSheet.create({
   chip: {
     paddingHorizontal: 14,
     minHeight: 44,
-    borderRadius: 22,
+    borderRadius: Radius.xs,
     borderWidth: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  chipText: { fontSize: 13, fontWeight: '500' },
-  chipTextSelected: { color: '#fff', fontWeight: '700' },
+  chipText: { fontSize: 12, fontFamily: 'Inter_600SemiBold', letterSpacing: 0.8, textTransform: 'uppercase' },
   startBtn: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    gap: 8, paddingVertical: 14, borderRadius: Radius.sm,
+    gap: 8, minHeight: 60, borderRadius: Radius.sm,
   },
-  startBtnText: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  startBtnText: { fontSize: 14, fontFamily: 'Inter_700Bold', letterSpacing: 2, textTransform: 'uppercase' },
   linkBtn: { paddingVertical: 4 },
-  linkText: { fontSize: 15, fontWeight: '500' },
+  linkText: { fontSize: 15, fontFamily: 'Inter_500Medium' },
 });
