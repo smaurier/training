@@ -159,11 +159,17 @@ export class SessionService {
   async findAnyPausedSession(): Promise<PausedSessionInfo | null> {
     const sessionLog = await this.sessionLogRepo.findAnyPaused();
     if (!sessionLog) return null;
+
     const workout = await this.workoutRepo.findById(sessionLog.workout_id);
+    if (!workout) {
+      await this.sessionLogRepo.abandon(sessionLog.id, new Date().toISOString());
+      return null;
+    }
+
     const setLogs = await this.setLogRepo.findBySessionLogId(sessionLog.id);
     const setsLogged = setLogs.length;
     const volume = setLogs.reduce((sum, sl) => sum + sl.reps_done * sl.weight_done, 0);
-    return { sessionLog, workoutName: workout?.name ?? '', setsLogged, volume };
+    return { sessionLog, workoutName: workout.name, setsLogged, volume };
   }
 
   async getNextWorkout(programId: number): Promise<Workout | null> {

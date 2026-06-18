@@ -447,6 +447,17 @@ describe('SessionService.findAnyPausedSession', () => {
     await service.abandonSession(log.id);
     expect(await service.findAnyPausedSession()).toBeNull();
   });
+
+  it('retourne null si le workout de la session en pause a été supprimé', async () => {
+    const ctx = makeService();
+    const service = ctx.build();
+    // Start + pause a session for workout_id 9999 — no workout with id 9999 in workoutRepo
+    const log = await service.startSession(9999, { checkin_energy: null, checkin_fatigue: null, checkin_sleep: null });
+    await service.pauseSession(log.id, { exerciseIdx: 0, blockIdx: 0, setIdx: 0 }, 'running');
+
+    const result = await service.findAnyPausedSession();
+    expect(result).toBeNull();
+  });
 });
 
 describe('SessionService.startSession (garde session en pause)', () => {
