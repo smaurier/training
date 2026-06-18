@@ -5,6 +5,15 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.20.0] — 2026-06-18
+
+abb4a9c refactor(tokens): borderRadius 4 → Radius.sm (manqué en T1)
+973c876 refactor(tokens): Spacing rétroactif — 54 fichiers, multiples de 4
+5c9892e refactor(tokens): LetterSpacing token — 41 occurrences, harmonise 0.4/1.2/1.5
+0e7fb64 refactor(tokens): borderRadius 10 → Radius.lg (harmonise à multiple de 4)
+
+---
+
 ## [1.19.5] — 2026-06-18
 
 252f13c refactor(tokens): FontFamily — remplacer strings Inter_ par constantes
