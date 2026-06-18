@@ -21,14 +21,7 @@ export function RestPhase({ durationSeconds, timer, nextLabel, onContinue }: Res
   const progress = durationSeconds > 0 ? timer.remaining / durationSeconds : 0;
 
   return (
-    <View style={[styles.container, { backgroundColor: isDone ? '#16a34a15' : colors.background }]}>
-      <Text
-        style={[styles.phaseLabel, { color: isDone ? '#16a34a' : colors.primary }]}
-        accessibilityRole="header"
-      >
-        {isDone ? "À toi ·" : 'REPOS'}
-      </Text>
-
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View
         accessible={true}
         accessibilityLabel={`Temps de repos restant : ${timer.remaining} secondes`}
@@ -37,7 +30,7 @@ export function RestPhase({ durationSeconds, timer, nextLabel, onContinue }: Res
           progress={progress}
           remaining={timer.remaining}
           label={isDone ? "À toi" : 'REPOS'}
-          size={200}
+          size={220}
         />
       </View>
 
@@ -51,17 +44,10 @@ export function RestPhase({ durationSeconds, timer, nextLabel, onContinue }: Res
         onPress={onContinue}
         style={[
           styles.continueBtn,
-          isDone
-            ? { backgroundColor: colors.primary }
-            : { backgroundColor: 'transparent', borderWidth: 1, borderColor: colors.border },
+          { borderWidth: 1, borderColor: colors.border },
         ]}
       >
-        <Text
-          style={[
-            styles.continueBtnText,
-            { color: isDone ? (colorScheme === 'dark' ? '#000' : '#fff') : colors.textSecondary },
-          ]}
-        >
+        <Text style={[styles.continueBtnText, { color: colors.text }]}>
           {isDone ? "À toi →" : 'Passer →'}
         </Text>
       </PressableA11y>
@@ -77,12 +63,6 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
     alignItems: 'center',
     gap: 20,
-  },
-  phaseLabel: {
-    fontSize: 32,
-    fontWeight: '800',
-    letterSpacing: 1,
-    textAlign: 'center',
   },
   nextSection: { alignItems: 'center', gap: 4 },
   nextSectionLabel: { fontSize: 10, fontWeight: '700', letterSpacing: 1 },

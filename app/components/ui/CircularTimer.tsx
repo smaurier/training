@@ -9,13 +9,6 @@ interface CircularTimerProps {
   size?: number;
 }
 
-function arcColor(progress: number): string {
-  if (progress <= 0) return '#16a34a';
-  if (progress > 0.6) return '#16a34a';
-  if (progress > 0.3) return '#f59e0b';
-  return '#ef4444';
-}
-
 function formatTime(seconds: number): string {
   const n = Math.max(0, Math.round(seconds));
   const m = Math.floor(n / 60);
@@ -34,7 +27,6 @@ export function CircularTimer({ progress, remaining, label, size = 160 }: Circul
   const circumference = 2 * Math.PI * radius;
   const clamped = Math.max(0, Math.min(1, progress));
   const dashOffset = circumference * (1 - clamped);
-  const color = arcColor(clamped);
   const isDone = clamped <= 0;
   const fontSize = Math.round(size * 0.22);
 
@@ -58,7 +50,7 @@ export function CircularTimer({ progress, remaining, label, size = 160 }: Circul
           cx={cx}
           cy={cy}
           r={radius}
-          stroke={color}
+          stroke={colors.primary}
           strokeWidth={strokeWidth}
           strokeDasharray={[circumference]}
           strokeDashoffset={dashOffset}
@@ -70,7 +62,7 @@ export function CircularTimer({ progress, remaining, label, size = 160 }: Circul
         x={cx}
         y={label ? cy - size * 0.04 : cy + size * 0.06}
         textAnchor="middle"
-        fill={isDone ? '#16a34a' : colors.text}
+        fill={colors.text}
         fontSize={fontSize}
         fontWeight="700"
       >
@@ -81,7 +73,7 @@ export function CircularTimer({ progress, remaining, label, size = 160 }: Circul
           x={cx}
           y={cy + size * 0.12}
           textAnchor="middle"
-          fill={isDone ? '#16a34a' : colors.textSecondary}
+          fill={colors.textSecondary}
           fontSize={Math.round(size * 0.07)}
           fontWeight="600"
         >
