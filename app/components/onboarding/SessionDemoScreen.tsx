@@ -5,7 +5,7 @@ import { PressableA11y } from '@/components/ui/PressableA11y';
 import { useColorScheme } from '@/components/useColorScheme';
 import Colors from '@/constants/Colors';
 import { Radius } from '@/constants/Radius';
-import { FontFamily } from '@/constants/Typography';
+import { LetterSpacing, FontFamily  } from '@/constants/Typography';
 import type { ScreenProps } from '@/app/onboarding';
 
 // ⚠️ Replica simplifiée de RunningPhase/RestPhase — découplée intentionnellement.
@@ -130,7 +130,7 @@ export function SessionDemoScreen({ onNext, onBack }: ScreenProps) {
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 24 },
   topRow: { gap: 16, marginBottom: 32 },
-  label: { fontSize: 11, fontFamily: FontFamily.bold, letterSpacing: 1 },
+  label: { fontSize: 11, fontFamily: FontFamily.bold, letterSpacing: LetterSpacing.widest },
   content: { gap: 16 },
   exerciseName: { fontSize: 26, fontFamily: FontFamily.bold },
   setInfo: { fontSize: 14, fontFamily: FontFamily.medium },

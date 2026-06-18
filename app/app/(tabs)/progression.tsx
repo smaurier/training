@@ -16,7 +16,7 @@ import { MuscleGroupCard } from '@/components/progression/MuscleGroupCard';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
-import { FontFamily } from '@/constants/Typography';
+import { LetterSpacing, FontFamily  } from '@/constants/Typography';
 import type { SessionSummary } from '@/services/HistoryService';
 import type { Exercise1RM } from '@/services/ProgressionService';
 
@@ -313,7 +313,7 @@ const styles = StyleSheet.create({
   segmentButton: { flex: 1, borderRadius: Radius.sm, paddingVertical: 6, alignItems: 'center' },
   segmentText: { fontSize: 13, fontFamily: FontFamily.semibold },
   sectionHeader: { paddingHorizontal: 16, paddingVertical: 8 },
-  sectionTitle: { fontSize: 12, fontFamily: FontFamily.bold, textTransform: 'uppercase', letterSpacing: 1 },
+  sectionTitle: { fontSize: 12, fontFamily: FontFamily.bold, textTransform: 'uppercase', letterSpacing: LetterSpacing.widest },
   statsContent: { paddingVertical: 12, paddingHorizontal: 16, gap: 12 },
   scrollContent: { paddingVertical: 12, paddingHorizontal: 16, gap: 12 },
   emptyText: { fontSize: 14, textAlign: 'center', paddingVertical: 24 },
@@ -321,17 +321,17 @@ const styles = StyleSheet.create({
   addBtnText: { fontSize: 15, fontFamily: FontFamily.semibold },
   chipsRow: { flexDirection: 'row', gap: 8 },
   chip: { flex: 1, borderRadius: Radius.sm, padding: 10, alignItems: 'center', gap: 2 },
-  chipLabel: { fontSize: 9, fontFamily: FontFamily.bold, textTransform: 'uppercase', letterSpacing: 0.5 },
+  chipLabel: { fontSize: 9, fontFamily: FontFamily.bold, textTransform: 'uppercase', letterSpacing: LetterSpacing.wide },
   chipValue: { fontSize: 22, fontFamily: FontFamily.bold },
   chipSub: { fontSize: 9 },
   card: { borderRadius: Radius.sm, padding: 14 },
-  cardLabel: { fontSize: 10, fontFamily: FontFamily.bold, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10 },
+  cardLabel: { fontSize: 10, fontFamily: FontFamily.bold, textTransform: 'uppercase', letterSpacing: LetterSpacing.wide, marginBottom: 10 },
   prRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 8 },
   prInfo: { flex: 1, gap: 2 },
   prName: { fontSize: 14, fontFamily: FontFamily.regular },
   prMeta: { fontSize: 12 },
   prDate: { fontSize: 12 },
-  listTitle: { fontSize: 10, fontFamily: FontFamily.bold, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 6 },
+  listTitle: { fontSize: 10, fontFamily: FontFamily.bold, textTransform: 'uppercase', letterSpacing: LetterSpacing.wide, marginBottom: 6 },
   list: { borderRadius: Radius.sm, overflow: 'hidden' },
   presencesCard: { borderRadius: Radius.sm, paddingHorizontal: 14, paddingVertical: 12 },
   presencesText: { fontSize: 15, fontFamily: FontFamily.semibold },

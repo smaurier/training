@@ -7,7 +7,7 @@ import type { WorkoutExerciseDetail } from '@/services/WorkoutExerciseService';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
-import { FontFamily } from '@/constants/Typography';
+import { LetterSpacing, FontFamily  } from '@/constants/Typography';
 
 function estimateDurationSeconds(exercises: WorkoutExerciseDetail[]): number {
   let total = exercises.length * 30; // transition per exercise
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
   title: { fontSize: 24, fontFamily: FontFamily.bold, textAlign: 'center' },
   subtitle: { fontSize: 14, textAlign: 'center' },
   row: { gap: 10 },
-  rowLabel: { fontSize: 11, fontFamily: FontFamily.bold, letterSpacing: 0.8 },
+  rowLabel: { fontSize: 11, fontFamily: FontFamily.bold, letterSpacing: LetterSpacing.wider },
   segment: { flexDirection: 'row', borderWidth: 1, borderRadius: Radius.sm, overflow: 'hidden' },
   segmentBtn: { flex: 1, alignItems: 'center', paddingVertical: 14 },
   segmentFirst: { borderTopLeftRadius: Radius.sm, borderBottomLeftRadius: Radius.sm },

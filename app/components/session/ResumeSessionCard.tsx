@@ -1,4 +1,5 @@
 import React from 'react';
+import { LetterSpacing } from '@/constants/Typography';
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { PressableA11y } from '@/components/ui/PressableA11y';
@@ -42,7 +43,7 @@ export function ResumeSessionCard({ workoutName, serieLabel, onPress }: ResumeSe
 const styles = StyleSheet.create({
   card: { borderWidth: 1.5, borderRadius: Radius.md, padding: 16, gap: 4 },
   row: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  label: { fontSize: 11, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.5 },
+  label: { fontSize: 11, fontWeight: '600', textTransform: 'uppercase', letterSpacing: LetterSpacing.wide },
   workoutName: { fontSize: 18, fontWeight: '700' },
   serieLabel: { fontSize: 13 },
   cta: { fontSize: 14, fontWeight: '600', marginTop: 4 },

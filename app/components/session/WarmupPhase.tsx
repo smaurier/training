@@ -1,4 +1,5 @@
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { LetterSpacing } from '@/constants/Typography';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import { useUnits } from '@/hooks/useUnits';
 import Colors from '@/constants/Colors';
@@ -81,7 +82,7 @@ const styles = StyleSheet.create({
   phaseLabel: {
     fontSize: 11,
     fontWeight: '700',
-    letterSpacing: 1.5,
+    letterSpacing: LetterSpacing.spaced,
   },
   exerciseName: {
     fontSize: 28,

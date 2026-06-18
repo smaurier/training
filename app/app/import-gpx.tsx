@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { LetterSpacing } from '@/constants/Typography';
 import { View, Text, TextInput, ScrollView, StyleSheet, Alert } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
@@ -188,7 +189,7 @@ const styles = StyleSheet.create({
   pickBtnText: { fontSize: 17, fontWeight: '600' },
   preview: { gap: 12 },
   previewCard: { borderWidth: 1, borderRadius: Radius.sm, padding: 16, gap: 8 },
-  previewLabel: { fontSize: 11, fontWeight: '600', letterSpacing: 0.5 },
+  previewLabel: { fontSize: 11, fontWeight: '600', letterSpacing: LetterSpacing.wide },
   previewValue: { fontSize: 18, fontWeight: '600' },
   distanceInput: { borderWidth: 1, borderRadius: Radius.sm, padding: 10, fontSize: 18, fontWeight: '600' },
   rpeRow: { flexDirection: 'row', gap: 8 },

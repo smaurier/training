@@ -6,6 +6,16 @@ export const FontFamily = {
   regular:  'Inter_400Regular',
 } as const;
 
+export const LetterSpacing = {
+  tighter: -1,   // hero title
+  tight:   -0.3, // body dense
+  wide:     0.5, // structural labels
+  wider:    0.8, // chips / tags
+  widest:   1,   // general labels
+  spaced:   1.6, // section headers uppercase
+  max:      2,   // CTA uppercase
+} as const;
+
 export const Typography = {
   display:    { fontSize: 32, fontFamily: 'Inter_900Black' as const },
   title:      { fontSize: 20, fontFamily: 'Inter_700Bold' as const },

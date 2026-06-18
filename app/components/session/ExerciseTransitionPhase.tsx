@@ -5,7 +5,7 @@ import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
 import { SemanticColors } from '@/constants/SemanticColors';
-import { FontFamily } from '@/constants/Typography';
+import { LetterSpacing, FontFamily  } from '@/constants/Typography';
 
 interface ExerciseTransitionPhaseProps {
   exercise: WorkoutExerciseDetail;
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
   exerciseLabel: {
     fontSize: 11,
     fontFamily: FontFamily.bold,
-    letterSpacing: 1.5,
+    letterSpacing: LetterSpacing.spaced,
   },
   exerciseName: {
     fontSize: 28,
@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   supersetPreview: { marginTop: 4 },
-  supersetPreviewLabel: { fontSize: 11, fontFamily: FontFamily.bold, letterSpacing: 0.5, marginBottom: 4 },
+  supersetPreviewLabel: { fontSize: 11, fontFamily: FontFamily.bold, letterSpacing: LetterSpacing.wide, marginBottom: 4 },
   supersetPreviewChain: { fontSize: 14, fontFamily: FontFamily.regular },
   continueBtn: {
     paddingVertical: 14,

@@ -1,5 +1,7 @@
+
 // app/app/session/[workoutId].tsx
 import { useEffect, useCallback, useMemo, useState, useRef } from 'react';
+import { LetterSpacing } from '@/constants/Typography';
 import { View, Text, StyleSheet, AccessibilityInfo, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
@@ -605,5 +607,5 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     alignItems: 'center',
   },
-  deloadBannerText: { fontSize: 12, fontWeight: '500', letterSpacing: 0.5 },
+  deloadBannerText: { fontSize: 12, fontWeight: '500', letterSpacing: LetterSpacing.wide },
 });

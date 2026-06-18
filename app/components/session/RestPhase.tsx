@@ -1,4 +1,5 @@
 import { View, Text, StyleSheet } from 'react-native';
+import { LetterSpacing } from '@/constants/Typography';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import { CircularTimer } from '@/components/ui/CircularTimer';
 import type { UseTimerResult } from '@/hooks/useTimer';
@@ -65,7 +66,7 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   nextSection: { alignItems: 'center', gap: 4 },
-  nextSectionLabel: { fontSize: 10, fontWeight: '700', letterSpacing: 1 },
+  nextSectionLabel: { fontSize: 10, fontWeight: '700', letterSpacing: LetterSpacing.widest },
   nextLabel: {
     fontSize: 17,
     fontWeight: '600',

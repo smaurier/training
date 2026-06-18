@@ -1,4 +1,5 @@
 import { View, Text, ScrollView, ActivityIndicator, StyleSheet, TextInput } from 'react-native';
+import { LetterSpacing } from '@/constants/Typography';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import { BarChart } from 'react-native-gifted-charts';
@@ -454,7 +455,7 @@ const styles = StyleSheet.create({
   content: { padding: 16, gap: 12, paddingBottom: 32 },
   title: { fontSize: 20, fontWeight: '700', marginBottom: 4 },
   section: { borderRadius: Radius.sm, padding: 14, gap: 8 },
-  sectionLabel: { fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5 },
+  sectionLabel: { fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: LetterSpacing.wide },
   prValue: { fontSize: 18, fontWeight: '700' },
   prMeta: { fontSize: 13 },
   prRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 8 },
@@ -473,7 +474,7 @@ const styles = StyleSheet.create({
   sheetContent: { padding: 20, gap: 12 },
   sheetTitle: { fontSize: 17, fontWeight: '700' },
   sheetInput: { borderWidth: 1, borderRadius: Radius.md, padding: 12, fontSize: 16 },
-  sheetLabel: { fontSize: 12, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.5 },
+  sheetLabel: { fontSize: 12, fontWeight: '600', textTransform: 'uppercase', letterSpacing: LetterSpacing.wide },
   chipsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   chip: { borderWidth: 1, borderRadius: 20, paddingHorizontal: 12, paddingVertical: 6 },
   chipText: { fontSize: 13, fontWeight: '500' },

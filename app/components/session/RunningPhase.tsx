@@ -19,7 +19,7 @@ import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
 import { SemanticColors } from '@/constants/SemanticColors';
-import { FontFamily } from '@/constants/Typography';
+import { LetterSpacing, FontFamily  } from '@/constants/Typography';
 import { useUnits } from '@/hooks/useUnits';
 import { lbsToKg } from '@/services/settingsUtils';
 import { computeRepsFeedback } from '@/services/repsFeedback';
@@ -686,7 +686,7 @@ const styles = StyleSheet.create({
   progressLabel: { fontSize: 13 },
   circularTimerWrapper: { alignItems: 'center' },
   blockBadge: { alignSelf: 'flex-start', marginTop: 4 },
-  blockBadgeText: { fontSize: 11, fontWeight: '700', letterSpacing: 0.5 },
+  blockBadgeText: { fontSize: 11, fontWeight: '700', letterSpacing: LetterSpacing.wide },
   targetCard: { padding: 16, borderRadius: Radius.sm, borderWidth: 1, alignItems: 'center' },
   targetText: { fontSize: 20, fontWeight: '600' },
   inputRow: { flexDirection: 'row', gap: 10 },
@@ -699,11 +699,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     gap: 8, minHeight: 64, borderRadius: Radius.sm,
   },
-  validateBtnText: { fontSize: 15, fontFamily: FontFamily.bold, letterSpacing: 2, textTransform: 'uppercase' },
+  validateBtnText: { fontSize: 15, fontFamily: FontFamily.bold, letterSpacing: LetterSpacing.max, textTransform: 'uppercase' },
   repsFeedback: { fontSize: 13, textAlign: 'center', lineHeight: 18 },
   lastLog: { fontSize: 12, marginTop: 4 },
   restSection: { gap: 4 },
-  restLabel: { fontSize: 10, fontWeight: '600', letterSpacing: 0.5 },
+  restLabel: { fontSize: 10, fontWeight: '600', letterSpacing: LetterSpacing.wide },
   restSet: { fontSize: 13, lineHeight: 20 },
   skipBtn: { alignItems: 'center', paddingVertical: 14, borderTopWidth: 1 },
   skipText: { fontSize: 14 },
@@ -753,7 +753,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '700',
     color: '#fff',
-    letterSpacing: 0.5,
+    letterSpacing: LetterSpacing.wide,
   },
   amrapBadge: {
     alignSelf: 'flex-start',
@@ -767,7 +767,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '700',
     color: '#fff',
-    letterSpacing: 0.5,
+    letterSpacing: LetterSpacing.wide,
   },
   dropsetBadge: {
     alignSelf: 'flex-start',
@@ -781,6 +781,6 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '700',
     color: '#fff',
-    letterSpacing: 0.5,
+    letterSpacing: LetterSpacing.wide,
   },
 });

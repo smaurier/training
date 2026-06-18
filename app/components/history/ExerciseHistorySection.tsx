@@ -1,4 +1,5 @@
 import { View, Text, StyleSheet } from 'react-native';
+import { LetterSpacing } from '@/constants/Typography';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import type { ExerciseHistory } from '@/services/HistoryService';
@@ -51,7 +52,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '700',
     textTransform: 'uppercase',
-    letterSpacing: 0.8,
+    letterSpacing: LetterSpacing.wider,
     marginBottom: 8,
   },
   chips: {

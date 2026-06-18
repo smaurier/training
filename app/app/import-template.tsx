@@ -1,4 +1,5 @@
 import { View, Text, TextInput, ScrollView, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import { LetterSpacing } from '@/constants/Typography';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { PressableA11y } from '@/components/ui/PressableA11y';
@@ -164,7 +165,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '600',
     textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    letterSpacing: LetterSpacing.wide,
     marginBottom: 4,
     marginTop: 8,
   },

@@ -7,7 +7,7 @@ import { ThemeContext } from '@/contexts/ThemeContext';
 import { useUnits } from '@/hooks/useUnits';
 import Colors from '@/constants/Colors';
 import { Radius } from '@/constants/Radius';
-import { FontFamily } from '@/constants/Typography';
+import { LetterSpacing, FontFamily  } from '@/constants/Typography';
 import type { ThemePreference, UnitsPreference, PlateStepValue } from '@/services/settingsUtils';
 import { getDb } from '@/db';
 import { ExportService } from '@/services/ExportService';
@@ -440,7 +440,7 @@ export default function ReglagesScreen() {
 
 const styles = StyleSheet.create({
   container: { padding: 20, gap: 8 },
-  sectionTitle: { fontSize: 11, fontFamily: FontFamily.semibold, letterSpacing: 0.5, marginTop: 8, marginBottom: 4 },
+  sectionTitle: { fontSize: 11, fontFamily: FontFamily.semibold, letterSpacing: LetterSpacing.wide, marginTop: 8, marginBottom: 4 },
   card: { borderWidth: 1, borderRadius: Radius.sm, padding: 16, gap: 10 },
   segmented: { flexDirection: 'row', borderWidth: 1, borderRadius: Radius.sm, overflow: 'hidden' },
   segment: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 10 },

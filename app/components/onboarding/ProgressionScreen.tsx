@@ -4,7 +4,7 @@ import { PressableA11y } from '@/components/ui/PressableA11y';
 import { useColorScheme } from '@/components/useColorScheme';
 import Colors from '@/constants/Colors';
 import { Radius } from '@/constants/Radius';
-import { FontFamily } from '@/constants/Typography';
+import { LetterSpacing, FontFamily  } from '@/constants/Typography';
 import type { ScreenProps } from '@/app/onboarding';
 
 const SECTIONS = [
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
   title: { fontSize: 24, fontFamily: FontFamily.bold },
   subtitle: { fontSize: 14, fontFamily: FontFamily.regular, lineHeight: 20 },
   row: { borderBottomWidth: 1, paddingBottom: 16, gap: 4 },
-  rowLabel: { fontSize: 11, fontFamily: FontFamily.bold, letterSpacing: 0.8 },
+  rowLabel: { fontSize: 11, fontFamily: FontFamily.bold, letterSpacing: LetterSpacing.wider },
   rowDesc: { fontSize: 14, fontFamily: FontFamily.regular, lineHeight: 20 },
   footer: { padding: 24, borderTopWidth: 1 },
   button: { borderRadius: Radius.lg, padding: 16, alignItems: 'center' },

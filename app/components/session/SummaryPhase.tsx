@@ -7,7 +7,7 @@ import type { PlateauResult } from '@/services/PlateauDetectionService';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
-import { FontFamily } from '@/constants/Typography';
+import { LetterSpacing, FontFamily  } from '@/constants/Typography';
 import { useUnits } from '@/hooks/useUnits';
 import type { SessionTagSlug } from '@/services/sessionTagsUtils';
 import { PREDEFINED_TAGS } from '@/services/sessionTagsUtils';
@@ -324,7 +324,7 @@ export function SummaryPhase({ progressions, totalSets, durationSeconds, totalVo
 const styles = StyleSheet.create({
   container: { flexGrow: 1, padding: 24, gap: 20 },
   hero: { paddingVertical: 8, gap: 4 },
-  heroLabel: { fontSize: 11, fontFamily: FontFamily.semibold, textTransform: 'uppercase', letterSpacing: 1.6 },
+  heroLabel: { fontSize: 11, fontFamily: FontFamily.semibold, textTransform: 'uppercase', letterSpacing: LetterSpacing.spaced },
   heroDuration: { fontSize: 13, fontFamily: FontFamily.regular },
   statsRow: { flexDirection: 'row', borderWidth: 1, borderRadius: Radius.sm, overflow: 'hidden' },
   statCell: { flex: 1, padding: 16, gap: 4 },
@@ -334,8 +334,8 @@ const styles = StyleSheet.create({
   prContent: { flex: 1, gap: 2 },
   prTitle: { fontSize: 14, fontFamily: FontFamily.semibold },
   prSub: { fontSize: 12, fontFamily: FontFamily.regular },
-  statValue: { fontSize: 22, fontFamily: FontFamily.black, letterSpacing: -0.3 },
-  statLabel: { fontSize: 10, fontFamily: FontFamily.semibold, letterSpacing: 1.2, textTransform: 'uppercase' },
+  statValue: { fontSize: 22, fontFamily: FontFamily.black, letterSpacing: LetterSpacing.tight },
+  statLabel: { fontSize: 10, fontFamily: FontFamily.semibold, letterSpacing: LetterSpacing.widest, textTransform: 'uppercase' },
   progressionSection: { borderWidth: 1, borderRadius: Radius.sm, padding: 16, gap: 12 },
   sectionTitle: { fontSize: 15, fontFamily: FontFamily.semibold },
   progressionRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 8, borderBottomWidth: 1 },
@@ -362,7 +362,7 @@ const styles = StyleSheet.create({
   tagLabel: { fontSize: 13, fontFamily: FontFamily.regular },
   notesInput: { borderWidth: 1, borderRadius: Radius.sm, padding: 12, fontSize: 14, minHeight: 72, textAlignVertical: 'top' },
   closeBtn: { paddingVertical: 16, borderRadius: Radius.sm, alignItems: 'center', marginTop: 8 },
-  closeBtnText: { fontSize: 15, fontFamily: FontFamily.bold, letterSpacing: 2, textTransform: 'uppercase' },
+  closeBtnText: { fontSize: 15, fontFamily: FontFamily.bold, letterSpacing: LetterSpacing.max, textTransform: 'uppercase' },
   cardioCard: { borderWidth: 1, borderRadius: Radius.sm, padding: 16, gap: 12 },
   cardioRow: { flexDirection: 'row', gap: 8 },
   cardioField: { flex: 1, gap: 4 },
@@ -373,7 +373,7 @@ const styles = StyleSheet.create({
   cardioRpeLabel: { fontSize: 13, fontFamily: FontFamily.regular },
   cardioBtnRow: { flexDirection: 'row', gap: 8 },
   cardioSaveBtn: { flex: 2, paddingVertical: 14, borderRadius: Radius.sm, alignItems: 'center' },
-  cardioSaveBtnText: { fontSize: 15, fontFamily: FontFamily.bold, letterSpacing: 2 },
+  cardioSaveBtnText: { fontSize: 15, fontFamily: FontFamily.bold, letterSpacing: LetterSpacing.max },
   cardioIgnoreBtn: { flex: 1, paddingVertical: 14, borderRadius: Radius.sm, alignItems: 'center', borderWidth: 1 },
   cardioIgnoreBtnText: { fontSize: 15, fontFamily: FontFamily.regular },
 });

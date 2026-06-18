@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { LetterSpacing } from '@/constants/Typography';
 import { View, Text, StyleSheet, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import type { BlockWithSets } from '@/services/WorkoutExerciseService';
@@ -174,10 +175,10 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '600',
     textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    letterSpacing: LetterSpacing.wide,
   },
   badge: { borderRadius: Radius.xs, paddingHorizontal: 5, paddingVertical: 1 },
-  badgeText: { fontSize: 9, fontWeight: '700', letterSpacing: 0.4 },
+  badgeText: { fontSize: 9, fontWeight: '700', letterSpacing: LetterSpacing.wide },
   set: { fontSize: 14, lineHeight: 20, paddingVertical: 2 },
   reorderBtn: { alignItems: 'center', justifyContent: 'center' },
   addBtn: { marginTop: 4 },

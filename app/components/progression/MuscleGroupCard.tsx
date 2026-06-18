@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { LetterSpacing } from '@/constants/Typography';
 import { View, Text, StyleSheet } from 'react-native';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import type { MacroGroupVolume, MacroCategory } from '@/services/muscleGroupUtils';
@@ -72,7 +73,7 @@ export function MuscleGroupCard({ data }: MuscleGroupCardProps) {
 
 const styles = StyleSheet.create({
   card: { borderRadius: Radius.sm, padding: 14, gap: 10 },
-  title: { fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 2 },
+  title: { fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: LetterSpacing.wide, marginBottom: 2 },
   row: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 4 },
   catLabel: { fontSize: 13, fontWeight: '600', width: 64 },
   barTrack: { flex: 1, height: 6, borderRadius: 3, overflow: 'hidden' },
