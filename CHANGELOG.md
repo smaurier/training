@@ -5,6 +5,33 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.19.0] — 2026-06-18
+
+55444d1 fix(design): Inter fontFamily + colors.primary in session transition components
+6b14312 feat(design): T9 global audit complete — onPrimary + Inter fontFamily
+bed2cb6 feat(design): global audit — colors.onPrimary on all lime button text
+1364c51 fix(design): Réglages — Inter fontFamily replaces fontWeight strings
+013c0ec feat(design): Réglages — full B&W, zero lime
+18cc3bb fix(design): Progression — onPrimary text, Inter fontFamily
+0e411ca feat(design): Progression — onPrimary segment text, textDisabled past bars
+432840b fix(ui): replace fontWeight with Inter_600SemiBold in ProgramCard
+7d8696c feat(design): ProgramCard — active state via left lime border, remove badge
+11815dc fix(session): use Inter_700Bold font instead of fontWeight in progressionNew style
+a030db7 fix(style): align cardio form styles with design system
+46543a0 fix(typography): align SummaryPhase to design system
+6d95041 fix(SummaryPhase): Use colors.primary for green accent elements
+7abf696 feat(design): SummaryPhase — 3-stat grid, PR card, neutral chips, lime CTA
+ce0c719 feat(design): CircularTimer lime arc always, RestPhase cleanup
+f84fec5 feat(design): RunningPhase — lime CTA (minH 64), SeriesProgressBar, fix hardcoded colors
+02d95b8 fix(design): cycle dots — remove hardcoded transparent backgroundColor
+82ae7a7 feat(design): home — structured header, cycle dots, exercise preview, lime CTA
+48ed05d docs(design): plan passe design v1
+7dce2e0 chore(design): update Colors.ts — lime primary + onPrimary token
+8772fd2 docs(design): nom app Trace (provisoire) dans directives design
+c22291b docs(design): add UI design system directives — Tactique/Data + Lime accent
+
+---
+
 ## [1.18.0] — 2026-06-17
 
 7bc8cf5 fix(a11y): accessibilityLabel Revoir l'introduction dans réglages
