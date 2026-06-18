@@ -5,8 +5,6 @@ import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
 
-const ACTIVE_BADGE_TEXT_COLOR = '#fff' as const;
-
 interface ProgramCardProps {
   program: Program;
   workoutCount: number;
@@ -20,7 +18,11 @@ export function ProgramCard({ program, workoutCount, onPress, onLongPress }: Pro
 
   return (
     <PressableA11y
-      style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}
+      style={[
+        styles.card,
+        { backgroundColor: colors.surface, borderColor: colors.border },
+        program.is_active === 1 && { borderLeftWidth: 3, borderLeftColor: colors.primary },
+      ]}
       onPress={onPress}
       onLongPress={onLongPress}
       accessibilityLabel={`Programme ${program.name}, ${workoutCount} séance${workoutCount !== 1 ? 's' : ''}`}
@@ -30,14 +32,6 @@ export function ProgramCard({ program, workoutCount, onPress, onLongPress }: Pro
         <Text style={[styles.name, { color: colors.text }]} numberOfLines={1}>
           {program.name}
         </Text>
-        {program.is_active === 1 && (
-          <View style={[styles.activeBadge, { backgroundColor: colors.primary }]}
-            accessibilityLabel="Programme actif"
-            accessibilityRole="text"
-          >
-            <Text style={styles.activeBadgeText}>actif</Text>
-          </View>
-        )}
       </View>
       {program.description ? (
         <Text style={[styles.description, { color: colors.textSecondary }]} numberOfLines={2}>
@@ -78,15 +72,5 @@ const styles = StyleSheet.create({
   meta: {
     fontSize: 12,
     marginTop: 2,
-  },
-  activeBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: Radius.sm,
-  },
-  activeBadgeText: {
-    color: ACTIVE_BADGE_TEXT_COLOR,
-    fontSize: 11,
-    fontWeight: '600',
   },
 });
