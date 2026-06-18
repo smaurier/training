@@ -4,6 +4,30 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 
 ---
 
+## S49g — 2026-06-18 — Design polish : plan 5 tâches exécuté (subagent-driven)
+
+### Livré
+
+- **T1 — borderRadius 16/20 → tokens** : chips → `Radius.xs` (2), modales → `Radius.md` (8). 4 fichiers. Commit `9a3b8a6`.
+- **T2 — SemanticColors** : ajout `positive`/`negative`/`prBadgeTint`. 7 composants tokenisés (Exercise1RMCard, VolumeBarChart, ProgramScreen, reglages, workoutId, workout/[id]). Commit `55cd716`.
+- **prBadge → lime** : `SemanticColors.prBadge` `'#ca8a04'` → `'#84CC16'` (lime, directive accent unique). `prBadgeTint` → `rgba(0,0,0,0.65)` (texte sur lime). `prBadgeTitle` `'#fff'` → `'#000'`. Commit `ff29f4a`.
+- **T5 — barres historiques** : `[exerciseId].tsx` barres non-actives `'#1E40AF'`/`'#BFDBFE'` → `colors.textDisabled`. Dark-first, plus de conditionnel colorScheme pour les couleurs. Commit `c3f9ad8`.
+- **T4 — LetterSpacing négatifs** : ajout `display:-3` (96px+) et `hero:-2` (48-72px). Appliqué sur SessionDemoScreen (64px timer → hero, 32px title → tighter) et ReadyScreen (32px → tighter). Commit `8c9e51a`.
+- **T3 — fontWeight → FontFamily** : 95 occurrences dans 32 fichiers. `'700'→FontFamily.bold`, `'600'→semibold`, `'500'→medium`, `'400'→regular`, `'900'→black`. Script Node.js, 0 doublons imports, typecheck 0 errors. Commit `968b31e`.
+
+### Décisions
+
+- **prBadge gold→lime** : le reviewer code quality a signalé l'incohérence avec la directive "accent unique" dans CLAUDE.md. Fix appliqué immédiatement à la demande de l'utilisateur.
+- **chips Radius.xs=2** : 2px est intentionnellement plat (design system direction "flat"). Pas Radius.sm=4 — direction "chips = micro-badges" validée.
+- **fontWeight '800'/'300' exclus** : pas de token FontFamily correspondant, laissés tels quels (rare, fonts custom Inter ne les supporte pas réellement).
+- **LetterSpacing.display** : token créé mais non utilisé (aucun element 96px+ dans le codebase actuel). En attente future implémentation hero timer.
+
+### Méthode
+
+Subagent-Driven Development (écriture-plans → T1→T2→T5→T4→T3 séquentiels). Review spec + qualité après chaque tâche. 6 commits net.
+
+---
+
 ## S49f — 2026-06-18 — Tokenisation design system complète (v1.20.0)
 
 ### Livré
@@ -1732,3 +1756,92 @@ progression/[exerciseId].tsx → ProgressionService direct (mount)
 - Implémenter micro-copy audit (~1h) : "Tout réussi" → "Tout fait", "Objectif" → "Cible", badge PR, RestPhase
 - Onboarding écran 0 (s'insère dans le wizard priorité haute)
 - Humeur après séance (extension SummaryPhase)
+
+---
+
+## Session 12 — 2026-06-18 · Audit RGAA/WCAG contrastes + Brzycki 1RM + WelcomeScreen
+
+### Ce qui a été demandé
+- Audit systématique contrastes RGAA/WCAG 2.1 sur toute l'app (dark + light)
+- Corriger toutes les violations (règle : "sous le seuil c'est sous le seuil, on ne discrimine pas")
+- Fix warmup preview "0 séries" dans l'accueil
+- Feature Brzycki : calibration scientifique de la charge de départ (1RM Brzycki)
+- WelcomeScreen : écran 0 onboarding philosophique
+
+### Décisions prises
+
+**Tokens sémantiques dans Colors.ts (vs SemanticColors)**
+- `SemanticColors` est mode-agnostique (fond superset/cardio/etc.) → pas refactorisé
+- 4 nouveaux tokens ajoutés dans `Colors.ts` dark+light : `primaryText`, `positiveText`, `negativeText`, `destructiveText`
+- Raison : évite breaking change sur tous les usages fond, résout le dual-mode proprement
+
+**Lime interdit comme texte courant**
+- `tabBarActiveTintColor: colors.tint` (lime, 2.0:1 sur blanc) → `colors.tabIconSelected` (#0D0D0D)
+- Liens accueil : `colors.primary` → `colors.text` + `textDecorationLine: 'underline'`
+- `primaryText` = `#3A5A00` (light, 7.97:1) / `#84CC16` (dark, 9.8:1) pour texte accent lisible
+
+**Contraste badge AMRAP/stretch**
+- Blanc sur orange `#ea580c` = 3.6:1 (< 4.5:1) → `#000` (6.4:1)
+- Blanc sur vert `#16a34a` = 3.3:1 → `#000` (5.9:1)
+
+**textSecondary/tabIconDefault corrigés**
+- `#888888` → `#8C8C8C` dark (`textSecondary` 4.62:1 sur surfaceElevated, `tabIconDefault` 5.17:1)
+- `#8A8A8A` → `#6B6B6B` light (`textSecondary` 4.89:1 sur blanc)
+
+**Brzycki : pure function TDD first**
+- `compute1RM(weight, reps)` : formule `weight / (1.0278 - 0.0278 × min(reps, 12))`
+- `suggestWorkingWeight(1RM, targetReps, plateStep)` : inversée + arrondi au pas
+- 9 tests GREEN avant tout composant (Red/Green/Refactor)
+- Sheet 3 étapes : poids → reps → résultat (1RM estimé + charge suggérée)
+- Câblé dans `ExerciseStartingWeightPhase` via `sheetRef.current?.expand()`
+
+**WelcomeScreen**
+- Inséré en position 0 dans `ALL_SCREENS`, `shouldSkip` toujours false
+- 3 valeurs dot lime : Présence / Progression / Autonomie
+- Nom app "Trace." (provisoire) comme titre héros 56px Black
+
+### Ce qui a été fait
+
+**Audit contrastes**
+- `constants/Colors.ts` — `textSecondary` (dark+light), `tabIconDefault`, +4 tokens sémantiques
+- `app/(tabs)/_layout.tsx` — `tabBarActiveTintColor` lime → `tabIconSelected`
+- `app/(tabs)/index.tsx` — lime → text+underline sur liens, fix warmup preview (hide si 0 sets)
+- `components/session/RunningPhase.tsx` — badge AMRAP text `#fff` → `#000`
+- `app/workout/[id].tsx` — badge stretch text + icon `#fff` → `#000`
+- `components/progression/Exercise1RMCard.tsx` — SemanticColors → `colors.positiveText/negativeText`
+- `components/progression/VolumeBarChart.tsx` — SemanticColors → tokens Colors
+- `app/(tabs)/reglages.tsx` — SemanticColors → `colors.destructiveText`
+- `components/session/ExerciseStartingWeightPhase.tsx` — SemanticColors → `colors.destructiveText`
+- `components/onboarding/ProgramScreen.tsx` — SemanticColors → `colors.negativeText` inline
+
+**Brzycki 1RM**
+- `services/brzycki.ts` — `compute1RM` + `suggestWorkingWeight` (TDD, 9 tests)
+- `services/brzycki.test.ts` — 9 cas (smoke, limites, circularité, arrondi, minimum)
+- `components/session/BrzyckiCalibrationSheet.tsx` — BottomSheet 3 étapes gorhom
+- `components/session/ExerciseStartingWeightPhase.tsx` — prop `plateStep`, lien calibration, sheet intégré
+- `app/session/[workoutId].tsx` — passage `plateStep` à `ExerciseStartingWeightPhase`
+
+**WelcomeScreen**
+- `components/onboarding/WelcomeScreen.tsx` — créé
+- `services/onboardingUtils.ts` — `'welcome'` ajouté à `OnboardingScreenId`
+- `app/onboarding.tsx` — `WelcomeScreen` en position 0 de `ALL_SCREENS`
+
+**TypeScript clean. 9/9 tests GREEN.**
+
+### Architecture Brzycki
+```
+brzycki.ts (pure fn) ← TDD first
+BrzyckiCalibrationSheet ← compute1RM + suggestWorkingWeight
+ExerciseStartingWeightPhase ← BrzyckiCalibrationSheet + plateStep prop
+session/[workoutId].tsx ← plateStep from settings DB
+```
+
+### Leçons Code Craft
+- **Token dual-mode** : quand un token sémantique doit varier selon le thème, l'ajouter directement dans `Colors.ts` (dark/light séparément) plutôt que de rendre `SemanticColors` mode-aware — évite de casser tous les usages fond existants.
+- **Lime text = violation** : lime (#84CC16) sur fond clair = 2.0:1 → toujours un token `primaryText` distinct. La règle CLAUDE.md "interdit texte courant" est strictement justifiée par les contrastes.
+- **Fragment JSX obligatoire** : un composant qui rend `<ViewA/><BottomSheet/>` côte à côte doit wrapper dans `<>...</>` — erreur TS2657 "JSX expressions must have one parent element".
+
+### Prochaine session
+- Micro-copy audit : "Tout réussi" → "Tout fait", "Objectif" → "Cible", badge PR, RestPhase
+- Humeur après séance (extension SummaryPhase)
+- Tests manuels sur device (tests-manuels-mvp.md)
