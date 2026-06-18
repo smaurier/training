@@ -5,6 +5,13 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.19.5] — 2026-06-18
+
+252f13c refactor(tokens): FontFamily — remplacer strings Inter_ par constantes
+25dce6e refactor(tokens): Radius.lg=12 — centraliser borderRadius dans composants
+
+---
+
 ## [1.19.4] — 2026-06-18
 
 561defc refactor(tokens): centraliser couleurs sémantiques dans SemanticColors.ts
