@@ -147,7 +147,7 @@ export default function ProgressionScreen() {
             accessibilityLabel="Ajouter une mesure corporelle"
             accessibilityRole="button"
           >
-            <Text style={styles.addBtnText}>+ Ajouter une mesure</Text>
+            <Text style={[styles.addBtnText, { color: colors.onPrimary }]}>+ Ajouter une mesure</Text>
           </PressableA11y>
 
           <AddMeasurementSheet ref={addSheetRef} onSave={saveMeasurement} />
@@ -310,34 +310,34 @@ const styles = StyleSheet.create({
   segmentContainer: { paddingHorizontal: 16, paddingVertical: 8 },
   segmentTrack: { flexDirection: 'row', borderRadius: Radius.sm, padding: 3 },
   segmentButton: { flex: 1, borderRadius: Radius.sm, paddingVertical: 6, alignItems: 'center' },
-  segmentText: { fontSize: 13, fontWeight: '600' },
+  segmentText: { fontSize: 13, fontFamily: 'Inter_600SemiBold' },
   sectionHeader: { paddingHorizontal: 16, paddingVertical: 8 },
-  sectionTitle: { fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1 },
+  sectionTitle: { fontSize: 12, fontFamily: 'Inter_700Bold', textTransform: 'uppercase', letterSpacing: 1 },
   statsContent: { paddingVertical: 12, paddingHorizontal: 16, gap: 12 },
   scrollContent: { paddingVertical: 12, paddingHorizontal: 16, gap: 12 },
   emptyText: { fontSize: 14, textAlign: 'center', paddingVertical: 24 },
   addBtn: { borderRadius: Radius.sm, paddingVertical: 14, alignItems: 'center', marginTop: 8 },
-  addBtnText: { color: '#fff', fontSize: 15, fontWeight: '600' },
+  addBtnText: { fontSize: 15, fontFamily: 'Inter_600SemiBold' },
   chipsRow: { flexDirection: 'row', gap: 8 },
   chip: { flex: 1, borderRadius: Radius.sm, padding: 10, alignItems: 'center', gap: 2 },
-  chipLabel: { fontSize: 9, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5 },
-  chipValue: { fontSize: 22, fontWeight: '700' },
+  chipLabel: { fontSize: 9, fontFamily: 'Inter_700Bold', textTransform: 'uppercase', letterSpacing: 0.5 },
+  chipValue: { fontSize: 22, fontFamily: 'Inter_700Bold' },
   chipSub: { fontSize: 9 },
   card: { borderRadius: Radius.sm, padding: 14 },
-  cardLabel: { fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10 },
+  cardLabel: { fontSize: 10, fontFamily: 'Inter_700Bold', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10 },
   prRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 8 },
   prInfo: { flex: 1, gap: 2 },
-  prName: { fontSize: 14, fontWeight: '500' },
+  prName: { fontSize: 14, fontFamily: 'Inter_400Regular' },
   prMeta: { fontSize: 12 },
   prDate: { fontSize: 12 },
-  listTitle: { fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 6 },
+  listTitle: { fontSize: 10, fontFamily: 'Inter_700Bold', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 6 },
   list: { borderRadius: Radius.sm, overflow: 'hidden' },
   presencesCard: { borderRadius: Radius.sm, paddingHorizontal: 14, paddingVertical: 12 },
-  presencesText: { fontSize: 15, fontWeight: '600' },
+  presencesText: { fontSize: 15, fontFamily: 'Inter_600SemiBold' },
   searchEntry: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderRadius: Radius.sm, paddingHorizontal: 14, paddingVertical: 12 },
   searchEntryText: { fontSize: 14 },
   searchEntryChevron: { fontSize: 18 },
   goalRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 10 },
-  goalRowName: { fontSize: 14, fontWeight: '500', flex: 1 },
+  goalRowName: { fontSize: 14, fontFamily: 'Inter_400Regular', flex: 1 },
   goalRowTarget: { fontSize: 13 },
 });

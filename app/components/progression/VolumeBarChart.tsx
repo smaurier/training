@@ -69,7 +69,7 @@ export function VolumeBarChart({ data }: VolumeBarChartProps) {
 
 const styles = StyleSheet.create({
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 4 },
-  label: { fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5 },
-  delta: { fontSize: 10, fontWeight: '600' },
-  total: { fontSize: 14, fontWeight: '700', marginTop: 4 },
+  label: { fontSize: 10, fontFamily: 'Inter_700Bold', textTransform: 'uppercase', letterSpacing: 0.5 },
+  delta: { fontSize: 10, fontFamily: 'Inter_600SemiBold' },
+  total: { fontSize: 14, fontFamily: 'Inter_700Bold', marginTop: 4 },
 });

@@ -1,0 +1,41 @@
+ANALYSIS OF importPayload LOGIC
+
+1. NESTED FOR..OF LOOPS - Sequential vs Parallel
+   Lines 141-193: 4 levels deep:
+   - for (const sw of payload.workouts)         // Line 141
+   - for (let exIdx = 0; exIdx < sw.exercises) // Line 148
+   - for (const sb of se.blocks)                // Line 172
+   - for (const ss of sb.sets)                  // Line 180
+
+2. SAVE SEQUENCE:
+   - Line 135: Save program first (needed for workout.program_id)
+   - Line 142: Save workout (needs program.id) ✓ Sequential OK
+   - Line 154: Save exercise (independent) - could be parallel per workout
+   - Line 166: Save workoutExercise (needs workout.id, exercise.id) - must wait
+   - Line 173: Save block (needs workoutExercise.id) - must wait
+   - Line 181: Save set (needs block.id) - must wait
+
+3. DEPENDENCY GRAPH:
+   Program
+   ├─ Workout (depends on Program)
+   │  ├─ Exercise (independent!)
+   │  └─ WorkoutExercise (depends on Workout + Exercise)
+   │     └─ Block (depends on WorkoutExercise)
+   │        └─ Set (depends on Block)
+
+4. PARALLELIZATION OPPORTUNITIES:
+   - Exercises could be saved in parallel per workout (they're DB-independent)
+   - Current: saves exercise inside exIdx loop for each exercise sequentially
+   
+5. KEY QUESTION: Is sequential adequate?
+   - Fewer than ~10 exercises per workout = unnoticeable
+   - But this is a design smell - tight coupling to sequential I/O
+   - However, for import operations (not critical path), acceptable trade-off
+
+6. TYPE CASTS: as any
+   Line 156: type: se.type as any
+   Line 185: weight_type: ss.weight_type as any
+   
+   Issue: ShareSet.weight_type is string, but WeightType union expected
+   Since payloads come from serialized data, this is defensive but safe
+   
