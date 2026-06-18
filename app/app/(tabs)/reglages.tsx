@@ -457,7 +457,7 @@ const styles = StyleSheet.create({
   label: { fontSize: 15, fontFamily: FontFamily.regular },
   subLabel: { fontSize: 13, marginTop: Spacing.md, marginBottom: Spacing.sm },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
-  chip: { paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm, borderRadius: 16, borderWidth: 1 },
+  chip: { paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm, borderRadius: Radius.xs, borderWidth: 1 },
   chipText: { fontSize: 13 },
   timeRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
   timeInput: { width: 48, textAlign: 'center', fontSize: 16, borderWidth: 1, borderRadius: Radius.md, padding: Spacing.sm },

@@ -1,4 +1,5 @@
 import { Spacing } from '@/constants/Spacing';
+import { Radius } from '@/constants/Radius';
 import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetView,
@@ -109,7 +110,7 @@ const styles = StyleSheet.create({
   iconWrap: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: Radius.md,
     alignItems: 'center',
     justifyContent: 'center',
   },

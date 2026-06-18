@@ -477,7 +477,7 @@ const styles = StyleSheet.create({
   sheetInput: { borderWidth: 1, borderRadius: Radius.md, padding: Spacing.md, fontSize: 16 },
   sheetLabel: { fontSize: 12, fontWeight: '600', textTransform: 'uppercase', letterSpacing: LetterSpacing.wide },
   chipsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
-  chip: { borderWidth: 1, borderRadius: 20, paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm },
+  chip: { borderWidth: 1, borderRadius: Radius.xs, paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm },
   chipText: { fontSize: 13, fontWeight: '500' },
   sheetPreview: { fontSize: 13, fontStyle: 'italic' },
   sheetSaveBtn: { borderRadius: Radius.md, paddingVertical: Spacing.md, alignItems: 'center', marginTop: Spacing.xs },
