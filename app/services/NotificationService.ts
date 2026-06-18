@@ -62,7 +62,7 @@ export class NotificationService {
     }
 
     const fireDate = new Date(lastSessionDate.getTime() + settings.inactivityDays * 24 * 60 * 60 * 1000);
-    const body = `Tu n'as pas fait de séance depuis ${settings.inactivityDays} jours. C'est le moment de reprendre 💪`;
+    const body = `Prêt pour une séance ? Ton programme t'attend.`;
     await this.scheduler.scheduleOnce('inactivity-check', fireDate, body);
   }
 

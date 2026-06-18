@@ -79,5 +79,16 @@ describe('NotificationService', () => {
       const inactivity = (await scheduler.getScheduled()).find(n => n.id === 'inactivity-check');
       expect(inactivity).toBeUndefined();
     });
+
+    it('le body de la notif inactivité ne punit pas l\'absence', async () => {
+      settings = defaultSettings;
+      const lastSession = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
+      await service.scheduleInactivityCheck(lastSession);
+      const scheduled = await scheduler.getScheduled();
+      const inactivity = scheduled.find(n => n.id === 'inactivity-check');
+      expect(inactivity).toBeDefined();
+      expect(inactivity!.body).not.toMatch(/n'as pas fait/i);
+      expect(inactivity!.body).not.toMatch(/depuis.*jours/i);
+    });
   });
 });
