@@ -197,7 +197,7 @@ export default function ExerciseProgressionScreen() {
   const barData = history.map((entry, i) => ({
     value: entry.estimated1RM,
     label: entry.date,
-    frontColor: i === history.length - 1 ? colors.primary : (colorScheme === 'dark' ? '#1E40AF' : '#BFDBFE'),
+    frontColor: i === history.length - 1 ? colors.primary : colors.textDisabled,
     labelTextStyle: { color: colors.textSecondary, fontSize: 9 },
   }));
 
