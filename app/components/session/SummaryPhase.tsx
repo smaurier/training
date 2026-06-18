@@ -69,15 +69,6 @@ export function SummaryPhase({ progressions, totalSets, durationSeconds, totalVo
 
   const progressionCount = progressions.filter(p => p.achieved).length;
 
-  const deltaVolume = previousSession != null && totalVolumeKg != null
-    ? totalVolumeKg - previousSession.volume
-    : null;
-  const deltaSets = previousSession != null
-    ? totalSets - previousSession.sets
-    : null;
-  const showDelta = deltaVolume !== null && deltaSets !== null
-    && !(deltaVolume === 0 && deltaSets === 0);
-
   return (
     <ScrollView contentContainerStyle={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.hero}>
@@ -129,8 +120,8 @@ export function SummaryPhase({ progressions, totalSets, durationSeconds, totalVo
                   <Text style={[styles.progressionOld, { color: colors.textSecondary }]}>
                     {p.oldWeight != null ? `${convert(p.oldWeight)} ${unitLabel}` : '—'}
                   </Text>
-                  <Ionicons name="arrow-forward" size={12} color="#16a34a" />
-                  <Text style={styles.progressionNew}>{p.newWeight != null ? `${convert(p.newWeight)} ${unitLabel}` : '—'}</Text>
+                  <Ionicons name="arrow-forward" size={12} color={colors.primary} />
+                  <Text style={[styles.progressionNew, { color: colors.primary }]}>{p.newWeight != null ? `${convert(p.newWeight)} ${unitLabel}` : '—'}</Text>
                 </View>
               ) : (
                 <Text style={[styles.progressionPending, { color: colors.textSecondary }]}>
@@ -350,7 +341,7 @@ const styles = StyleSheet.create({
   progressionName: { flex: 1, fontSize: 14 },
   progressionValues: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   progressionOld: { fontSize: 13 },
-  progressionNew: { fontSize: 13, fontWeight: '700', color: '#16a34a' },
+  progressionNew: { fontSize: 13, fontWeight: '700' },
   progressionPending: { fontSize: 12 },
   plateauSection: { borderWidth: 1, borderRadius: Radius.sm, padding: 16, gap: 10 },
   plateauRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 6, borderBottomWidth: 1 },
