@@ -12,6 +12,7 @@ import { getDb } from '@/db';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
+import { SemanticColors } from '../../constants/SemanticColors';
 import type { WorkoutExerciseDetail } from '@/services/WorkoutExerciseService';
 
 const SHADOW_COLOR = '#000' as const;
@@ -199,7 +200,7 @@ export default function WorkoutDetailScreen() {
           <PressableA11y
             accessibilityLabel="Démarrer la séance"
             onPress={() => router.push({ pathname: '/session/[workoutId]' as any, params: { workoutId: String(workoutId) } })}
-            style={[styles.startBtn, { backgroundColor: '#16a34a' }]}
+            style={[styles.startBtn, { backgroundColor: SemanticColors.stretch }]}
           >
             <Ionicons name="play" size={18} color="#fff" />
             <Text style={styles.startBtnText}>Démarrer la séance</Text>
@@ -251,7 +252,7 @@ const styles = StyleSheet.create({
   startBtnText: { color: '#fff', fontSize: 15, fontWeight: '600' },
   supersetContainer: {
     borderWidth: 2,
-    borderColor: '#7c3aed',
+    borderColor: SemanticColors.superset,
     borderRadius: Radius.lg,
     marginBottom: Spacing.sm,
     padding: Spacing.xs,
@@ -262,7 +263,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -10,
     left: 12,
-    backgroundColor: '#7c3aed',
+    backgroundColor: SemanticColors.superset,
     borderRadius: Radius.sm,
     paddingHorizontal: Spacing.sm,
     paddingVertical: 2,

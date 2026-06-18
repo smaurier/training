@@ -5,6 +5,7 @@ import Colors from '@/constants/Colors';
 import { LetterSpacing, FontFamily  } from '@/constants/Typography';
 import { useColorScheme } from '@/components/useColorScheme';
 import type { WeeklyVolume } from '@/services/ProgressionService';
+import { SemanticColors } from '../../constants/SemanticColors';
 
 interface VolumeBarChartProps {
   data: WeeklyVolume[];
@@ -39,7 +40,7 @@ export function VolumeBarChart({ data }: VolumeBarChartProps) {
       <View style={styles.header}>
         <Text style={[styles.label, { color: colors.textSecondary }]}>VOLUME / SEMAINE</Text>
         {delta !== null && (
-          <Text style={[styles.delta, { color: delta >= 0 ? '#22C55E' : '#EF4444' }]}>
+          <Text style={[styles.delta, { color: delta >= 0 ? SemanticColors.positive : SemanticColors.negative }]}>
             {delta >= 0 ? '↑' : '↓'} {delta >= 0 ? '+' : ''}{delta}% vs S-1
           </Text>
         )}

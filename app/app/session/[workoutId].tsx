@@ -18,6 +18,7 @@ import { ExerciseTransitionPhase } from '@/components/session/ExerciseTransition
 import { WarmupPhase } from '@/components/session/WarmupPhase';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
+import { SemanticColors } from '@/constants/SemanticColors';
 import { resolveWeights } from '@/services/weightRatio';
 import type { SetActual, PausedSessionInfo } from '@/services/SessionService';
 import type { SessionTagSlug } from '@/services/sessionTagsUtils';
@@ -567,7 +568,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 64,
     alignSelf: 'center',
-    backgroundColor: '#ca8a04',
+    backgroundColor: SemanticColors.prBadge,
     borderRadius: 14,
     paddingHorizontal: Spacing.xxl,
     paddingVertical: Spacing.lg,
@@ -582,7 +583,7 @@ const styles = StyleSheet.create({
   },
   prBadgeIcon: { fontSize: 24 },
   prBadgeTitle: { color: '#fff', fontSize: 16, fontWeight: '700' },
-  prBadgeSub: { color: '#fef3c7', fontSize: 13, maxWidth: 200 },
+  prBadgeSub: { color: SemanticColors.prBadgeTint, fontSize: 13, maxWidth: 200 },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   pauseButtonContainer: {
     position: 'absolute',

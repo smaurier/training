@@ -9,6 +9,7 @@ import { useUnits } from '@/hooks/useUnits';
 import Colors from '@/constants/Colors';
 import { Radius } from '@/constants/Radius';
 import { LetterSpacing, FontFamily  } from '@/constants/Typography';
+import { SemanticColors } from '../../constants/SemanticColors';
 import type { ThemePreference, UnitsPreference, PlateStepValue } from '@/services/settingsUtils';
 import { getDb } from '@/db';
 import { ExportService } from '@/services/ExportService';
@@ -328,7 +329,7 @@ export default function ReglagesScreen() {
           )}
         </PressableA11y>
         {exportError && (
-          <Text style={[styles.exportError, { color: '#dc2626' }]}>{exportError}</Text>
+          <Text style={[styles.exportError, { color: SemanticColors.destructive }]}>{exportError}</Text>
         )}
       </View>
 

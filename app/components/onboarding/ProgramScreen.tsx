@@ -6,6 +6,7 @@ import { useColorScheme } from '@/components/useColorScheme';
 import Colors from '@/constants/Colors';
 import { Radius } from '@/constants/Radius';
 import { FontFamily } from '@/constants/Typography';
+import { SemanticColors } from '../../constants/SemanticColors';
 import { usePrograms } from '@/hooks/usePrograms';
 import { TEMPLATES } from '@/data/templates';
 import { importTemplate, isTemplateImported } from '@/services/TemplateService';
@@ -177,5 +178,5 @@ const styles = StyleSheet.create({
   button: { borderRadius: Radius.lg, padding: Spacing.lg, alignItems: 'center' },
   buttonText: { fontSize: 16, fontFamily: FontFamily.bold },
   buttonSecondary: { padding: Spacing.lg, alignItems: 'center' },
-  errorText: { color: '#ef4444', fontSize: 13, fontFamily: FontFamily.regular },
+  errorText: { color: SemanticColors.negative, fontSize: 13, fontFamily: FontFamily.regular },
 });
