@@ -8,7 +8,6 @@ import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
 
 const MODAL_OVERLAY_COLOR = 'rgba(0,0,0,0.4)' as const;
-const BTN_PRIMARY_TEXT = '#fff' as const;
 
 interface EditSetModalProps {
   set: TrainingSet;
@@ -86,7 +85,7 @@ export function EditSetModal({ set, onSave, onClose }: EditSetModalProps) {
                     active ? { backgroundColor: colors.primary } : { backgroundColor: colors.surface },
                   ]}
                 >
-                  <Text style={{ color: active ? BTN_PRIMARY_TEXT : colors.text }}>{label}</Text>
+                  <Text style={{ color: active ? colors.onPrimary : colors.text }}>{label}</Text>
                 </PressableA11y>
               );
             })}
@@ -107,7 +106,7 @@ export function EditSetModal({ set, onSave, onClose }: EditSetModalProps) {
                     active ? { backgroundColor: colors.primary } : { backgroundColor: colors.surface },
                   ]}
                 >
-                  <Text style={{ color: active ? BTN_PRIMARY_TEXT : colors.text }}>{label}</Text>
+                  <Text style={{ color: active ? colors.onPrimary : colors.text }}>{label}</Text>
                 </PressableA11y>
               );
             })}
@@ -153,7 +152,7 @@ export function EditSetModal({ set, onSave, onClose }: EditSetModalProps) {
               onPress={handleSave}
               style={[styles.btn, { backgroundColor: colors.primary }]}
             >
-              <Text style={{ color: BTN_PRIMARY_TEXT }}>Enregistrer</Text>
+              <Text style={{ color: colors.onPrimary }}>Enregistrer</Text>
             </PressableA11y>
           </View>
         </View>

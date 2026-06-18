@@ -61,7 +61,7 @@ export function WarmupPhase({ exerciseName, workWeight, plateStep = 2, onStart }
           onPress={onStart}
           style={[styles.startBtn, { backgroundColor: colors.primary }]}
         >
-          <Text style={styles.startBtnText}>Commencer le travail →</Text>
+          <Text style={[styles.startBtnText, { color: colors.onPrimary }]}>Commencer le travail →</Text>
         </PressableA11y>
       </ScrollView>
     </View>
@@ -110,5 +110,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 8,
   },
-  startBtnText: { color: '#fff', fontSize: 17, fontWeight: '600' },
+  startBtnText: { fontSize: 17, fontWeight: '600' },
 });

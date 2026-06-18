@@ -422,7 +422,7 @@ export default function ExerciseProgressionScreen() {
                   { backgroundColor: selectedChip === chip ? colors.primary : colors.background, borderColor: colors.border },
                 ]}
               >
-                <Text style={[styles.chipText, { color: selectedChip === chip ? '#fff' : colors.text }]}>
+                <Text style={[styles.chipText, { color: selectedChip === chip ? colors.onPrimary : colors.text }]}>
                   {chip === 'none' ? 'Aucune' : chip === '1m' ? '1 mois' : chip === '3m' ? '3 mois' : chip === '6m' ? '6 mois' : '1 an'}
                 </Text>
               </PressableA11y>
@@ -441,7 +441,7 @@ export default function ExerciseProgressionScreen() {
             onPress={handleSaveGoal}
             style={[styles.sheetSaveBtn, { backgroundColor: colors.primary }]}
           >
-            <Text style={styles.sheetSaveBtnText}>Enregistrer</Text>
+            <Text style={[styles.sheetSaveBtnText, { color: colors.onPrimary }]}>Enregistrer</Text>
           </PressableA11y>
         </BottomSheetView>
       </BottomSheet>
@@ -479,5 +479,5 @@ const styles = StyleSheet.create({
   chipText: { fontSize: 13, fontWeight: '500' },
   sheetPreview: { fontSize: 13, fontStyle: 'italic' },
   sheetSaveBtn: { borderRadius: 8, paddingVertical: 12, alignItems: 'center', marginTop: 4 },
-  sheetSaveBtnText: { color: '#fff', fontSize: 15, fontWeight: '600' },
+  sheetSaveBtnText: { fontSize: 15, fontWeight: '600' },
 });

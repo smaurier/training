@@ -124,7 +124,7 @@ export function CheckInPhase({ onStart, exercises, deloadSuggested, onDeloadAppl
                 }}
                 style={[styles.deloadBtn, styles.deloadBtnPrimary, { backgroundColor: colors.primary }]}
               >
-                <Text style={styles.deloadBtnPrimaryText}>Appliquer la décharge</Text>
+                <Text style={[styles.deloadBtnPrimaryText, { color: colors.onPrimary }]}>Appliquer la décharge</Text>
               </PressableA11y>
               <PressableA11y
                 accessibilityLabel="Passer — continuer sans décharge"
@@ -162,7 +162,7 @@ export function CheckInPhase({ onStart, exercises, deloadSuggested, onDeloadAppl
                 >
                   <Text style={[
                     styles.segmentText,
-                    { color: isSelected ? '#fff' : colors.textSecondary },
+                    { color: isSelected ? colors.onPrimary : colors.textSecondary },
                     isSelected && styles.segmentTextSelected,
                   ]}>
                     {opt.text}
@@ -180,7 +180,7 @@ export function CheckInPhase({ onStart, exercises, deloadSuggested, onDeloadAppl
         onPress={handleStart}
         style={[styles.startBtn, { backgroundColor: colors.primary, opacity: canStart ? 1 : 0.4 }]}
       >
-        <Text style={styles.startBtnText}>{loading ? 'Démarrage…' : 'Commencer la séance'}</Text>
+        <Text style={[styles.startBtnText, { color: colors.onPrimary }]}>{loading ? 'Démarrage…' : 'Commencer la séance'}</Text>
       </PressableA11y>
     </ScrollView>
   );
@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
   segmentText: { fontSize: 14, fontWeight: '500' },
   segmentTextSelected: { fontWeight: '700' },
   startBtn: { marginTop: 8, paddingVertical: 16, borderRadius: Radius.sm, alignItems: 'center' },
-  startBtnText: { color: '#fff', fontSize: 17, fontWeight: '600' },
+  startBtnText: { fontSize: 17, fontWeight: '600' },
   previewCard: { borderWidth: 1, borderRadius: Radius.sm, padding: 16, gap: 10 },
   previewMeta: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   previewStat: { fontSize: 14, fontWeight: '600' },
@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
   deloadButtons: { flexDirection: 'column', gap: 8 },
   deloadBtn: { paddingVertical: 12, borderRadius: Radius.sm, alignItems: 'center' },
   deloadBtnPrimary: {},
-  deloadBtnPrimaryText: { color: '#fff', fontSize: 15, fontWeight: '600' },
+  deloadBtnPrimaryText: { fontSize: 15, fontWeight: '600' },
   deloadBtnSecondary: { borderWidth: 1 },
   deloadBtnSecondaryText: { fontSize: 15 },
 });

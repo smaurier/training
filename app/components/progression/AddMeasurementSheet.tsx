@@ -169,7 +169,7 @@ export const AddMeasurementSheet = forwardRef<AddMeasurementSheetRef, Props>(
             accessibilityLabel="Enregistrer la mesure"
             accessibilityRole="button"
           >
-            <Text style={styles.saveBtnText}>
+            <Text style={[styles.saveBtnText, { color: colors.onPrimary }]}>
               {isSaving ? 'Enregistrement…' : 'Enregistrer'}
             </Text>
           </PressableA11y>
@@ -199,5 +199,5 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
   saveBtn: { marginTop: 24, padding: 14, borderRadius: 10, alignItems: 'center' },
-  saveBtnText: { color: '#fff', fontWeight: '700', fontSize: 16 },
+  saveBtnText: { fontWeight: '700', fontSize: 16 },
 });

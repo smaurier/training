@@ -47,7 +47,7 @@ export function ShareQRModal({ visible, base64, programName, onClose }: Props) {
             accessibilityLabel="Fermer"
             accessibilityRole="button"
           >
-            <Text style={styles.closeBtnText}>Fermer</Text>
+            <Text style={[styles.closeBtnText, { color: colors.onPrimary }]}>Fermer</Text>
           </PressableA11y>
         </View>
       </View>
@@ -62,5 +62,5 @@ const styles = StyleSheet.create({
   subtitle: { fontSize: 13, textAlign: 'center', marginBottom: 24 },
   qrWrapper: { padding: 16, backgroundColor: '#fff', borderRadius: 12, marginBottom: 24 },
   closeBtn: { paddingVertical: 12, paddingHorizontal: 32, borderRadius: 10 },
-  closeBtnText: { color: '#fff', fontWeight: '700', fontSize: 16 },
+  closeBtnText: { fontWeight: '700', fontSize: 16 },
 });

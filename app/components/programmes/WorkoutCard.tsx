@@ -39,7 +39,7 @@ export function WorkoutCard({ workout, exerciseCount, isFirst, isLast, isNext, o
         </Text>
         {isNext && (
           <View style={[styles.nextBadge, { backgroundColor: colors.primary }]}>
-            <Text style={styles.nextBadgeText}>→ Prochain</Text>
+            <Text style={[styles.nextBadgeText, { color: colors.onPrimary }]}>→ Prochain</Text>
           </View>
         )}
       </PressableA11y>
@@ -96,7 +96,6 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   nextBadgeText: {
-    color: '#fff',
     fontSize: 11,
     fontWeight: '600',
   },

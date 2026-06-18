@@ -7,7 +7,6 @@ import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
 
 const MODAL_OVERLAY_COLOR = 'rgba(0,0,0,0.4)' as const;
-const BTN_PRIMARY_TEXT = '#fff' as const;
 
 const CHIPS = [
   { label: 'Échauffement', isWork: false },
@@ -109,7 +108,7 @@ export function EditBlockModal({ visible, block, workoutExerciseId: _workoutExer
               accessibilityState={{ disabled: !canSave }}
               style={[styles.btn, { backgroundColor: colors.primary, opacity: canSave ? 1 : 0.4 }]}
             >
-              <Text style={{ color: BTN_PRIMARY_TEXT }}>Enregistrer</Text>
+              <Text style={{ color: colors.onPrimary }}>Enregistrer</Text>
             </PressableA11y>
           </View>
         </View>

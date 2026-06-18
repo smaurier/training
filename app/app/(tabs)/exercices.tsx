@@ -10,7 +10,6 @@ import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
 
 const SHADOW_COLOR = '#000' as const;
-const FAB_ICON_COLOR = '#fff' as const;
 
 export default function ExercicesScreen() {
   const { exercises, loading, error, refresh, deleteExercise } = useExercises();
@@ -86,7 +85,7 @@ export default function ExercicesScreen() {
         onPress={() => router.push('/add-exercise')}
         accessibilityLabel="Ajouter un exercice"
       >
-        <Ionicons name="add" size={28} color={FAB_ICON_COLOR} />
+        <Ionicons name="add" size={28} color={colors.onPrimary} />
       </PressableA11y>
     </View>
   );

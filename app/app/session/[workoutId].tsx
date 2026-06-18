@@ -547,7 +547,7 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
               onPress={handleAbandonConfirm}
               style={[styles.abandonBtn, { backgroundColor: colors.primary }]}
             >
-              <Text style={[styles.abandonBtnText, { color: '#fff' }]}>Confirmer</Text>
+              <Text style={[styles.abandonBtnText, { color: colors.onPrimary }]}>Confirmer</Text>
             </PressableA11y>
           </View>
         </BottomSheetView>

@@ -17,7 +17,6 @@ import { SQLiteBlockRepository } from '@/repositories/SQLiteBlockRepository';
 import { SQLiteSetRepository } from '@/repositories/SQLiteSetRepository';
 import { SQLiteExerciseRepository } from '@/repositories/SQLiteExerciseRepository';
 
-const SUBMIT_TEXT_COLOR = '#fff' as const;
 const WARNING_COLOR = '#f59e0b' as const;
 
 const LEVEL_LABELS: Record<TemplateDefinition['level'], string> = {
@@ -146,9 +145,9 @@ export default function ImportTemplateModal() {
           accessibilityState={{ disabled: !canImport }}
         >
           {importing ? (
-            <ActivityIndicator color={SUBMIT_TEXT_COLOR} />
+            <ActivityIndicator color={colors.onPrimary} />
           ) : (
-            <Text style={[styles.submitText, { color: canImport ? SUBMIT_TEXT_COLOR : colors.textDisabled }]}>
+            <Text style={[styles.submitText, { color: canImport ? colors.onPrimary : colors.textDisabled }]}>
               Importer
             </Text>
           )}

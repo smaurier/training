@@ -13,7 +13,6 @@ import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
 import type { WorkoutExerciseDetail } from '@/services/WorkoutExerciseService';
 
-const FAB_ICON_COLOR = '#fff' as const;
 const SHADOW_COLOR = '#000' as const;
 
 type RenderItem =
@@ -193,7 +192,7 @@ export default function WorkoutDetailScreen() {
           style={[styles.fab, { backgroundColor: colors.primary }]}
           onPress={() => router.push({ pathname: '/add-workout-exercise' as any, params: { workoutId: String(workoutId) } })}
         >
-          <Ionicons name="add" size={28} color={FAB_ICON_COLOR} />
+          <Ionicons name="add" size={28} color={colors.onPrimary} />
         </PressableA11y>
         {exercises.length > 0 && (
           <PressableA11y

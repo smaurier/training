@@ -82,7 +82,7 @@ export default function AddExerciseModal() {
             accessibilityLabel={`Type ${t}`}
             accessibilityState={{ selected: type === t }}
           >
-            <Text style={{ color: type === t ? '#fff' : colors.text, fontSize: 13, fontWeight: '500' }}>
+            <Text style={{ color: type === t ? colors.onPrimary : colors.text, fontSize: 13, fontWeight: '500' }}>
               {t}
             </Text>
           </PressableA11y>
@@ -118,8 +118,8 @@ export default function AddExerciseModal() {
         accessibilityState={{ disabled: submitting }}
       >
         {submitting
-          ? <ActivityIndicator color="#fff" />
-          : <Text style={styles.submitText}>Créer l&apos;exercice</Text>
+          ? <ActivityIndicator color={colors.onPrimary} />
+          : <Text style={[styles.submitText, { color: colors.onPrimary }]}>Créer l&apos;exercice</Text>
         }
       </PressableA11y>
     </ScrollView>
@@ -153,5 +153,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 24,
   },
-  submitText: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  submitText: { fontSize: 16, fontWeight: '600' },
 });

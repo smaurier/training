@@ -10,7 +10,6 @@ import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
 
-const SUBMIT_TEXT_COLOR = '#fff' as const;
 
 export default function AddWorkoutModal() {
   const router = useRouter();
@@ -81,8 +80,8 @@ export default function AddWorkoutModal() {
         accessibilityState={{ disabled: submitting }}
       >
         {submitting
-          ? <ActivityIndicator color={SUBMIT_TEXT_COLOR} />
-          : <Text style={styles.submitText}>{isEditing ? 'Enregistrer' : 'Créer la séance'}</Text>
+          ? <ActivityIndicator color={colors.onPrimary} />
+          : <Text style={[styles.submitText, { color: colors.onPrimary }]}>{isEditing ? 'Enregistrer' : 'Créer la séance'}</Text>
         }
       </PressableA11y>
     </ScrollView>
@@ -107,5 +106,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 24,
   },
-  submitText: { color: SUBMIT_TEXT_COLOR, fontSize: 16, fontWeight: '600' },
+  submitText: { fontSize: 16, fontWeight: '600' },
 });

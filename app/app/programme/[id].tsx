@@ -21,7 +21,6 @@ import { SQLiteSetRepository } from '@/repositories/SQLiteSetRepository';
 import { SQLiteExerciseRepository } from '@/repositories/SQLiteExerciseRepository';
 import { ShareQRModal } from '@/components/programme/ShareQRModal';
 
-const FAB_ICON_COLOR = '#fff' as const;
 const SHADOW_COLOR = '#000' as const;
 
 export default function ProgrammeDetailScreen() {
@@ -220,7 +219,7 @@ export default function ProgrammeDetailScreen() {
           }
           accessibilityLabel="Ajouter une séance"
         >
-          <Ionicons name="add" size={28} color={FAB_ICON_COLOR} />
+          <Ionicons name="add" size={28} color={colors.onPrimary} />
         </PressableA11y>
       </View>
       {shareBase64 && program && (
