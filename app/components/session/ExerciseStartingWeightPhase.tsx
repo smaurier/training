@@ -39,51 +39,55 @@ export function ExerciseStartingWeightPhase({
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <Text style={[styles.exerciseName, { color: colors.text }]}>
-        {exercise.exercise.name}
-      </Text>
-      <Text style={[styles.title, { color: colors.text }]} accessibilityRole="header">
-        Charge de départ
-      </Text>
-      <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
-        Quel poids vas-tu utiliser pour commencer ?
-      </Text>
-      <TextInput
-        style={[
-          styles.input,
-          {
-            color: colors.text,
-            borderColor: colors.border,
-            backgroundColor: colors.surface,
-          },
-        ]}
-        value={weight}
-        onChangeText={setWeight}
-        keyboardType="decimal-pad"
-        placeholder="ex: 40"
-        placeholderTextColor={colors.textSecondary}
-        accessibilityLabel="Charge de départ en kilogrammes"
-        autoFocus
-      />
-      <PressableA11y
-        onPress={handleConfirm}
-        style={[
-          styles.btn,
-          {
-            backgroundColor: colors.primary,
-            opacity: !isValid || loading ? 0.5 : 1,
-          },
-        ]}
-        accessibilityLabel="Confirmer le poids de départ"
-        disabled={!isValid || loading}
-      >
-        <Text style={[styles.btnText, { color: colors.onPrimary }]}>
-          {loading ? 'Enregistrement…' : 'Confirmer →'}
+      <View style={styles.content}>
+        <Text style={[styles.exerciseName, { color: colors.text }]}>
+          {exercise.exercise.name}
         </Text>
-      </PressableA11y>
-      {error && (
-        <Text style={[styles.errorText, { color: '#dc2626' }]}>{error}</Text>
-      )}
+        <Text style={[styles.title, { color: colors.text }]} accessibilityRole="header">
+          Charge de départ
+        </Text>
+        <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+          Quel poids vas-tu utiliser pour commencer ?
+        </Text>
+        <TextInput
+          style={[
+            styles.input,
+            {
+              color: colors.text,
+              borderColor: colors.border,
+              backgroundColor: colors.surface,
+            },
+          ]}
+          value={weight}
+          onChangeText={setWeight}
+          keyboardType="decimal-pad"
+          placeholder="ex: 40"
+          placeholderTextColor={colors.textSecondary}
+          accessibilityLabel="Charge de départ en kilogrammes"
+          autoFocus
+        />
+      </View>
+      <View style={styles.footer}>
+        <PressableA11y
+          onPress={handleConfirm}
+          style={[
+            styles.btn,
+            {
+              backgroundColor: colors.primary,
+              opacity: !isValid || loading ? 0.5 : 1,
+            },
+          ]}
+          accessibilityLabel="Confirmer le poids de départ"
+          disabled={!isValid || loading}
+        >
+          <Text style={[styles.btnText, { color: colors.onPrimary }]}>
+            {loading ? 'Enregistrement…' : 'Confirmer →'}
+          </Text>
+        </PressableA11y>
+        {error && (
+          <Text style={[styles.errorText, { color: '#dc2626' }]}>{error}</Text>
+        )}
+      </View>
     </View>
   );
 }
@@ -91,9 +95,17 @@ export function ExerciseStartingWeightPhase({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     paddingHorizontal: 32,
+  },
+  content: {
+    flex: 1,
+    justifyContent: 'center',
     gap: 20,
+  },
+  footer: {
+    paddingBottom: 32,
+    paddingTop: 12,
+    gap: 12,
   },
   exerciseName: {
     fontSize: 18,
