@@ -5,6 +5,13 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.19.4] — 2026-06-18
+
+561defc refactor(tokens): centraliser couleurs sémantiques dans SemanticColors.ts
+b0e4116 feat(tokens): ajouter Spacing.ts — scale xs/sm/md/lg/xl/xxl/xxxl
+
+---
+
 ## [1.19.3] — 2026-06-18
 
 3cf5deb fix(ux): Confirmer footer fixe — bouton visible quand clavier ouvert
