@@ -341,7 +341,7 @@ const styles = StyleSheet.create({
   progressionName: { flex: 1, fontSize: 14 },
   progressionValues: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   progressionOld: { fontSize: 13 },
-  progressionNew: { fontSize: 13, fontWeight: '700' },
+  progressionNew: { fontSize: 13, fontFamily: 'Inter_700Bold' },
   progressionPending: { fontSize: 12 },
   plateauSection: { borderWidth: 1, borderRadius: Radius.sm, padding: 16, gap: 10 },
   plateauRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 6, borderBottomWidth: 1 },
