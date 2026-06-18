@@ -2,6 +2,7 @@ import type { ISessionLogRepository } from '../repositories/ISessionLogRepositor
 import type { ISetLogRepository } from '../repositories/ISetLogRepository';
 import type { IWorkoutRepository } from '../repositories/IWorkoutRepository';
 import type { IExerciseRepository } from '../repositories/IExerciseRepository';
+import type { IPersonalRecordRepository } from '../repositories/IPersonalRecordRepository';
 
 export interface SessionSummary {
   id: number;
@@ -42,6 +43,7 @@ export class HistoryService {
     private setLogRepo: ISetLogRepository,
     private workoutRepo: IWorkoutRepository,
     private exerciseRepo: IExerciseRepository,
+    private personalRecordRepo: IPersonalRecordRepository,
   ) {}
 
   private computeDuration(startedAt: string, endedAt: string | null): number {
@@ -70,6 +72,12 @@ export class HistoryService {
       durationSeconds: this.computeDuration(s.started_at, s.ended_at),
       totalSets: counts[s.id] ?? 0,
     }));
+  }
+
+  async deleteSession(id: number): Promise<void> {
+    await this.personalRecordRepo.deleteBySessionLogId(id);
+    await this.setLogRepo.deleteBySessionLogId(id);
+    await this.sessionLogRepo.delete(id);
   }
 
   async getSessionDetail(sessionLogId: number): Promise<SessionDetail | null> {

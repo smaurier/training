@@ -4,6 +4,7 @@ import { SQLiteSessionLogRepository } from '../repositories/SQLiteSessionLogRepo
 import { SQLiteSetLogRepository } from '../repositories/SQLiteSetLogRepository';
 import { SQLiteWorkoutRepository } from '../repositories/SQLiteWorkoutRepository';
 import { SQLiteExerciseRepository } from '../repositories/SQLiteExerciseRepository';
+import { SQLitePersonalRecordRepository } from '../repositories/SQLitePersonalRecordRepository';
 import { getDb } from '../db';
 
 export interface HistorySection {
@@ -25,6 +26,7 @@ function makeService(): HistoryService {
     new SQLiteSetLogRepository(db),
     new SQLiteWorkoutRepository(db),
     new SQLiteExerciseRepository(db),
+    new SQLitePersonalRecordRepository(db),
   );
 }
 

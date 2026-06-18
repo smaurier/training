@@ -17,7 +17,6 @@ interface ExerciseTransitionPhaseProps {
 }
 
 function getTypeColor(type: string, primaryColor: string): string {
-  if (type === 'etirement') return SemanticColors.stretch;
   if (type === 'cardio') return SemanticColors.cardio;
   return primaryColor;
 }

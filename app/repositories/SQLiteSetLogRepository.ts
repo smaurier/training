@@ -71,6 +71,10 @@ export class SQLiteSetLogRepository implements ISetLogRepository {
     );
   }
 
+  async deleteBySessionLogId(sessionLogId: number): Promise<void> {
+    await this.db.runAsync('DELETE FROM set_logs WHERE session_log_id = ?', [sessionLogId]);
+  }
+
   async updateCardioData(
     id: number,
     duration_seconds: number | null,

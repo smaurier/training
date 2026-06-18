@@ -1,14 +1,16 @@
 import { Spacing } from '@/constants/Spacing';
 import { FontFamily } from '@/constants/Typography';
-import { View, Text, ScrollView, ActivityIndicator, StyleSheet } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { View, Text, ScrollView, ActivityIndicator, StyleSheet, Alert } from 'react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { HistoryService, SessionDetail } from '@/services/HistoryService';
+import { PressableA11y } from '@/components/ui/PressableA11y';
 import { ExerciseHistorySection } from '@/components/history/ExerciseHistorySection';
 import { SQLiteSessionLogRepository } from '@/repositories/SQLiteSessionLogRepository';
 import { SQLiteSetLogRepository } from '@/repositories/SQLiteSetLogRepository';
 import { SQLiteWorkoutRepository } from '@/repositories/SQLiteWorkoutRepository';
 import { SQLiteExerciseRepository } from '@/repositories/SQLiteExerciseRepository';
+import { SQLitePersonalRecordRepository } from '@/repositories/SQLitePersonalRecordRepository';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { getDb } from '@/db';
@@ -33,6 +35,7 @@ function makeService(): HistoryService {
     new SQLiteSetLogRepository(db),
     new SQLiteWorkoutRepository(db),
     new SQLiteExerciseRepository(db),
+    new SQLitePersonalRecordRepository(db),
   );
 }
 
@@ -40,15 +43,17 @@ export default function SessionDetailScreen() {
   const { sessionLogId } = useLocalSearchParams<{ sessionLogId: string }>();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
+  const router = useRouter();
 
   const [detail, setDetail] = useState<SessionDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const serviceRef = useRef<HistoryService | null>(null);
+  if (serviceRef.current == null) serviceRef.current = makeService();
   const mountedRef = useRef(true);
   useEffect(() => () => { mountedRef.current = false; }, []);
 
   useEffect(() => {
-    const service = makeService();
-    service.getSessionDetail(Number(sessionLogId)).then(d => {
+    serviceRef.current!.getSessionDetail(Number(sessionLogId)).then(d => {
       if (!mountedRef.current) return;
       setDetail(d);
       setIsLoading(false);
@@ -56,6 +61,24 @@ export default function SessionDetailScreen() {
       if (mountedRef.current) setIsLoading(false);
     });
   }, [sessionLogId]);
+
+  function handleDelete() {
+    Alert.alert(
+      'Supprimer cette séance ?',
+      'Les séries et records associés seront définitivement effacés.',
+      [
+        { text: 'Annuler', style: 'cancel' },
+        {
+          text: 'Supprimer',
+          style: 'destructive',
+          onPress: async () => {
+            await serviceRef.current!.deleteSession(Number(sessionLogId));
+            router.back();
+          },
+        },
+      ],
+    );
+  }
 
   if (isLoading) {
     return (
@@ -148,6 +171,14 @@ export default function SessionDetailScreen() {
       {detail.exercises.map(exercise => (
         <ExerciseHistorySection key={exercise.exerciseId} exercise={exercise} />
       ))}
+
+      <PressableA11y
+        accessibilityLabel="Supprimer cette séance"
+        onPress={handleDelete}
+        style={[styles.deleteBtn, { borderColor: colors.border }]}
+      >
+        <Text style={[styles.deleteBtnText, { color: colors.destructiveText }]}>Supprimer cette séance</Text>
+      </PressableA11y>
     </ScrollView>
   );
 }
@@ -189,6 +220,19 @@ const styles = StyleSheet.create({
     fontSize: 11,
   },
   message: { fontSize: 15, textAlign: 'center' },
+  deleteBtn: {
+    marginTop: Spacing.xxxl,
+    marginHorizontal: Spacing.lg,
+    marginBottom: Spacing.lg,
+    paddingVertical: Spacing.md,
+    borderRadius: Spacing.sm,
+    borderWidth: 1,
+    alignItems: 'center',
+  },
+  deleteBtnText: {
+    fontSize: 15,
+    fontFamily: FontFamily.semibold,
+  },
   moodRow: {
     flexDirection: 'row',
     alignItems: 'center',

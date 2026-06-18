@@ -201,9 +201,9 @@ export default function WorkoutDetailScreen() {
           <PressableA11y
             accessibilityLabel="Démarrer la séance"
             onPress={() => router.push({ pathname: '/session/[workoutId]' as any, params: { workoutId: String(workoutId) } })}
-            style={[styles.startBtn, { backgroundColor: SemanticColors.stretch }]}
+            style={[styles.startBtn, { backgroundColor: colors.primary }]}
           >
-            <Ionicons name="play" size={18} color="#fff" />
+            <Ionicons name="play" size={18} color="#000" />
             <Text style={styles.startBtnText}>Démarrer la séance</Text>
           </PressableA11y>
         )}
@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
   },
-  startBtnText: { color: '#fff', fontSize: 15, fontFamily: FontFamily.semibold },
+  startBtnText: { color: '#000', fontSize: 15, fontFamily: FontFamily.semibold },
   supersetContainer: {
     borderWidth: 2,
     borderColor: SemanticColors.superset,

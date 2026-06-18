@@ -2,6 +2,7 @@ import { InMemorySessionLogRepository } from '../repositories/InMemorySessionLog
 import { InMemorySetLogRepository } from '../repositories/InMemorySetLogRepository';
 import { InMemoryWorkoutRepository } from '../repositories/InMemoryWorkoutRepository';
 import { InMemoryExerciseRepository } from '../repositories/InMemoryExerciseRepository';
+import { InMemoryPersonalRecordRepository } from '../repositories/InMemoryPersonalRecordRepository';
 import { HistoryService } from './HistoryService';
 
 function makeService() {
@@ -9,8 +10,9 @@ function makeService() {
   const setLogRepo = new InMemorySetLogRepository();
   const workoutRepo = new InMemoryWorkoutRepository();
   const exerciseRepo = new InMemoryExerciseRepository();
-  const service = new HistoryService(sessionLogRepo, setLogRepo, workoutRepo, exerciseRepo);
-  return { service, sessionLogRepo, setLogRepo, workoutRepo, exerciseRepo };
+  const personalRecordRepo = new InMemoryPersonalRecordRepository();
+  const service = new HistoryService(sessionLogRepo, setLogRepo, workoutRepo, exerciseRepo, personalRecordRepo);
+  return { service, sessionLogRepo, setLogRepo, workoutRepo, exerciseRepo, personalRecordRepo };
 }
 
 const baseSessionDto = {
@@ -127,6 +129,51 @@ describe('HistoryService', () => {
       const detail = await service.getSessionDetail(session.id);
       expect(detail!.exercises[0].sets[0].rpe).toBe(7);
       expect(detail!.exercises[0].sets[1].rpe).toBe(9);
+    });
+  });
+
+  describe('deleteSession', () => {
+    it('supprime la session — elle disparaît de getSessionList', async () => {
+      const { service, sessionLogRepo, workoutRepo } = makeService();
+      const workout = await workoutRepo.save({ program_id: 1, name: 'Push A', order_index: 0 });
+      const session = await sessionLogRepo.save({ ...baseSessionDto, workout_id: workout.id });
+      await service.deleteSession(session.id);
+      expect(await service.getSessionList()).toHaveLength(0);
+    });
+
+    it('supprime les set_logs de la session', async () => {
+      const { service, sessionLogRepo, setLogRepo, workoutRepo } = makeService();
+      const workout = await workoutRepo.save({ program_id: 1, name: 'Push A', order_index: 0 });
+      const session = await sessionLogRepo.save({ ...baseSessionDto, workout_id: workout.id });
+      await setLogRepo.save({ session_log_id: session.id, set_id: 1, exercise_id: 5, reps_done: 8, weight_done: 80, rpe: 7, completed_at: '2026-01-01T10:05:00.000Z' });
+      await service.deleteSession(session.id);
+      expect(await setLogRepo.findBySessionLogId(session.id)).toHaveLength(0);
+    });
+
+    it('supprime les PRs liés à la session', async () => {
+      const { service, sessionLogRepo, workoutRepo, personalRecordRepo } = makeService();
+      const workout = await workoutRepo.save({ program_id: 1, name: 'Push A', order_index: 0 });
+      const session = await sessionLogRepo.save({ ...baseSessionDto, workout_id: workout.id });
+      await personalRecordRepo.save({ exercise_id: 1, weight: 100, reps: 5, estimated_1rm: 116.7, achieved_at: '2026-01-01T10:00:00.000Z', session_log_id: session.id });
+      await service.deleteSession(session.id);
+      expect(await personalRecordRepo.findRecent(10)).toHaveLength(0);
+    });
+
+    it('ne supprime pas les PRs sans session_log_id (anciens PRs)', async () => {
+      const { service, sessionLogRepo, workoutRepo, personalRecordRepo } = makeService();
+      const workout = await workoutRepo.save({ program_id: 1, name: 'Push A', order_index: 0 });
+      const session = await sessionLogRepo.save({ ...baseSessionDto, workout_id: workout.id });
+      await personalRecordRepo.save({ exercise_id: 1, weight: 100, reps: 5, estimated_1rm: 116.7, achieved_at: '2026-01-01T10:00:00.000Z', session_log_id: null });
+      await service.deleteSession(session.id);
+      expect(await personalRecordRepo.findRecent(10)).toHaveLength(1);
+    });
+
+    it("getSessionDetail retourne null après suppression", async () => {
+      const { service, sessionLogRepo, workoutRepo } = makeService();
+      const workout = await workoutRepo.save({ program_id: 1, name: 'Push A', order_index: 0 });
+      const session = await sessionLogRepo.save({ ...baseSessionDto, workout_id: workout.id });
+      await service.deleteSession(session.id);
+      expect(await service.getSessionDetail(session.id)).toBeNull();
     });
   });
 });

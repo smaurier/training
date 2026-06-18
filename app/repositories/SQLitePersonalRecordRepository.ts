@@ -35,4 +35,11 @@ export class SQLitePersonalRecordRepository implements IPersonalRecordRepository
       [limit]
     );
   }
+
+  async deleteBySessionLogId(sessionLogId: number): Promise<void> {
+    await this.db.runAsync(
+      'DELETE FROM personal_records WHERE session_log_id = ?',
+      [sessionLogId]
+    );
+  }
 }
