@@ -19,6 +19,7 @@ import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
 import { SemanticColors } from '@/constants/SemanticColors';
+import { FontFamily } from '@/constants/Typography';
 import { useUnits } from '@/hooks/useUnits';
 import { lbsToKg } from '@/services/settingsUtils';
 import { computeRepsFeedback } from '@/services/repsFeedback';
@@ -698,7 +699,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     gap: 8, minHeight: 64, borderRadius: Radius.sm,
   },
-  validateBtnText: { fontSize: 15, fontFamily: 'Inter_700Bold', letterSpacing: 2, textTransform: 'uppercase' },
+  validateBtnText: { fontSize: 15, fontFamily: FontFamily.bold, letterSpacing: 2, textTransform: 'uppercase' },
   repsFeedback: { fontSize: 13, textAlign: 'center', lineHeight: 18 },
   lastLog: { fontSize: 12, marginTop: 4 },
   restSection: { gap: 4 },

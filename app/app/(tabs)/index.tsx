@@ -10,6 +10,7 @@ import { useWorkoutExercises } from '@/hooks/useWorkoutExercises';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
+import { FontFamily } from '@/constants/Typography';
 import type { Workout } from '@/db/types';
 import { ResumeSessionCard } from '@/components/session/ResumeSessionCard';
 import type { PausedSessionInfo } from '@/services/SessionService';
@@ -242,15 +243,15 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, gap: 16 },
   card: { borderWidth: 1, borderRadius: Radius.sm, padding: 20, gap: 12 },
-  cardLabel: { fontSize: 11, fontFamily: 'Inter_600SemiBold', textTransform: 'uppercase', letterSpacing: 1.6 },
-  workoutName: { fontSize: 22, fontFamily: 'Inter_700Bold', letterSpacing: -0.3 },
-  lastDate: { fontSize: 11, fontFamily: 'Inter_400Regular' },
+  cardLabel: { fontSize: 11, fontFamily: FontFamily.semibold, textTransform: 'uppercase', letterSpacing: 1.6 },
+  workoutName: { fontSize: 22, fontFamily: FontFamily.bold, letterSpacing: -0.3 },
+  lastDate: { fontSize: 11, fontFamily: FontFamily.regular },
   cycleDots: { flexDirection: 'row', gap: 8, alignItems: 'center' },
   cycleDot: { width: 8, height: 8, borderRadius: 999 },
   exercisePreview: { gap: 0, marginTop: 4 },
   exerciseRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 10 },
-  exerciseRowName: { flex: 1, fontSize: 14, fontFamily: 'Inter_400Regular', marginRight: 12 },
-  exerciseRowSets: { fontSize: 12, fontFamily: 'Inter_500Medium' },
+  exerciseRowName: { flex: 1, fontSize: 14, fontFamily: FontFamily.regular, marginRight: 12 },
+  exerciseRowSets: { fontSize: 12, fontFamily: FontFamily.medium },
   chipsWrapper: { position: 'relative' },
   chipsScroll: { marginHorizontal: -4 },
   chipsRow: { paddingHorizontal: 4 },
@@ -264,13 +265,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  chipText: { fontSize: 12, fontFamily: 'Inter_600SemiBold', letterSpacing: 0.8, textTransform: 'uppercase' },
+  chipText: { fontSize: 12, fontFamily: FontFamily.semibold, letterSpacing: 0.8, textTransform: 'uppercase' },
   startBtn: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     gap: 8, minHeight: 60, borderRadius: Radius.sm,
   },
-  startBtnText: { fontSize: 14, fontFamily: 'Inter_700Bold', letterSpacing: 2, textTransform: 'uppercase' },
-  emptyHint: { fontSize: 12, fontFamily: 'Inter_400Regular', textAlign: 'center', marginTop: 8 },
+  startBtnText: { fontSize: 14, fontFamily: FontFamily.bold, letterSpacing: 2, textTransform: 'uppercase' },
+  emptyHint: { fontSize: 12, fontFamily: FontFamily.regular, textAlign: 'center', marginTop: 8 },
   linkBtn: { paddingVertical: 4 },
-  linkText: { fontSize: 15, fontFamily: 'Inter_500Medium' },
+  linkText: { fontSize: 15, fontFamily: FontFamily.medium },
 });

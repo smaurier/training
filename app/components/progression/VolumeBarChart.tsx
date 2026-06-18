@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { BarChart } from 'react-native-gifted-charts';
 import Colors from '@/constants/Colors';
+import { FontFamily } from '@/constants/Typography';
 import { useColorScheme } from '@/components/useColorScheme';
 import type { WeeklyVolume } from '@/services/ProgressionService';
 
@@ -69,7 +70,7 @@ export function VolumeBarChart({ data }: VolumeBarChartProps) {
 
 const styles = StyleSheet.create({
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 4 },
-  label: { fontSize: 10, fontFamily: 'Inter_700Bold', textTransform: 'uppercase', letterSpacing: 0.5 },
-  delta: { fontSize: 10, fontFamily: 'Inter_600SemiBold' },
-  total: { fontSize: 14, fontFamily: 'Inter_700Bold', marginTop: 4 },
+  label: { fontSize: 10, fontFamily: FontFamily.bold, textTransform: 'uppercase', letterSpacing: 0.5 },
+  delta: { fontSize: 10, fontFamily: FontFamily.semibold },
+  total: { fontSize: 14, fontFamily: FontFamily.bold, marginTop: 4 },
 });

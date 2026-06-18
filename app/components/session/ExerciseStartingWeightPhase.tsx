@@ -6,6 +6,7 @@ import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
 import { SemanticColors } from '@/constants/SemanticColors';
+import { FontFamily } from '@/constants/Typography';
 
 interface ExerciseStartingWeightPhaseProps {
   exercise: WorkoutExerciseDetail;
@@ -110,11 +111,11 @@ const styles = StyleSheet.create({
   },
   exerciseName: {
     fontSize: 18,
-    fontFamily: 'Inter_400Regular',
+    fontFamily: FontFamily.regular,
   },
   title: {
     fontSize: 28,
-    fontFamily: 'Inter_700Bold',
+    fontFamily: FontFamily.bold,
   },
   subtitle: {
     fontSize: 16,
@@ -126,7 +127,7 @@ const styles = StyleSheet.create({
     borderRadius: Radius.sm,
     paddingHorizontal: 16,
     fontSize: 28,
-    fontFamily: 'Inter_600SemiBold',
+    fontFamily: FontFamily.semibold,
   },
   btn: {
     height: 56,
@@ -136,7 +137,7 @@ const styles = StyleSheet.create({
   },
   btnText: {
     fontSize: 18,
-    fontFamily: 'Inter_600SemiBold',
+    fontFamily: FontFamily.semibold,
   },
   errorText: {
     fontSize: 14,

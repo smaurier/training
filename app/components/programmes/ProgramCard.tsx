@@ -4,6 +4,7 @@ import { PressableA11y } from '@/components/ui/PressableA11y';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
+import { FontFamily } from '@/constants/Typography';
 
 interface ProgramCardProps {
   program: Program;
@@ -62,7 +63,7 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 16,
-    fontFamily: 'Inter_600SemiBold',
+    fontFamily: FontFamily.semibold,
     flex: 1,
   },
   description: {

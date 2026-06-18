@@ -7,6 +7,7 @@ import { ThemeContext } from '@/contexts/ThemeContext';
 import { useUnits } from '@/hooks/useUnits';
 import Colors from '@/constants/Colors';
 import { Radius } from '@/constants/Radius';
+import { FontFamily } from '@/constants/Typography';
 import type { ThemePreference, UnitsPreference, PlateStepValue } from '@/services/settingsUtils';
 import { getDb } from '@/db';
 import { ExportService } from '@/services/ExportService';

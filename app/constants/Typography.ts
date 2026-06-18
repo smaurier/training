@@ -1,3 +1,11 @@
+export const FontFamily = {
+  black:    'Inter_900Black',
+  bold:     'Inter_700Bold',
+  semibold: 'Inter_600SemiBold',
+  medium:   'Inter_500Medium',
+  regular:  'Inter_400Regular',
+} as const;
+
 export const Typography = {
   display:    { fontSize: 32, fontFamily: 'Inter_900Black' as const },
   title:      { fontSize: 20, fontFamily: 'Inter_700Bold' as const },

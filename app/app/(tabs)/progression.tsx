@@ -16,6 +16,7 @@ import { MuscleGroupCard } from '@/components/progression/MuscleGroupCard';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
+import { FontFamily } from '@/constants/Typography';
 import type { SessionSummary } from '@/services/HistoryService';
 import type { Exercise1RM } from '@/services/ProgressionService';
 
@@ -310,34 +311,34 @@ const styles = StyleSheet.create({
   segmentContainer: { paddingHorizontal: 16, paddingVertical: 8 },
   segmentTrack: { flexDirection: 'row', borderRadius: Radius.sm, padding: 3 },
   segmentButton: { flex: 1, borderRadius: Radius.sm, paddingVertical: 6, alignItems: 'center' },
-  segmentText: { fontSize: 13, fontFamily: 'Inter_600SemiBold' },
+  segmentText: { fontSize: 13, fontFamily: FontFamily.semibold },
   sectionHeader: { paddingHorizontal: 16, paddingVertical: 8 },
-  sectionTitle: { fontSize: 12, fontFamily: 'Inter_700Bold', textTransform: 'uppercase', letterSpacing: 1 },
+  sectionTitle: { fontSize: 12, fontFamily: FontFamily.bold, textTransform: 'uppercase', letterSpacing: 1 },
   statsContent: { paddingVertical: 12, paddingHorizontal: 16, gap: 12 },
   scrollContent: { paddingVertical: 12, paddingHorizontal: 16, gap: 12 },
   emptyText: { fontSize: 14, textAlign: 'center', paddingVertical: 24 },
   addBtn: { borderRadius: Radius.sm, paddingVertical: 14, alignItems: 'center', marginTop: 8 },
-  addBtnText: { fontSize: 15, fontFamily: 'Inter_600SemiBold' },
+  addBtnText: { fontSize: 15, fontFamily: FontFamily.semibold },
   chipsRow: { flexDirection: 'row', gap: 8 },
   chip: { flex: 1, borderRadius: Radius.sm, padding: 10, alignItems: 'center', gap: 2 },
-  chipLabel: { fontSize: 9, fontFamily: 'Inter_700Bold', textTransform: 'uppercase', letterSpacing: 0.5 },
-  chipValue: { fontSize: 22, fontFamily: 'Inter_700Bold' },
+  chipLabel: { fontSize: 9, fontFamily: FontFamily.bold, textTransform: 'uppercase', letterSpacing: 0.5 },
+  chipValue: { fontSize: 22, fontFamily: FontFamily.bold },
   chipSub: { fontSize: 9 },
   card: { borderRadius: Radius.sm, padding: 14 },
-  cardLabel: { fontSize: 10, fontFamily: 'Inter_700Bold', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10 },
+  cardLabel: { fontSize: 10, fontFamily: FontFamily.bold, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10 },
   prRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 8 },
   prInfo: { flex: 1, gap: 2 },
-  prName: { fontSize: 14, fontFamily: 'Inter_400Regular' },
+  prName: { fontSize: 14, fontFamily: FontFamily.regular },
   prMeta: { fontSize: 12 },
   prDate: { fontSize: 12 },
-  listTitle: { fontSize: 10, fontFamily: 'Inter_700Bold', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 6 },
+  listTitle: { fontSize: 10, fontFamily: FontFamily.bold, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 6 },
   list: { borderRadius: Radius.sm, overflow: 'hidden' },
   presencesCard: { borderRadius: Radius.sm, paddingHorizontal: 14, paddingVertical: 12 },
-  presencesText: { fontSize: 15, fontFamily: 'Inter_600SemiBold' },
+  presencesText: { fontSize: 15, fontFamily: FontFamily.semibold },
   searchEntry: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderRadius: Radius.sm, paddingHorizontal: 14, paddingVertical: 12 },
   searchEntryText: { fontSize: 14 },
   searchEntryChevron: { fontSize: 18 },
   goalRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 10 },
-  goalRowName: { fontSize: 14, fontFamily: 'Inter_400Regular', flex: 1 },
+  goalRowName: { fontSize: 14, fontFamily: FontFamily.regular, flex: 1 },
   goalRowTarget: { fontSize: 13 },
 });

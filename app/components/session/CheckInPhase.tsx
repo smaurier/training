@@ -7,6 +7,7 @@ import type { WorkoutExerciseDetail } from '@/services/WorkoutExerciseService';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
+import { FontFamily } from '@/constants/Typography';
 
 function estimateDurationSeconds(exercises: WorkoutExerciseDetail[]): number {
   let total = exercises.length * 30; // transition per exercise
@@ -189,31 +190,31 @@ export function CheckInPhase({ onStart, exercises, deloadSuggested, onDeloadAppl
 const styles = StyleSheet.create({
   container: { flexGrow: 1, padding: 24, gap: 28 },
   hero: { alignItems: 'center', paddingTop: 32, gap: 6 },
-  title: { fontSize: 24, fontFamily: 'Inter_700Bold', textAlign: 'center' },
+  title: { fontSize: 24, fontFamily: FontFamily.bold, textAlign: 'center' },
   subtitle: { fontSize: 14, textAlign: 'center' },
   row: { gap: 10 },
-  rowLabel: { fontSize: 11, fontFamily: 'Inter_700Bold', letterSpacing: 0.8 },
+  rowLabel: { fontSize: 11, fontFamily: FontFamily.bold, letterSpacing: 0.8 },
   segment: { flexDirection: 'row', borderWidth: 1, borderRadius: Radius.sm, overflow: 'hidden' },
   segmentBtn: { flex: 1, alignItems: 'center', paddingVertical: 14 },
   segmentFirst: { borderTopLeftRadius: Radius.sm, borderBottomLeftRadius: Radius.sm },
   segmentLast: { borderTopRightRadius: Radius.sm, borderBottomRightRadius: Radius.sm },
-  segmentText: { fontSize: 14, fontFamily: 'Inter_400Regular' },
-  segmentTextSelected: { fontFamily: 'Inter_700Bold' },
+  segmentText: { fontSize: 14, fontFamily: FontFamily.regular },
+  segmentTextSelected: { fontFamily: FontFamily.bold },
   startBtn: { marginTop: 8, paddingVertical: 16, borderRadius: Radius.sm, alignItems: 'center' },
-  startBtnText: { fontSize: 17, fontFamily: 'Inter_600SemiBold' },
+  startBtnText: { fontSize: 17, fontFamily: FontFamily.semibold },
   previewCard: { borderWidth: 1, borderRadius: Radius.sm, padding: 16, gap: 10 },
   previewMeta: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  previewStat: { fontSize: 14, fontFamily: 'Inter_600SemiBold' },
-  previewDuration: { fontSize: 14, fontFamily: 'Inter_700Bold' },
+  previewStat: { fontSize: 14, fontFamily: FontFamily.semibold },
+  previewDuration: { fontSize: 14, fontFamily: FontFamily.bold },
   previewList: { gap: 3 },
   previewItem: { fontSize: 13 },
   deloadCard: { borderWidth: 1, borderRadius: Radius.sm, padding: 16, gap: 12, marginBottom: 8 },
-  deloadTitle: { fontSize: 15, fontFamily: 'Inter_600SemiBold' },
+  deloadTitle: { fontSize: 15, fontFamily: FontFamily.semibold },
   deloadBody: { fontSize: 14, lineHeight: 20 },
   deloadButtons: { flexDirection: 'column', gap: 8 },
   deloadBtn: { paddingVertical: 12, borderRadius: Radius.sm, alignItems: 'center' },
   deloadBtnPrimary: {},
-  deloadBtnPrimaryText: { fontSize: 15, fontFamily: 'Inter_600SemiBold' },
+  deloadBtnPrimaryText: { fontSize: 15, fontFamily: FontFamily.semibold },
   deloadBtnSecondary: { borderWidth: 1 },
   deloadBtnSecondaryText: { fontSize: 15 },
 });
