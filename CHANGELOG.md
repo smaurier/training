@@ -5,6 +5,14 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.19.1] — 2026-06-18
+
+0b158d5 feat(onboarding): PhilosophyScreen — copy manifeste validé, titre 40px Black
+e368d31 fix(copy): supprimer 'Progression stagnante' — ETA non calculable suffit
+39a0c86 fix(notif): message inactivité factuel, sans punition de l'absence
+
+---
+
 ## [1.19.0] — 2026-06-18
 
 55444d1 fix(design): Inter fontFamily + colors.primary in session transition components
