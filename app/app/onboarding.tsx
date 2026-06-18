@@ -1,4 +1,5 @@
 // app/app/onboarding.tsx
+import { Spacing } from '@/constants/Spacing';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState, useMemo, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
@@ -129,9 +130,9 @@ const styles = StyleSheet.create({
   dotsRow: {
     flexDirection: 'row',
     justifyContent: 'center',
-    gap: 6,
+    gap: Spacing.sm,
     paddingTop: 56,
-    paddingBottom: 8,
+    paddingBottom: Spacing.sm,
   },
   dot: {
     width: 6,

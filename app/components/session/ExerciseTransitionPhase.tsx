@@ -1,3 +1,4 @@
+import { Spacing } from '@/constants/Spacing';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import type { WorkoutExerciseDetail } from '@/services/WorkoutExerciseService';
@@ -76,7 +77,7 @@ export function ExerciseTransitionPhase({
         ) : null}
 
         {supersetGroup && supersetGroup.length > 1 && (
-          <View style={[styles.supersetPreview, { backgroundColor: SemanticColors.supersetAlpha, borderColor: SemanticColors.superset, borderWidth: 1, borderRadius: Radius.md, padding: 12 }]}>
+          <View style={[styles.supersetPreview, { backgroundColor: SemanticColors.supersetAlpha, borderColor: SemanticColors.superset, borderWidth: 1, borderRadius: Radius.md, padding: Spacing.md }]}>
             <Text style={[styles.supersetPreviewLabel, { color: SemanticColors.superset }]}>
               {'Tu vas enchaîner :'}
             </Text>
@@ -117,10 +118,10 @@ const styles = StyleSheet.create({
   },
   content: {
     flexGrow: 1,
-    paddingHorizontal: 24,
+    paddingHorizontal: Spacing.xxl,
     paddingTop: 80,
     paddingBottom: 40,
-    gap: 12,
+    gap: Spacing.md,
   },
   exerciseLabel: {
     fontSize: 11,
@@ -137,20 +138,20 @@ const styles = StyleSheet.create({
   },
   separator: {
     height: 1,
-    marginVertical: 4,
+    marginVertical: Spacing.xs,
   },
   description: {
     fontSize: 15,
     lineHeight: 22,
   },
-  supersetPreview: { marginTop: 4 },
-  supersetPreviewLabel: { fontSize: 11, fontFamily: FontFamily.bold, letterSpacing: LetterSpacing.wide, marginBottom: 4 },
+  supersetPreview: { marginTop: Spacing.xs },
+  supersetPreviewLabel: { fontSize: 11, fontFamily: FontFamily.bold, letterSpacing: LetterSpacing.wide, marginBottom: Spacing.xs },
   supersetPreviewChain: { fontSize: 14, fontFamily: FontFamily.regular },
   continueBtn: {
-    paddingVertical: 14,
+    paddingVertical: Spacing.lg,
     borderRadius: Radius.sm,
     alignItems: 'center',
-    marginTop: 24,
+    marginTop: Spacing.xxl,
   },
   continueBtnText: {
     fontSize: 17,

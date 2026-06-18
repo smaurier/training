@@ -1,3 +1,4 @@
+import { Spacing } from '@/constants/Spacing';
 import { useRef, useState, useCallback, forwardRef, useImperativeHandle } from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
@@ -181,13 +182,13 @@ export const AddMeasurementSheet = forwardRef<AddMeasurementSheetRef, Props>(
 );
 
 const styles = StyleSheet.create({
-  container: { padding: 20, paddingBottom: 40 },
-  title: { fontSize: 18, fontWeight: '700', marginBottom: 20 },
+  container: { padding: Spacing.xl, paddingBottom: 40 },
+  title: { fontSize: 18, fontWeight: '700', marginBottom: Spacing.xl },
   fieldRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 14,
+    marginBottom: Spacing.lg,
   },
   fieldLabel: { fontSize: 14, flex: 1 },
   input: {
@@ -195,10 +196,10 @@ const styles = StyleSheet.create({
     width: 110,
     borderWidth: 1,
     borderRadius: Radius.md,
-    padding: 10,
+    padding: Spacing.md,
     fontSize: 14,
     textAlign: 'right',
   },
-  saveBtn: { marginTop: 24, padding: 14, borderRadius: Radius.lg, alignItems: 'center' },
+  saveBtn: { marginTop: Spacing.xxl, padding: Spacing.lg, borderRadius: Radius.lg, alignItems: 'center' },
   saveBtnText: { fontWeight: '700', fontSize: 16 },
 });

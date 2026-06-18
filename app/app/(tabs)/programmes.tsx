@@ -1,3 +1,4 @@
+import { Spacing } from '@/constants/Spacing';
 import { FlatList, View, Text, ActivityIndicator, StyleSheet, Alert } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { useCallback, useRef, useState, useEffect } from 'react';
@@ -31,7 +32,7 @@ export default function ProgrammesScreen() {
       headerRight: () => (
         <PressableA11y
           onPress={() => router.push('/scan-programme' as any)}
-          style={{ padding: 8 }}
+          style={{ padding: Spacing.sm }}
           accessibilityLabel="Scanner un programme partagé"
           accessibilityRole="button"
         >
@@ -148,9 +149,9 @@ export default function ProgrammesScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  list: { padding: 16, paddingBottom: 100 },
+  list: { padding: Spacing.lg, paddingBottom: 100 },
   empty: { textAlign: 'center', marginTop: 48, fontSize: 15 },
-  errorText: { fontSize: 15, textAlign: 'center', paddingHorizontal: 24 },
+  errorText: { fontSize: 15, textAlign: 'center', paddingHorizontal: Spacing.xxl },
   fab: {
     position: 'absolute',
     bottom: 24,

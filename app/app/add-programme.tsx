@@ -1,3 +1,4 @@
+import { Spacing } from '@/constants/Spacing';
 import {
   Text, TextInput,
   StyleSheet, ScrollView, Alert, ActivityIndicator
@@ -100,19 +101,19 @@ export default function AddProgrammeModal() {
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 24, gap: 8 },
-  label: { fontSize: 14, fontWeight: '600', marginTop: 8 },
+  container: { padding: Spacing.xxl, gap: Spacing.sm },
+  label: { fontSize: 14, fontWeight: '600', marginTop: Spacing.sm },
   input: {
     height: 48,
     borderWidth: 1,
     borderRadius: Radius.sm,
-    paddingHorizontal: 14,
+    paddingHorizontal: Spacing.lg,
     fontSize: 15,
-    marginTop: 4,
+    marginTop: Spacing.xs,
   },
   inputMultiline: {
     height: 88,
-    paddingTop: 12,
+    paddingTop: Spacing.md,
     textAlignVertical: 'top',
   },
   submitBtn: {
@@ -120,7 +121,7 @@ const styles = StyleSheet.create({
     borderRadius: Radius.sm,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 24,
+    marginTop: Spacing.xxl,
   },
   submitText: { fontSize: 16, fontWeight: '600' },
 });

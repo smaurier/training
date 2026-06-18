@@ -1,3 +1,4 @@
+import { Spacing } from '@/constants/Spacing';
 import { useState } from 'react';
 import { View, Text, StyleSheet, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -235,24 +236,24 @@ export function WorkoutExerciseCard({
 }
 
 const styles = StyleSheet.create({
-  card: { borderRadius: Radius.sm, borderWidth: 1, marginBottom: 10, overflow: 'hidden' },
+  card: { borderRadius: Radius.sm, borderWidth: 1, marginBottom: Spacing.md, overflow: 'hidden' },
   typeStripe: { position: 'absolute', left: 0, top: 0, bottom: 0, width: 3 },
-  header: { flexDirection: 'row', alignItems: 'center', paddingRight: 4, minHeight: 56 },
-  headerMain: { flex: 1, flexDirection: 'row', alignItems: 'center', paddingLeft: 16, paddingVertical: 16, paddingRight: 8, gap: 8 },
+  header: { flexDirection: 'row', alignItems: 'center', paddingRight: Spacing.xs, minHeight: 56 },
+  headerMain: { flex: 1, flexDirection: 'row', alignItems: 'center', paddingLeft: Spacing.lg, paddingVertical: Spacing.lg, paddingRight: Spacing.sm, gap: Spacing.sm },
   headerContent: { flex: 1, gap: 2 },
   reorderBtn: { alignItems: 'center', justifyContent: 'center' },
   name: { fontSize: 16, fontWeight: '600' },
   muscles: { fontSize: 12 },
-  blocks: { padding: 12, paddingTop: 0, gap: 8 },
-  empty: { fontSize: 13, fontStyle: 'italic', paddingVertical: 4 },
-  hint: { fontSize: 12, fontStyle: 'italic', paddingVertical: 4, lineHeight: 18 },
-  addBlockBtn: { marginTop: 4, paddingVertical: 8 },
+  blocks: { padding: Spacing.md, paddingTop: 0, gap: Spacing.sm },
+  empty: { fontSize: 13, fontStyle: 'italic', paddingVertical: Spacing.xs },
+  hint: { fontSize: 12, fontStyle: 'italic', paddingVertical: Spacing.xs, lineHeight: 18 },
+  addBlockBtn: { marginTop: Spacing.xs, paddingVertical: Spacing.sm },
   addBlockText: { fontSize: 13, fontWeight: '500' },
-  supersetRow: { marginTop: 8, flexDirection: 'row', alignItems: 'center', gap: 8 },
-  supersetBadge: { borderRadius: 4, paddingHorizontal: 8, paddingVertical: 2 },
+  supersetRow: { marginTop: Spacing.sm, flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
+  supersetBadge: { borderRadius: 4, paddingHorizontal: Spacing.sm, paddingVertical: 2 },
   supersetBadgeText: { fontSize: 11, fontWeight: '700' },
-  linkBtn: { borderWidth: 1, borderRadius: 6, paddingHorizontal: 10, paddingVertical: 4 },
+  linkBtn: { borderWidth: 1, borderRadius: 6, paddingHorizontal: Spacing.md, paddingVertical: Spacing.xs },
   linkBtnText: { fontSize: 12 },
-  unlinkBtn: { paddingHorizontal: 8, paddingVertical: 4 },
+  unlinkBtn: { paddingHorizontal: Spacing.sm, paddingVertical: Spacing.xs },
   unlinkBtnText: { fontSize: 12 },
 });

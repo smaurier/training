@@ -1,3 +1,4 @@
+import { Spacing } from '@/constants/Spacing';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { LetterSpacing } from '@/constants/Typography';
 import { PressableA11y } from '@/components/ui/PressableA11y';
@@ -74,10 +75,10 @@ const styles = StyleSheet.create({
   stripe: { width: 4 },
   content: {
     flexGrow: 1,
-    paddingHorizontal: 24,
+    paddingHorizontal: Spacing.xxl,
     paddingTop: 80,
     paddingBottom: 40,
-    gap: 16,
+    gap: Spacing.lg,
   },
   phaseLabel: {
     fontSize: 11,
@@ -98,18 +99,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.lg,
   },
   setRowBorder: { borderBottomWidth: 1 },
   setWeight: { fontSize: 17, fontWeight: '600' },
   setPercent: { fontSize: 14 },
   hint: { fontSize: 14 },
   startBtn: {
-    paddingVertical: 14,
+    paddingVertical: Spacing.lg,
     borderRadius: Radius.sm,
     alignItems: 'center',
-    marginTop: 8,
+    marginTop: Spacing.sm,
   },
   startBtnText: { fontSize: 17, fontWeight: '600' },
 });

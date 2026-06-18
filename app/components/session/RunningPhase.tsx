@@ -1,4 +1,5 @@
 // app/components/session/RunningPhase.tsx
+import { Spacing } from '@/constants/Spacing';
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { View, Text, TextInput, StyleSheet, ScrollView, Vibration } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -542,7 +543,7 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
               }}
               style={[styles.sheetCancelBtn, { borderColor: colors.border }]}
             >
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, justifyContent: 'center' }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, justifyContent: 'center' }}>
                 <Ionicons name="swap-horizontal-outline" size={16} color={colors.text} />
                 <Text style={[styles.sheetCancelText, { color: colors.text }]}>Remplacer cet exercice</Text>
               </View>
@@ -675,60 +676,60 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
 
 const styles = StyleSheet.create({
   wrapper: { flex: 1 },
-  container: { flexGrow: 1, padding: 20, gap: 14 },
+  container: { flexGrow: 1, padding: Spacing.xl, gap: Spacing.lg },
   header: { gap: 2 },
   headerRow: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' },
-  headerTextGroup: { flex: 1, gap: 2, marginTop: 16 },
-  headerActions: { gap: 4, marginTop: 16 },
-  actionBtn: { padding: 12 },
-  exerciseNameRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  headerTextGroup: { flex: 1, gap: 2, marginTop: Spacing.lg },
+  headerActions: { gap: Spacing.xs, marginTop: Spacing.lg },
+  actionBtn: { padding: Spacing.md },
+  exerciseNameRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
   exerciseName: { fontSize: 26, fontWeight: '700' },
   progressLabel: { fontSize: 13 },
   circularTimerWrapper: { alignItems: 'center' },
-  blockBadge: { alignSelf: 'flex-start', marginTop: 4 },
+  blockBadge: { alignSelf: 'flex-start', marginTop: Spacing.xs },
   blockBadgeText: { fontSize: 11, fontWeight: '700', letterSpacing: LetterSpacing.wide },
-  targetCard: { padding: 16, borderRadius: Radius.sm, borderWidth: 1, alignItems: 'center' },
+  targetCard: { padding: Spacing.lg, borderRadius: Radius.sm, borderWidth: 1, alignItems: 'center' },
   targetText: { fontSize: 20, fontWeight: '600' },
-  inputRow: { flexDirection: 'row', gap: 10 },
-  inputGroup: { flex: 1, gap: 4 },
+  inputRow: { flexDirection: 'row', gap: Spacing.md },
+  inputGroup: { flex: 1, gap: Spacing.xs },
   inputGroupDisabled: { opacity: 0.4 },
   inputLabel: { fontSize: 11, fontWeight: '500', textAlign: 'center' },
   inputHint: { fontSize: 10, textAlign: 'center', marginBottom: 2 },
-  input: { borderWidth: 1, borderRadius: Radius.sm, padding: 10, fontSize: 18, fontWeight: '600', textAlign: 'center' },
+  input: { borderWidth: 1, borderRadius: Radius.sm, padding: Spacing.md, fontSize: 18, fontWeight: '600', textAlign: 'center' },
   validateBtn: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    gap: 8, minHeight: 64, borderRadius: Radius.sm,
+    gap: Spacing.sm, minHeight: 64, borderRadius: Radius.sm,
   },
   validateBtnText: { fontSize: 15, fontFamily: FontFamily.bold, letterSpacing: LetterSpacing.max, textTransform: 'uppercase' },
   repsFeedback: { fontSize: 13, textAlign: 'center', lineHeight: 18 },
-  lastLog: { fontSize: 12, marginTop: 4 },
-  restSection: { gap: 4 },
+  lastLog: { fontSize: 12, marginTop: Spacing.xs },
+  restSection: { gap: Spacing.xs },
   restLabel: { fontSize: 10, fontWeight: '600', letterSpacing: LetterSpacing.wide },
   restSet: { fontSize: 13, lineHeight: 20 },
-  skipBtn: { alignItems: 'center', paddingVertical: 14, borderTopWidth: 1 },
+  skipBtn: { alignItems: 'center', paddingVertical: Spacing.lg, borderTopWidth: 1 },
   skipText: { fontSize: 14 },
-  sheetContainer: { paddingHorizontal: 24, paddingVertical: 8, gap: 12 },
+  sheetContainer: { paddingHorizontal: Spacing.xxl, paddingVertical: Spacing.sm, gap: Spacing.md },
   sheetTitle: { fontSize: 17, fontWeight: '600' },
   sheetMessage: { fontSize: 15 },
-  sheetDestructiveBtn: { alignItems: 'center', justifyContent: 'center', paddingVertical: 14, borderRadius: Radius.lg },
+  sheetDestructiveBtn: { alignItems: 'center', justifyContent: 'center', paddingVertical: Spacing.lg, borderRadius: Radius.lg },
   sheetBtnText: { color: '#fff', fontSize: 16, fontWeight: '600' },
-  sheetCancelBtn: { alignItems: 'center', justifyContent: 'center', paddingVertical: 14, borderRadius: Radius.lg, borderWidth: 1 },
+  sheetCancelBtn: { alignItems: 'center', justifyContent: 'center', paddingVertical: Spacing.lg, borderRadius: Radius.lg, borderWidth: 1 },
   sheetCancelText: { fontSize: 16, fontWeight: '500' },
-  descriptionScrollContent: { paddingHorizontal: 24, paddingBottom: 40 },
+  descriptionScrollContent: { paddingHorizontal: Spacing.xxl, paddingBottom: 40 },
   descriptionText: { fontSize: 15, lineHeight: 24 },
-  rpeSection: { flex: 1, gap: 6 },
-  rpeRow: { flexDirection: 'row', gap: 8 },
+  rpeSection: { flex: 1, gap: Spacing.sm },
+  rpeRow: { flexDirection: 'row', gap: Spacing.sm },
   rpeChip: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 12,
+    paddingVertical: Spacing.md,
     borderRadius: Radius.sm,
     borderWidth: 1,
     minHeight: 44,
   },
   rpeChipText: { fontSize: 14, fontWeight: '500' },
-  stepperRow: { flexDirection: 'row', alignItems: 'center', gap: 12, justifyContent: 'center' },
+  stepperRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md, justifyContent: 'center' },
   stepperBtn: {
     width: 52,
     height: 52,
@@ -746,7 +747,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
     backgroundColor: SemanticColors.superset,
     borderRadius: 4,
-    paddingHorizontal: 8,
+    paddingHorizontal: Spacing.sm,
     paddingVertical: 2,
   },
   supersetBadgeText: {
@@ -760,7 +761,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
     backgroundColor: SemanticColors.cardio,
     borderRadius: 4,
-    paddingHorizontal: 8,
+    paddingHorizontal: Spacing.sm,
     paddingVertical: 2,
   },
   amrapBadgeText: {
@@ -774,7 +775,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
     backgroundColor: SemanticColors.dropset,
     borderRadius: 4,
-    paddingHorizontal: 8,
+    paddingHorizontal: Spacing.sm,
     paddingVertical: 2,
   },
   dropsetBadgeText: {

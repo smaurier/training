@@ -1,3 +1,4 @@
+import { Spacing } from '@/constants/Spacing';
 import { View, Text, StyleSheet } from 'react-native';
 import { BarChart } from 'react-native-gifted-charts';
 import Colors from '@/constants/Colors';
@@ -69,8 +70,8 @@ export function VolumeBarChart({ data }: VolumeBarChartProps) {
 }
 
 const styles = StyleSheet.create({
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 4 },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: Spacing.xs },
   label: { fontSize: 10, fontFamily: FontFamily.bold, textTransform: 'uppercase', letterSpacing: LetterSpacing.wide },
   delta: { fontSize: 10, fontFamily: FontFamily.semibold },
-  total: { fontSize: 14, fontFamily: FontFamily.bold, marginTop: 4 },
+  total: { fontSize: 14, fontFamily: FontFamily.bold, marginTop: Spacing.xs },
 });

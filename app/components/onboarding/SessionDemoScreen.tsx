@@ -1,4 +1,5 @@
 // app/components/onboarding/SessionDemoScreen.tsx
+import { Spacing } from '@/constants/Spacing';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
 import { useState, useEffect, useRef } from 'react';
 import { PressableA11y } from '@/components/ui/PressableA11y';
@@ -128,18 +129,18 @@ export function SessionDemoScreen({ onNext, onBack }: ScreenProps) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 24 },
-  topRow: { gap: 16, marginBottom: 32 },
+  container: { flex: 1, padding: Spacing.xxl },
+  topRow: { gap: Spacing.lg, marginBottom: Spacing.xxxl },
   label: { fontSize: 11, fontFamily: FontFamily.bold, letterSpacing: LetterSpacing.widest },
-  content: { gap: 16 },
+  content: { gap: Spacing.lg },
   exerciseName: { fontSize: 26, fontFamily: FontFamily.bold },
   setInfo: { fontSize: 14, fontFamily: FontFamily.medium },
   hint: { fontSize: 14, fontFamily: FontFamily.regular, lineHeight: 20 },
   repsInput: {
-    borderWidth: 2, borderRadius: Radius.lg, padding: 16,
+    borderWidth: 2, borderRadius: Radius.lg, padding: Spacing.lg,
     fontSize: 28, fontFamily: FontFamily.bold, textAlign: 'center',
   },
-  button: { borderRadius: Radius.lg, padding: 16, alignItems: 'center' },
+  button: { borderRadius: Radius.lg, padding: Spacing.lg, alignItems: 'center' },
   buttonText: { fontSize: 16, fontFamily: FontFamily.bold },
   restTitle: { fontSize: 32, fontFamily: FontFamily.black },
   restTimer: { fontSize: 64, fontFamily: FontFamily.black },

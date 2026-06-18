@@ -1,4 +1,5 @@
 // app/components/onboarding/ObjectiveScreen.tsx
+import { Spacing } from '@/constants/Spacing';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import { useColorScheme } from '@/components/useColorScheme';
@@ -75,14 +76,14 @@ export function ObjectiveScreen({ wizardState, setWizardState, onNext, onBack }:
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  header: { padding: 24, gap: 8 },
+  header: { padding: Spacing.xxl, gap: Spacing.sm },
   title: { fontSize: 24, fontFamily: FontFamily.bold },
   subtitle: { fontSize: 14, fontFamily: FontFamily.regular },
-  list: { paddingHorizontal: 24, gap: 12, paddingBottom: 24 },
-  card: { borderWidth: 1.5, borderRadius: Radius.lg, padding: 16, gap: 4 },
+  list: { paddingHorizontal: Spacing.xxl, gap: Spacing.md, paddingBottom: Spacing.xxl },
+  card: { borderWidth: 1.5, borderRadius: Radius.lg, padding: Spacing.lg, gap: Spacing.xs },
   cardLabel: { fontSize: 16, fontFamily: FontFamily.bold },
   cardDesc: { fontSize: 13, fontFamily: FontFamily.regular },
-  footer: { padding: 24, borderTopWidth: 1 },
-  button: { borderRadius: Radius.lg, padding: 16, alignItems: 'center' },
+  footer: { padding: Spacing.xxl, borderTopWidth: 1 },
+  button: { borderRadius: Radius.lg, padding: Spacing.lg, alignItems: 'center' },
   buttonText: { fontSize: 16, fontFamily: FontFamily.bold },
 });

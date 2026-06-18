@@ -1,3 +1,4 @@
+import { Spacing } from '@/constants/Spacing';
 import { useState, useEffect } from 'react';
 import { Modal, View, Text, TextInput, Switch, StyleSheet, ScrollView } from 'react-native';
 import type { Block } from '@/db/types';
@@ -119,15 +120,15 @@ export function EditBlockModal({ visible, block, workoutExerciseId: _workoutExer
 
 const styles = StyleSheet.create({
   overlay: { flex: 1, justifyContent: 'flex-end' },
-  sheet: { borderTopLeftRadius: 16, borderTopRightRadius: 16, padding: 20, gap: 14 },
+  sheet: { borderTopLeftRadius: 16, borderTopRightRadius: 16, padding: Spacing.xl, gap: Spacing.lg },
   title: { fontSize: 17, fontWeight: '600' },
-  input: { borderWidth: 1, borderRadius: Radius.sm, padding: 10, fontSize: 16 },
+  input: { borderWidth: 1, borderRadius: Radius.sm, padding: Spacing.md, fontSize: 16 },
   switchRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   switchLabel: { fontSize: 15 },
-  buttons: { flexDirection: 'row', gap: 12, marginTop: 4 },
-  btn: { flex: 1, alignItems: 'center', paddingVertical: 12, borderRadius: Radius.sm },
-  chip: { borderWidth: 1, borderRadius: Radius.full, paddingHorizontal: 14, paddingVertical: 6 },
+  buttons: { flexDirection: 'row', gap: Spacing.md, marginTop: Spacing.xs },
+  btn: { flex: 1, alignItems: 'center', paddingVertical: Spacing.md, borderRadius: Radius.sm },
+  chip: { borderWidth: 1, borderRadius: Radius.full, paddingHorizontal: Spacing.lg, paddingVertical: Spacing.sm },
   chipsScroll: { marginBottom: -4 },
-  chipsRow: { flexDirection: 'row', gap: 8, paddingBottom: 4 },
+  chipsRow: { flexDirection: 'row', gap: Spacing.sm, paddingBottom: Spacing.xs },
   chipText: { fontSize: 13, fontWeight: '500' },
 });

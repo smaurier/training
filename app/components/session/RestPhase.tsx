@@ -1,3 +1,4 @@
+import { Spacing } from '@/constants/Spacing';
 import { View, Text, StyleSheet } from 'react-native';
 import { LetterSpacing } from '@/constants/Typography';
 import { PressableA11y } from '@/components/ui/PressableA11y';
@@ -59,13 +60,13 @@ export function RestPhase({ durationSeconds, timer, nextLabel, onContinue }: Res
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 24,
+    paddingHorizontal: Spacing.xxl,
     paddingTop: 60,
     paddingBottom: 40,
     alignItems: 'center',
-    gap: 20,
+    gap: Spacing.xl,
   },
-  nextSection: { alignItems: 'center', gap: 4 },
+  nextSection: { alignItems: 'center', gap: Spacing.xs },
   nextSectionLabel: { fontSize: 10, fontWeight: '700', letterSpacing: LetterSpacing.widest },
   nextLabel: {
     fontSize: 17,
@@ -74,7 +75,7 @@ const styles = StyleSheet.create({
   },
   continueBtn: {
     width: '100%',
-    paddingVertical: 14,
+    paddingVertical: Spacing.lg,
     borderRadius: Radius.sm,
     alignItems: 'center',
     marginTop: 'auto',

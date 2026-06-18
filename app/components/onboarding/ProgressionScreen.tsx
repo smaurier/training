@@ -1,4 +1,5 @@
 // app/components/onboarding/ProgressionScreen.tsx
+import { Spacing } from '@/constants/Spacing';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import { useColorScheme } from '@/components/useColorScheme';
@@ -70,13 +71,13 @@ export function ProgressionScreen({ onNext, onBack }: ScreenProps) {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  content: { padding: 24, gap: 20 },
+  content: { padding: Spacing.xxl, gap: Spacing.xl },
   title: { fontSize: 24, fontFamily: FontFamily.bold },
   subtitle: { fontSize: 14, fontFamily: FontFamily.regular, lineHeight: 20 },
-  row: { borderBottomWidth: 1, paddingBottom: 16, gap: 4 },
+  row: { borderBottomWidth: 1, paddingBottom: Spacing.lg, gap: Spacing.xs },
   rowLabel: { fontSize: 11, fontFamily: FontFamily.bold, letterSpacing: LetterSpacing.wider },
   rowDesc: { fontSize: 14, fontFamily: FontFamily.regular, lineHeight: 20 },
-  footer: { padding: 24, borderTopWidth: 1 },
-  button: { borderRadius: Radius.lg, padding: 16, alignItems: 'center' },
+  footer: { padding: Spacing.xxl, borderTopWidth: 1 },
+  button: { borderRadius: Radius.lg, padding: Spacing.lg, alignItems: 'center' },
   buttonText: { fontSize: 16, fontFamily: FontFamily.bold },
 });

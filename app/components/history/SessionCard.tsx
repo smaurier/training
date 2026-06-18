@@ -1,3 +1,4 @@
+import { Spacing } from '@/constants/Spacing';
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { PressableA11y } from '@/components/ui/PressableA11y';
@@ -55,13 +56,13 @@ const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.lg,
     borderBottomWidth: 1,
   },
   content: {
     flex: 1,
-    gap: 4,
+    gap: Spacing.xs,
   },
   name: {
     fontSize: 16,

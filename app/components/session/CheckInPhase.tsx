@@ -1,4 +1,5 @@
 // app/components/session/CheckInPhase.tsx
+import { Spacing } from '@/constants/Spacing';
 import { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, ViewStyle } from 'react-native';
 import { PressableA11y } from '@/components/ui/PressableA11y';
@@ -188,31 +189,31 @@ export function CheckInPhase({ onStart, exercises, deloadSuggested, onDeloadAppl
 }
 
 const styles = StyleSheet.create({
-  container: { flexGrow: 1, padding: 24, gap: 28 },
-  hero: { alignItems: 'center', paddingTop: 32, gap: 6 },
+  container: { flexGrow: 1, padding: Spacing.xxl, gap: 28 },
+  hero: { alignItems: 'center', paddingTop: Spacing.xxxl, gap: Spacing.sm },
   title: { fontSize: 24, fontFamily: FontFamily.bold, textAlign: 'center' },
   subtitle: { fontSize: 14, textAlign: 'center' },
-  row: { gap: 10 },
+  row: { gap: Spacing.md },
   rowLabel: { fontSize: 11, fontFamily: FontFamily.bold, letterSpacing: LetterSpacing.wider },
   segment: { flexDirection: 'row', borderWidth: 1, borderRadius: Radius.sm, overflow: 'hidden' },
-  segmentBtn: { flex: 1, alignItems: 'center', paddingVertical: 14 },
+  segmentBtn: { flex: 1, alignItems: 'center', paddingVertical: Spacing.lg },
   segmentFirst: { borderTopLeftRadius: Radius.sm, borderBottomLeftRadius: Radius.sm },
   segmentLast: { borderTopRightRadius: Radius.sm, borderBottomRightRadius: Radius.sm },
   segmentText: { fontSize: 14, fontFamily: FontFamily.regular },
   segmentTextSelected: { fontFamily: FontFamily.bold },
-  startBtn: { marginTop: 8, paddingVertical: 16, borderRadius: Radius.sm, alignItems: 'center' },
+  startBtn: { marginTop: Spacing.sm, paddingVertical: Spacing.lg, borderRadius: Radius.sm, alignItems: 'center' },
   startBtnText: { fontSize: 17, fontFamily: FontFamily.semibold },
-  previewCard: { borderWidth: 1, borderRadius: Radius.sm, padding: 16, gap: 10 },
+  previewCard: { borderWidth: 1, borderRadius: Radius.sm, padding: Spacing.lg, gap: Spacing.md },
   previewMeta: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   previewStat: { fontSize: 14, fontFamily: FontFamily.semibold },
   previewDuration: { fontSize: 14, fontFamily: FontFamily.bold },
   previewList: { gap: 3 },
   previewItem: { fontSize: 13 },
-  deloadCard: { borderWidth: 1, borderRadius: Radius.sm, padding: 16, gap: 12, marginBottom: 8 },
+  deloadCard: { borderWidth: 1, borderRadius: Radius.sm, padding: Spacing.lg, gap: Spacing.md, marginBottom: Spacing.sm },
   deloadTitle: { fontSize: 15, fontFamily: FontFamily.semibold },
   deloadBody: { fontSize: 14, lineHeight: 20 },
-  deloadButtons: { flexDirection: 'column', gap: 8 },
-  deloadBtn: { paddingVertical: 12, borderRadius: Radius.sm, alignItems: 'center' },
+  deloadButtons: { flexDirection: 'column', gap: Spacing.sm },
+  deloadBtn: { paddingVertical: Spacing.md, borderRadius: Radius.sm, alignItems: 'center' },
   deloadBtnPrimary: {},
   deloadBtnPrimaryText: { fontSize: 15, fontFamily: FontFamily.semibold },
   deloadBtnSecondary: { borderWidth: 1 },

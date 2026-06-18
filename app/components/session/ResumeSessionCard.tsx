@@ -1,3 +1,4 @@
+import { Spacing } from '@/constants/Spacing';
 import React from 'react';
 import { LetterSpacing } from '@/constants/Typography';
 import { View, Text, StyleSheet } from 'react-native';
@@ -41,10 +42,10 @@ export function ResumeSessionCard({ workoutName, serieLabel, onPress }: ResumeSe
 }
 
 const styles = StyleSheet.create({
-  card: { borderWidth: 1.5, borderRadius: Radius.md, padding: 16, gap: 4 },
-  row: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  card: { borderWidth: 1.5, borderRadius: Radius.md, padding: Spacing.lg, gap: Spacing.xs },
+  row: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
   label: { fontSize: 11, fontWeight: '600', textTransform: 'uppercase', letterSpacing: LetterSpacing.wide },
   workoutName: { fontSize: 18, fontWeight: '700' },
   serieLabel: { fontSize: 13 },
-  cta: { fontSize: 14, fontWeight: '600', marginTop: 4 },
+  cta: { fontSize: 14, fontWeight: '600', marginTop: Spacing.xs },
 });

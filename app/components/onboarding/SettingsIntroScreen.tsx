@@ -1,4 +1,5 @@
 // app/components/onboarding/SettingsIntroScreen.tsx
+import { Spacing } from '@/constants/Spacing';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { useState, useCallback } from 'react';
 import { PressableA11y } from '@/components/ui/PressableA11y';
@@ -52,7 +53,7 @@ function SegmentedControl<T extends string>({
 
 const sc = StyleSheet.create({
   container: { flexDirection: 'row', borderWidth: 1, borderRadius: Radius.lg, overflow: 'hidden' },
-  segment: { flex: 1, paddingVertical: 8, alignItems: 'center' },
+  segment: { flex: 1, paddingVertical: Spacing.sm, alignItems: 'center' },
   segmentText: { fontSize: 14, fontFamily: FontFamily.medium },
 });
 
@@ -150,15 +151,15 @@ export function SettingsIntroScreen({ onNext, onBack }: ScreenProps) {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  content: { padding: 24, gap: 24 },
+  content: { padding: Spacing.xxl, gap: Spacing.xxl },
   title: { fontSize: 24, fontFamily: FontFamily.bold },
   subtitle: { fontSize: 14, fontFamily: FontFamily.regular },
-  section: { gap: 8 },
+  section: { gap: Spacing.sm },
   sectionTitle: { fontSize: 14, fontFamily: FontFamily.bold },
   sectionHint: { fontSize: 13, fontFamily: FontFamily.regular },
-  infoBlock: { borderWidth: 1, borderRadius: Radius.lg, padding: 12 },
+  infoBlock: { borderWidth: 1, borderRadius: Radius.lg, padding: Spacing.md },
   infoText: { fontSize: 13, fontFamily: FontFamily.regular, lineHeight: 18 },
-  footer: { padding: 24, borderTopWidth: 1 },
-  button: { borderRadius: Radius.lg, padding: 16, alignItems: 'center' },
+  footer: { padding: Spacing.xxl, borderTopWidth: 1 },
+  button: { borderRadius: Radius.lg, padding: Spacing.lg, alignItems: 'center' },
   buttonText: { fontSize: 16, fontFamily: FontFamily.bold },
 });

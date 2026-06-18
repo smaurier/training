@@ -1,3 +1,4 @@
+import { Spacing } from '@/constants/Spacing';
 import React from 'react';
 import { View, Text, Modal, StyleSheet } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
@@ -57,11 +58,11 @@ export function ShareQRModal({ visible, base64, programName, onClose }: Props) {
 }
 
 const styles = StyleSheet.create({
-  backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', alignItems: 'center', padding: 24 },
-  card: { borderRadius: 16, padding: 24, alignItems: 'center', width: '100%', maxWidth: 340 },
-  title: { fontSize: 18, fontWeight: '700', textAlign: 'center', marginBottom: 8 },
-  subtitle: { fontSize: 13, textAlign: 'center', marginBottom: 24 },
-  qrWrapper: { padding: 16, backgroundColor: '#fff', borderRadius: Radius.lg, marginBottom: 24 },
-  closeBtn: { paddingVertical: 12, paddingHorizontal: 32, borderRadius: Radius.lg },
+  backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', alignItems: 'center', padding: Spacing.xxl },
+  card: { borderRadius: 16, padding: Spacing.xxl, alignItems: 'center', width: '100%', maxWidth: 340 },
+  title: { fontSize: 18, fontWeight: '700', textAlign: 'center', marginBottom: Spacing.sm },
+  subtitle: { fontSize: 13, textAlign: 'center', marginBottom: Spacing.xxl },
+  qrWrapper: { padding: Spacing.lg, backgroundColor: '#fff', borderRadius: Radius.lg, marginBottom: Spacing.xxl },
+  closeBtn: { paddingVertical: Spacing.md, paddingHorizontal: Spacing.xxxl, borderRadius: Radius.lg },
   closeBtnText: { fontWeight: '700', fontSize: 16 },
 });

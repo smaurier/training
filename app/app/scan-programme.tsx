@@ -1,3 +1,4 @@
+import { Spacing } from '@/constants/Spacing';
 import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Alert } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
@@ -86,11 +87,11 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   overlay: {
     position: 'absolute', bottom: 60, left: 0, right: 0,
-    alignItems: 'center', paddingHorizontal: 24,
+    alignItems: 'center', paddingHorizontal: Spacing.xxl,
   },
   hint: {
     color: '#fff', fontSize: 15, textAlign: 'center',
-    backgroundColor: 'rgba(0,0,0,0.6)', paddingHorizontal: 16, paddingVertical: 10, borderRadius: Radius.md,
+    backgroundColor: 'rgba(0,0,0,0.6)', paddingHorizontal: Spacing.lg, paddingVertical: Spacing.md, borderRadius: Radius.md,
   },
-  msg: { fontSize: 16, textAlign: 'center', margin: 32 },
+  msg: { fontSize: 16, textAlign: 'center', margin: Spacing.xxxl },
 });

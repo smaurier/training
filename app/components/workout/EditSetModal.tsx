@@ -1,3 +1,4 @@
+import { Spacing } from '@/constants/Spacing';
 import { useState } from 'react';
 import { Modal, View, Text, TextInput, StyleSheet } from 'react-native';
 import type { Set as TrainingSet, WeightType, SetType } from '@/db/types';
@@ -163,14 +164,14 @@ export function EditSetModal({ set, onSave, onClose }: EditSetModalProps) {
 
 const styles = StyleSheet.create({
   overlay: { flex: 1, justifyContent: 'flex-end' },
-  sheet: { borderTopLeftRadius: 16, borderTopRightRadius: 16, padding: 20, gap: 14 },
+  sheet: { borderTopLeftRadius: 16, borderTopRightRadius: 16, padding: Spacing.xl, gap: Spacing.lg },
   title: { fontSize: 17, fontWeight: '600' },
   fieldLabel: { fontSize: 12, fontWeight: '500', marginBottom: -8 },
-  segmented: { flexDirection: 'row', gap: 8 },
-  segment: { flex: 1, alignItems: 'center', paddingVertical: 10, borderRadius: Radius.sm, borderWidth: 1 },
-  inputFull: { borderWidth: 1, borderRadius: Radius.sm, padding: 10, fontSize: 16 },
+  segmented: { flexDirection: 'row', gap: Spacing.sm },
+  segment: { flex: 1, alignItems: 'center', paddingVertical: Spacing.md, borderRadius: Radius.sm, borderWidth: 1 },
+  inputFull: { borderWidth: 1, borderRadius: Radius.sm, padding: Spacing.md, fontSize: 16 },
   disabled: { opacity: 0.4 },
   hint: { fontSize: 12, fontStyle: 'italic', marginTop: -8 },
-  buttons: { flexDirection: 'row', gap: 12, marginTop: 4 },
-  btn: { flex: 1, alignItems: 'center', paddingVertical: 12, borderRadius: Radius.sm },
+  buttons: { flexDirection: 'row', gap: Spacing.md, marginTop: Spacing.xs },
+  btn: { flex: 1, alignItems: 'center', paddingVertical: Spacing.md, borderRadius: Radius.sm },
 });

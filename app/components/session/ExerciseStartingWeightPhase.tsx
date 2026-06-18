@@ -1,3 +1,4 @@
+import { Spacing } from '@/constants/Spacing';
 import { useState } from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
 import { PressableA11y } from '@/components/ui/PressableA11y';
@@ -97,17 +98,17 @@ export function ExerciseStartingWeightPhase({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 32,
+    paddingHorizontal: Spacing.xxxl,
   },
   content: {
     flex: 1,
     justifyContent: 'center',
-    gap: 20,
+    gap: Spacing.xl,
   },
   footer: {
-    paddingBottom: 32,
-    paddingTop: 12,
-    gap: 12,
+    paddingBottom: Spacing.xxxl,
+    paddingTop: Spacing.md,
+    gap: Spacing.md,
   },
   exerciseName: {
     fontSize: 18,
@@ -125,7 +126,7 @@ const styles = StyleSheet.create({
     height: 64,
     borderWidth: 1,
     borderRadius: Radius.sm,
-    paddingHorizontal: 16,
+    paddingHorizontal: Spacing.lg,
     fontSize: 28,
     fontFamily: FontFamily.semibold,
   },

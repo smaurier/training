@@ -1,3 +1,4 @@
+import { Spacing } from '@/constants/Spacing';
 import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetView,
@@ -94,15 +95,15 @@ export function AddProgrammeBottomSheet({
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 24,
-    paddingVertical: 8,
-    gap: 4,
+    paddingHorizontal: Spacing.xxl,
+    paddingVertical: Spacing.sm,
+    gap: Spacing.xs,
   },
   option: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
-    paddingVertical: 14,
+    gap: Spacing.lg,
+    paddingVertical: Spacing.lg,
     minHeight: 44,
   },
   iconWrap: {

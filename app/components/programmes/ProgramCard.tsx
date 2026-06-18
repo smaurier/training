@@ -1,3 +1,4 @@
+import { Spacing } from '@/constants/Spacing';
 import { View, Text, StyleSheet } from 'react-native';
 import { Program } from '@/db/types';
 import { PressableA11y } from '@/components/ui/PressableA11y';
@@ -48,18 +49,18 @@ export function ProgramCard({ program, workoutCount, onPress, onLongPress }: Pro
 
 const styles = StyleSheet.create({
   card: {
-    padding: 16,
+    padding: Spacing.lg,
     borderRadius: Radius.sm,
     borderWidth: 1,
-    marginBottom: 10,
-    gap: 4,
+    marginBottom: Spacing.md,
+    gap: Spacing.xs,
     minHeight: 44,
   },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    gap: 8,
+    gap: Spacing.sm,
   },
   name: {
     fontSize: 16,

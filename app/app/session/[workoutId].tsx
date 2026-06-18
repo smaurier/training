@@ -1,5 +1,6 @@
 
 // app/app/session/[workoutId].tsx
+import { Spacing } from '@/constants/Spacing';
 import { useEffect, useCallback, useMemo, useState, useRef } from 'react';
 import { LetterSpacing } from '@/constants/Typography';
 import { View, Text, StyleSheet, AccessibilityInfo, ActivityIndicator } from 'react-native';
@@ -560,7 +561,7 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  errorContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 32 },
+  errorContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: Spacing.xxxl },
   errorText: { fontSize: 16, textAlign: 'center' },
   prBadge: {
     position: 'absolute',
@@ -568,8 +569,8 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     backgroundColor: '#ca8a04',
     borderRadius: 14,
-    paddingHorizontal: 24,
-    paddingVertical: 14,
+    paddingHorizontal: Spacing.xxl,
+    paddingVertical: Spacing.lg,
     zIndex: 100,
     alignItems: 'center',
     gap: 2,
@@ -590,20 +591,20 @@ const styles = StyleSheet.create({
     zIndex: 50,
   },
   pauseButton: {
-    padding: 8,
+    padding: Spacing.sm,
   },
-  abandonSheet: { padding: 20, gap: 12 },
+  abandonSheet: { padding: Spacing.xl, gap: Spacing.md },
   abandonTitle: { fontSize: 17, fontWeight: '700' },
   abandonBody: { fontSize: 14, lineHeight: 20 },
-  abandonButtons: { flexDirection: 'row', gap: 12, marginTop: 8 },
+  abandonButtons: { flexDirection: 'row', gap: Spacing.md, marginTop: Spacing.sm },
   abandonBtn: {
-    flex: 1, paddingVertical: 12, borderRadius: Radius.sm,
+    flex: 1, paddingVertical: Spacing.md, borderRadius: Radius.sm,
     alignItems: 'center', borderWidth: 1,
   },
   abandonBtnText: { fontSize: 15, fontWeight: '600' },
   deloadBanner: {
-    paddingHorizontal: 16,
-    paddingVertical: 6,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.sm,
     borderBottomWidth: 1,
     alignItems: 'center',
   },

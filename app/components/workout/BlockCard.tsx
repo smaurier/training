@@ -1,3 +1,4 @@
+import { Spacing } from '@/constants/Spacing';
 import { useState } from 'react';
 import { LetterSpacing } from '@/constants/Typography';
 import { View, Text, StyleSheet, Alert } from 'react-native';
@@ -167,10 +168,10 @@ export function BlockCard({ block, isFirst, isLast, onUpdateSet, onAddSet, onRem
 }
 
 const styles = StyleSheet.create({
-  container: { gap: 4, paddingVertical: 8 },
+  container: { gap: Spacing.xs, paddingVertical: Spacing.sm },
   blockHeader: { flexDirection: 'row', alignItems: 'center' },
   blockNamePressable: { flex: 1 },
-  blockNameRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 2 },
+  blockNameRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, marginBottom: 2 },
   blockName: {
     fontSize: 11,
     fontWeight: '600',
@@ -181,6 +182,6 @@ const styles = StyleSheet.create({
   badgeText: { fontSize: 9, fontWeight: '700', letterSpacing: LetterSpacing.wide },
   set: { fontSize: 14, lineHeight: 20, paddingVertical: 2 },
   reorderBtn: { alignItems: 'center', justifyContent: 'center' },
-  addBtn: { marginTop: 4 },
+  addBtn: { marginTop: Spacing.xs },
   addBtnText: { fontSize: 13, fontWeight: '500' },
 });

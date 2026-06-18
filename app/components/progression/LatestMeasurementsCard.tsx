@@ -1,3 +1,4 @@
+import { Spacing } from '@/constants/Spacing';
 import { View, Text, StyleSheet } from 'react-native';
 import Colors from '@/constants/Colors';
 import { Radius } from '@/constants/Radius';
@@ -53,23 +54,23 @@ export function LatestMeasurementsCard({ latest, useKg = true }: Props) {
 const styles = StyleSheet.create({
   card: {
     borderRadius: Radius.lg,
-    padding: 16,
-    marginBottom: 16,
+    padding: Spacing.lg,
+    marginBottom: Spacing.lg,
     borderWidth: 1,
   },
   title: {
     fontSize: 16,
     fontWeight: '700',
-    marginBottom: 4,
+    marginBottom: Spacing.xs,
   },
   date: {
     fontSize: 12,
-    marginBottom: 12,
+    marginBottom: Spacing.md,
   },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 8,
+    marginBottom: Spacing.sm,
   },
   label: {
     fontSize: 14,

@@ -1,3 +1,4 @@
+import { Spacing } from '@/constants/Spacing';
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import type { StyleProp, ViewStyle } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -145,7 +146,7 @@ export default function HomeScreen() {
           {/* Exercise preview */}
           {previewExercises.length > 0 && (
             <View style={styles.exercisePreview}>
-              <Text style={[styles.cardLabel, { color: colors.textSecondary, marginBottom: 4 }]}>AU PROGRAMME</Text>
+              <Text style={[styles.cardLabel, { color: colors.textSecondary, marginBottom: Spacing.xs }]}>AU PROGRAMME</Text>
               {previewExercises.slice(0, 5).map((we, i) => {
                 const workBlock = we.blocks.find(b => b.is_work_block === 1);
                 const setCount = workBlock ? workBlock.sets.length : 0;
@@ -241,24 +242,24 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, gap: 16 },
-  card: { borderWidth: 1, borderRadius: Radius.sm, padding: 20, gap: 12 },
+  container: { flex: 1, padding: Spacing.xl, gap: Spacing.lg },
+  card: { borderWidth: 1, borderRadius: Radius.sm, padding: Spacing.xl, gap: Spacing.md },
   cardLabel: { fontSize: 11, fontFamily: FontFamily.semibold, textTransform: 'uppercase', letterSpacing: LetterSpacing.spaced },
   workoutName: { fontSize: 22, fontFamily: FontFamily.bold, letterSpacing: LetterSpacing.tight },
   lastDate: { fontSize: 11, fontFamily: FontFamily.regular },
-  cycleDots: { flexDirection: 'row', gap: 8, alignItems: 'center' },
+  cycleDots: { flexDirection: 'row', gap: Spacing.sm, alignItems: 'center' },
   cycleDot: { width: 8, height: 8, borderRadius: 999 },
-  exercisePreview: { gap: 0, marginTop: 4 },
-  exerciseRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 10 },
-  exerciseRowName: { flex: 1, fontSize: 14, fontFamily: FontFamily.regular, marginRight: 12 },
+  exercisePreview: { gap: 0, marginTop: Spacing.xs },
+  exerciseRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: Spacing.md },
+  exerciseRowName: { flex: 1, fontSize: 14, fontFamily: FontFamily.regular, marginRight: Spacing.md },
   exerciseRowSets: { fontSize: 12, fontFamily: FontFamily.medium },
   chipsWrapper: { position: 'relative' },
   chipsScroll: { marginHorizontal: -4 },
-  chipsRow: { paddingHorizontal: 4 },
-  chipsInner: { flexDirection: 'row', gap: 8, paddingVertical: 2, alignSelf: 'flex-start' },
+  chipsRow: { paddingHorizontal: Spacing.xs },
+  chipsInner: { flexDirection: 'row', gap: Spacing.sm, paddingVertical: 2, alignSelf: 'flex-start' },
   chipsFade: { position: 'absolute', right: -4, top: 0, bottom: 0, width: 48 },
   chip: {
-    paddingHorizontal: 14,
+    paddingHorizontal: Spacing.lg,
     minHeight: 44,
     borderRadius: Radius.xs,
     borderWidth: 1,
@@ -268,10 +269,10 @@ const styles = StyleSheet.create({
   chipText: { fontSize: 12, fontFamily: FontFamily.semibold, letterSpacing: LetterSpacing.wider, textTransform: 'uppercase' },
   startBtn: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    gap: 8, minHeight: 60, borderRadius: Radius.sm,
+    gap: Spacing.sm, minHeight: 60, borderRadius: Radius.sm,
   },
   startBtnText: { fontSize: 14, fontFamily: FontFamily.bold, letterSpacing: LetterSpacing.max, textTransform: 'uppercase' },
-  emptyHint: { fontSize: 12, fontFamily: FontFamily.regular, textAlign: 'center', marginTop: 8 },
-  linkBtn: { paddingVertical: 4 },
+  emptyHint: { fontSize: 12, fontFamily: FontFamily.regular, textAlign: 'center', marginTop: Spacing.sm },
+  linkBtn: { paddingVertical: Spacing.xs },
   linkText: { fontSize: 15, fontFamily: FontFamily.medium },
 });

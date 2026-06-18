@@ -1,3 +1,4 @@
+import { Spacing } from '@/constants/Spacing';
 import { useRef, useState, useMemo, useCallback } from 'react';
 import { Text, StyleSheet } from 'react-native';
 import BottomSheet, {
@@ -135,13 +136,13 @@ export function SubstituteSheet({ sheetRef, currentMuscleGroups, onSelect, onClo
 }
 
 const styles = StyleSheet.create({
-  header: { paddingHorizontal: 20, paddingBottom: 12, gap: 12 },
+  header: { paddingHorizontal: Spacing.xl, paddingBottom: Spacing.md, gap: Spacing.md },
   title: { fontSize: 17, fontWeight: '600' },
-  search: { borderWidth: 1, borderRadius: Radius.sm, padding: 10, fontSize: 16 },
-  emptyContainer: { paddingHorizontal: 20, paddingTop: 24, alignItems: 'center' },
+  search: { borderWidth: 1, borderRadius: Radius.sm, padding: Spacing.md, fontSize: 16 },
+  emptyContainer: { paddingHorizontal: Spacing.xl, paddingTop: Spacing.xxl, alignItems: 'center' },
   emptyText: { fontSize: 14, fontStyle: 'italic', textAlign: 'center' },
-  list: { paddingHorizontal: 20, paddingBottom: 40 },
-  row: { paddingVertical: 14, borderBottomWidth: StyleSheet.hairlineWidth, gap: 2 },
+  list: { paddingHorizontal: Spacing.xl, paddingBottom: 40 },
+  row: { paddingVertical: Spacing.lg, borderBottomWidth: StyleSheet.hairlineWidth, gap: 2 },
   rowName: { fontSize: 16 },
   rowType: { fontSize: 12 },
 });

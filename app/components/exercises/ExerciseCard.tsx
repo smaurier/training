@@ -1,3 +1,4 @@
+import { Spacing } from '@/constants/Spacing';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { LetterSpacing } from '@/constants/Typography';
 import { Swipeable } from 'react-native-gesture-handler';
@@ -60,11 +61,11 @@ export function ExerciseCard({ exercise, onDelete }: ExerciseCardProps) {
 
 const styles = StyleSheet.create({
   card: {
-    padding: 14,
+    padding: Spacing.lg,
     borderRadius: Radius.sm,
     borderWidth: 1,
-    marginBottom: 10,
-    gap: 4,
+    marginBottom: Spacing.md,
+    gap: Spacing.xs,
   },
   row: {
     flexDirection: 'row',
@@ -91,6 +92,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: 80,
     borderRadius: Radius.sm,
-    marginBottom: 10,
+    marginBottom: Spacing.md,
   },
 });

@@ -1,3 +1,4 @@
+import { Spacing } from '@/constants/Spacing';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import { useColorScheme } from '@/components/useColorScheme';
@@ -52,12 +53,12 @@ export function PhilosophyScreen({ onNext }: ScreenProps) {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  content: { padding: 24, paddingTop: 48, gap: 28 },
+  content: { padding: Spacing.xxl, paddingTop: 48, gap: 28 },
   title: { fontSize: 40, fontFamily: FontFamily.black, letterSpacing: LetterSpacing.tighter },
   intro: { fontSize: 17, fontFamily: FontFamily.regular, lineHeight: 26 },
-  block: { borderWidth: 1, borderRadius: Radius.sm, padding: 16 },
+  block: { borderWidth: 1, borderRadius: Radius.sm, padding: Spacing.lg },
   blockBody: { fontSize: 15, fontFamily: FontFamily.regular, lineHeight: 24 },
-  footer: { padding: 24, borderTopWidth: 1 },
-  button: { borderRadius: Radius.sm, padding: 18, alignItems: 'center' },
+  footer: { padding: Spacing.xxl, borderTopWidth: 1 },
+  button: { borderRadius: Radius.sm, padding: Spacing.xl, alignItems: 'center' },
   buttonText: { fontSize: 16, fontFamily: FontFamily.bold, letterSpacing: LetterSpacing.widest },
 });

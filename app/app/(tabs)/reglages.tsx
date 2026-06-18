@@ -1,3 +1,4 @@
+import { Spacing } from '@/constants/Spacing';
 import { useContext, useState, useCallback, useEffect } from 'react';
 import { View, Text, ScrollView, StyleSheet, ActivityIndicator, Switch, TextInput, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
@@ -113,8 +114,8 @@ function SectionHeader({
 }) {
   const isOpen = expandedHelp === helpId;
   return (
-    <View style={{ marginBottom: 4 }}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+    <View style={{ marginBottom: Spacing.xs }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: Spacing.sm }}>
         <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>{title}</Text>
         <PressableA11y
           onPress={() => onToggleHelp(helpId)}
@@ -125,7 +126,7 @@ function SectionHeader({
         </PressableA11y>
       </View>
       {isOpen && (
-        <Text style={{ color: colors.textSecondary, fontSize: 13, fontFamily: FontFamily.regular, marginTop: 4, marginBottom: 4 }}>
+        <Text style={{ color: colors.textSecondary, fontSize: 13, fontFamily: FontFamily.regular, marginTop: Spacing.xs, marginBottom: Spacing.xs }}>
           {helpText}
         </Text>
       )}
@@ -264,7 +265,7 @@ export default function ReglagesScreen() {
         colors={colors}
       />
       <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-        <Text style={[styles.hint, { color: colors.textSecondary, marginBottom: 8 }]}>
+        <Text style={[styles.hint, { color: colors.textSecondary, marginBottom: Spacing.sm }]}>
           {"Semaines d'entraînement avant de suggérer une semaine de décharge"}
         </Text>
         <SegmentedControl
@@ -289,7 +290,7 @@ export default function ReglagesScreen() {
         colors={colors}
       />
       <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-        <Text style={[styles.hint, { color: colors.textSecondary, marginBottom: 8 }]}>
+        <Text style={[styles.hint, { color: colors.textSecondary, marginBottom: Spacing.sm }]}>
           Incrément minimal lors des calculs de poids (décharge, échauffement)
         </Text>
         <SegmentedControl
@@ -439,26 +440,26 @@ export default function ReglagesScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 20, gap: 8 },
-  sectionTitle: { fontSize: 11, fontFamily: FontFamily.semibold, letterSpacing: LetterSpacing.wide, marginTop: 8, marginBottom: 4 },
-  card: { borderWidth: 1, borderRadius: Radius.sm, padding: 16, gap: 10 },
+  container: { padding: Spacing.xl, gap: Spacing.sm },
+  sectionTitle: { fontSize: 11, fontFamily: FontFamily.semibold, letterSpacing: LetterSpacing.wide, marginTop: Spacing.sm, marginBottom: Spacing.xs },
+  card: { borderWidth: 1, borderRadius: Radius.sm, padding: Spacing.lg, gap: Spacing.md },
   segmented: { flexDirection: 'row', borderWidth: 1, borderRadius: Radius.sm, overflow: 'hidden' },
-  segment: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 10 },
+  segment: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: Spacing.md },
   segmentText: { fontSize: 14, fontFamily: FontFamily.regular },
   hint: { fontSize: 12, textAlign: 'center' },
   exportRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   exportInfo: { flex: 1, gap: 2 },
   exportLabel: { fontSize: 15, fontFamily: FontFamily.regular },
   exportMeta: { fontSize: 12 },
-  exportArrow: { fontSize: 18, fontFamily: FontFamily.semibold, marginLeft: 8 },
-  exportError: { fontSize: 13, marginTop: 4 },
+  exportArrow: { fontSize: 18, fontFamily: FontFamily.semibold, marginLeft: Spacing.sm },
+  exportError: { fontSize: 13, marginTop: Spacing.xs },
   row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   label: { fontSize: 15, fontFamily: FontFamily.regular },
-  subLabel: { fontSize: 13, marginTop: 12, marginBottom: 6 },
-  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  chip: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16, borderWidth: 1 },
+  subLabel: { fontSize: 13, marginTop: Spacing.md, marginBottom: Spacing.sm },
+  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
+  chip: { paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm, borderRadius: 16, borderWidth: 1 },
   chipText: { fontSize: 13 },
-  timeRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  timeInput: { width: 48, textAlign: 'center', fontSize: 16, borderWidth: 1, borderRadius: Radius.md, padding: 8 },
+  timeRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
+  timeInput: { width: 48, textAlign: 'center', fontSize: 16, borderWidth: 1, borderRadius: Radius.md, padding: Spacing.sm },
   timeSep: { fontSize: 20 },
 });

@@ -1,3 +1,4 @@
+import { Spacing } from '@/constants/Spacing';
 import { View, Text, StyleSheet } from 'react-native';
 import { LineChart } from 'react-native-gifted-charts';
 import Colors from '@/constants/Colors';
@@ -62,13 +63,13 @@ export function BodyMeasurementChart({ measurements, metric, unit }: Props) {
 const styles = StyleSheet.create({
   container: {
     borderRadius: Radius.lg,
-    padding: 16,
-    marginBottom: 16,
+    padding: Spacing.lg,
+    marginBottom: Spacing.lg,
     borderWidth: 1,
   },
   title: {
     fontSize: 14,
     fontWeight: '600',
-    marginBottom: 12,
+    marginBottom: Spacing.md,
   },
 });

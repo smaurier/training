@@ -1,3 +1,4 @@
+import { Spacing } from '@/constants/Spacing';
 import { useState } from 'react';
 import { View, Text, TextInput, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
@@ -72,9 +73,9 @@ export default function ExerciseSearchScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  searchInput: { margin: 16, borderRadius: Radius.sm, padding: 12, fontSize: 15, borderWidth: 1 },
+  searchInput: { margin: Spacing.lg, borderRadius: Radius.sm, padding: Spacing.md, fontSize: 15, borderWidth: 1 },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   empty: { fontSize: 14 },
-  row: { paddingHorizontal: 16, paddingVertical: 14, borderBottomWidth: StyleSheet.hairlineWidth },
+  row: { paddingHorizontal: Spacing.lg, paddingVertical: Spacing.lg, borderBottomWidth: StyleSheet.hairlineWidth },
   name: { fontSize: 15, fontWeight: '500' },
 });

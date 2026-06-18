@@ -1,3 +1,4 @@
+import { Spacing } from '@/constants/Spacing';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { View, Text, FlatList, ActivityIndicator, StyleSheet, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack, useFocusEffect } from 'expo-router';
@@ -212,9 +213,9 @@ export default function WorkoutDetailScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  list: { padding: 16, paddingBottom: 100 },
+  list: { padding: Spacing.lg, paddingBottom: 100 },
   empty: { textAlign: 'center', marginTop: 48, fontSize: 15 },
-  errorText: { fontSize: 15, textAlign: 'center', paddingHorizontal: 24 },
+  errorText: { fontSize: 15, textAlign: 'center', paddingHorizontal: Spacing.xxl },
   fab: {
     position: 'absolute',
     bottom: 24,
@@ -238,8 +239,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
-    paddingVertical: 14,
+    gap: Spacing.sm,
+    paddingVertical: Spacing.lg,
     borderRadius: Radius.sm,
     elevation: 4,
     shadowColor: SHADOW_COLOR,
@@ -252,10 +253,10 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#7c3aed',
     borderRadius: Radius.lg,
-    marginBottom: 8,
-    padding: 4,
+    marginBottom: Spacing.sm,
+    padding: Spacing.xs,
     position: 'relative',
-    paddingTop: 16,
+    paddingTop: Spacing.lg,
   },
   supersetLabel: {
     position: 'absolute',
@@ -263,7 +264,7 @@ const styles = StyleSheet.create({
     left: 12,
     backgroundColor: '#7c3aed',
     borderRadius: 4,
-    paddingHorizontal: 8,
+    paddingHorizontal: Spacing.sm,
     paddingVertical: 2,
   },
   supersetLabelText: { color: '#fff', fontSize: 10, fontWeight: '700' },

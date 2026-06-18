@@ -1,3 +1,4 @@
+import { Spacing } from '@/constants/Spacing';
 import { useState, useCallback } from 'react';
 import { LetterSpacing } from '@/constants/Typography';
 import { View, Text, TextInput, ScrollView, StyleSheet, Alert } from 'react-native';
@@ -183,20 +184,20 @@ export default function ImportGpxScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 24, gap: 16 },
-  title: { fontSize: 22, fontWeight: '700', marginBottom: 8 },
-  pickBtn: { paddingVertical: 16, borderRadius: Radius.sm, alignItems: 'center' },
+  container: { padding: Spacing.xxl, gap: Spacing.lg },
+  title: { fontSize: 22, fontWeight: '700', marginBottom: Spacing.sm },
+  pickBtn: { paddingVertical: Spacing.lg, borderRadius: Radius.sm, alignItems: 'center' },
   pickBtnText: { fontSize: 17, fontWeight: '600' },
-  preview: { gap: 12 },
-  previewCard: { borderWidth: 1, borderRadius: Radius.sm, padding: 16, gap: 8 },
+  preview: { gap: Spacing.md },
+  previewCard: { borderWidth: 1, borderRadius: Radius.sm, padding: Spacing.lg, gap: Spacing.sm },
   previewLabel: { fontSize: 11, fontWeight: '600', letterSpacing: LetterSpacing.wide },
   previewValue: { fontSize: 18, fontWeight: '600' },
-  distanceInput: { borderWidth: 1, borderRadius: Radius.sm, padding: 10, fontSize: 18, fontWeight: '600' },
-  rpeRow: { flexDirection: 'row', gap: 8 },
-  rpeChip: { flex: 1, borderWidth: 1, borderRadius: Radius.sm, paddingVertical: 10, alignItems: 'center' },
+  distanceInput: { borderWidth: 1, borderRadius: Radius.sm, padding: Spacing.md, fontSize: 18, fontWeight: '600' },
+  rpeRow: { flexDirection: 'row', gap: Spacing.sm },
+  rpeChip: { flex: 1, borderWidth: 1, borderRadius: Radius.sm, paddingVertical: Spacing.md, alignItems: 'center' },
   rpeLabel: { fontSize: 13, fontWeight: '500' },
-  importBtn: { paddingVertical: 16, borderRadius: Radius.sm, alignItems: 'center', marginTop: 8 },
+  importBtn: { paddingVertical: Spacing.lg, borderRadius: Radius.sm, alignItems: 'center', marginTop: Spacing.sm },
   importBtnText: { fontSize: 17, fontWeight: '600' },
-  cancelBtn: { paddingVertical: 14, borderRadius: Radius.sm, alignItems: 'center', borderWidth: 1 },
+  cancelBtn: { paddingVertical: Spacing.lg, borderRadius: Radius.sm, alignItems: 'center', borderWidth: 1 },
   cancelBtnText: { fontSize: 15 },
 });

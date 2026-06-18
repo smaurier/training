@@ -1,3 +1,4 @@
+import { Spacing } from '@/constants/Spacing';
 import { View, Text, TextInput, ScrollView, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import { LetterSpacing } from '@/constants/Typography';
 import { useRouter } from 'expo-router';
@@ -160,20 +161,20 @@ export default function ImportTemplateModal() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  scroll: { padding: 16, paddingBottom: 24, gap: 8 },
+  scroll: { padding: Spacing.lg, paddingBottom: Spacing.xxl, gap: Spacing.sm },
   sectionTitle: {
     fontSize: 12,
     fontWeight: '600',
     textTransform: 'uppercase',
     letterSpacing: LetterSpacing.wide,
-    marginBottom: 4,
-    marginTop: 8,
+    marginBottom: Spacing.xs,
+    marginTop: Spacing.sm,
   },
   card: {
-    padding: 14,
+    padding: Spacing.lg,
     borderRadius: Radius.sm,
     borderWidth: 1,
-    gap: 4,
+    gap: Spacing.xs,
     minHeight: 44,
   },
   cardSelected: { borderWidth: 2 },
@@ -182,23 +183,23 @@ const styles = StyleSheet.create({
   cardFreq: { fontSize: 13 },
   cardLevel: { fontSize: 12 },
   cardDesc: { fontSize: 12 },
-  importSection: { marginTop: 16, gap: 8 },
+  importSection: { marginTop: Spacing.lg, gap: Spacing.sm },
   warning: {
     borderWidth: 1,
     borderRadius: Radius.sm,
-    padding: 12,
+    padding: Spacing.md,
   },
   warningText: { fontSize: 13, lineHeight: 18 },
   input: {
     borderWidth: 1,
     borderRadius: Radius.sm,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
     fontSize: 15,
     minHeight: 44,
   },
   footer: {
-    padding: 16,
+    padding: Spacing.lg,
     borderTopWidth: 1,
   },
   submitBtn: {

@@ -1,3 +1,4 @@
+import { Spacing } from '@/constants/Spacing';
 import { View, StyleSheet } from 'react-native';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
@@ -13,7 +14,7 @@ export function SeriesProgressBar({ done, total, height = 3 }: SeriesProgressBar
   const colors = Colors[colorScheme ?? 'light'];
 
   return (
-    <View style={[styles.row, { gap: 4 }]}>
+    <View style={[styles.row, { gap: Spacing.xs }]}>
       {Array.from({ length: total }).map((_, i) => (
         <View
           key={i}

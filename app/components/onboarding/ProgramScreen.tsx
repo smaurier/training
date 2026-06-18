@@ -1,3 +1,4 @@
+import { Spacing } from '@/constants/Spacing';
 import { View, Text, FlatList, TextInput, ActivityIndicator, StyleSheet } from 'react-native';
 import { useState } from 'react';
 import { PressableA11y } from '@/components/ui/PressableA11y';
@@ -161,20 +162,20 @@ export function ProgramScreen({ wizardState, setWizardState, onNext, onBack, isR
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  header: { padding: 24, gap: 8 },
+  header: { padding: Spacing.xxl, gap: Spacing.sm },
   title: { fontSize: 24, fontFamily: FontFamily.bold },
   subtitle: { fontSize: 13, fontFamily: FontFamily.regular },
-  list: { paddingHorizontal: 24, gap: 12, paddingBottom: 24 },
-  card: { borderWidth: 1.5, borderRadius: Radius.lg, padding: 16, gap: 4 },
+  list: { paddingHorizontal: Spacing.xxl, gap: Spacing.md, paddingBottom: Spacing.xxl },
+  card: { borderWidth: 1.5, borderRadius: Radius.lg, padding: Spacing.lg, gap: Spacing.xs },
   cardRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   cardTitle: { fontSize: 15, fontFamily: FontFamily.bold },
   badge: { fontSize: 11, fontFamily: FontFamily.medium },
   cardMeta: { fontSize: 12, fontFamily: FontFamily.medium },
   cardDesc: { fontSize: 13, fontFamily: FontFamily.regular },
-  footer: { padding: 16, borderTopWidth: 1, gap: 8 },
-  input: { borderWidth: 1, borderRadius: Radius.lg, padding: 12, fontSize: 15, fontFamily: FontFamily.regular },
-  button: { borderRadius: Radius.lg, padding: 16, alignItems: 'center' },
+  footer: { padding: Spacing.lg, borderTopWidth: 1, gap: Spacing.sm },
+  input: { borderWidth: 1, borderRadius: Radius.lg, padding: Spacing.md, fontSize: 15, fontFamily: FontFamily.regular },
+  button: { borderRadius: Radius.lg, padding: Spacing.lg, alignItems: 'center' },
   buttonText: { fontSize: 16, fontFamily: FontFamily.bold },
-  buttonSecondary: { padding: 16, alignItems: 'center' },
+  buttonSecondary: { padding: Spacing.lg, alignItems: 'center' },
   errorText: { color: '#ef4444', fontSize: 13, fontFamily: FontFamily.regular },
 });

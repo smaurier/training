@@ -1,4 +1,5 @@
 // app/components/onboarding/ReadyScreen.tsx
+import { Spacing } from '@/constants/Spacing';
 import { View, Text, StyleSheet } from 'react-native';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import { useColorScheme } from '@/components/useColorScheme';
@@ -60,14 +61,14 @@ export function ReadyScreen({ wizardState, onNext, isReview }: ScreenProps) {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  content: { flex: 1, padding: 24, justifyContent: 'center', gap: 24 },
+  content: { flex: 1, padding: Spacing.xxl, justifyContent: 'center', gap: Spacing.xxl },
   title: { fontSize: 32, fontFamily: FontFamily.black },
   subtitle: { fontSize: 16, fontFamily: FontFamily.regular, lineHeight: 22 },
-  summary: { borderWidth: 1, borderRadius: Radius.lg, padding: 16, gap: 12 },
+  summary: { borderWidth: 1, borderRadius: Radius.lg, padding: Spacing.lg, gap: Spacing.md },
   summaryRow: { flexDirection: 'row', justifyContent: 'space-between' },
   summaryKey: { fontSize: 13, fontFamily: FontFamily.medium },
   summaryVal: { fontSize: 13, fontFamily: FontFamily.bold },
-  footer: { padding: 24, borderTopWidth: 1 },
-  button: { borderRadius: Radius.lg, padding: 16, alignItems: 'center' },
+  footer: { padding: Spacing.xxl, borderTopWidth: 1 },
+  button: { borderRadius: Radius.lg, padding: Spacing.lg, alignItems: 'center' },
   buttonText: { fontSize: 16, fontFamily: FontFamily.bold },
 });

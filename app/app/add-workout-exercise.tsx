@@ -1,3 +1,4 @@
+import { Spacing } from '@/constants/Spacing';
 import { useState, useCallback, useRef } from 'react';
 import { View, Text, FlatList, TextInput, ActivityIndicator, StyleSheet, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack, useFocusEffect } from 'expo-router';
@@ -109,13 +110,13 @@ export default function AddWorkoutExerciseScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  search: { margin: 16, padding: 12, borderRadius: Radius.sm, borderWidth: 1, fontSize: 15 },
+  search: { margin: Spacing.lg, padding: Spacing.md, borderRadius: Radius.sm, borderWidth: 1, fontSize: 15 },
   loader: { marginTop: 48 },
-  item: { padding: 16, borderBottomWidth: 1, gap: 2 },
+  item: { padding: Spacing.lg, borderBottomWidth: 1, gap: 2 },
   itemName: { fontSize: 15, fontWeight: '500' },
   itemMuscles: { fontSize: 13 },
-  emptyContainer:  { alignItems: 'center', marginTop: 48, gap: 16 },
+  emptyContainer:  { alignItems: 'center', marginTop: 48, gap: Spacing.lg },
   empty:           { textAlign: 'center', fontSize: 15 },
-  createBtn:       { borderWidth: 1, borderRadius: Radius.sm, paddingHorizontal: 20, paddingVertical: 10 },
+  createBtn:       { borderWidth: 1, borderRadius: Radius.sm, paddingHorizontal: Spacing.xl, paddingVertical: Spacing.md },
   createBtnText:   { fontSize: 15, fontWeight: '500' },
 });

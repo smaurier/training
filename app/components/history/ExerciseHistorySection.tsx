@@ -1,3 +1,4 @@
+import { Spacing } from '@/constants/Spacing';
 import { View, Text, StyleSheet } from 'react-native';
 import { LetterSpacing } from '@/constants/Typography';
 import Colors from '@/constants/Colors';
@@ -45,25 +46,25 @@ export function ExerciseHistorySection({ exercise }: ExerciseHistorySectionProps
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 16,
-    paddingHorizontal: 16,
+    paddingTop: Spacing.lg,
+    paddingHorizontal: Spacing.lg,
   },
   exerciseName: {
     fontSize: 12,
     fontWeight: '700',
     textTransform: 'uppercase',
     letterSpacing: LetterSpacing.wider,
-    marginBottom: 8,
+    marginBottom: Spacing.sm,
   },
   chips: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
+    gap: Spacing.sm,
   },
   chip: {
     borderRadius: Radius.sm,
     borderWidth: 1,
-    paddingHorizontal: 10,
+    paddingHorizontal: Spacing.md,
     paddingVertical: 5,
   },
   chipText: {

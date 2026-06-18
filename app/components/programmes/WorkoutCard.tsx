@@ -1,3 +1,4 @@
+import { Spacing } from '@/constants/Spacing';
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Workout } from '@/db/types';
@@ -73,13 +74,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: Radius.sm,
     borderWidth: 1,
-    marginBottom: 10,
+    marginBottom: Spacing.md,
     minHeight: 44,
   },
   main: {
     flex: 1,
-    padding: 16,
-    gap: 4,
+    padding: Spacing.lg,
+    gap: Spacing.xs,
   },
   name: {
     fontSize: 16,
@@ -90,20 +91,20 @@ const styles = StyleSheet.create({
   },
   nextBadge: {
     alignSelf: 'flex-start',
-    paddingHorizontal: 8,
+    paddingHorizontal: Spacing.sm,
     paddingVertical: 3,
     borderRadius: Radius.lg,
-    marginTop: 4,
+    marginTop: Spacing.xs,
   },
   nextBadgeText: {
     fontSize: 11,
     fontWeight: '600',
   },
   reorderCol: {
-    paddingRight: 8,
+    paddingRight: Spacing.sm,
     gap: 2,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  reorderBtn: { padding: 6, alignItems: 'center', justifyContent: 'center' },
+  reorderBtn: { padding: Spacing.sm, alignItems: 'center', justifyContent: 'center' },
 });

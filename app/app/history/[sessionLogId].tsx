@@ -1,3 +1,4 @@
+import { Spacing } from '@/constants/Spacing';
 import { View, Text, ScrollView, ActivityIndicator, StyleSheet } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
@@ -135,12 +136,12 @@ export default function SessionDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32 },
-  content: { paddingBottom: 32 },
+  center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: Spacing.xxxl },
+  content: { paddingBottom: Spacing.xxxl },
   statsRow: {
     flexDirection: 'row',
     borderBottomWidth: 1,
-    paddingVertical: 12,
+    paddingVertical: Spacing.md,
   },
   statItem: {
     flex: 1,
@@ -157,7 +158,7 @@ const styles = StyleSheet.create({
   checkinRow: {
     flexDirection: 'row',
     borderBottomWidth: 1,
-    paddingVertical: 10,
+    paddingVertical: Spacing.md,
   },
   checkinItem: {
     flex: 1,
