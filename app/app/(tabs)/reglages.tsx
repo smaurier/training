@@ -88,12 +88,12 @@ function SegmentedControl<T extends string,>({
           style={[
             styles.segment,
             i < options.length - 1 && { borderRightWidth: 1, borderRightColor: colors.border },
-            selected === opt.value && { backgroundColor: colors.primary },
+            selected === opt.value && { backgroundColor: colors.surfaceElevated },
           ]}
         >
           <Text style={[
             styles.segmentText,
-            { color: selected === opt.value ? (isDark ? '#000' : '#fff') : colors.text },
+            { color: colors.text },
           ]}>
             {opt.label}
           </Text>
@@ -320,9 +320,9 @@ export default function ReglagesScreen() {
             <Text style={[styles.exportMeta, { color: colors.textSecondary }]}>Sauvegarde complète (JSON)</Text>
           </View>
           {isExporting ? (
-            <ActivityIndicator size="small" color={colors.primary} />
+            <ActivityIndicator size="small" color={colors.textSecondary} />
           ) : (
-            <Text style={[styles.exportArrow, { color: colors.primary }]}>→</Text>
+            <Text style={[styles.exportArrow, { color: colors.textSecondary }]}>→</Text>
           )}
         </PressableA11y>
         {exportError && (
@@ -360,15 +360,15 @@ export default function ReglagesScreen() {
                     key={iso}
                     style={[
                       styles.chip,
-                      { borderColor: selected ? colors.primary : colors.border },
-                      selected && { backgroundColor: colors.primary },
+                      { borderColor: colors.border },
+                      selected && { backgroundColor: colors.surfaceElevated },
                     ]}
                     onPress={() => { void handleNotifChange({ isoWeekday: iso }); }}
                     accessibilityLabel={label}
                     accessibilityRole="button"
                     accessibilityState={{ selected }}
                   >
-                    <Text style={[styles.chipText, { color: selected ? '#fff' : colors.textSecondary }]}>{label}</Text>
+                    <Text style={[styles.chipText, { color: colors.text }]}>{label}</Text>
                   </Pressable>
                 );
               })}
@@ -404,15 +404,15 @@ export default function ReglagesScreen() {
                     key={days}
                     style={[
                       styles.chip,
-                      { borderColor: selected ? colors.primary : colors.border },
-                      selected && { backgroundColor: colors.primary },
+                      { borderColor: colors.border },
+                      selected && { backgroundColor: colors.surfaceElevated },
                     ]}
                     onPress={() => { void handleNotifChange({ inactivityDays: days }); }}
                     accessibilityLabel={`${days} jours`}
                     accessibilityRole="button"
                     accessibilityState={{ selected }}
                   >
-                    <Text style={[styles.chipText, { color: selected ? '#fff' : colors.textSecondary }]}>{days}j</Text>
+                    <Text style={[styles.chipText, { color: colors.text }]}>{days}j</Text>
                   </Pressable>
                 );
               })}
