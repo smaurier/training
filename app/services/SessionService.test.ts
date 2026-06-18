@@ -457,6 +457,8 @@ describe('SessionService.findAnyPausedSession', () => {
 
     const result = await service.findAnyPausedSession();
     expect(result).toBeNull();
+    const allLogs = await ctx.sessionLogRepo.findAll();
+    expect(allLogs[0].status).toBe('abandoned');
   });
 });
 

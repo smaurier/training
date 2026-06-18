@@ -217,7 +217,8 @@ export default function HomeScreen() {
 
           {/* CTA */}
           <PressableA11y
-            accessibilityLabel={hasExercises ? `Démarrer ${selectedWorkout.name}` : 'Aucun exercice dans cette séance'}
+            accessibilityLabel={`Démarrer ${selectedWorkout.name}`}
+            accessibilityHint={!hasExercises ? 'Cette séance ne contient pas encore d\'exercices' : undefined}
             accessibilityState={{ disabled: !hasExercises }}
             onPress={hasExercises
               ? () => router.push({ pathname: '/session/[workoutId]' as any, params: { workoutId: String(selectedWorkout.id) } })
