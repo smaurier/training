@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
   cardMeta: { fontSize: 12, fontFamily: FontFamily.medium },
   cardDesc: { fontSize: 13, fontFamily: FontFamily.regular },
   footer: { padding: 16, borderTopWidth: 1, gap: 8 },
-  input: { borderWidth: 1, borderRadius: 10, padding: 12, fontSize: 15, fontFamily: FontFamily.regular },
+  input: { borderWidth: 1, borderRadius: Radius.lg, padding: 12, fontSize: 15, fontFamily: FontFamily.regular },
   button: { borderRadius: Radius.lg, padding: 16, alignItems: 'center' },
   buttonText: { fontSize: 16, fontFamily: FontFamily.bold },
   buttonSecondary: { padding: 16, alignItems: 'center' },

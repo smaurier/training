@@ -62,6 +62,6 @@ const styles = StyleSheet.create({
   title: { fontSize: 18, fontWeight: '700', textAlign: 'center', marginBottom: 8 },
   subtitle: { fontSize: 13, textAlign: 'center', marginBottom: 24 },
   qrWrapper: { padding: 16, backgroundColor: '#fff', borderRadius: Radius.lg, marginBottom: 24 },
-  closeBtn: { paddingVertical: 12, paddingHorizontal: 32, borderRadius: 10 },
+  closeBtn: { paddingVertical: 12, paddingHorizontal: 32, borderRadius: Radius.lg },
   closeBtnText: { fontWeight: '700', fontSize: 16 },
 });

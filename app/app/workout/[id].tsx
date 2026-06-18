@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
   supersetContainer: {
     borderWidth: 2,
     borderColor: '#7c3aed',
-    borderRadius: 10,
+    borderRadius: Radius.lg,
     marginBottom: 8,
     padding: 4,
     position: 'relative',

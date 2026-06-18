@@ -51,7 +51,7 @@ function SegmentedControl<T extends string>({
 }
 
 const sc = StyleSheet.create({
-  container: { flexDirection: 'row', borderWidth: 1, borderRadius: 10, overflow: 'hidden' },
+  container: { flexDirection: 'row', borderWidth: 1, borderRadius: Radius.lg, overflow: 'hidden' },
   segment: { flex: 1, paddingVertical: 8, alignItems: 'center' },
   segmentText: { fontSize: 14, fontFamily: FontFamily.medium },
 });
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
   section: { gap: 8 },
   sectionTitle: { fontSize: 14, fontFamily: FontFamily.bold },
   sectionHint: { fontSize: 13, fontFamily: FontFamily.regular },
-  infoBlock: { borderWidth: 1, borderRadius: 10, padding: 12 },
+  infoBlock: { borderWidth: 1, borderRadius: Radius.lg, padding: 12 },
   infoText: { fontSize: 13, fontFamily: FontFamily.regular, lineHeight: 18 },
   footer: { padding: 24, borderTopWidth: 1 },
   button: { borderRadius: Radius.lg, padding: 16, alignItems: 'center' },

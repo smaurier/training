@@ -199,6 +199,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'right',
   },
-  saveBtn: { marginTop: 24, padding: 14, borderRadius: 10, alignItems: 'center' },
+  saveBtn: { marginTop: 24, padding: 14, borderRadius: Radius.lg, alignItems: 'center' },
   saveBtnText: { fontWeight: '700', fontSize: 16 },
 });

@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     paddingHorizontal: 8,
     paddingVertical: 3,
-    borderRadius: 10,
+    borderRadius: Radius.lg,
     marginTop: 4,
   },
   nextBadgeText: {
