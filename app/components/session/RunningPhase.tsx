@@ -228,7 +228,7 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
   );
 
   return (
-    <>
+    <View style={styles.wrapper}>
       <ScrollView
         contentContainerStyle={[styles.container, { backgroundColor: colors.background }]}
         keyboardShouldPersistTaps="handled"
@@ -498,15 +498,15 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
           Poids mis à jour pour les séries suivantes.
         </Text>
       )}
-
-      <PressableA11y
-        accessibilityLabel="Passer — ouvrir les options"
-        onPress={() => skipExerciseSheetRef.current?.expand()}
-        style={styles.skipBtn}
-      >
-        <Text style={[styles.skipText, { color: colors.textSecondary }]}>Passer →</Text>
-      </PressableA11y>
     </ScrollView>
+
+    <PressableA11y
+      accessibilityLabel="Passer — ouvrir les options"
+      onPress={() => skipExerciseSheetRef.current?.expand()}
+      style={[styles.skipBtn, { borderTopColor: colors.border }]}
+    >
+      <Text style={[styles.skipText, { color: colors.textSecondary }]}>Passer →</Text>
+    </PressableA11y>
 
       <BottomSheet
         ref={skipExerciseSheetRef}
@@ -667,17 +667,18 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
           onClose={() => substituteSheetRef.current?.close()}
         />
       )}
-    </>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  wrapper: { flex: 1 },
   container: { flexGrow: 1, padding: 20, gap: 14 },
   header: { gap: 2 },
   headerRow: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' },
   headerTextGroup: { flex: 1, gap: 2, marginTop: 16 },
   headerActions: { gap: 4, marginTop: 16 },
-  actionBtn: { padding: 8 },
+  actionBtn: { padding: 12 },
   exerciseNameRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   exerciseName: { fontSize: 26, fontWeight: '700' },
   progressLabel: { fontSize: 13 },
@@ -702,7 +703,7 @@ const styles = StyleSheet.create({
   restSection: { gap: 4 },
   restLabel: { fontSize: 10, fontWeight: '600', letterSpacing: 0.5 },
   restSet: { fontSize: 13, lineHeight: 20 },
-  skipBtn: { alignItems: 'center', paddingVertical: 8 },
+  skipBtn: { alignItems: 'center', paddingVertical: 14, borderTopWidth: 1 },
   skipText: { fontSize: 14 },
   sheetContainer: { paddingHorizontal: 24, paddingVertical: 8, gap: 12 },
   sheetTitle: { fontSize: 17, fontWeight: '600' },
