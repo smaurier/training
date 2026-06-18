@@ -10,6 +10,7 @@ import BottomSheet, {
   type BottomSheetBackdropProps,
 } from '@gorhom/bottom-sheet';
 import { PressableA11y } from '@/components/ui/PressableA11y';
+import { SeriesProgressBar } from '@/components/ui/SeriesProgressBar';
 import { CircularTimer } from '@/components/ui/CircularTimer';
 import type { WorkoutExerciseDetail, BlockWithSets } from '@/services/WorkoutExerciseService';
 import type { Set as TrainingSet } from '@/db/types';
@@ -255,7 +256,7 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
             </View>
             <Text style={[styles.progressLabel, { color: colors.textSecondary }]}>{progressLabel}</Text>
             <View style={styles.blockBadge}>
-              <Text style={[styles.blockBadgeText, { color: colors.primary }]}>{block.name.toUpperCase()}</Text>
+              <Text style={[styles.blockBadgeText, { color: colors.textSecondary }]}>{block.name.toUpperCase()}</Text>
             </View>
             {supersetPosition && (
               <View style={styles.supersetBadge}>
@@ -276,21 +277,10 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
             )}
             <GestureDetector gesture={undoSwipe}>
               <View
-                style={styles.seriesDots}
                 accessible
                 accessibilityLabel={`Série ${currentSetIndex + 1} sur ${block.sets.length}`}
               >
-                {block.sets.map((_, i) => (
-                  <View
-                    key={i}
-                    style={[
-                      styles.dot,
-                      i < currentSetIndex && { backgroundColor: '#16a34a' },
-                      i === currentSetIndex && { backgroundColor: colors.primary, width: 10, height: 10, borderRadius: 5 },
-                      i > currentSetIndex && { borderColor: colors.border, borderWidth: 1.5 },
-                    ]}
-                  />
-                ))}
+                <SeriesProgressBar done={currentSetIndex} total={block.sets.length} />
               </View>
             </GestureDetector>
             {lastSetLog && (
@@ -370,10 +360,10 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
           <PressableA11y
             accessibilityLabel="Valider le footing"
             onPress={handleCardioValidate}
-            style={[styles.validateBtn, { backgroundColor: '#ea580c' }]}
+            style={[styles.validateBtn, { backgroundColor: colors.primary }]}
           >
-            <Ionicons name="checkmark" size={20} color="#fff" />
-            <Text style={styles.validateBtnText}>{loading ? 'Validation…' : 'Valider le footing'}</Text>
+            <Ionicons name="checkmark" size={20} color={colors.onPrimary} />
+            <Text style={[styles.validateBtnText, { color: colors.onPrimary }]}>{loading ? 'Validation…' : 'Valider le footing'}</Text>
           </PressableA11y>
         </>
       ) : isDuration ? (
@@ -400,10 +390,10 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
             <PressableA11y
               accessibilityLabel="C'est fait — valider cet exercice"
               onPress={handleDurationValidate}
-              style={[styles.validateBtn, { backgroundColor: timerDone ? '#16a34a' : colors.primary }]}
+              style={[styles.validateBtn, { backgroundColor: colors.primary }]}
             >
-              <Ionicons name="checkmark" size={20} color="#fff" />
-              <Text style={styles.validateBtnText}>{loading ? 'Validation…' : "C'est fait"}</Text>
+              <Ionicons name="checkmark" size={20} color={colors.onPrimary} />
+              <Text style={[styles.validateBtnText, { color: colors.onPrimary }]}>{loading ? 'Validation…' : "C'est fait"}</Text>
             </PressableA11y>
           )}
         </>
@@ -460,7 +450,7 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
                       },
                     ]}
                   >
-                    <Text style={[styles.rpeChipText, { color: rpe === opt.value ? '#fff' : colors.text }]}>
+                    <Text style={[styles.rpeChipText, { color: rpe === opt.value ? colors.onPrimary : colors.text }]}>
                       {opt.label}
                     </Text>
                   </PressableA11y>
@@ -472,10 +462,10 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
           <PressableA11y
             accessibilityLabel="Valider la série avec les valeurs saisies"
             onPress={handleValidate}
-            style={[styles.validateBtn, { backgroundColor: '#16a34a' }]}
+            style={[styles.validateBtn, { backgroundColor: colors.primary }]}
           >
-            <Ionicons name="checkmark" size={20} color="#fff" />
-            <Text style={styles.validateBtnText}>{loading ? 'Validation…' : 'Valider'}</Text>
+            <Ionicons name="checkmark" size={20} color={colors.onPrimary} />
+            <Text style={[styles.validateBtnText, { color: colors.onPrimary }]}>{loading ? 'Validation…' : 'VALIDER'}</Text>
           </PressableA11y>
           {repsFeedback !== null && (
             <Text
@@ -657,7 +647,7 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
             style={[styles.validateBtn, { backgroundColor: colors.primary, opacity: adjusting ? 0.5 : 1 }]}
             disabled={adjusting}
           >
-            <Text style={styles.validateBtnText}>Confirmer</Text>
+            <Text style={[styles.validateBtnText, { color: colors.onPrimary }]}>Confirmer</Text>
           </PressableA11y>
           <PressableA11y
             accessibilityLabel="Annuler la modification de poids"
@@ -694,8 +684,6 @@ const styles = StyleSheet.create({
   circularTimerWrapper: { alignItems: 'center' },
   blockBadge: { alignSelf: 'flex-start', marginTop: 4 },
   blockBadgeText: { fontSize: 11, fontWeight: '700', letterSpacing: 0.5 },
-  seriesDots: { flexDirection: 'row', gap: 6, alignItems: 'center', marginTop: 6 },
-  dot: { width: 8, height: 8, borderRadius: 4 },
   targetCard: { padding: 16, borderRadius: Radius.sm, borderWidth: 1, alignItems: 'center' },
   targetText: { fontSize: 20, fontWeight: '600' },
   inputRow: { flexDirection: 'row', gap: 10 },
@@ -704,8 +692,11 @@ const styles = StyleSheet.create({
   inputLabel: { fontSize: 11, fontWeight: '500', textAlign: 'center' },
   inputHint: { fontSize: 10, textAlign: 'center', marginBottom: 2 },
   input: { borderWidth: 1, borderRadius: Radius.sm, padding: 10, fontSize: 18, fontWeight: '600', textAlign: 'center' },
-  validateBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 14, borderRadius: Radius.sm },
-  validateBtnText: { color: '#fff', fontSize: 17, fontWeight: '600' },
+  validateBtn: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    gap: 8, minHeight: 64, borderRadius: Radius.sm,
+  },
+  validateBtnText: { fontSize: 15, fontFamily: 'Inter_700Bold', letterSpacing: 2, textTransform: 'uppercase' },
   repsFeedback: { fontSize: 13, textAlign: 'center', lineHeight: 18 },
   lastLog: { fontSize: 12, marginTop: 4 },
   restSection: { gap: 4 },
