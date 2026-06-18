@@ -2,6 +2,7 @@ import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import { useColorScheme } from '@/components/useColorScheme';
 import Colors from '@/constants/Colors';
+import { Radius } from '@/constants/Radius';
 import type { ScreenProps } from '@/app/onboarding';
 
 export function PhilosophyScreen({ onNext }: ScreenProps) {
@@ -11,34 +12,25 @@ export function PhilosophyScreen({ onNext }: ScreenProps) {
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <Text style={[styles.title, { color: colors.text }]}>Bienvenue</Text>
-        <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
-          Une app d'entraînement pensée différemment.
-        </Text>
+        <Text style={[styles.title, { color: colors.text }]}>Bienvenue.</Text>
 
-        <Text style={[styles.manifeste, { color: colors.text }]}>
-          Ta progression est visible, motivante, et personnelle.{'\n'}
-          Elle ne te compare à personne.{'\n'}
-          Elle ne te punit jamais.
+        <Text style={[styles.intro, { color: colors.textSecondary }]}>
+          {"Cette app est un carnet d'entraînement.\n"}
+          {"Elle suit ta progression. Elle te guide en séance.\n"}
+          {"Elle n'est pas là pour te juger."}
         </Text>
 
         <View style={[styles.block, { borderColor: colors.border }]}>
-          <Text style={[styles.blockTitle, { color: colors.text }]}>Ce que tu ne trouveras pas</Text>
           <Text style={[styles.blockBody, { color: colors.textSecondary }]}>
-            {'— Pas de streak à maintenir\n'}
-            {'— Pas de "tu n\'as pas fait de séance depuis X jours"\n'}
-            {'— Pas de classements ou comparaisons\n'}
-            {'— Pas d\'objectifs quotidiens culpabilisants'}
+            {'Pas de classements. Pas de comparaisons.\n'}
+            {'Pas de message si tu rates une séance.'}
           </Text>
         </View>
 
         <View style={[styles.block, { borderColor: colors.border }]}>
-          <Text style={[styles.blockTitle, { color: colors.text }]}>Ce que tu vas trouver</Text>
           <Text style={[styles.blockBody, { color: colors.textSecondary }]}>
-            {'— Suivi précis série par série\n'}
-            {'— Progression automatique des charges\n'}
-            {'— Tes meilleures marques et ton historique\n'}
-            {'— Une séance guidée du début à la fin'}
+            {"Ta courbe de progression t'appartient.\n"}
+            {"Elle est là quand tu la cherches."}
           </Text>
         </View>
       </ScrollView>
@@ -47,10 +39,10 @@ export function PhilosophyScreen({ onNext }: ScreenProps) {
         <PressableA11y
           onPress={onNext}
           style={[styles.button, { backgroundColor: colors.primary }]}
-          accessibilityLabel="Continuer"
+          accessibilityLabel="Continuer vers la configuration"
           accessibilityRole="button"
         >
-          <Text style={[styles.buttonText, { color: colors.onPrimary }]}>Continuer</Text>
+          <Text style={[styles.buttonText, { color: colors.onPrimary }]}>Continuer →</Text>
         </PressableA11y>
       </View>
     </View>
@@ -59,14 +51,12 @@ export function PhilosophyScreen({ onNext }: ScreenProps) {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  content: { padding: 24, paddingTop: 40, gap: 24 },
-  title: { fontSize: 32, fontFamily: 'Inter_900Black' },
-  subtitle: { fontSize: 16, fontFamily: 'Inter_400Regular' },
-  manifeste: { fontSize: 18, fontFamily: 'Inter_600SemiBold', lineHeight: 28 },
-  block: { borderWidth: 1, borderRadius: 12, padding: 16, gap: 8 },
-  blockTitle: { fontSize: 14, fontFamily: 'Inter_700Bold' },
-  blockBody: { fontSize: 14, fontFamily: 'Inter_400Regular', lineHeight: 22 },
+  content: { padding: 24, paddingTop: 48, gap: 28 },
+  title: { fontSize: 40, fontFamily: 'Inter_900Black', letterSpacing: -1 },
+  intro: { fontSize: 17, fontFamily: 'Inter_400Regular', lineHeight: 26 },
+  block: { borderWidth: 1, borderRadius: Radius.sm, padding: 16 },
+  blockBody: { fontSize: 15, fontFamily: 'Inter_400Regular', lineHeight: 24 },
   footer: { padding: 24, borderTopWidth: 1 },
-  button: { borderRadius: 12, padding: 16, alignItems: 'center' },
-  buttonText: { fontSize: 16, fontFamily: 'Inter_700Bold' },
+  button: { borderRadius: Radius.sm, padding: 18, alignItems: 'center' },
+  buttonText: { fontSize: 16, fontFamily: 'Inter_700Bold', letterSpacing: 1 },
 });
