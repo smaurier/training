@@ -93,7 +93,7 @@ export const RunningPhase = forwardRef<RunningPhaseHandle, RunningPhaseProps>(fu
   const skipExerciseSheetRef = useRef<BottomSheet>(null);
   const descriptionSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ['30%'], []);
-  const descriptionSnapPoints = useMemo(() => ['50%', '90%'], []);
+  const descriptionSnapPoints = useMemo(() => ['80%'], []);
 
   const renderBackdrop = useCallback(
     (props: BottomSheetBackdropProps) => (
@@ -290,9 +290,9 @@ export const RunningPhase = forwardRef<RunningPhaseHandle, RunningPhaseProps>(fu
                 <Text style={styles.amrapBadgeText}>AMRAP</Text>
               </View>
             )}
-            {set.rest_duration === 0 && (
-              <View style={styles.dropsetBadge}>
-                <Text style={styles.dropsetBadgeText}>DROPSET</Text>
+            {set.rest_duration === 0 && !isCardio && exercise.exercise.type !== 'etirement' && (
+              <View style={[styles.dropsetBadge, { borderColor: colors.textSecondary }]}>
+                <Text style={[styles.dropsetBadgeText, { color: colors.textSecondary }]}>ENCHAÎNÉ</Text>
               </View>
             )}
             <GestureDetector gesture={undoSwipe}>
@@ -390,11 +390,6 @@ export const RunningPhase = forwardRef<RunningPhaseHandle, RunningPhaseProps>(fu
         </>
       ) : isDuration ? (
         <>
-          {/* Durée cible */}
-          <View style={[styles.targetCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-            <Text style={[styles.targetText, { color: colors.text }]}>{formatTime(set.duration_seconds ?? 0)}</Text>
-          </View>
-
           <PressableA11y
             style={styles.circularTimerWrapper}
             accessibilityLabel={timerA11yLabel}
@@ -454,30 +449,30 @@ export const RunningPhase = forwardRef<RunningPhaseHandle, RunningPhaseProps>(fu
                 <Text style={[styles.inputHint, { color: colors.textSecondary }]}>par haltère</Text>
               )}
             </View>
-            <View style={styles.rpeSection}>
-              <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>RESSENTI (OPTIONNEL)</Text>
-              <View style={styles.rpeRow}>
-                {RPE_OPTIONS.map(opt => (
-                  <PressableA11y
-                    key={opt.value}
-                    accessibilityLabel={`Ressenti : ${opt.label}`}
-                    accessibilityRole="radio"
-                    accessibilityState={{ checked: rpe === opt.value }}
-                    onPress={() => setRpe(rpe === opt.value ? '' : opt.value)}
-                    style={[
-                      styles.rpeChip,
-                      {
-                        borderColor: colors.border,
-                        backgroundColor: rpe === opt.value ? colors.primary : colors.surface,
-                      },
-                    ]}
-                  >
-                    <Text style={[styles.rpeChipText, { color: rpe === opt.value ? colors.onPrimary : colors.text }]}>
-                      {opt.label}
-                    </Text>
-                  </PressableA11y>
-                ))}
-              </View>
+          </View>
+          <View style={styles.rpeSection}>
+            <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>RESSENTI (OPTIONNEL)</Text>
+            <View style={styles.rpeRow}>
+              {RPE_OPTIONS.map(opt => (
+                <PressableA11y
+                  key={opt.value}
+                  accessibilityLabel={`Ressenti : ${opt.label}`}
+                  accessibilityRole="radio"
+                  accessibilityState={{ checked: rpe === opt.value }}
+                  onPress={() => setRpe(rpe === opt.value ? '' : opt.value)}
+                  style={[
+                    styles.rpeChip,
+                    {
+                      borderColor: colors.border,
+                      backgroundColor: rpe === opt.value ? colors.primary : colors.surface,
+                    },
+                  ]}
+                >
+                  <Text style={[styles.rpeChipText, { color: rpe === opt.value ? colors.onPrimary : colors.text }]}>
+                    {opt.label}
+                  </Text>
+                </PressableA11y>
+              ))}
             </View>
           </View>
 
@@ -696,7 +691,7 @@ export const RunningPhase = forwardRef<RunningPhaseHandle, RunningPhaseProps>(fu
 
 const styles = StyleSheet.create({
   wrapper: { flex: 1 },
-  container: { flexGrow: 1, padding: Spacing.xl },
+  container: { flexGrow: 1, paddingHorizontal: Spacing.xl, paddingTop: 64, paddingBottom: Spacing.xl },
   header: { gap: 2 },
   body: { flex: 1, justifyContent: 'center', gap: Spacing.lg, paddingTop: Spacing.xl },
   headerRow: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' },
@@ -738,7 +733,7 @@ const styles = StyleSheet.create({
   sheetCancelText: { fontSize: 16, fontFamily: FontFamily.medium },
   descriptionScrollContent: { paddingHorizontal: Spacing.xxl, paddingBottom: 40 },
   descriptionText: { fontSize: 15, lineHeight: 24 },
-  rpeSection: { flex: 1, gap: Spacing.sm },
+  rpeSection: { gap: Spacing.sm },
   rpeRow: { flexDirection: 'row', gap: Spacing.sm },
   rpeChip: {
     flex: 1,
@@ -794,7 +789,7 @@ const styles = StyleSheet.create({
   dropsetBadge: {
     alignSelf: 'flex-start',
     marginTop: 2,
-    backgroundColor: SemanticColors.dropset,
+    borderWidth: 1,
     borderRadius: Radius.sm,
     paddingHorizontal: Spacing.sm,
     paddingVertical: 2,
@@ -802,7 +797,6 @@ const styles = StyleSheet.create({
   dropsetBadgeText: {
     fontSize: 11,
     fontFamily: FontFamily.bold,
-    color: '#fff',
     letterSpacing: LetterSpacing.wide,
   },
 });

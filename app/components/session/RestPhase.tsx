@@ -24,21 +24,23 @@ export function RestPhase({ durationSeconds, timer, nextLabel, onContinue }: Res
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <View
-        accessible={true}
-        accessibilityLabel={`Temps de repos restant : ${timer.remaining} secondes`}
-      >
-        <CircularTimer
-          progress={progress}
-          remaining={timer.remaining}
-          label={isDone ? "À toi" : 'REPOS'}
-          size={220}
-        />
-      </View>
+      <View style={styles.centerContent}>
+        <View
+          accessible={true}
+          accessibilityLabel={`Temps de repos restant : ${timer.remaining} secondes`}
+        >
+          <CircularTimer
+            progress={progress}
+            remaining={timer.remaining}
+            label={isDone ? "À toi" : 'REPOS'}
+            size={220}
+          />
+        </View>
 
-      <View style={styles.nextSection}>
-        <Text style={[styles.nextSectionLabel, { color: colors.textSecondary }]}>PROCHAINE</Text>
-        <Text style={[styles.nextLabel, { color: colors.text }]}>{nextLabel}</Text>
+        <View style={styles.nextSection}>
+          <Text style={[styles.nextSectionLabel, { color: colors.textSecondary }]}>PROCHAINE</Text>
+          <Text style={[styles.nextLabel, { color: colors.text }]}>{nextLabel}</Text>
+        </View>
       </View>
 
       <PressableA11y
@@ -61,8 +63,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: Spacing.xxl,
-    paddingTop: 60,
     paddingBottom: 40,
+    alignItems: 'center',
+  },
+  centerContent: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
     gap: Spacing.xl,
   },
