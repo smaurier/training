@@ -33,6 +33,7 @@ export interface InitialSession {
   startedAt: number;
   setsLogged: number;
   volume: number;
+  timerState?: { countdown: number; started: boolean };
 }
 
 export interface UseSessionResult {
@@ -66,7 +67,7 @@ export interface UseSessionResult {
   substituteCurrentExercise: (replacement: WorkoutExerciseDetail['exercise']) => void;
   isCurrentExerciseSubstituted: boolean;
   error: string | null;
-  pauseSession: () => Promise<void>;
+  pauseSession: (timerState?: { countdown: number; started: boolean }) => Promise<void>;
 }
 
 export function isSupersetForward(
@@ -413,10 +414,10 @@ export function useSession(
     setStartingWeightDone(true);
   }, []);
 
-  const pauseSession = useCallback(async () => {
+  const pauseSession = useCallback(async (timerState?: { countdown: number; started: boolean }) => {
     if (!sessionLogId) return;
     try {
-      await service.pauseSession(sessionLogId, position, phase);
+      await service.pauseSession(sessionLogId, position, phase, timerState);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Erreur pause séance');
       throw e;

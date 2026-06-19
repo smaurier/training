@@ -1,6 +1,6 @@
 // app/components/session/RunningPhase.tsx
 import { Spacing } from '@/constants/Spacing';
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo, forwardRef, useImperativeHandle } from 'react';
 import { View, Text, TextInput, StyleSheet, ScrollView, Vibration } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
@@ -34,6 +34,10 @@ const RPE_OPTIONS = [
   { label: 'Difficile', value: '9' },
 ] as const;
 
+export interface RunningPhaseHandle {
+  getTimerState: () => { countdown: number; started: boolean };
+}
+
 interface RunningPhaseProps {
   exercise: WorkoutExerciseDetail;
   block: BlockWithSets;
@@ -50,6 +54,8 @@ interface RunningPhaseProps {
   supersetExerciseNames?: string[];
   onSubstituteExercise?: (replacement: WorkoutExerciseDetail['exercise']) => void;
   isSubstituted?: boolean;
+  initialCountdown?: number;
+  initialTimerStarted?: boolean;
 }
 
 function formatLastLog(log: LastSetLog, isCardio: boolean, isDuration: boolean, convert: (kg: number) => string, unitLabel: string): string {
@@ -79,7 +85,7 @@ function parseMuscleGroups(json: string): string[] {
   catch { return []; }
 }
 
-export function RunningPhase({ exercise, block, set, progressLabel, onValidate, onSkip, onSkipExercise, onUndo, canUndo, lastSetLog, onAdjustWeight, supersetPosition, supersetExerciseNames, onSubstituteExercise, isSubstituted }: RunningPhaseProps) {
+export const RunningPhase = forwardRef<RunningPhaseHandle, RunningPhaseProps>(function RunningPhase({ exercise, block, set, progressLabel, onValidate, onSkip, onSkipExercise, onUndo, canUndo, lastSetLog, onAdjustWeight, supersetPosition, supersetExerciseNames, onSubstituteExercise, isSubstituted, initialCountdown, initialTimerStarted }: RunningPhaseProps, ref) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const { convert, label: unitLabel, resolved: unitResolved } = useUnits();
@@ -109,14 +115,25 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
   );
   const [rpe, setRpe] = useState('');
   const [loading, setLoading] = useState(false);
-  const [countdown, setCountdown] = useState(set.duration_seconds ?? 0);
+  const [countdown, setCountdown] = useState(initialCountdown ?? (set.duration_seconds ?? 0));
   const [timerDone, setTimerDone] = useState(false);
-  const [timerStarted, setTimerStarted] = useState(false);
+  const [timerStarted, setTimerStarted] = useState(initialTimerStarted ?? false);
+
+  useImperativeHandle(ref, () => ({
+    getTimerState: () => ({ countdown, started: timerStarted }),
+  }), [countdown, timerStarted]);
   const [cardioMinutes, setCardioMinutes] = useState('');
   const [cardioDistance, setCardioDistance] = useState('');
 
   const adjustWeightSheetRef = useRef<BottomSheet>(null);
   const substituteSheetRef = useRef<BottomSheet>(null);
+
+  function closeAllSheets() {
+    skipExerciseSheetRef.current?.close();
+    descriptionSheetRef.current?.close();
+    adjustWeightSheetRef.current?.close();
+    substituteSheetRef.current?.close();
+  }
   const adjustSuccessTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const adjustWeightSnapPoints = useMemo(() => ['45%'], []);
   const [adjustedWeight, setAdjustedWeight] = useState(set.weight ?? 0);
@@ -297,6 +314,7 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
               <PressableA11y
                 onPress={() => {
                   setAdjustedWeight(set.weight ?? 0);
+                  closeAllSheets();
                   adjustWeightSheetRef.current?.expand();
                 }}
                 accessibilityLabel="Modifier le poids de travail pour les séries suivantes"
@@ -307,7 +325,7 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
             )}
             {!!exercise.exercise.description && (
               <PressableA11y
-                onPress={() => descriptionSheetRef.current?.expand()}
+                onPress={() => { closeAllSheets(); descriptionSheetRef.current?.expand(); }}
                 accessibilityLabel="Voir la description de l'exercice"
                 style={styles.actionBtn}
               >
@@ -505,7 +523,7 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
 
     <PressableA11y
       accessibilityLabel="Passer — ouvrir les options"
-      onPress={() => skipExerciseSheetRef.current?.expand()}
+      onPress={() => { closeAllSheets(); skipExerciseSheetRef.current?.expand(); }}
       style={[styles.skipBtn, { borderTopColor: colors.border }]}
     >
       <Text style={[styles.skipText, { color: colors.textSecondary }]}>Passer →</Text>
@@ -538,7 +556,7 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
             <PressableA11y
               accessibilityLabel="Remplacer cet exercice par un autre"
               onPress={() => {
-                skipExerciseSheetRef.current?.close();
+                closeAllSheets();
                 substituteSheetRef.current?.expand();
               }}
               style={[styles.sheetCancelBtn, { borderColor: colors.border }]}
@@ -672,7 +690,7 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
       )}
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   wrapper: { flex: 1 },

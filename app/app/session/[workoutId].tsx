@@ -10,7 +10,7 @@ import { useWorkoutExercises } from '@/hooks/useWorkoutExercises';
 import { useSession } from '@/hooks/useSession';
 import { useTimer } from '@/hooks/useTimer';
 import { CheckInPhase } from '@/components/session/CheckInPhase';
-import { RunningPhase } from '@/components/session/RunningPhase';
+import { RunningPhase, type RunningPhaseHandle } from '@/components/session/RunningPhase';
 import { SummaryPhase } from '@/components/session/SummaryPhase';
 import { ExerciseStartingWeightPhase } from '@/components/session/ExerciseStartingWeightPhase';
 import { RestPhase } from '@/components/session/RestPhase';
@@ -95,6 +95,9 @@ async function checkPausedOnMount(workoutId: number): Promise<{
         startedAt: new Date(paused.sessionLog.started_at).getTime(),
         setsLogged: paused.setsLogged,
         volume: paused.volume,
+        timerState: pos.timerCountdown != null
+          ? { countdown: pos.timerCountdown, started: pos.timerStarted ?? false }
+          : undefined,
       },
     };
   }
@@ -327,6 +330,11 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
     }).catch(console.error);
   }, [session.phase, session.sessionLogId, exercises]);
 
+  const runningPhaseRef = useRef<RunningPhaseHandle | null>(null);
+  const resumeTimerForSetId = useRef<number | null>(
+    initialSession?.timerState != null ? session.currentSet?.id ?? null : null
+  );
+
   const [prBadge, setPrBadge] = useState<string | null>(null);
   const prBadgeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -370,7 +378,8 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
 
   const handlePause = useCallback(async () => {
     try {
-      await session.pauseSession();
+      const timerState = runningPhaseRef.current?.getTimerState();
+      await session.pauseSession(timerState);
       router.replace('/(tabs)');
     } catch {
       // error already shown via session.error
@@ -452,10 +461,12 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
             {needsStartingWeight ? (
               <ExerciseStartingWeightPhase
                 exercise={session.currentExercise}
+                plateStep={plateStep}
                 onConfirm={handleStartingWeightConfirm}
               />
             ) : (
               <RunningPhase
+                ref={runningPhaseRef}
                 key={session.currentSet.id}
                 exercise={session.currentExercise}
                 block={session.currentBlock}
@@ -472,6 +483,8 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
                 supersetExerciseNames={getSupersetExerciseNames(session.position, deloadedExercises)}
                 onSubstituteExercise={session.substituteCurrentExercise}
                 isSubstituted={session.isCurrentExerciseSubstituted}
+                initialCountdown={session.currentSet.id === resumeTimerForSetId.current ? initialSession?.timerState?.countdown : undefined}
+                initialTimerStarted={session.currentSet.id === resumeTimerForSetId.current ? initialSession?.timerState?.started : undefined}
               />
             )}
           </>
@@ -520,9 +533,10 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
           <PressableA11y
             accessibilityLabel="Mettre la séance en pause"
             onPress={handlePause}
-            style={styles.pauseButton}
+            style={[styles.pauseButton, { backgroundColor: colors.surface, borderColor: colors.border }]}
           >
-            <Ionicons name="pause-circle-outline" size={28} color={colors.textSecondary} />
+            <Ionicons name="pause-outline" size={14} color={colors.textSecondary} />
+            <Text style={[styles.pauseButtonLabel, { color: colors.textSecondary }]}>Pause</Text>
           </PressableA11y>
         </View>
       )}
@@ -588,11 +602,21 @@ const styles = StyleSheet.create({
   pauseButtonContainer: {
     position: 'absolute',
     top: 48,
-    right: 16,
+    left: 16,
     zIndex: 50,
   },
   pauseButton: {
-    padding: Spacing.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xs,
+    paddingVertical: Spacing.xs,
+    paddingHorizontal: Spacing.sm,
+    borderRadius: Radius.full,
+    borderWidth: 1,
+  },
+  pauseButtonLabel: {
+    fontSize: 12,
+    fontFamily: FontFamily.medium,
   },
   abandonSheet: { padding: Spacing.xl, gap: Spacing.md },
   abandonTitle: { fontSize: 17, fontFamily: FontFamily.bold },

@@ -2,20 +2,21 @@
 import { Spacing } from '@/constants/Spacing';
 import { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, ViewStyle } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import { CheckIn } from '@/services/SessionService';
 import type { WorkoutExerciseDetail } from '@/services/WorkoutExerciseService';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
-import { LetterSpacing, FontFamily  } from '@/constants/Typography';
+import { LetterSpacing, FontFamily } from '@/constants/Typography';
 
 function estimateDurationSeconds(exercises: WorkoutExerciseDetail[]): number {
-  let total = exercises.length * 30; // transition per exercise
+  let total = exercises.length * 30;
   for (const ex of exercises) {
     for (const block of ex.blocks) {
       for (const set of block.sets) {
-        total += 45 + set.rest_duration; // ~45s effort + rest
+        total += 45 + set.rest_duration;
       }
     }
   }
@@ -48,9 +49,10 @@ interface CheckInPhaseProps {
 export function CheckInPhase({ onStart, exercises, deloadSuggested, onDeloadApplied }: CheckInPhaseProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
+  const insets = useSafeAreaInsets();
 
   const estimatedDuration = formatDuration(estimateDurationSeconds(exercises));
-  const PREVIEW_MAX = 4;
+  const PREVIEW_MAX = 3;
   const previewNames = exercises.slice(0, PREVIEW_MAX).map(e => e.exercise.name);
   const overflow = exercises.length - PREVIEW_MAX;
 
@@ -77,68 +79,38 @@ export function CheckInPhase({ onStart, exercises, deloadSuggested, onDeloadAppl
   }
 
   return (
-    <ScrollView contentContainerStyle={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={styles.hero}>
-        <Text style={[styles.title, { color: colors.text }]}>Comment tu te sens ?</Text>
-        <Text style={[styles.subtitle, { color: colors.textSecondary }]}>3 questions avant de commencer</Text>
-      </View>
+    <ScrollView
+      contentContainerStyle={[styles.container, { backgroundColor: colors.background, paddingTop: insets.top + Spacing.xxl }]}
+      keyboardShouldPersistTaps="handled"
+    >
+      {exercises.length > 0 && (
+        <View style={styles.sessionInfo}>
+          <Text style={[styles.sessionStat, { color: colors.text }]}>
+            {exercises.length} exercice{exercises.length > 1 ? 's' : ''}
+          </Text>
+          <Text style={[styles.bullet, { color: colors.textSecondary }]}>·</Text>
+          <Text style={[styles.sessionDuration, { color: colors.primary }]}>{estimatedDuration}</Text>
+        </View>
+      )}
 
       {exercises.length > 0 && (
-        <View style={[styles.previewCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-          <View style={styles.previewMeta}>
-            <Text style={[styles.previewStat, { color: colors.text }]}>
-              {exercises.length} exercice{exercises.length > 1 ? 's' : ''}
+        <View style={styles.previewList}>
+          {previewNames.map((name, i) => (
+            <Text key={i} style={[styles.previewItem, { color: colors.textSecondary }]} numberOfLines={1}>
+              {name}
             </Text>
-            <Text style={[styles.previewDuration, { color: colors.primary }]}>{estimatedDuration}</Text>
-          </View>
-          <View style={styles.previewList}>
-            {previewNames.map((name, i) => (
-              <Text key={i} style={[styles.previewItem, { color: colors.textSecondary }]} numberOfLines={1}>
-                · {name}
-              </Text>
-            ))}
-            {overflow > 0 && (
-              <Text style={[styles.previewItem, { color: colors.textSecondary }]}>
-                + {overflow} de plus
-              </Text>
-            )}
-          </View>
+          ))}
+          {overflow > 0 && (
+            <Text style={[styles.previewItem, { color: colors.textSecondary }]}>
+              +{overflow} de plus
+            </Text>
+          )}
         </View>
       )}
 
-      {deloadSuggested && !deloadDismissed && (
-        <View style={[styles.deloadCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-          <Text style={[styles.deloadTitle, { color: colors.text }]}>
-            {deloadAccepted ? 'Décharge appliquée ✓' : 'Semaine de décharge suggérée'}
-          </Text>
-          {!deloadAccepted && (
-            <Text style={[styles.deloadBody, { color: colors.textSecondary }]}>
-              {"Après plusieurs semaines d'entraînement, une semaine à charge réduite (-10%) permet aux muscles et tendons de récupérer et de repartir plus forts."}
-            </Text>
-          )}
-          {!deloadAccepted && (
-            <View style={styles.deloadButtons}>
-              <PressableA11y
-                accessibilityLabel="Appliquer la décharge — poids réduits de 10% pour cette séance"
-                onPress={() => {
-                  setDeloadAccepted(true);
-                  onDeloadApplied?.();
-                }}
-                style={[styles.deloadBtn, styles.deloadBtnPrimary, { backgroundColor: colors.primary }]}
-              >
-                <Text style={[styles.deloadBtnPrimaryText, { color: colors.onPrimary }]}>Appliquer la décharge</Text>
-              </PressableA11y>
-              <PressableA11y
-                accessibilityLabel="Passer — continuer sans décharge"
-                onPress={() => setDeloadDismissed(true)}
-                style={[styles.deloadBtn, styles.deloadBtnSecondary, { borderColor: colors.border }]}
-              >
-                <Text style={[styles.deloadBtnSecondaryText, { color: colors.text }]}>Passer</Text>
-              </PressableA11y>
-            </View>
-          )}
-        </View>
-      )}
+      <View style={[styles.divider, { backgroundColor: colors.border }]} />
+
+      <Text style={[styles.sectionLabel, { color: colors.textSecondary }]}>COMMENT TU TE SENS ?</Text>
 
       {CHECKIN_ROWS.map((row, i) => (
         <View key={row.label} style={styles.row}>
@@ -176,40 +148,73 @@ export function CheckInPhase({ onStart, exercises, deloadSuggested, onDeloadAppl
         </View>
       ))}
 
+      {deloadSuggested && !deloadDismissed && (
+        <View style={[styles.deloadCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          <Text style={[styles.deloadTitle, { color: colors.text }]}>
+            {deloadAccepted ? 'Décharge appliquée ✓' : 'Semaine de décharge suggérée'}
+          </Text>
+          {!deloadAccepted && (
+            <Text style={[styles.deloadBody, { color: colors.textSecondary }]}>
+              {"Après plusieurs semaines d'entraînement, une semaine à charge réduite (-10%) permet aux muscles et tendons de récupérer et de repartir plus forts."}
+            </Text>
+          )}
+          {!deloadAccepted && (
+            <View style={styles.deloadButtons}>
+              <PressableA11y
+                accessibilityLabel="Appliquer la décharge — poids réduits de 10% pour cette séance"
+                onPress={() => {
+                  setDeloadAccepted(true);
+                  onDeloadApplied?.();
+                }}
+                style={[styles.deloadBtn, styles.deloadBtnPrimary, { backgroundColor: colors.primary }]}
+              >
+                <Text style={[styles.deloadBtnPrimaryText, { color: colors.onPrimary }]}>Appliquer la décharge</Text>
+              </PressableA11y>
+              <PressableA11y
+                accessibilityLabel="Passer — continuer sans décharge"
+                onPress={() => setDeloadDismissed(true)}
+                style={[styles.deloadBtn, styles.deloadBtnSecondary, { borderColor: colors.border }]}
+              >
+                <Text style={[styles.deloadBtnSecondaryText, { color: colors.text }]}>Passer</Text>
+              </PressableA11y>
+            </View>
+          )}
+        </View>
+      )}
+
       <PressableA11y
         accessibilityLabel="Commencer la séance"
         accessibilityState={{ disabled: !canStart }}
         onPress={handleStart}
         style={[styles.startBtn, { backgroundColor: colors.primary, opacity: canStart ? 1 : 0.4 }]}
       >
-        <Text style={[styles.startBtnText, { color: colors.onPrimary }]}>{loading ? 'Démarrage…' : 'Commencer la séance'}</Text>
+        <Text style={[styles.startBtnText, { color: colors.onPrimary }]}>{loading ? 'Démarrage…' : 'COMMENCER'}</Text>
       </PressableA11y>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flexGrow: 1, padding: Spacing.xxl, gap: 28 },
-  hero: { alignItems: 'center', paddingTop: Spacing.xxxl, gap: Spacing.sm },
-  title: { fontSize: 24, fontFamily: FontFamily.bold, textAlign: 'center' },
-  subtitle: { fontSize: 14, textAlign: 'center' },
-  row: { gap: Spacing.md },
-  rowLabel: { fontSize: 11, fontFamily: FontFamily.bold, letterSpacing: LetterSpacing.wider },
-  segment: { flexDirection: 'row', borderWidth: 1, borderRadius: Radius.sm, overflow: 'hidden' },
-  segmentBtn: { flex: 1, alignItems: 'center', paddingVertical: Spacing.lg },
-  segmentFirst: { borderTopLeftRadius: Radius.sm, borderBottomLeftRadius: Radius.sm },
-  segmentLast: { borderTopRightRadius: Radius.sm, borderBottomRightRadius: Radius.sm },
-  segmentText: { fontSize: 14, fontFamily: FontFamily.regular },
-  segmentTextSelected: { fontFamily: FontFamily.bold },
-  startBtn: { marginTop: Spacing.sm, paddingVertical: Spacing.lg, borderRadius: Radius.sm, alignItems: 'center' },
-  startBtnText: { fontSize: 17, fontFamily: FontFamily.semibold },
-  previewCard: { borderWidth: 1, borderRadius: Radius.sm, padding: Spacing.lg, gap: Spacing.md },
-  previewMeta: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  previewStat: { fontSize: 14, fontFamily: FontFamily.semibold },
-  previewDuration: { fontSize: 14, fontFamily: FontFamily.bold },
+  container: { flexGrow: 1, paddingHorizontal: Spacing.xxl, paddingBottom: Spacing.xxxl, gap: Spacing.lg },
+  sessionInfo: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
+  sessionStat: { fontSize: 15, fontFamily: FontFamily.semibold },
+  bullet: { fontSize: 15 },
+  sessionDuration: { fontSize: 15, fontFamily: FontFamily.bold },
   previewList: { gap: 3 },
   previewItem: { fontSize: 13 },
-  deloadCard: { borderWidth: 1, borderRadius: Radius.sm, padding: Spacing.lg, gap: Spacing.md, marginBottom: Spacing.sm },
+  divider: { height: 1 },
+  sectionLabel: { fontSize: 11, fontFamily: FontFamily.bold, letterSpacing: LetterSpacing.max },
+  row: { gap: Spacing.sm },
+  rowLabel: { fontSize: 11, fontFamily: FontFamily.bold, letterSpacing: LetterSpacing.wider },
+  segment: { flexDirection: 'row', borderWidth: 1, borderRadius: Radius.sm, overflow: 'hidden' },
+  segmentBtn: { flex: 1, alignItems: 'center', paddingVertical: Spacing.md },
+  segmentFirst: { borderTopLeftRadius: Radius.sm, borderBottomLeftRadius: Radius.sm },
+  segmentLast: { borderTopRightRadius: Radius.sm, borderBottomRightRadius: Radius.sm },
+  segmentText: { fontSize: 13, fontFamily: FontFamily.regular },
+  segmentTextSelected: { fontFamily: FontFamily.bold },
+  startBtn: { marginTop: Spacing.md, paddingVertical: Spacing.lg, borderRadius: Radius.sm, alignItems: 'center', minHeight: 64, justifyContent: 'center' },
+  startBtnText: { fontSize: 15, fontFamily: FontFamily.bold, letterSpacing: LetterSpacing.max },
+  deloadCard: { borderWidth: 1, borderRadius: Radius.sm, padding: Spacing.lg, gap: Spacing.md },
   deloadTitle: { fontSize: 15, fontFamily: FontFamily.semibold },
   deloadBody: { fontSize: 14, lineHeight: 20 },
   deloadButtons: { flexDirection: 'column', gap: Spacing.sm },

@@ -121,12 +121,15 @@ export class SessionService {
     sessionLogId: number,
     position: { exerciseIdx: number; blockIdx: number; setIdx: number },
     phase: 'checkin' | 'exercise_transition' | 'running' | 'rest' | 'summary' | 'warmup',
+    timerState?: { countdown: number; started: boolean },
   ): Promise<void> {
     const positionJson = JSON.stringify({
       exerciseIdx: position.exerciseIdx,
       blockIdx: position.blockIdx,
       setIdx: position.setIdx,
       phase,
+      timerCountdown: timerState?.countdown,
+      timerStarted: timerState?.started,
     });
     await this.sessionLogRepo.pause(sessionLogId, positionJson);
   }
