@@ -5,6 +5,18 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.22.0] — 2026-06-19
+
+034b22b refactor(session): redesign phase — bouton pause + sheets mutex + check-in + timer résistant à la pause
+0525f47 fix(session): batch terrain bugs — timer, seeds, emojis, safe area, layout
+220b2f2 fix(onboarding): affiche l'unité système résolue (kg/lbs) sous le contrôle Système
+3dba2ac fix(onboarding): bouton Passer visible sur tous les écrans (pas seulement le premier)
+458e9fd fix(onboarding): safe area bottom — boutons Commencer/Continuer cachés par nav Android
+7f99044 chore(eas): add projectId + Android camera permissions
+a347a50 chore: setup EAS Build + journal S50
+
+---
+
 ## [1.21.2] — 2026-06-19
 
 b69c858 feat(history): supprimer une séance + harmonisation couleur lime
