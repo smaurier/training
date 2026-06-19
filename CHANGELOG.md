@@ -5,6 +5,15 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.24.2] — 2026-06-19
+
+6a35a97 fix(session): description sheet — titre dans BottomSheetScrollView
+e9fed96 feat(session): exercices étirement — vue simplifiée sans saisie ni RPE
+bd85da3 fix(copy): PC → Poids de corps partout (RunningPhase, BlockCard, EditSetModal)
+f990ccf fix(session): bouton pause inline — supprime position:absolute
+
+---
+
 ## [1.24.1] — 2026-06-19
 
 a935da8 feat(session): finir la séance + décompte 3-2-1 chrono durée
