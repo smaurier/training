@@ -6,8 +6,6 @@ import { PressableA11y } from '@/components/ui/PressableA11y';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import type { Exercise1RM } from '@/services/ProgressionService';
-import { SemanticColors } from '../../constants/SemanticColors';
-
 interface Exercise1RMCardProps {
   item: Exercise1RM;
   onPress: () => void;
@@ -20,8 +18,8 @@ export function Exercise1RMCard({ item, onPress, isLast }: Exercise1RMCardProps)
 
   const deltaColor =
     item.delta === null ? colors.textSecondary
-    : item.delta > 0 ? SemanticColors.positive
-    : item.delta < 0 ? SemanticColors.negative
+    : item.delta > 0 ? colors.positiveText
+    : item.delta < 0 ? colors.negativeText
     : colors.textSecondary;
 
   const cardStyles: ViewStyle[] = [styles.card];
