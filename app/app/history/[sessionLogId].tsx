@@ -15,10 +15,9 @@ import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { getDb } from '@/db';
 
-const CHECKIN_ENERGY: Record<number, string> = { 1: '😴', 2: '😐', 3: '💪' };
-const CHECKIN_FATIGUE: Record<number, string> = { 1: '💪', 2: '😐', 3: '😴' };
-const CHECKIN_SLEEP: Record<number, string> = { 1: '😴', 2: '😐', 3: '🌙' };
-const MOOD_AFTER: Record<number, string> = { 1: '😓', 2: '😌', 3: '⚡' };
+const CHECKIN_ENERGY: Record<number, string> = { 1: 'Faible', 2: 'Normale', 3: 'Élevée' };
+const CHECKIN_FATIGUE: Record<number, string> = { 1: 'Légère', 2: 'Modérée', 3: 'Élevée' };
+const CHECKIN_SLEEP: Record<number, string> = { 1: 'Mauvais', 2: 'Moyen', 3: 'Bon' };
 const MOOD_AFTER_LABEL: Record<number, string> = { 1: 'Épuisé', 2: 'Bien', 3: 'En forme' };
 
 function formatDuration(seconds: number): string {
@@ -135,19 +134,19 @@ export default function SessionDetailScreen() {
         <View style={[styles.checkinRow, { borderBottomColor: colors.border, backgroundColor: colors.surface }]}>
           {detail.checkinEnergy !== null && (
             <View style={styles.checkinItem}>
-              <Text style={styles.checkinEmoji}>{CHECKIN_ENERGY[detail.checkinEnergy]}</Text>
+              <Text style={[styles.checkinValue, { color: colors.text }]}>{CHECKIN_ENERGY[detail.checkinEnergy]}</Text>
               <Text style={[styles.checkinLabel, { color: colors.textSecondary }]}>Énergie</Text>
             </View>
           )}
           {detail.checkinFatigue !== null && (
             <View style={styles.checkinItem}>
-              <Text style={styles.checkinEmoji}>{CHECKIN_FATIGUE[detail.checkinFatigue]}</Text>
+              <Text style={[styles.checkinValue, { color: colors.text }]}>{CHECKIN_FATIGUE[detail.checkinFatigue]}</Text>
               <Text style={[styles.checkinLabel, { color: colors.textSecondary }]}>Fatigue</Text>
             </View>
           )}
           {detail.checkinSleep !== null && (
             <View style={styles.checkinItem}>
-              <Text style={styles.checkinEmoji}>{CHECKIN_SLEEP[detail.checkinSleep]}</Text>
+              <Text style={[styles.checkinValue, { color: colors.text }]}>{CHECKIN_SLEEP[detail.checkinSleep]}</Text>
               <Text style={[styles.checkinLabel, { color: colors.textSecondary }]}>Sommeil</Text>
             </View>
           )}
@@ -160,7 +159,6 @@ export default function SessionDetailScreen() {
           accessible
           accessibilityLabel={`Ressenti après séance : ${MOOD_AFTER_LABEL[detail.moodAfter]}`}
         >
-          <Text style={styles.moodEmoji}>{MOOD_AFTER[detail.moodAfter]}</Text>
           <View style={styles.moodTexte}>
             <Text style={[styles.moodLabel, { color: colors.textSecondary }]}>RESSENTI</Text>
             <Text style={[styles.moodValue, { color: colors.text }]}>{MOOD_AFTER_LABEL[detail.moodAfter]}</Text>
@@ -213,8 +211,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 2,
   },
-  checkinEmoji: {
-    fontSize: 20,
+  checkinValue: {
+    fontSize: 14,
+    fontFamily: FontFamily.semibold,
   },
   checkinLabel: {
     fontSize: 11,
@@ -241,8 +240,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     gap: Spacing.lg,
   },
-  moodEmoji: { fontSize: 28 },
-  moodTexte: { gap: 2 },
+  moodTexte: { gap: 2, paddingHorizontal: Spacing.lg },
   moodLabel: { fontSize: 10, fontFamily: FontFamily.semibold, textTransform: 'uppercase', letterSpacing: 1 },
   moodValue: { fontSize: 15, fontFamily: FontFamily.semibold },
 });

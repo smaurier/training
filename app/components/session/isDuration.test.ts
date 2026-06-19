@@ -3,7 +3,6 @@ type ExerciseType = 'musculation' | 'etirement' | 'cardio';
 
 function computeIsDuration(type: ExerciseType, durationSeconds: number | null): boolean {
   if (type === 'cardio') return false;
-  if (type === 'etirement') return false;
   return (durationSeconds ?? 0) > 0;
 }
 
@@ -13,8 +12,12 @@ describe('computeIsDuration', () => {
     expect(computeIsDuration('cardio', null)).toBe(false);
   });
 
-  it('returns false for etirement regardless of duration_seconds', () => {
-    expect(computeIsDuration('etirement', 10)).toBe(false);
+  it('returns true for etirement with duration_seconds > 0 (timed holds)', () => {
+    expect(computeIsDuration('etirement', 60)).toBe(true);  // Deep squat hold
+    expect(computeIsDuration('etirement', 30)).toBe(true);  // Suspension passive
+  });
+
+  it('returns false for etirement without duration_seconds (reps-based mobility)', () => {
     expect(computeIsDuration('etirement', 0)).toBe(false);
     expect(computeIsDuration('etirement', null)).toBe(false);
   });

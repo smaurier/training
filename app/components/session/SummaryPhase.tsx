@@ -1,6 +1,7 @@
 import { Spacing } from '@/constants/Spacing';
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TextInput, StyleSheet } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import type { ProgressionResult } from '@/services/SessionService';
@@ -47,6 +48,7 @@ export function SummaryPhase({ progressions, totalSets, durationSeconds, totalVo
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const { convert, label: unitLabel } = useUnits();
+  const insets = useSafeAreaInsets();
 
   const [cardioDismissed, setCardioDismissed] = useState(false);
   const [cardioMinutes, setCardioMinutes] = useState('');
@@ -72,7 +74,7 @@ export function SummaryPhase({ progressions, totalSets, durationSeconds, totalVo
   const progressionCount = progressions.filter(p => p.achieved).length;
 
   return (
-    <ScrollView contentContainerStyle={[styles.container, { backgroundColor: colors.background }]}>
+    <ScrollView contentContainerStyle={[styles.container, { backgroundColor: colors.background, paddingBottom: Spacing.xxl + insets.bottom }]}>
       <View style={styles.hero}>
         <Text style={[styles.heroLabel, { color: colors.textSecondary }]}>SÉANCE TERMINÉE</Text>
         <Text style={[styles.heroDuration, { color: colors.textSecondary }]}>
@@ -249,10 +251,10 @@ export function SummaryPhase({ progressions, totalSets, durationSeconds, totalVo
         <Text style={[styles.sectionTitle, { color: colors.text }]}>Comment tu te sens ?</Text>
         <View style={styles.moodRow}>
           {([
-            { mood: 1 as const, emoji: '😓', label: 'Épuisé' },
-            { mood: 2 as const, emoji: '😌', label: 'Bien' },
-            { mood: 3 as const, emoji: '⚡', label: 'En forme' },
-          ] as const).map(({ mood, emoji, label }) => (
+            { mood: 1 as const, label: 'Épuisé' },
+            { mood: 2 as const, label: 'Bien' },
+            { mood: 3 as const, label: 'En forme' },
+          ] as const).map(({ mood, label }) => (
             <PressableA11y
               key={mood}
               accessibilityLabel={`Humeur : ${label}`}
@@ -266,7 +268,6 @@ export function SummaryPhase({ progressions, totalSets, durationSeconds, totalVo
                   : { backgroundColor: colors.surface },
               ]}
             >
-              <Text style={styles.moodEmoji}>{emoji}</Text>
               <Text style={[styles.moodLabel, { color: colors.text }]}>{label}</Text>
             </PressableA11y>
           ))}
@@ -323,7 +324,7 @@ export function SummaryPhase({ progressions, totalSets, durationSeconds, totalVo
 }
 
 const styles = StyleSheet.create({
-  container: { flexGrow: 1, padding: Spacing.xxl, gap: Spacing.xl },
+  container: { flexGrow: 1, paddingHorizontal: Spacing.xxl, paddingTop: Spacing.xxl, gap: Spacing.xl },
   hero: { paddingVertical: Spacing.sm, gap: Spacing.xs },
   heroLabel: { fontSize: 11, fontFamily: FontFamily.semibold, textTransform: 'uppercase', letterSpacing: LetterSpacing.spaced },
   heroDuration: { fontSize: 13, fontFamily: FontFamily.regular },
@@ -354,9 +355,8 @@ const styles = StyleSheet.create({
   deloadHintBody: { fontSize: 13, lineHeight: 18 },
   moodSection: { borderWidth: 1, borderRadius: Radius.sm, padding: Spacing.lg, gap: Spacing.md },
   moodRow: { flexDirection: 'row', gap: Spacing.sm },
-  moodChip: { flex: 1, alignItems: 'center', borderWidth: 1, borderRadius: Radius.sm, paddingVertical: Spacing.md, gap: Spacing.xs },
-  moodEmoji: { fontSize: 22 },
-  moodLabel: { fontSize: 12, fontFamily: FontFamily.semibold },
+  moodChip: { flex: 1, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderRadius: Radius.sm, paddingVertical: Spacing.md, minHeight: 44 },
+  moodLabel: { fontSize: 13, fontFamily: FontFamily.semibold },
   tagsSection: { borderWidth: 1, borderRadius: Radius.sm, padding: Spacing.lg, gap: Spacing.md },
   tagsWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
   tagChip: { borderWidth: 1, borderRadius: Radius.sm, paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm },

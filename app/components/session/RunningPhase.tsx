@@ -101,7 +101,7 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
   );
 
   const isCardio = exercise.exercise.type === 'cardio';
-  const isDuration = exercise.exercise.type !== 'etirement' && !isCardio && (set.duration_seconds ?? 0) > 0;
+  const isDuration = !isCardio && (set.duration_seconds ?? 0) > 0;
 
   const [reps, setReps] = useState(String(set.reps_min));
   const [weight, setWeight] = useState(
@@ -330,7 +330,7 @@ export function RunningPhase({ exercise, block, set, progressLabel, onValidate, 
       {isCardio ? (
         <>
           <View style={[styles.targetCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-            <Text style={[styles.targetText, { color: colors.text }]}>🏃 Footing</Text>
+            <Text style={[styles.targetText, { color: colors.text }]}>Footing</Text>
           </View>
 
           <View style={styles.inputRow}>
@@ -767,7 +767,7 @@ const styles = StyleSheet.create({
   amrapBadgeText: {
     fontSize: 11,
     fontFamily: FontFamily.bold,
-    color: '#fff',
+    color: '#000',
     letterSpacing: LetterSpacing.wide,
   },
   dropsetBadge: {

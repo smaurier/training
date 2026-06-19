@@ -538,9 +538,13 @@ function f(reps_min: number, rest: number, weight: number | null = null, weight_
 function bw(reps_min: number, rest: number): SetSpec {
   return { reps_min, weight: null, weight_type: 'bodyweight', rest };
 }
-// Mobilité/étirements : duration_seconds = durée réelle, reps_min = 1
+// Mobilité/étirements : durée tenue (Deep squat hold, Suspension passive, stretches post-séance)
 function mob(seconds: number): SetSpec {
   return { reps_min: 1, weight: null, weight_type: 'bodyweight', rest: 0, duration_seconds: seconds };
+}
+// Mobilité répétitions (Cercles épaules, Rotations thoraciques, Leg swings…)
+function mobReps(reps: number): SetSpec {
+  return { reps_min: reps, weight: null, weight_type: 'bodyweight', rest: 0 };
 }
 
 function workBlock(sets: SetSpec[]): BlockSpec {
@@ -567,9 +571,9 @@ const PPL: { name: string; description: string; workouts: WorkoutSpec[] } = {
       name: 'Push — Pecs / Épaules / Triceps',
       exercises: [
         // Mobilité (5 min) — activation articulaire avant pressing
-        { exercise: 'Cercles épaules',       blocks: [mobilityBlock([mob(20)])] },
-        { exercise: 'Rotations thoraciques', blocks: [mobilityBlock([mob(10)])] },
-        { exercise: 'Band pull-aparts',      blocks: [mobilityBlock([mob(20)])] },
+        { exercise: 'Cercles épaules',       blocks: [mobilityBlock([mobReps(20)])] },
+        { exercise: 'Rotations thoraciques', blocks: [mobilityBlock([mobReps(10)])] },
+        { exercise: 'Band pull-aparts',      blocks: [mobilityBlock([mobReps(20)])] },
         { exercise: 'Suspension passive',    blocks: [mobilityBlock([mob(30)])] },
 
         // Musculation
@@ -620,10 +624,10 @@ const PPL: { name: string; description: string; workouts: WorkoutSpec[] } = {
       name: 'Pull — Dos / Biceps / V',
       exercises: [
         // Mobilité (5 min)
-        { exercise: 'Cat-cow',               blocks: [mobilityBlock([mob(10)])] },
-        { exercise: 'Rotations thoraciques', blocks: [mobilityBlock([mob(10)])] },
+        { exercise: 'Cat-cow',               blocks: [mobilityBlock([mobReps(10)])] },
+        { exercise: 'Rotations thoraciques', blocks: [mobilityBlock([mobReps(10)])] },
         { exercise: 'Suspension passive',    blocks: [mobilityBlock([mob(30)])] },
-        { exercise: 'Hip hinge léger',       blocks: [mobilityBlock([mob(10)])] },
+        { exercise: 'Hip hinge léger',       blocks: [mobilityBlock([mobReps(10)])] },
 
         // Musculation
         { exercise: 'Tractions',           blocks: [workBlock([bw(8, 90), bw(8, 90), bw(8, 90), bw(8, 90)])] },
@@ -660,8 +664,8 @@ const PPL: { name: string; description: string; workouts: WorkoutSpec[] } = {
       exercises: [
         // Mobilité (5 min) — dynamique, axé hanche/cheville
         { exercise: 'Deep squat hold',          blocks: [mobilityBlock([mob(30)])] },
-        { exercise: 'Leg swings avant/arrière', blocks: [mobilityBlock([mob(10)])] },
-        { exercise: 'Leg swings latéraux',      blocks: [mobilityBlock([mob(10)])] },
+        { exercise: 'Leg swings avant/arrière', blocks: [mobilityBlock([mobReps(10)])] },
+        { exercise: 'Leg swings latéraux',      blocks: [mobilityBlock([mobReps(10)])] },
         { exercise: 'Cossack squat',            blocks: [mobilityBlock([bw(8, 0)])] },
 
         // Musculation
@@ -685,10 +689,10 @@ const PPL: { name: string; description: string; workouts: WorkoutSpec[] } = {
       name: 'Bonus — Force Couché / Bras / Épaules',
       exercises: [
         // Mobilité (5 min)
-        { exercise: 'Cercles épaules',    blocks: [mobilityBlock([mob(20)])] },
-        { exercise: 'Band pull-aparts',   blocks: [mobilityBlock([mob(15)])] },
+        { exercise: 'Cercles épaules',    blocks: [mobilityBlock([mobReps(20)])] },
+        { exercise: 'Band pull-aparts',   blocks: [mobilityBlock([mobReps(15)])] },
         { exercise: 'Couch stretch',      blocks: [mobilityBlock([mob(30)])] },
-        { exercise: 'Rotations poignets', blocks: [mobilityBlock([mob(10)])] },
+        { exercise: 'Rotations poignets', blocks: [mobilityBlock([mobReps(10)])] },
 
         // Musculation
         { exercise: 'Pin Press',                     blocks: [workBlock([f(5, 120, 40), f(5, 120, 40), f(5, 120, 40), f(5, 120, 40)])] },

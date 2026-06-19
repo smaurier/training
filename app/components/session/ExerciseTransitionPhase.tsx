@@ -35,6 +35,9 @@ function getWorkSummary(exercise: WorkoutExerciseDetail): string {
     const s = firstSet.duration_seconds % 60;
     return m > 0 ? `${m}min${s > 0 ? ` ${s}s` : ''}` : `${s}s`;
   }
+  if (firstSet?.reps_min && firstSet.reps_min > 0) {
+    return `${firstSet.reps_min} rép`;
+  }
   return '';
 }
 
@@ -58,6 +61,7 @@ export function ExerciseTransitionPhase({
       <View style={[styles.stripe, { backgroundColor: typeColor }]} />
 
       <ScrollView
+        style={styles.scrollView}
         contentContainerStyle={styles.content}
         keyboardShouldPersistTaps="handled"
       >
@@ -114,6 +118,9 @@ const styles = StyleSheet.create({
   },
   stripe: {
     width: 4,
+  },
+  scrollView: {
+    flex: 1,
   },
   content: {
     flexGrow: 1,
