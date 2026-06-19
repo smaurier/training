@@ -3,7 +3,7 @@ export const SemanticColors = {
   superset: '#7c3aed',
   supersetAlpha: '#7c3aed20',
   cardio: '#ea580c',
-  dropset: '#2563eb',
+  dropset: '#be185d',
   stretch: '#16a34a',
   prBadge:     '#84CC16',
   positive:    '#22c55e',
