@@ -5,6 +5,13 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.24.4] — 2026-06-19
+
+a1c4057 feat(android): navigation bar suit le theme dark/light
+2706d79 feat(reglages): long-press version => reset donnees de test
+
+---
+
 ## [1.24.3] — 2026-06-19
 
 b35fae9 fix(session): pause button safe area via SafeAreaView edges top
