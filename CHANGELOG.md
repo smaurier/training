@@ -5,6 +5,15 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.23.0] — 2026-06-19
+
+0d46e89 design: dropset badge pink-700 #be185d (était bleu lien #2563eb)
+ac36485 design: standardiser labels CTA — uppercase + FontFamily.bold + LetterSpacing.max
+1407541 fix(session): RunningPhase — centrage vertical, CircularTimer done state, guard cardio starting weight
+1717ab6 refactor(warmup): redesign WarmupPhase — safe area, table layout, skip option, CTA design system
+
+---
+
 ## [1.22.0] — 2026-06-19
 
 034b22b refactor(session): redesign phase — bouton pause + sheets mutex + check-in + timer résistant à la pause
