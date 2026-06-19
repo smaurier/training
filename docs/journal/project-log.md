@@ -4,6 +4,29 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 
 ---
 
+## S51 — 2026-06-19 — Design polish + onboarding refonte + v1.24.0
+
+### Livré
+
+- **Standardisation CTA (18 fichiers)** : uppercase + `FontFamily.bold` + `LetterSpacing.max` sur tous les boutons primaires. Commit `ac36485`.
+- **Dropset badge** : `#2563eb` (bleu lien) → `#be185d` (pink-700). Contraste blanc 5.6:1 WCAG AA. Commit `0d46e89`.
+- **Onboarding refonte 8→4 écrans** : suppression PhilosophyScreen, ObjectiveScreen, SessionDemoScreen, ProgressionScreen. Flow : Welcome → Program → Settings → Ready. `WizardState.objective` retiré. ProgramScreen montre tous les templates sans filtrage. CTA IMPORTER ET CONTINUER uppercase. 7 tests passants. Commit `db062e5`.
+- **Colors semantic tokens** : `primaryText`/`positiveText`/`negativeText`/`destructiveText` (dark+light). Exercise1RMCard, VolumeBarChart, reglages, _layout migrés de SemanticColors → colors.xxx. Commit `b78334b`.
+- **Repository contract tests** : `deleteBySessionLogId` sur 3 repos (personalRecord, sessionLog, setLog) — interface + InMemory + SQLite + 12 contract tests. Commit `ff46d18`.
+- **Home screen** : setLabel affiche durée (`Ns`) pour exercices durée. Liens "Créer/Configurer" → `colors.text` + underline (règle 1 élément lime). Brzycki service commité (`brzycki.ts` + `brzycki.test.ts`, 9 tests). Commit `0954458`.
+
+### Décisions
+
+- **Onboarding 4 écrans vs 8** : ObjectiveScreen enlevée → ProgramScreen montre tous les templates (`TEMPLATES` direct). Pas de perte fonctionnelle — filtrage par objectif était une friction inutile.
+- **PhilosophyScreen supprimée** : trop abstraite pour un 1er lancement. La philosophie reste dans CLAUDE.md (filtre décision) mais pas imposée à l'utilisateur à l'onboarding.
+- **Plans S49g stale** : tous les correctifs des plans audit-fonctionnel, usage-une-main, philosophie-ux, design-polish étaient déjà en place dans le codebase. Commit de nettoyage des fichiers en attente.
+
+### Prochaine étape
+
+Build APK v1.24.0 via EAS. Semaine test terrain. Audit RAAM 1.1 + Code Craft en fin de semaine.
+
+---
+
 ## S50 — 2026-06-19 — Suppression séance + lime harmonisation + setup EAS Build
 
 ### Livré
