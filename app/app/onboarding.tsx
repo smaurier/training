@@ -3,6 +3,7 @@ import { Spacing } from '@/constants/Spacing';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState, useMemo, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColorScheme } from '@/components/useColorScheme';
 import Colors from '@/constants/Colors';
 import { usePrograms } from '@/hooks/usePrograms';
@@ -11,6 +12,7 @@ import type { OnboardingScreenId } from '@/services/onboardingUtils';
 import { getDb } from '@/db';
 import { SQLiteSettingsRepository } from '@/repositories/SQLiteSettingsRepository';
 
+import { WelcomeScreen } from '@/components/onboarding/WelcomeScreen';
 import { PhilosophyScreen } from '@/components/onboarding/PhilosophyScreen';
 import { ObjectiveScreen } from '@/components/onboarding/ObjectiveScreen';
 import { ProgramScreen } from '@/components/onboarding/ProgramScreen';
@@ -37,6 +39,7 @@ export type ScreenProps = {
 };
 
 const ALL_SCREENS: { id: OnboardingScreenId; component: React.ComponentType<ScreenProps> }[] = [
+  { id: 'welcome',       component: WelcomeScreen },
   { id: 'philosophy',    component: PhilosophyScreen },
   { id: 'objective',     component: ObjectiveScreen },
   { id: 'program',       component: ProgramScreen },
@@ -51,6 +54,7 @@ export default function OnboardingScreen() {
   const isReview = review === 'true';
   const router = useRouter();
   const colorScheme = useColorScheme();
+  const insets = useSafeAreaInsets();
   const colors = Colors[colorScheme ?? 'light'];
   const { programs } = usePrograms();
 
@@ -104,7 +108,7 @@ export default function OnboardingScreen() {
   const showDots = step > 0 || current.id !== 'philosophy';
 
   return (
-    <View style={[styles.root, { backgroundColor: colors.background }]}>
+    <View style={[styles.root, { backgroundColor: colors.background, paddingBottom: insets.bottom }]}>
       {!isReview && step === 0 && (
         <TouchableOpacity
           onPress={handleSkip}
