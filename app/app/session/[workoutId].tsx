@@ -4,6 +4,7 @@ import { Spacing } from '@/constants/Spacing';
 import { useEffect, useCallback, useMemo, useState, useRef } from 'react';
 import { LetterSpacing, FontFamily} from '@/constants/Typography';
 import { View, Text, StyleSheet, AccessibilityInfo, ActivityIndicator } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import { useWorkoutExercises } from '@/hooks/useWorkoutExercises';
@@ -419,7 +420,7 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
       <Stack.Screen options={{ headerShown: false }} />
       <View style={[styles.container, { backgroundColor: colors.background }]}>
         {session.phase !== 'checkin' && session.phase !== 'summary' && (
-          <View style={styles.pauseButtonRow}>
+          <SafeAreaView edges={['top']} style={styles.pauseButtonRow}>
             <PressableA11y
               accessibilityLabel="Mettre la séance en pause"
               onPress={handlePause}
@@ -428,7 +429,7 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
               <Ionicons name="pause-outline" size={14} color={colors.textSecondary} />
               <Text style={[styles.pauseButtonLabel, { color: colors.textSecondary }]}>Pause</Text>
             </PressableA11y>
-          </View>
+          </SafeAreaView>
         )}
         <View style={styles.phaseContent}>
         {session.error && (

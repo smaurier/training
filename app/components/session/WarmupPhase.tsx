@@ -1,6 +1,5 @@
 import { Spacing } from '@/constants/Spacing';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LetterSpacing, FontFamily } from '@/constants/Typography';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import { useUnits } from '@/hooks/useUnits';
@@ -19,7 +18,6 @@ interface WarmupPhaseProps {
 export function WarmupPhase({ exerciseName, workWeight, plateStep = 2, onStart }: WarmupPhaseProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
-  const insets = useSafeAreaInsets();
   const { convert, label: unitLabel } = useUnits();
   const sets = computeWarmupSets(workWeight, plateStep);
 
@@ -27,7 +25,7 @@ export function WarmupPhase({ exerciseName, workWeight, plateStep = 2, onStart }
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.stripe, { backgroundColor: colors.primary }]} />
       <ScrollView
-        contentContainerStyle={[styles.content, { paddingTop: insets.top + 72 }]}
+        contentContainerStyle={styles.content}
         keyboardShouldPersistTaps="handled"
       >
         <Text style={[styles.phaseLabel, { color: colors.primary }]}>
@@ -93,6 +91,7 @@ const styles = StyleSheet.create({
   stripe: { width: 4 },
   content: {
     flexGrow: 1,
+    paddingTop: Spacing.xl,
     paddingHorizontal: Spacing.xxl,
     paddingBottom: Spacing.xxxl,
     gap: Spacing.lg,
