@@ -113,6 +113,11 @@ export function SettingsIntroScreen({ onNext, onBack }: ScreenProps) {
             onSelect={setUnit}
             colors={colors}
           />
+          {unitsPref === 'system' && (
+            <Text style={[styles.systemHint, { color: colors.textSecondary }]}>
+              {`Ton téléphone utilise les ${resolvedUnits === 'lbs' ? 'lbs' : 'kg'}`}
+            </Text>
+          )}
         </View>
 
         <View style={styles.section}>
@@ -157,6 +162,7 @@ const styles = StyleSheet.create({
   section: { gap: Spacing.sm },
   sectionTitle: { fontSize: 14, fontFamily: FontFamily.bold },
   sectionHint: { fontSize: 13, fontFamily: FontFamily.regular },
+  systemHint: { fontSize: 12, fontFamily: FontFamily.regular, marginTop: 4 },
   infoBlock: { borderWidth: 1, borderRadius: Radius.lg, padding: Spacing.md },
   infoText: { fontSize: 13, fontFamily: FontFamily.regular, lineHeight: 18 },
   footer: { padding: Spacing.xxl, borderTopWidth: 1 },
