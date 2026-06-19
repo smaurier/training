@@ -104,7 +104,7 @@ export default function HomeScreen() {
             onPress={() => router.push('/(tabs)/programmes')}
             style={styles.linkBtn}
           >
-            <Text style={[styles.linkText, { color: colors.primary }]}>Créer un programme →</Text>
+            <Text style={[styles.linkText, { color: colors.text }]}>Créer un programme →</Text>
           </PressableA11y>
         </View>
       ) : workouts.length === 0 ? (
@@ -115,7 +115,7 @@ export default function HomeScreen() {
             onPress={() => router.push('/(tabs)/programmes')}
             style={styles.linkBtn}
           >
-            <Text style={[styles.linkText, { color: colors.primary }]}>Configurer une séance →</Text>
+            <Text style={[styles.linkText, { color: colors.text }]}>Configurer une séance →</Text>
           </PressableA11y>
         </View>
       ) : selectedWorkout ? (
@@ -154,8 +154,14 @@ export default function HomeScreen() {
               {previewExercises.slice(0, 5).map((we, i) => {
                 const workBlock = we.blocks.find(b => b.is_work_block === 1);
                 const setCount = workBlock ? workBlock.sets.length : 0;
-                const repsMin = workBlock?.sets[0]?.reps_min ?? 0;
-                const setLabel = setCount > 0 && repsMin > 0 ? `${setCount} × ${repsMin}` : `${setCount} séries`;
+                const firstSet = workBlock?.sets[0];
+                const repsMin = firstSet?.reps_min ?? 0;
+                const durationSec = firstSet?.duration_seconds ?? 0;
+                const setLabel =
+                  setCount === 0 ? null
+                  : repsMin > 0 ? `${setCount} × ${repsMin}`
+                  : durationSec > 0 ? `${setCount} × ${durationSec}s`
+                  : `${setCount} séries`;
                 return (
                   <View
                     key={we.id}
@@ -167,7 +173,9 @@ export default function HomeScreen() {
                     <Text style={[styles.exerciseRowName, { color: colors.text }]} numberOfLines={1}>
                       {we.exercise.name}
                     </Text>
-                    <Text style={[styles.exerciseRowSets, { color: colors.textSecondary }]}>{setLabel}</Text>
+                    {setLabel !== null && (
+                      <Text style={[styles.exerciseRowSets, { color: colors.textSecondary }]}>{setLabel}</Text>
+                    )}
                   </View>
                 );
               })}
@@ -278,5 +286,5 @@ const styles = StyleSheet.create({
   startBtnText: { fontSize: 14, fontFamily: FontFamily.bold, letterSpacing: LetterSpacing.max, textTransform: 'uppercase' },
   emptyHint: { fontSize: 12, fontFamily: FontFamily.regular, textAlign: 'center', marginTop: Spacing.sm },
   linkBtn: { paddingVertical: Spacing.xs },
-  linkText: { fontSize: 15, fontFamily: FontFamily.medium },
+  linkText: { fontSize: 15, fontFamily: FontFamily.medium, textDecorationLine: 'underline' },
 });
