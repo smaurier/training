@@ -5,6 +5,15 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.24.1] — 2026-06-19
+
+a935da8 feat(session): finir la séance + décompte 3-2-1 chrono durée
+636d0ba fix(session): 6 bugs terrain — layout, timer, badge, RPE, sheet
+1b7f0e2 docs(plans): archiver plans S51 — audit fonctionnel + design polish + philosophie-ux + usage une main
+f573445 docs(journal): session S51 — design polish + onboarding refonte 8→4 + v1.24.0
+
+---
+
 ## [1.24.0] — 2026-06-19
 
 0954458 feat(home): setLabel affiche durée + liens texte non-lime + service Brzycki 1RM
