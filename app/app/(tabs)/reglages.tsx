@@ -1,6 +1,7 @@
 import { Spacing } from '@/constants/Spacing';
 import { useContext, useState, useCallback, useEffect } from 'react';
-import { View, Text, ScrollView, StyleSheet, ActivityIndicator, Switch, TextInput, Pressable } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, ActivityIndicator, Switch, TextInput, Pressable, Alert } from 'react-native';
+import Constants from 'expo-constants';
 import { useRouter } from 'expo-router';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import { useColorScheme } from '@/components/useColorScheme';
@@ -147,6 +148,31 @@ export default function ReglagesScreen() {
 
   const [isExporting, setIsExporting] = useState(false);
   const [exportError, setExportError] = useState<string | null>(null);
+  const [isResetting, setIsResetting] = useState(false);
+
+  const handleDevReset = useCallback(() => {
+    Alert.alert(
+      'Réinitialiser les données',
+      'Supprime toutes les séances, logs et records personnels. Les poids cibles du programme restent inchangés.',
+      [
+        { text: 'Annuler', style: 'cancel' },
+        {
+          text: 'Réinitialiser',
+          style: 'destructive',
+          onPress: async () => {
+            setIsResetting(true);
+            try {
+              const db = getDb();
+              await db.execAsync('DELETE FROM personal_records;');
+              await db.execAsync('DELETE FROM session_logs;');
+            } finally {
+              setIsResetting(false);
+            }
+          },
+        },
+      ]
+    );
+  }, []);
   const [deloadWeeksStr, setDeloadWeeksStr] = useState<'4' | '6' | '8'>('4');
 
   const [notifSettings, setNotifSettings] = useState<NotifSettings>(DEFAULT_NOTIF);
@@ -435,6 +461,22 @@ export default function ReglagesScreen() {
           <Text style={{ color: colors.textSecondary, fontSize: 18 }}>›</Text>
         </PressableA11y>
       </View>
+
+      <Pressable
+        onLongPress={handleDevReset}
+        delayLongPress={1000}
+        accessibilityLabel={`Version ${Constants.expoConfig?.version ?? '—'}`}
+        accessibilityHint="Appuyer longuement pour réinitialiser les données de test"
+        style={styles.versionRow}
+      >
+        {isResetting ? (
+          <ActivityIndicator size="small" color={colors.textSecondary} />
+        ) : (
+          <Text style={[styles.versionLabel, { color: colors.textSecondary }]}>
+            v{Constants.expoConfig?.version ?? '—'}
+          </Text>
+        )}
+      </Pressable>
     </ScrollView>
   );
 }
@@ -462,4 +504,6 @@ const styles = StyleSheet.create({
   timeRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
   timeInput: { width: 48, textAlign: 'center', fontSize: 16, borderWidth: 1, borderRadius: Radius.md, padding: Spacing.sm },
   timeSep: { fontSize: 20 },
+  versionRow: { alignItems: 'center', paddingVertical: Spacing.lg },
+  versionLabel: { fontSize: 12, fontFamily: FontFamily.regular },
 });
