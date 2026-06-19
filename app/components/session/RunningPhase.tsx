@@ -572,6 +572,16 @@ export const RunningPhase = forwardRef<RunningPhaseHandle, RunningPhaseProps>(fu
       <Text style={[styles.skipText, { color: colors.textSecondary }]}>Passer →</Text>
     </PressableA11y>
 
+    {prepCountdown !== null && (
+      <View
+        style={[styles.prepCountdownOverlay, { backgroundColor: colors.background }]}
+        pointerEvents="none"
+      >
+        <Text style={[styles.prepCountdownNumber, { color: colors.text }]}>{prepCountdown}</Text>
+        <Text style={[styles.prepCountdownLabel, { color: colors.textSecondary }]}>PRÉPARE-TOI</Text>
+      </View>
+    )}
+
       <BottomSheet
         ref={skipExerciseSheetRef}
         index={-1}
@@ -766,6 +776,7 @@ const styles = StyleSheet.create({
   progressLabel: { fontSize: 13 },
   circularTimerWrapper: { alignItems: 'center' },
   prepCountdownWrapper: { justifyContent: 'center', width: 220, height: 220 },
+  prepCountdownOverlay: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, justifyContent: 'center', alignItems: 'center', zIndex: 10 },
   prepCountdownNumber: { fontSize: 96, fontFamily: FontFamily.black, textAlign: 'center', lineHeight: 110 },
   prepCountdownLabel: { fontSize: 11, fontFamily: FontFamily.bold, letterSpacing: LetterSpacing.widest, textAlign: 'center' },
   blockBadge: { alignSelf: 'flex-start', marginTop: Spacing.xs },
