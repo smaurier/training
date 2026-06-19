@@ -577,8 +577,8 @@ export const RunningPhase = forwardRef<RunningPhaseHandle, RunningPhaseProps>(fu
         style={[styles.prepCountdownOverlay, { backgroundColor: colors.background }]}
         pointerEvents="none"
       >
-        <Text style={[styles.prepCountdownNumber, { color: colors.text }]}>{prepCountdown}</Text>
-        <Text style={[styles.prepCountdownLabel, { color: colors.textSecondary }]}>PRÉPARE-TOI</Text>
+        <Text style={[styles.prepCountdownNumber, { color: colors.text, width: '100%', textAlign: 'center' }]}>{prepCountdown}</Text>
+        <Text style={[styles.prepCountdownLabel, { color: colors.textSecondary, width: '100%', textAlign: 'center' }]}>PRÉPARE-TOI</Text>
       </View>
     )}
 
