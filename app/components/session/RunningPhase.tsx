@@ -731,7 +731,7 @@ export const RunningPhase = forwardRef<RunningPhaseHandle, RunningPhaseProps>(fu
 
 const styles = StyleSheet.create({
   wrapper: { flex: 1 },
-  container: { flexGrow: 1, paddingHorizontal: Spacing.xl, paddingTop: 64, paddingBottom: Spacing.xl },
+  container: { flexGrow: 1, padding: Spacing.xl },
   header: { gap: 2 },
   body: { flex: 1, justifyContent: 'center', gap: Spacing.lg, paddingTop: Spacing.xl },
   headerRow: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' },

@@ -418,6 +418,19 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <View style={[styles.container, { backgroundColor: colors.background }]}>
+        {session.phase !== 'checkin' && session.phase !== 'summary' && (
+          <View style={styles.pauseButtonRow}>
+            <PressableA11y
+              accessibilityLabel="Mettre la séance en pause"
+              onPress={handlePause}
+              style={[styles.pauseButton, { backgroundColor: colors.surface, borderColor: colors.border }]}
+            >
+              <Ionicons name="pause-outline" size={14} color={colors.textSecondary} />
+              <Text style={[styles.pauseButtonLabel, { color: colors.textSecondary }]}>Pause</Text>
+            </PressableA11y>
+          </View>
+        )}
+        <View style={styles.phaseContent}>
         {session.error && (
           <View style={styles.errorContainer}>
             <Text style={[styles.errorText, { color: colors.text }]}>{session.error}</Text>
@@ -522,24 +535,13 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
             onSaveCardioData={handleSaveCardioData}
           />
         )}
+        </View>
       </View>
       {prBadge !== null && (
         <View style={styles.prBadge} pointerEvents="none">
           <Text style={styles.prBadgeIcon}>🏆</Text>
           <Text style={styles.prBadgeTitle}>✦ Nouvelle meilleure marque</Text>
           <Text style={styles.prBadgeSub} numberOfLines={1}>{prBadge}</Text>
-        </View>
-      )}
-      {session.phase !== 'checkin' && session.phase !== 'summary' && (
-        <View style={styles.pauseButtonContainer} pointerEvents="box-none">
-          <PressableA11y
-            accessibilityLabel="Mettre la séance en pause"
-            onPress={handlePause}
-            style={[styles.pauseButton, { backgroundColor: colors.surface, borderColor: colors.border }]}
-          >
-            <Ionicons name="pause-outline" size={14} color={colors.textSecondary} />
-            <Text style={[styles.pauseButtonLabel, { color: colors.textSecondary }]}>Pause</Text>
-          </PressableA11y>
         </View>
       )}
       <BottomSheetModal
@@ -601,11 +603,10 @@ const styles = StyleSheet.create({
   prBadgeTitle: { color: '#000', fontSize: 16, fontFamily: FontFamily.bold },
   prBadgeSub: { color: SemanticColors.prBadgeTint, fontSize: 13, maxWidth: 200 },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  pauseButtonContainer: {
-    position: 'absolute',
-    top: 48,
-    left: 16,
-    zIndex: 50,
+  phaseContent: { flex: 1 },
+  pauseButtonRow: {
+    paddingHorizontal: Spacing.md,
+    paddingTop: Spacing.md,
   },
   pauseButton: {
     flexDirection: 'row',
