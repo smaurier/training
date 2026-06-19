@@ -5,8 +5,7 @@ import { PressableA11y } from '@/components/ui/PressableA11y';
 import { useColorScheme } from '@/components/useColorScheme';
 import Colors from '@/constants/Colors';
 import { Radius } from '@/constants/Radius';
-import { FontFamily } from '@/constants/Typography';
-import { SemanticColors } from '../../constants/SemanticColors';
+import { FontFamily, LetterSpacing } from '@/constants/Typography';
 import { usePrograms } from '@/hooks/usePrograms';
 import { TEMPLATES } from '@/data/templates';
 import { importTemplate, isTemplateImported } from '@/services/TemplateService';
@@ -20,13 +19,6 @@ import { SQLiteExerciseRepository } from '@/repositories/SQLiteExerciseRepositor
 import type { ScreenProps } from '@/app/onboarding';
 import type { TemplateDefinition } from '@/data/templates';
 
-const OBJECTIVE_LEVELS: Record<string, TemplateDefinition['level'][]> = {
-  force:        ['débutant', 'intermédiaire'],
-  hypertrophie: ['intermédiaire', 'avancé'],
-  maintien:     ['débutant', 'intermédiaire'],
-  cardio:       ['débutant', 'intermédiaire'],
-};
-
 export function ProgramScreen({ wizardState, setWizardState, onNext, onBack, isReview }: ScreenProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
@@ -35,11 +27,6 @@ export function ProgramScreen({ wizardState, setWizardState, onNext, onBack, isR
   const [programName, setProgramName] = useState('');
   const [importing, setImporting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const relevantLevels = wizardState.objective ? OBJECTIVE_LEVELS[wizardState.objective] : null;
-  const filtered = relevantLevels
-    ? TEMPLATES.filter(t => relevantLevels.includes(t.level))
-    : TEMPLATES;
 
   const activeProgram = programs.find(p => p.is_active === 1);
 
@@ -84,7 +71,7 @@ export function ProgramScreen({ wizardState, setWizardState, onNext, onBack, isR
       </View>
 
       <FlatList
-        data={filtered}
+        data={TEMPLATES}
         keyExtractor={t => t.id}
         contentContainerStyle={styles.list}
         renderItem={({ item }) => {
@@ -128,7 +115,7 @@ export function ProgramScreen({ wizardState, setWizardState, onNext, onBack, isR
               placeholderTextColor={colors.textSecondary}
               accessibilityLabel="Nom du programme"
             />
-            {error && <Text style={styles.errorText}>{error}</Text>}
+            {error && <Text style={[styles.errorText, { color: colors.negativeText }]}>{error}</Text>}
             <PressableA11y
               onPress={handleImport}
               disabled={!programName.trim() || importing}
@@ -142,7 +129,7 @@ export function ProgramScreen({ wizardState, setWizardState, onNext, onBack, isR
             >
               {importing
                 ? <ActivityIndicator color={colors.onPrimary} />
-                : <Text style={[styles.buttonText, { color: colors.onPrimary }]}>Importer et continuer</Text>
+                : <Text style={[styles.buttonText, { color: colors.onPrimary }]}>IMPORTER ET CONTINUER</Text>
               }
             </PressableA11y>
           </>
@@ -176,7 +163,7 @@ const styles = StyleSheet.create({
   footer: { padding: Spacing.lg, borderTopWidth: 1, gap: Spacing.sm },
   input: { borderWidth: 1, borderRadius: Radius.lg, padding: Spacing.md, fontSize: 15, fontFamily: FontFamily.regular },
   button: { borderRadius: Radius.lg, padding: Spacing.lg, alignItems: 'center' },
-  buttonText: { fontSize: 16, fontFamily: FontFamily.bold },
+  buttonText: { fontSize: 16, fontFamily: FontFamily.bold, letterSpacing: LetterSpacing.max },
   buttonSecondary: { padding: Spacing.lg, alignItems: 'center' },
-  errorText: { color: SemanticColors.negative, fontSize: 13, fontFamily: FontFamily.regular },
+  errorText: { fontSize: 13, fontFamily: FontFamily.regular },
 });

@@ -1,12 +1,9 @@
 import type { Program } from '../db/types';
 
 export type OnboardingScreenId =
-  | 'philosophy'
-  | 'objective'
+  | 'welcome'
   | 'program'
-  | 'session-demo'
   | 'settings-intro'
-  | 'progression'
   | 'ready';
 
 export function shouldSkip(

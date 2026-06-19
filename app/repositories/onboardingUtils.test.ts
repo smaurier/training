@@ -19,13 +19,13 @@ describe('shouldSkip', () => {
   it('program: ne skip pas si programs vide + review', () => {
     expect(shouldSkip('program', noPrograms, true)).toBe(false);
   });
-  it('philosophy: jamais skip', () => {
-    expect(shouldSkip('philosophy', oneProgram, false)).toBe(false);
+  it('welcome: jamais skip', () => {
+    expect(shouldSkip('welcome', oneProgram, false)).toBe(false);
   });
   it('ready: jamais skip', () => {
     expect(shouldSkip('ready', oneProgram, false)).toBe(false);
   });
-  it('session-demo: jamais skip', () => {
-    expect(shouldSkip('session-demo', oneProgram, false)).toBe(false);
+  it('settings-intro: jamais skip', () => {
+    expect(shouldSkip('settings-intro', oneProgram, false)).toBe(false);
   });
 });

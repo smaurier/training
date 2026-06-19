@@ -13,18 +13,11 @@ import { getDb } from '@/db';
 import { SQLiteSettingsRepository } from '@/repositories/SQLiteSettingsRepository';
 
 import { WelcomeScreen } from '@/components/onboarding/WelcomeScreen';
-import { PhilosophyScreen } from '@/components/onboarding/PhilosophyScreen';
-import { ObjectiveScreen } from '@/components/onboarding/ObjectiveScreen';
 import { ProgramScreen } from '@/components/onboarding/ProgramScreen';
-import { SessionDemoScreen } from '@/components/onboarding/SessionDemoScreen';
 import { SettingsIntroScreen } from '@/components/onboarding/SettingsIntroScreen';
-import { ProgressionScreen } from '@/components/onboarding/ProgressionScreen';
 import { ReadyScreen } from '@/components/onboarding/ReadyScreen';
 
-export type Objective = 'force' | 'hypertrophie' | 'maintien' | 'cardio' | null;
-
 export type WizardState = {
-  objective: Objective;
   selectedProgramId: number | null;
 };
 
@@ -39,14 +32,10 @@ export type ScreenProps = {
 };
 
 const ALL_SCREENS: { id: OnboardingScreenId; component: React.ComponentType<ScreenProps> }[] = [
-  { id: 'welcome',       component: WelcomeScreen },
-  { id: 'philosophy',    component: PhilosophyScreen },
-  { id: 'objective',     component: ObjectiveScreen },
-  { id: 'program',       component: ProgramScreen },
-  { id: 'session-demo',  component: SessionDemoScreen },
-  { id: 'settings-intro',component: SettingsIntroScreen },
-  { id: 'progression',   component: ProgressionScreen },
-  { id: 'ready',         component: ReadyScreen },
+  { id: 'welcome',        component: WelcomeScreen },
+  { id: 'program',        component: ProgramScreen },
+  { id: 'settings-intro', component: SettingsIntroScreen },
+  { id: 'ready',          component: ReadyScreen },
 ];
 
 export default function OnboardingScreen() {
@@ -60,7 +49,6 @@ export default function OnboardingScreen() {
 
   const [step, setStep] = useState(0);
   const [wizardStateRaw, setWizardStateRaw] = useState<WizardState>({
-    objective: null,
     selectedProgramId: null,
   });
 
@@ -105,7 +93,6 @@ export default function OnboardingScreen() {
 
   const current = activeScreens[step];
   const Component = current.component;
-  const showDots = step > 0 || current.id !== 'philosophy';
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background, paddingBottom: insets.bottom }]}>
@@ -119,19 +106,17 @@ export default function OnboardingScreen() {
           <Text style={[styles.skipText, { color: colors.textSecondary }]}>Passer</Text>
         </TouchableOpacity>
       )}
-      {showDots && (
-        <View style={styles.dotsRow}>
-          {activeScreens.map((_, i) => (
-            <View
-              key={i}
-              style={[
-                styles.dot,
-                { backgroundColor: i === step ? colors.primary : colors.border },
-              ]}
-            />
-          ))}
-        </View>
-      )}
+      <View style={styles.dotsRow}>
+        {activeScreens.map((_, i) => (
+          <View
+            key={i}
+            style={[
+              styles.dot,
+              { backgroundColor: i === step ? colors.primary : colors.border },
+            ]}
+          />
+        ))}
+      </View>
       <Component
         wizardState={wizardStateRaw}
         setWizardState={setWizardState}

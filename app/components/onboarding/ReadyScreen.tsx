@@ -25,22 +25,14 @@ export function ReadyScreen({ wizardState, onNext, isReview }: ScreenProps) {
           </Text>
         )}
 
-        <View style={[styles.summary, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-          {wizardState.objective && (
-            <View style={styles.summaryRow}>
-              <Text style={[styles.summaryKey, { color: colors.textSecondary }]}>Objectif</Text>
-              <Text style={[styles.summaryVal, { color: colors.text }]}>
-                {wizardState.objective.charAt(0).toUpperCase() + wizardState.objective.slice(1)}
-              </Text>
-            </View>
-          )}
-          {wizardState.selectedProgramId && (
+        {wizardState.selectedProgramId ? (
+          <View style={[styles.summary, { backgroundColor: colors.surface, borderColor: colors.border }]}>
             <View style={styles.summaryRow}>
               <Text style={[styles.summaryKey, { color: colors.textSecondary }]}>Programme</Text>
               <Text style={[styles.summaryVal, { color: colors.text }]}>Importé ✓</Text>
             </View>
-          )}
-        </View>
+          </View>
+        ) : null}
       </View>
 
       <View style={[styles.footer, { borderTopColor: colors.border }]}>
