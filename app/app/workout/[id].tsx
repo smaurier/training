@@ -1,5 +1,5 @@
 import { Spacing } from '@/constants/Spacing';
-import { FontFamily } from '@/constants/Typography';
+import { FontFamily, LetterSpacing } from '@/constants/Typography';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { View, Text, FlatList, ActivityIndicator, StyleSheet, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack, useFocusEffect } from 'expo-router';
@@ -204,7 +204,7 @@ export default function WorkoutDetailScreen() {
             style={[styles.startBtn, { backgroundColor: colors.primary }]}
           >
             <Ionicons name="play" size={18} color="#000" />
-            <Text style={styles.startBtnText}>Démarrer la séance</Text>
+            <Text style={[styles.startBtnText, { color: colors.onPrimary }]}>DÉMARRER</Text>
           </PressableA11y>
         )}
       </View>
@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
   },
-  startBtnText: { color: '#000', fontSize: 15, fontFamily: FontFamily.semibold },
+  startBtnText: { fontSize: 15, fontFamily: FontFamily.bold, letterSpacing: LetterSpacing.max },
   supersetContainer: {
     borderWidth: 2,
     borderColor: SemanticColors.superset,

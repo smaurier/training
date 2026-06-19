@@ -51,7 +51,7 @@ export function ReadyScreen({ wizardState, onNext, isReview }: ScreenProps) {
           accessibilityRole="button"
         >
           <Text style={[styles.buttonText, { color: colors.onPrimary }]}>
-            {isReview ? "Retour aux réglages" : "Commencer →"}
+            {isReview ? "RETOUR AUX RÉGLAGES" : "COMMENCER →"}
           </Text>
         </PressableA11y>
       </View>
@@ -70,5 +70,5 @@ const styles = StyleSheet.create({
   summaryVal: { fontSize: 13, fontFamily: FontFamily.bold },
   footer: { padding: Spacing.xxl, borderTopWidth: 1 },
   button: { borderRadius: Radius.lg, padding: Spacing.lg, alignItems: 'center' },
-  buttonText: { fontSize: 16, fontFamily: FontFamily.bold },
+  buttonText: { fontSize: 16, fontFamily: FontFamily.bold, letterSpacing: LetterSpacing.max },
 });

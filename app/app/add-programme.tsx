@@ -1,5 +1,5 @@
 import { Spacing } from '@/constants/Spacing';
-import { FontFamily } from '@/constants/Typography';
+import { FontFamily, LetterSpacing } from '@/constants/Typography';
 import {
   Text, TextInput,
   StyleSheet, ScrollView, Alert, ActivityIndicator
@@ -94,7 +94,7 @@ export default function AddProgrammeModal() {
       >
         {submitting
           ? <ActivityIndicator color={colors.onPrimary} />
-          : <Text style={[styles.submitText, { color: colors.onPrimary }]}>{isEditing ? 'Enregistrer' : 'Créer le programme'}</Text>
+          : <Text style={[styles.submitText, { color: colors.onPrimary }]}>{isEditing ? 'ENREGISTRER' : 'CRÉER LE PROGRAMME'}</Text>
         }
       </PressableA11y>
     </ScrollView>
@@ -124,5 +124,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: Spacing.xxl,
   },
-  submitText: { fontSize: 16, fontFamily: FontFamily.semibold },
+  submitText: { fontSize: 16, fontFamily: FontFamily.bold, letterSpacing: LetterSpacing.max },
 });

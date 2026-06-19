@@ -62,7 +62,7 @@ export function ProgressionScreen({ onNext, onBack }: ScreenProps) {
           accessibilityLabel="Continuer"
           accessibilityRole="button"
         >
-          <Text style={[styles.buttonText, { color: colors.onPrimary }]}>Continuer</Text>
+          <Text style={[styles.buttonText, { color: colors.onPrimary }]}>CONTINUER</Text>
         </PressableA11y>
       </View>
     </View>
@@ -79,5 +79,5 @@ const styles = StyleSheet.create({
   rowDesc: { fontSize: 14, fontFamily: FontFamily.regular, lineHeight: 20 },
   footer: { padding: Spacing.xxl, borderTopWidth: 1 },
   button: { borderRadius: Radius.lg, padding: Spacing.lg, alignItems: 'center' },
-  buttonText: { fontSize: 16, fontFamily: FontFamily.bold },
+  buttonText: { fontSize: 16, fontFamily: FontFamily.bold, letterSpacing: LetterSpacing.max },
 });

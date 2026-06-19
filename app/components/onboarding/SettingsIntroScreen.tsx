@@ -6,7 +6,7 @@ import { PressableA11y } from '@/components/ui/PressableA11y';
 import { useColorScheme } from '@/components/useColorScheme';
 import Colors from '@/constants/Colors';
 import { Radius } from '@/constants/Radius';
-import { FontFamily } from '@/constants/Typography';
+import { FontFamily, LetterSpacing } from '@/constants/Typography';
 import { useUnits } from '@/hooks/useUnits';
 import { SQLiteSettingsRepository } from '@/repositories/SQLiteSettingsRepository';
 import { getDb } from '@/db';
@@ -147,7 +147,7 @@ export function SettingsIntroScreen({ onNext, onBack }: ScreenProps) {
           accessibilityLabel="Continuer"
           accessibilityRole="button"
         >
-          <Text style={[styles.buttonText, { color: colors.onPrimary }]}>Continuer</Text>
+          <Text style={[styles.buttonText, { color: colors.onPrimary }]}>CONTINUER</Text>
         </PressableA11y>
       </View>
     </View>
@@ -167,5 +167,5 @@ const styles = StyleSheet.create({
   infoText: { fontSize: 13, fontFamily: FontFamily.regular, lineHeight: 18 },
   footer: { padding: Spacing.xxl, borderTopWidth: 1 },
   button: { borderRadius: Radius.lg, padding: Spacing.lg, alignItems: 'center' },
-  buttonText: { fontSize: 16, fontFamily: FontFamily.bold },
+  buttonText: { fontSize: 16, fontFamily: FontFamily.bold, letterSpacing: LetterSpacing.max },
 });

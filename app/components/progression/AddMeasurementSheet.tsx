@@ -1,5 +1,5 @@
 import { Spacing } from '@/constants/Spacing';
-import { FontFamily } from '@/constants/Typography';
+import { FontFamily, LetterSpacing } from '@/constants/Typography';
 import { useRef, useState, useCallback, forwardRef, useImperativeHandle } from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
@@ -173,7 +173,7 @@ export const AddMeasurementSheet = forwardRef<AddMeasurementSheetRef, Props>(
             accessibilityRole="button"
           >
             <Text style={[styles.saveBtnText, { color: colors.onPrimary }]}>
-              {isSaving ? 'Enregistrement…' : 'Enregistrer'}
+              {isSaving ? 'Enregistrement…' : 'ENREGISTRER'}
             </Text>
           </PressableA11y>
         </BottomSheetScrollView>
@@ -202,5 +202,5 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
   saveBtn: { marginTop: Spacing.xxl, padding: Spacing.lg, borderRadius: Radius.lg, alignItems: 'center' },
-  saveBtnText: { fontFamily: FontFamily.bold, fontSize: 16 },
+  saveBtnText: { fontFamily: FontFamily.bold, fontSize: 16, letterSpacing: LetterSpacing.max },
 });

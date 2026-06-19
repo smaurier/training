@@ -44,7 +44,7 @@ export function PhilosophyScreen({ onNext }: ScreenProps) {
           accessibilityLabel="Continuer vers la configuration"
           accessibilityRole="button"
         >
-          <Text style={[styles.buttonText, { color: colors.onPrimary }]}>Continuer →</Text>
+          <Text style={[styles.buttonText, { color: colors.onPrimary }]}>CONTINUER →</Text>
         </PressableA11y>
       </View>
     </View>
@@ -60,5 +60,5 @@ const styles = StyleSheet.create({
   blockBody: { fontSize: 15, fontFamily: FontFamily.regular, lineHeight: 24 },
   footer: { padding: Spacing.xxl, borderTopWidth: 1 },
   button: { borderRadius: Radius.sm, padding: Spacing.xl, alignItems: 'center' },
-  buttonText: { fontSize: 16, fontFamily: FontFamily.bold, letterSpacing: LetterSpacing.widest },
+  buttonText: { fontSize: 16, fontFamily: FontFamily.bold, letterSpacing: LetterSpacing.max },
 });

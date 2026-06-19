@@ -92,7 +92,7 @@ export function SessionDemoScreen({ onNext, onBack }: ScreenProps) {
             accessibilityLabel="Valider la série"
             accessibilityRole="button"
           >
-            <Text style={[styles.buttonText, { color: colors.onPrimary }]}>Valider ✓</Text>
+            <Text style={[styles.buttonText, { color: colors.onPrimary }]}>VALIDER</Text>
           </PressableA11y>
         </View>
       )}
@@ -120,7 +120,7 @@ export function SessionDemoScreen({ onNext, onBack }: ScreenProps) {
             accessibilityLabel="Continuer"
             accessibilityRole="button"
           >
-            <Text style={[styles.buttonText, { color: colors.onPrimary }]}>Continuer</Text>
+            <Text style={[styles.buttonText, { color: colors.onPrimary }]}>CONTINUER</Text>
           </PressableA11y>
         </View>
       )}
@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
     fontSize: 28, fontFamily: FontFamily.bold, textAlign: 'center',
   },
   button: { borderRadius: Radius.lg, padding: Spacing.lg, alignItems: 'center' },
-  buttonText: { fontSize: 16, fontFamily: FontFamily.bold },
+  buttonText: { fontSize: 16, fontFamily: FontFamily.bold, letterSpacing: LetterSpacing.max },
   restTitle: { fontSize: 32, fontFamily: FontFamily.black, letterSpacing: LetterSpacing.tighter },
   restTimer: { fontSize: 64, fontFamily: FontFamily.black, letterSpacing: LetterSpacing.hero },
   doneTitle: { fontSize: 24, fontFamily: FontFamily.bold },

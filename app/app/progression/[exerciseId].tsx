@@ -443,7 +443,7 @@ export default function ExerciseProgressionScreen() {
             onPress={handleSaveGoal}
             style={[styles.sheetSaveBtn, { backgroundColor: colors.primary }]}
           >
-            <Text style={[styles.sheetSaveBtnText, { color: colors.onPrimary }]}>Enregistrer</Text>
+            <Text style={[styles.sheetSaveBtnText, { color: colors.onPrimary }]}>ENREGISTRER</Text>
           </PressableA11y>
         </BottomSheetView>
       </BottomSheet>
@@ -481,5 +481,5 @@ const styles = StyleSheet.create({
   chipText: { fontSize: 13, fontFamily: FontFamily.medium },
   sheetPreview: { fontSize: 13, fontStyle: 'italic' },
   sheetSaveBtn: { borderRadius: Radius.md, paddingVertical: Spacing.md, alignItems: 'center', marginTop: Spacing.xs },
-  sheetSaveBtnText: { fontSize: 15, fontFamily: FontFamily.semibold },
+  sheetSaveBtnText: { fontSize: 15, fontFamily: FontFamily.bold, letterSpacing: LetterSpacing.max },
 });

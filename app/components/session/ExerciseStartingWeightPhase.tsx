@@ -1,21 +1,24 @@
 import { Spacing } from '@/constants/Spacing';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
+import BottomSheet from '@gorhom/bottom-sheet';
 import { PressableA11y } from '@/components/ui/PressableA11y';
 import type { WorkoutExerciseDetail } from '@/services/WorkoutExerciseService';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { Radius } from '@/constants/Radius';
-import { SemanticColors } from '@/constants/SemanticColors';
-import { FontFamily } from '@/constants/Typography';
+import { FontFamily, LetterSpacing } from '@/constants/Typography';
+import { BrzyckiCalibrationSheet } from './BrzyckiCalibrationSheet';
 
 interface ExerciseStartingWeightPhaseProps {
   exercise: WorkoutExerciseDetail;
+  plateStep: number;
   onConfirm: (weight: number) => Promise<void>;
 }
 
 export function ExerciseStartingWeightPhase({
   exercise,
+  plateStep,
   onConfirm,
 }: ExerciseStartingWeightPhaseProps) {
   const colorScheme = useColorScheme();
@@ -23,6 +26,10 @@ export function ExerciseStartingWeightPhase({
   const [weight, setWeight] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const calibrationSheetRef = useRef<BottomSheet>(null);
+
+  const workBlock = exercise.blocks.find(b => b.is_work_block === 1);
+  const targetReps = workBlock?.sets[0]?.reps_min ?? 8;
 
   async function handleConfirm() {
     const w = parseFloat(weight.replace(',', '.'));
@@ -41,6 +48,7 @@ export function ExerciseStartingWeightPhase({
   const isValid = weight.trim().length > 0 && !isNaN(parseFloat(weight.replace(',', '.')));
 
   return (
+    <>
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.content}>
         <Text style={[styles.exerciseName, { color: colors.text }]}>
@@ -69,6 +77,15 @@ export function ExerciseStartingWeightPhase({
           accessibilityLabel="Charge de départ en kilogrammes"
           autoFocus
         />
+        <PressableA11y
+          accessibilityLabel="Calibrer scientifiquement ma charge de départ avec la formule Brzycki"
+          onPress={() => calibrationSheetRef.current?.expand()}
+          style={styles.calibrateLink}
+        >
+          <Text style={[styles.calibrateLinkText, { color: colors.primaryText }]}>
+            Calibrer scientifiquement →
+          </Text>
+        </PressableA11y>
       </View>
       <View style={styles.footer}>
         <PressableA11y
@@ -84,14 +101,21 @@ export function ExerciseStartingWeightPhase({
           disabled={!isValid || loading}
         >
           <Text style={[styles.btnText, { color: colors.onPrimary }]}>
-            {loading ? 'Enregistrement…' : 'Confirmer →'}
+            {loading ? 'Enregistrement…' : 'CONFIRMER →'}
           </Text>
         </PressableA11y>
         {error && (
-          <Text style={[styles.errorText, { color: SemanticColors.destructive }]}>{error}</Text>
+          <Text style={[styles.errorText, { color: colors.destructiveText }]}>{error}</Text>
         )}
       </View>
     </View>
+    <BrzyckiCalibrationSheet
+      sheetRef={calibrationSheetRef}
+      targetReps={targetReps}
+      plateStep={plateStep}
+      onConfirm={(suggested) => setWeight(String(suggested))}
+    />
+    </>
   );
 }
 
@@ -138,11 +162,14 @@ const styles = StyleSheet.create({
   },
   btnText: {
     fontSize: 18,
-    fontFamily: FontFamily.semibold,
+    fontFamily: FontFamily.bold,
+    letterSpacing: LetterSpacing.max,
   },
   errorText: {
     fontSize: 14,
     textAlign: 'center',
     marginTop: -8,
   },
+  calibrateLink: { alignSelf: 'flex-start' },
+  calibrateLinkText: { fontSize: 14, fontFamily: FontFamily.medium },
 });

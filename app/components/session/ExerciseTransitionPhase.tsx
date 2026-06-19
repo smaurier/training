@@ -104,7 +104,7 @@ export function ExerciseTransitionPhase({
           onPress={onContinue}
           style={[styles.continueBtn, { backgroundColor: typeColor }]}
         >
-          <Text style={[styles.continueBtnText, { color: onTypeColor }]}>C&apos;est parti →</Text>
+          <Text style={[styles.continueBtnText, { color: onTypeColor }]}>C&apos;EST PARTI →</Text>
         </PressableA11y>
       </ScrollView>
     </View>
@@ -161,6 +161,7 @@ const styles = StyleSheet.create({
   },
   continueBtnText: {
     fontSize: 17,
-    fontFamily: FontFamily.semibold,
+    fontFamily: FontFamily.bold,
+    letterSpacing: LetterSpacing.max,
   },
 });

@@ -234,7 +234,7 @@ export function SummaryPhase({ progressions, totalSets, durationSeconds, totalVo
               onPress={handleCardioSubmit}
               style={[styles.cardioSaveBtn, { backgroundColor: colors.primary }]}
             >
-              <Text style={[styles.cardioSaveBtnText, { color: colors.onPrimary }]}>Enregistrer</Text>
+              <Text style={[styles.cardioSaveBtnText, { color: colors.onPrimary }]}>ENREGISTRER</Text>
             </PressableA11y>
             <PressableA11y
               accessibilityLabel="Ignorer le recueil cardio"

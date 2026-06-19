@@ -1,5 +1,5 @@
 import { Spacing } from '@/constants/Spacing';
-import { FontFamily } from '@/constants/Typography';
+import { FontFamily, LetterSpacing } from '@/constants/Typography';
 import { useState, useEffect } from 'react';
 import { Modal, View, Text, TextInput, Switch, StyleSheet, ScrollView } from 'react-native';
 import type { Block } from '@/db/types';
@@ -110,7 +110,7 @@ export function EditBlockModal({ visible, block, workoutExerciseId: _workoutExer
               accessibilityState={{ disabled: !canSave }}
               style={[styles.btn, { backgroundColor: colors.primary, opacity: canSave ? 1 : 0.4 }]}
             >
-              <Text style={{ color: colors.onPrimary }}>Enregistrer</Text>
+              <Text style={{ color: colors.onPrimary, fontFamily: FontFamily.bold, letterSpacing: LetterSpacing.max }}>ENREGISTRER</Text>
             </PressableA11y>
           </View>
         </View>

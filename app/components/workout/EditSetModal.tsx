@@ -1,5 +1,5 @@
 import { Spacing } from '@/constants/Spacing';
-import { FontFamily } from '@/constants/Typography';
+import { FontFamily, LetterSpacing } from '@/constants/Typography';
 import { useState } from 'react';
 import { Modal, View, Text, TextInput, StyleSheet } from 'react-native';
 import type { Set as TrainingSet, WeightType, SetType } from '@/db/types';
@@ -154,7 +154,7 @@ export function EditSetModal({ set, onSave, onClose }: EditSetModalProps) {
               onPress={handleSave}
               style={[styles.btn, { backgroundColor: colors.primary }]}
             >
-              <Text style={{ color: colors.onPrimary }}>Enregistrer</Text>
+              <Text style={{ color: colors.onPrimary, fontFamily: FontFamily.bold, letterSpacing: LetterSpacing.max }}>ENREGISTRER</Text>
             </PressableA11y>
           </View>
         </View>
