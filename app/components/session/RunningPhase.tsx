@@ -1,7 +1,7 @@
 // app/components/session/RunningPhase.tsx
 import { Spacing } from '@/constants/Spacing';
 import { useState, useEffect, useRef, useCallback, useMemo, forwardRef, useImperativeHandle } from 'react';
-import { View, Text, TextInput, StyleSheet, ScrollView, Vibration } from 'react-native';
+import { View, Text, TextInput, StyleSheet, ScrollView, Vibration, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import BottomSheet, {
@@ -56,6 +56,7 @@ interface RunningPhaseProps {
   isSubstituted?: boolean;
   initialCountdown?: number;
   initialTimerStarted?: boolean;
+  onFinish?: () => Promise<void>;
 }
 
 function formatLastLog(log: LastSetLog, isCardio: boolean, isDuration: boolean, convert: (kg: number) => string, unitLabel: string): string {
@@ -85,14 +86,14 @@ function parseMuscleGroups(json: string): string[] {
   catch { return []; }
 }
 
-export const RunningPhase = forwardRef<RunningPhaseHandle, RunningPhaseProps>(function RunningPhase({ exercise, block, set, progressLabel, onValidate, onSkip, onSkipExercise, onUndo, canUndo, lastSetLog, onAdjustWeight, supersetPosition, supersetExerciseNames, onSubstituteExercise, isSubstituted, initialCountdown, initialTimerStarted }: RunningPhaseProps, ref) {
+export const RunningPhase = forwardRef<RunningPhaseHandle, RunningPhaseProps>(function RunningPhase({ exercise, block, set, progressLabel, onValidate, onSkip, onSkipExercise, onUndo, canUndo, lastSetLog, onAdjustWeight, supersetPosition, supersetExerciseNames, onSubstituteExercise, isSubstituted, initialCountdown, initialTimerStarted, onFinish }: RunningPhaseProps, ref) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const { convert, label: unitLabel, resolved: unitResolved } = useUnits();
 
   const skipExerciseSheetRef = useRef<BottomSheet>(null);
   const descriptionSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ['30%'], []);
+  const snapPoints = useMemo(() => ['45%'], []);
   const descriptionSnapPoints = useMemo(() => ['80%'], []);
 
   const renderBackdrop = useCallback(
@@ -118,6 +119,7 @@ export const RunningPhase = forwardRef<RunningPhaseHandle, RunningPhaseProps>(fu
   const [countdown, setCountdown] = useState(initialCountdown ?? (set.duration_seconds ?? 0));
   const [timerDone, setTimerDone] = useState(false);
   const [timerStarted, setTimerStarted] = useState(initialTimerStarted ?? false);
+  const [prepCountdown, setPrepCountdown] = useState<number | null>(null);
 
   useImperativeHandle(ref, () => ({
     getTimerState: () => ({ countdown, started: timerStarted }),
@@ -158,6 +160,18 @@ export const RunningPhase = forwardRef<RunningPhaseHandle, RunningPhaseProps>(fu
   }, [isDuration, timerStarted]);
 
   useEffect(() => {
+    if (prepCountdown === null) return;
+    if (prepCountdown === 0) {
+      setPrepCountdown(null);
+      setTimerStarted(true);
+      return;
+    }
+    Vibration.vibrate(40);
+    const t = setTimeout(() => setPrepCountdown(c => (c === null ? null : c - 1)), 1000);
+    return () => clearTimeout(t);
+  }, [prepCountdown]);
+
+  useEffect(() => {
     return () => {
       if (adjustSuccessTimeout.current) clearTimeout(adjustSuccessTimeout.current);
     };
@@ -182,7 +196,7 @@ export const RunningPhase = forwardRef<RunningPhaseHandle, RunningPhaseProps>(fu
 
   function handleTimerPress() {
     if (timerDone) { handleDurationValidate(); return; }
-    if (!timerStarted) { setTimerStarted(true); }
+    if (!timerStarted && prepCountdown === null) { setPrepCountdown(3); }
   }
 
   async function handleDurationValidate() {
@@ -390,18 +404,25 @@ export const RunningPhase = forwardRef<RunningPhaseHandle, RunningPhaseProps>(fu
         </>
       ) : isDuration ? (
         <>
-          <PressableA11y
-            style={styles.circularTimerWrapper}
-            accessibilityLabel={timerA11yLabel}
-            onPress={handleTimerPress}
-          >
-            <CircularTimer
-              progress={countdown / (set.duration_seconds ?? 1)}
-              remaining={countdown}
-              label={timerLabel}
-              size={220}
-            />
-          </PressableA11y>
+          {prepCountdown !== null ? (
+            <View style={[styles.circularTimerWrapper, styles.prepCountdownWrapper]}>
+              <Text style={[styles.prepCountdownNumber, { color: colors.text }]}>{prepCountdown}</Text>
+              <Text style={[styles.prepCountdownLabel, { color: colors.textSecondary }]}>PRÉPARE-TOI</Text>
+            </View>
+          ) : (
+            <PressableA11y
+              style={styles.circularTimerWrapper}
+              accessibilityLabel={timerA11yLabel}
+              onPress={handleTimerPress}
+            >
+              <CircularTimer
+                progress={countdown / (set.duration_seconds ?? 1)}
+                remaining={countdown}
+                label={timerLabel}
+                size={220}
+              />
+            </PressableA11y>
+          )}
 
           {timerStarted && (
             <PressableA11y
@@ -580,6 +601,25 @@ export const RunningPhase = forwardRef<RunningPhaseHandle, RunningPhaseProps>(fu
                 : "Passer l’exercice entier"}
             </Text>
           </PressableA11y>
+          {onFinish && (
+            <PressableA11y
+              accessibilityLabel="Finir la séance maintenant"
+              onPress={() => {
+                skipExerciseSheetRef.current?.close();
+                Alert.alert(
+                  'Finir la séance ?',
+                  'La séance sera complétée avec les séries déjà validées.',
+                  [
+                    { text: 'Annuler', style: 'cancel' },
+                    { text: 'Terminer', style: 'destructive', onPress: onFinish },
+                  ],
+                );
+              }}
+              style={[styles.sheetCancelBtn, { borderColor: colors.border }]}
+            >
+              <Text style={[styles.sheetCancelText, { color: colors.textSecondary }]}>Finir la séance</Text>
+            </PressableA11y>
+          )}
           <PressableA11y
             accessibilityLabel="Annuler"
             onPress={() => skipExerciseSheetRef.current?.close()}
@@ -702,6 +742,9 @@ const styles = StyleSheet.create({
   exerciseName: { fontSize: 26, fontFamily: FontFamily.bold },
   progressLabel: { fontSize: 13 },
   circularTimerWrapper: { alignItems: 'center' },
+  prepCountdownWrapper: { justifyContent: 'center', width: 220, height: 220 },
+  prepCountdownNumber: { fontSize: 96, fontFamily: FontFamily.black, textAlign: 'center', lineHeight: 110 },
+  prepCountdownLabel: { fontSize: 11, fontFamily: FontFamily.bold, letterSpacing: LetterSpacing.widest, textAlign: 'center' },
   blockBadge: { alignSelf: 'flex-start', marginTop: Spacing.xs },
   blockBadgeText: { fontSize: 11, fontFamily: FontFamily.bold, letterSpacing: LetterSpacing.wide },
   targetCard: { padding: Spacing.lg, borderRadius: Radius.sm, borderWidth: 1, alignItems: 'center' },

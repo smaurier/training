@@ -486,6 +486,7 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
                 isSubstituted={session.isCurrentExerciseSubstituted}
                 initialCountdown={session.currentSet.id === resumeTimerForSetId.current ? initialSession?.timerState?.countdown : undefined}
                 initialTimerStarted={session.currentSet.id === resumeTimerForSetId.current ? initialSession?.timerState?.started : undefined}
+                onFinish={session.finishEarly}
               />
             )}
           </>

@@ -68,6 +68,7 @@ export interface UseSessionResult {
   isCurrentExerciseSubstituted: boolean;
   error: string | null;
   pauseSession: (timerState?: { countdown: number; started: boolean }) => Promise<void>;
+  finishEarly: () => Promise<void>;
 }
 
 export function isSupersetForward(
@@ -424,6 +425,18 @@ export function useSession(
     }
   }, [service, sessionLogId, position, phase]);
 
+  const finishEarly = useCallback(async () => {
+    if (!sessionLogId) return;
+    await service.completeSession(sessionLogId);
+    try {
+      const progs = await service.calculateProgressions(sessionLogId, plateStep);
+      setProgressions(progs);
+    } catch {
+      setProgressions([]);
+    }
+    setPhase('summary');
+  }, [service, sessionLogId, plateStep]);
+
   return {
     phase, sessionLogId, position,
     currentExercise, currentBlock, currentSet, progressLabel,
@@ -432,6 +445,6 @@ export function useSession(
     warmupWorkWeight, confirmTransition, confirmRest, confirmWarmup, restDuration, nextLabel,
     progressions, sessionStartedAt, totalSetsLogged, totalVolume, lastSetLog,
     substituteCurrentExercise, isCurrentExerciseSubstituted,
-    error, pauseSession,
+    error, pauseSession, finishEarly,
   };
 }
