@@ -108,6 +108,7 @@ export const RunningPhase = forwardRef<RunningPhaseHandle, RunningPhaseProps>(fu
   );
 
   const isCardio = exercise.exercise.type === 'cardio';
+  const isEtirement = exercise.exercise.type === 'etirement';
   const isDuration = !isCardio && (set.duration_seconds ?? 0) > 0;
 
   const [reps, setReps] = useState(String(set.reps_min));
@@ -209,6 +210,16 @@ export const RunningPhase = forwardRef<RunningPhaseHandle, RunningPhaseProps>(fu
     }
   }
 
+  async function handleWarmupValidate() {
+    if (loading) return;
+    setLoading(true);
+    try {
+      await onValidate({ repsDone: set.reps_min, weightDone: 0, rpe: null });
+    } finally {
+      setLoading(false);
+    }
+  }
+
   async function handleCardioValidate() {
     if (loading) return;
     setLoading(true);
@@ -304,7 +315,7 @@ export const RunningPhase = forwardRef<RunningPhaseHandle, RunningPhaseProps>(fu
                 <Text style={styles.amrapBadgeText}>AMRAP</Text>
               </View>
             )}
-            {set.rest_duration === 0 && !isCardio && exercise.exercise.type !== 'etirement' && (
+            {set.rest_duration === 0 && !isCardio && !isEtirement && (
               <View style={[styles.dropsetBadge, { borderColor: colors.textSecondary }]}>
                 <Text style={[styles.dropsetBadgeText, { color: colors.textSecondary }]}>ENCHAÎNÉ</Text>
               </View>
@@ -434,6 +445,20 @@ export const RunningPhase = forwardRef<RunningPhaseHandle, RunningPhaseProps>(fu
               <Text style={[styles.validateBtnText, { color: colors.onPrimary }]}>{loading ? 'Validation…' : "C'est fait"}</Text>
             </PressableA11y>
           )}
+        </>
+      ) : isEtirement ? (
+        <>
+          <View style={[styles.targetCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+            <Text style={[styles.targetText, { color: colors.text }]}>{setLabel}</Text>
+          </View>
+          <PressableA11y
+            accessibilityLabel="Valider cet exercice"
+            onPress={handleWarmupValidate}
+            style={[styles.validateBtn, { backgroundColor: colors.primary }]}
+          >
+            <Ionicons name="checkmark" size={20} color={colors.onPrimary} />
+            <Text style={[styles.validateBtnText, { color: colors.onPrimary }]}>{loading ? 'Validation…' : 'VALIDER'}</Text>
+          </PressableA11y>
         </>
       ) : (
         <>
