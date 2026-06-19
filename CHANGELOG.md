@@ -5,6 +5,12 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.24.3] — 2026-06-19
+
+b35fae9 fix(session): pause button safe area via SafeAreaView edges top
+
+---
+
 ## [1.24.2] — 2026-06-19
 
 6a35a97 fix(session): description sheet — titre dans BottomSheetScrollView
