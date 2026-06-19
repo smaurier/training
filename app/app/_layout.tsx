@@ -15,6 +15,7 @@ import 'react-native-reanimated';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { StatusBar } from 'expo-status-bar';
+import * as NavigationBar from 'expo-navigation-bar';
 
 import { initDatabase, getDb } from '@/db';
 import { SQLiteSettingsRepository } from '@/repositories/SQLiteSettingsRepository';
@@ -162,6 +163,12 @@ function RootLayoutNav({ onboardingDone }: { onboardingDone: boolean }) {
       router.replace('/onboarding' as any);
     }
   }, [onboardingDone, router]);
+
+  useEffect(() => {
+    const isDark = themeCtx.resolved === 'dark';
+    NavigationBar.setBackgroundColorAsync(isDark ? '#0D0D0D' : '#F5F5F5').catch(console.error);
+    NavigationBar.setButtonStyleAsync(isDark ? 'light' : 'dark').catch(console.error);
+  }, [themeCtx.resolved]);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
