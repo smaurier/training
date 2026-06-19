@@ -664,12 +664,10 @@ export const RunningPhase = forwardRef<RunningPhaseHandle, RunningPhaseProps>(fu
         backgroundStyle={{ backgroundColor: colors.surface }}
         handleIndicatorStyle={{ backgroundColor: colors.border }}
       >
-        <BottomSheetView style={styles.sheetContainer}>
-          <Text style={[styles.sheetTitle, { color: colors.text }]} numberOfLines={1}>
+        <BottomSheetScrollView contentContainerStyle={styles.descriptionScrollContent}>
+          <Text style={[styles.sheetTitle, { color: colors.text, marginBottom: Spacing.md }]} numberOfLines={2}>
             {exercise.exercise.name}
           </Text>
-        </BottomSheetView>
-        <BottomSheetScrollView contentContainerStyle={styles.descriptionScrollContent}>
           <Text style={[styles.descriptionText, { color: colors.text }]}>
             {exercise.exercise.description}
           </Text>
