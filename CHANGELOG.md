@@ -5,6 +5,14 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.24.5] — 2026-06-19
+
+94fe547 fix(session): decompte 3-2-1 via Modal (centrage garanti)
+f63d589 fix(session): decompte 3-2-1 centre horizontalement
+069f044 fix(session): decompte 3-2-1 centre en overlay plein ecran
+
+---
+
 ## [1.24.4] — 2026-06-19
 
 a1c4057 feat(android): navigation bar suit le theme dark/light
