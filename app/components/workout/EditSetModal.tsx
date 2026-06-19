@@ -33,7 +33,7 @@ export function EditSetModal({ set, onSave, onClose }: EditSetModalProps) {
 
   const SEGMENTS: { key: WeightType; label: string }[] = [
     { key: 'fixed', label: 'Fixe' },
-    { key: 'bodyweight', label: 'PC' },
+    { key: 'bodyweight', label: 'Poids de corps' },
     { key: 'bar', label: 'Barre' },
   ];
 

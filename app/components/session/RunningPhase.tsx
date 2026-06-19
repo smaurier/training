@@ -231,7 +231,7 @@ export const RunningPhase = forwardRef<RunningPhaseHandle, RunningPhaseProps>(fu
     ? (set.reps_min > 0 ? `${set.reps_min}+ rép` : 'MAX rép')
     : `${set.reps_min} rép`;
   const weightLabel = set.weight_type === 'bodyweight'
-    ? 'PC'
+    ? 'Poids de corps'
     : set.weight_type === 'bar'
       ? 'barre'
       : set.weight != null
@@ -525,7 +525,7 @@ export const RunningPhase = forwardRef<RunningPhaseHandle, RunningPhaseProps>(fu
             const isChained = prevSet?.rest_duration === 0;
             return (
               <Text key={s.id} style={[styles.restSet, { color: colors.textSecondary }]}>
-                {i + currentSetIndex + 2} · {s.weight != null ? `${convert(s.weight)} ${unitLabel}` : 'PC'} × {s.set_type === 'amrap' ? (s.reps_min > 0 ? `${s.reps_min}+` : 'MAX') : s.reps_min}{isChained ? ' ⚡' : ''}
+                {i + currentSetIndex + 2} · {s.weight_type === 'bodyweight' ? 'Poids de corps' : s.weight != null ? `${convert(s.weight)} ${unitLabel}` : '—'} × {s.set_type === 'amrap' ? (s.reps_min > 0 ? `${s.reps_min}+` : 'MAX') : s.reps_min}{isChained ? ' ⚡' : ''}
               </Text>
             );
           })}

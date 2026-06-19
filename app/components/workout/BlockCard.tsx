@@ -31,7 +31,7 @@ function formatSet(set: TrainingSet): string {
     : `${set.reps_min} rép`;
 
   let weight: string;
-  if (set.weight_type === 'bodyweight') weight = 'PC';
+  if (set.weight_type === 'bodyweight') weight = 'Poids de corps';
   else if (set.weight_type === 'bar') weight = 'barre';
   else weight = set.weight != null ? `${set.weight} kg` : '— kg';
 
