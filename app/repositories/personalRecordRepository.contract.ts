@@ -71,4 +71,30 @@ export function runPersonalRecordRepositoryContractTests(createRepo: () => IPers
       expect(prs[0].achieved_at).toBe('2026-03-01T10:00:00.000Z');
     });
   });
+
+  describe('deleteBySessionLogId', () => {
+    it('supprime les PRs liés à la session', async () => {
+      await repo.save({ ...dto1, session_log_id: 42 });
+      await repo.save({ ...dto1, exercise_id: 2, session_log_id: 42 });
+      await repo.deleteBySessionLogId(42);
+      expect(await repo.findRecent(10)).toHaveLength(0);
+    });
+
+    it('ne supprime pas les PRs d\'autres sessions', async () => {
+      await repo.save({ ...dto1, session_log_id: 42 });
+      await repo.save({ ...dto1, exercise_id: 2, session_log_id: 99 });
+      await repo.deleteBySessionLogId(42);
+      expect(await repo.findRecent(10)).toHaveLength(1);
+    });
+
+    it('ne supprime pas les PRs sans session_log_id (anciens PRs)', async () => {
+      await repo.save({ ...dto1, session_log_id: null });
+      await repo.deleteBySessionLogId(42);
+      expect(await repo.findRecent(10)).toHaveLength(1);
+    });
+
+    it('ne throw pas si aucun PR pour cette session', async () => {
+      await expect(repo.deleteBySessionLogId(9999)).resolves.toBeUndefined();
+    });
+  });
 }

@@ -17,4 +17,5 @@ export interface ISessionLogRepository {
   saveMoodAfter(id: number, mood: 1 | 2 | 3): Promise<void>;
   saveSessionMeta(id: number, tags: SessionTagSlug[], notes: string | null): Promise<void>;
   findMostRecent(): Promise<SessionLog | null>;
+  delete(id: number): Promise<void>;
 }

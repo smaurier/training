@@ -29,4 +29,8 @@ export class InMemoryPersonalRecordRepository implements IPersonalRecordReposito
       .sort((a, b) => b.achieved_at.localeCompare(a.achieved_at))
       .slice(0, limit);
   }
+
+  async deleteBySessionLogId(sessionLogId: number): Promise<void> {
+    this.items = this.items.filter(i => i.session_log_id !== sessionLogId);
+  }
 }

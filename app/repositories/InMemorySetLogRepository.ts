@@ -54,6 +54,10 @@ export class InMemorySetLogRepository implements ISetLogRepository {
     );
   }
 
+  async deleteBySessionLogId(sessionLogId: number): Promise<void> {
+    this.items = this.items.filter(i => i.session_log_id !== sessionLogId);
+  }
+
   async updateCardioData(
     id: number,
     duration_seconds: number | null,

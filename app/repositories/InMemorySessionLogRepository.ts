@@ -87,6 +87,10 @@ export class InMemorySessionLogRepository implements ISessionLogRepository {
     return completed[0] ?? null;
   }
 
+  async delete(id: number): Promise<void> {
+    this.items = this.items.filter(i => i.id !== id);
+  }
+
   async getLastCompletedWorkoutId(workoutIds: number[]): Promise<number | null> {
     if (workoutIds.length === 0) return null;
     const row = this.items

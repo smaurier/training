@@ -110,4 +110,8 @@ export class SQLiteSessionLogRepository implements ISessionLogRepository {
     );
     return row?.workout_id ?? null;
   }
+
+  async delete(id: number): Promise<void> {
+    await this.db.runAsync('DELETE FROM session_logs WHERE id = ?', [id]);
+  }
 }

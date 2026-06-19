@@ -14,6 +14,7 @@ export interface ISetLogRepository {
   findFromDate(from: string): Promise<SetLog[]>;
   findDistinctExerciseIds(): Promise<number[]>;
   deleteBySetAndSession(setId: number, sessionLogId: number): Promise<void>;
+  deleteBySessionLogId(sessionLogId: number): Promise<void>;
   updateCardioData(
     id: number,
     duration_seconds: number | null,

@@ -170,4 +170,24 @@ export function runSetLogRepositoryContractTests(createRepo: () => ISetLogReposi
       expect(other.duration_seconds).toBeNull();
     });
   });
+
+  describe('deleteBySessionLogId', () => {
+    it('supprime tous les set_logs de la session', async () => {
+      await repo.save({ ...dto1, session_log_id: 1 });
+      await repo.save({ ...dto1, session_log_id: 1, set_id: 11, completed_at: '2026-01-01T10:06:00.000Z' });
+      await repo.deleteBySessionLogId(1);
+      expect(await repo.findBySessionLogId(1)).toHaveLength(0);
+    });
+
+    it('ne supprime pas les set_logs d\'autres sessions', async () => {
+      await repo.save({ ...dto1, session_log_id: 1 });
+      await repo.save({ ...dto1, session_log_id: 2, completed_at: '2026-01-01T10:06:00.000Z' });
+      await repo.deleteBySessionLogId(1);
+      expect(await repo.findBySessionLogId(2)).toHaveLength(1);
+    });
+
+    it('ne throw pas si session sans set_logs', async () => {
+      await expect(repo.deleteBySessionLogId(9999)).resolves.toBeUndefined();
+    });
+  });
 }

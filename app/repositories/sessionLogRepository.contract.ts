@@ -197,4 +197,23 @@ export function runSessionLogRepositoryContractTests(createRepo: () => ISessionL
       expect(map.get(2)).toBeNull();
     });
   });
+
+  describe('delete', () => {
+    it('supprime la session et findById retourne null', async () => {
+      const s = await repo.save(dto1);
+      await repo.delete(s.id);
+      expect(await repo.findById(s.id)).toBeNull();
+    });
+
+    it('ne supprime pas les autres sessions', async () => {
+      const s1 = await repo.save(dto1);
+      const s2 = await repo.save({ ...dto1, workout_id: 2 });
+      await repo.delete(s1.id);
+      expect(await repo.findById(s2.id)).not.toBeNull();
+    });
+
+    it('ne throw pas si id inexistant', async () => {
+      await expect(repo.delete(9999)).resolves.toBeUndefined();
+    });
+  });
 }
