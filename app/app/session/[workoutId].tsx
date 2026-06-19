@@ -203,6 +203,7 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
     if (session.startingWeightDone) return false;
     if (session.phase !== 'running') return false;
     if (!session.currentExercise) return false;
+    if (session.currentExercise.exercise.type === 'cardio') return false;
     const firstTravailBlockIdx = session.currentExercise.blocks.findIndex(
       b => b.is_work_block === 1 && b.name === 'Travail'
     );

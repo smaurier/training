@@ -345,6 +345,7 @@ export const RunningPhase = forwardRef<RunningPhaseHandle, RunningPhaseProps>(fu
         </View>
       </View>
 
+      <View style={styles.body}>
       {isCardio ? (
         <>
           <View style={[styles.targetCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
@@ -519,6 +520,7 @@ export const RunningPhase = forwardRef<RunningPhaseHandle, RunningPhaseProps>(fu
           Poids mis à jour pour les séries suivantes.
         </Text>
       )}
+      </View>
     </ScrollView>
 
     <PressableA11y
@@ -694,8 +696,9 @@ export const RunningPhase = forwardRef<RunningPhaseHandle, RunningPhaseProps>(fu
 
 const styles = StyleSheet.create({
   wrapper: { flex: 1 },
-  container: { flexGrow: 1, padding: Spacing.xl, gap: Spacing.lg },
+  container: { flexGrow: 1, padding: Spacing.xl },
   header: { gap: 2 },
+  body: { flex: 1, justifyContent: 'center', gap: Spacing.lg, paddingTop: Spacing.xl },
   headerRow: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' },
   headerTextGroup: { flex: 1, gap: 2, marginTop: Spacing.lg },
   headerActions: { gap: Spacing.xs, marginTop: Spacing.lg },

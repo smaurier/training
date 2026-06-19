@@ -26,8 +26,8 @@ export function CircularTimer({ progress, remaining, label, size = 160 }: Circul
   const radius = cx - strokeWidth / 2;
   const circumference = 2 * Math.PI * radius;
   const clamped = Math.max(0, Math.min(1, progress));
-  const dashOffset = circumference * (1 - clamped);
   const isDone = clamped <= 0;
+  const dashOffset = isDone ? 0 : circumference * (1 - clamped);
   const fontSize = Math.round(size * 0.22);
 
   return (
