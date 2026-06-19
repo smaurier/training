@@ -109,7 +109,7 @@ export default function OnboardingScreen() {
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background, paddingBottom: insets.bottom }]}>
-      {!isReview && step === 0 && (
+      {!isReview && step < activeScreens.length - 1 && (
         <TouchableOpacity
           onPress={handleSkip}
           style={styles.skipBtn}
