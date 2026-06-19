@@ -5,6 +5,15 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.24.0] — 2026-06-19
+
+0954458 feat(home): setLabel affiche durée + liens texte non-lime + service Brzycki 1RM
+ff46d18 test(repos): contract tests + InMemory/SQLite impls pour deleteBySessionLogId (3 repos)
+b78334b refactor(design): SemanticColors → Colors semantic tokens (primaryText/positiveText/negativeText/destructiveText)
+db062e5 refactor(onboarding): réduire de 8 à 4 écrans (welcome/program/settings/ready)
+
+---
+
 ## [1.23.0] — 2026-06-19
 
 0d46e89 design: dropset badge pink-700 #be185d (était bleu lien #2563eb)
