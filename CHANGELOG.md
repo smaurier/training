@@ -5,6 +5,14 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.24.6] — 2026-06-20
+
+814937d fix(reliability): error boundary session + version-bump sync app.json
+5b19fb7 fix(version): sync app.json version 1.0.0 → 1.24.5
+512937a feat(branding): logo Trace concept A — La Trace
+
+---
+
 ## [1.24.5] — 2026-06-19
 
 94fe547 fix(session): decompte 3-2-1 via Modal (centrage garanti)
