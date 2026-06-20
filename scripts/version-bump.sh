@@ -26,8 +26,9 @@ DATE=$(date +%Y-%m-%d)
 
 echo "Bumping v$CURRENT → $NEW ($TYPE)"
 
-# Update app/package.json
+# Update app/package.json and app/app.json
 sed -i "s/\"version\": \"$CURRENT\"/\"version\": \"$NEW\"/" app/package.json
+sed -i "s/\"version\": \"$CURRENT\"/\"version\": \"$NEW\"/" app/app.json
 
 # Generate commit list since last tag
 COMMITS=$(git log "v$CURRENT"..HEAD --oneline --no-decorate 2>/dev/null || git log --oneline -20)
@@ -41,7 +42,7 @@ awk -v entry="$ENTRY" '
 ' CHANGELOG.md > "$TMP" && mv "$TMP" CHANGELOG.md
 
 # Commit + tag
-git add app/package.json CHANGELOG.md
+git add app/package.json app/app.json CHANGELOG.md
 git commit -m "chore(release): bump to $TAG"
 git tag "$TAG"
 

@@ -17,6 +17,7 @@ import { ExerciseStartingWeightPhase } from '@/components/session/ExerciseStarti
 import { RestPhase } from '@/components/session/RestPhase';
 import { ExerciseTransitionPhase } from '@/components/session/ExerciseTransitionPhase';
 import { WarmupPhase } from '@/components/session/WarmupPhase';
+import { SessionPhaseErrorBoundary } from '@/components/session/SessionPhaseErrorBoundary';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { SemanticColors } from '@/constants/SemanticColors';
@@ -432,6 +433,7 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
           </SafeAreaView>
         )}
         <View style={styles.phaseContent}>
+        <SessionPhaseErrorBoundary onBack={handleBack}>
         {session.error && (
           <View style={styles.errorContainer}>
             <Text style={[styles.errorText, { color: colors.text }]}>{session.error}</Text>
@@ -536,6 +538,7 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
             onSaveCardioData={handleSaveCardioData}
           />
         )}
+        </SessionPhaseErrorBoundary>
         </View>
       </View>
       {prBadge !== null && (
