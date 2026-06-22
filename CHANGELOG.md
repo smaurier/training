@@ -5,6 +5,12 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.24.8] — 2026-06-22
+
+1678ec3 refactor(session): extraire useSessionSummary + usePRBadge + makeSessionService
+
+---
+
 ## [1.24.7] — 2026-06-22
 
 501a6fb feat(monitoring): intégrer Sentry crash reporting
