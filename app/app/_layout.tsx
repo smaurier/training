@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react-native';
 import {
   useFonts,
   Inter_400Regular,
@@ -6,6 +7,13 @@ import {
   Inter_700Bold,
   Inter_900Black,
 } from '@expo-google-fonts/inter';
+
+Sentry.init({
+  dsn: 'https://adda69eec47e45671f9358dc393007a8@o4511610198491136.ingest.de.sentry.io/4511610200850512',
+  enabled: !__DEV__,
+  environment: __DEV__ ? 'development' : 'production',
+  tracesSampleRate: 0,
+});
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useURL } from 'expo-linking';
 import { Stack, useRouter } from 'expo-router';
@@ -62,7 +70,7 @@ SplashScreen.preventAutoHideAsync();
 
 const settingsRepo = new SQLiteSettingsRepository(getDb());
 
-export default function RootLayout() {
+function RootLayout() {
   const [loaded, error] = useFonts({
     Inter_400Regular,
     Inter_500Medium,
@@ -124,6 +132,8 @@ export default function RootLayout() {
     </ThemeContextProvider>
   );
 }
+
+export default Sentry.wrap(RootLayout);
 
 function RootLayoutNav({ onboardingDone }: { onboardingDone: boolean }) {
   const themeCtx = useContext(ThemeContext)!;

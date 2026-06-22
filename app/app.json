@@ -44,7 +44,8 @@
       "expo-font",
       "expo-localization",
       "expo-notifications",
-      "expo-camera"
+      "expo-camera",
+      "@sentry/react-native"
     ],
     "experiments": {
       "typedRoutes": true
