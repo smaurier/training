@@ -5,6 +5,12 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.24.9] — 2026-06-22
+
+8684508 chore(eas): appVersionSource remote + production buildType app-bundle
+
+---
+
 ## [1.24.8] — 2026-06-22
 
 1678ec3 refactor(session): extraire useSessionSummary + usePRBadge + makeSessionService
