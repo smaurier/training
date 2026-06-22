@@ -4,6 +4,86 @@ Journal chronologique du projet, du lancement à la release. Chaque session est 
 
 ---
 
+## S53 — 2026-06-22 — Beta-ready : Sentry + God Component refactor + eas.json v1.24.9
+
+### Livré
+
+- **Sentry crash reporting** : `@sentry/react-native` v7.2.0, plugin ajouté dans `app.json`, `Sentry.init()` en tête de `_layout.tsx` (`enabled: !__DEV__`, `tracesSampleRate: 0`), `RootLayout` wrappé via `Sentry.wrap()`. DSN EU (ingest.de.sentry.io). Commit `501a6fb`, v1.24.7.
+- **God Component refactor** : `[workoutId].tsx` 644 → 517 lignes, `useSession.ts` 450 → 428 lignes. 3 extractions :
+  - `services/makeSessionService.ts` : factory `SessionService` partagée — supprime le doublon `makeService`/`makeServiceForCheck` (2 fichiers → 1).
+  - `hooks/useSessionSummary.ts` : regroupe les 6 `useEffect` phase=summary (plateaux, RPE, prevSummary, décharge, humeur, tags/notes, cardio) + états associés. Interface `UseSessionSummaryResult`.
+  - `hooks/usePRBadge.ts` : isole badge PR, timeout, `handleValidate`, `AccessibilityInfo`.
+  - 11 imports retirés de `[workoutId].tsx`. Commit `1678ec3`, v1.24.8.
+- **eas.json** : `cli.appVersionSource: remote` (EAS gère versionCode Android automatiquement, supprime warning build) + `production.buildType: app-bundle` (AAB obligatoire Play Store, était APK). Commit `8684508`, v1.24.9.
+
+### Décisions
+
+- **`appVersionSource: remote`** : avec `remote`, EAS incrémente le versionCode à chaque build cloud — plus de risque de conflit Play Store, plus besoin de gérer manuellement dans `app.json`.
+- **`production: app-bundle` vs preview: apk** : preview reste APK (installation directe sans Play Store, pour les testeurs). Production passe AAB (exigé par Google Play Store). Les deux profils coexistent.
+- **God Component : extraction partielle** : `[workoutId].tsx` et `useSession.ts` réduits mais non réécrit from scratch. `useSession.ts` reste 428 lignes — logique de domaine cohérente, pas de découpage supplémentaire justifié (YAGNI).
+- **Sentry désactivé en dev** : `enabled: !__DEV__` — pas de bruit Sentry pendant le développement local, actif uniquement sur les builds EAS.
+
+### Chemin critique — état
+
+```
+✅ Fix version-bump.sh (v1.24.6)
+✅ Error boundaries SessionPhaseErrorBoundary (v1.24.6)
+✅ Sentry crash reporting (v1.24.7)
+✅ God Component refactor (v1.24.8)
+✅ eas.json appVersionSource + production AAB (v1.24.9)
+→ Builder APK preview v1.24.9 + distribuer 5-10 testeurs
+→ Batch retours terrain → corrections
+→ Play Store
+```
+
+### Prochaine étape
+
+Builder APK : `npx eas build --profile=preview --platform=android`. Distribuer lien APK à 5-10 testeurs sportifs (salle, entourage). Collecter retours via formulaire simple ou canal dédié.
+
+---
+
+## S52 — 2026-06-19 — Logo Trace + fixes UX session + EAS build APK v1.24.5
+
+### Livré
+
+- **Logo Trace Concept A** : polyline lime (#84CC16) sur fond #0D0D0D. Script `scripts/generate-icons.mjs` (@resvg/resvg-js WASM, zéro compilation native sur Windows). 5 assets générés : `icon.png` (1024px, 16% padding), `android-icon-foreground.png` (1024px transparent, 26% padding safe zone adaptive), `android-icon-monochrome.png` (blanc, Android 13+ themed icons), `splash-icon.png`, `favicon.png` (48px). Commits `512937a`.
+- **Sync version app.json** : `app.json` était resté à `1.0.0` depuis le début — synchro vers `1.24.5` (= package.json). Commit `5b19fb7`. Bug découvert : le script `version-bump.sh` ne met pas à jour `app.json` (ajouté en backlog dette technique).
+- **Pause button SafeAreaView** : bouton pause passait derrière la status bar. Wrapping `pauseButtonRow` dans `<SafeAreaView edges={['top']}>`. `WarmupPhase` double-comptait `insets.top` — suppression du `insets.top` dans son `paddingTop`. Commits session précédente.
+- **3-2-1 countdown centré (Modal)** : overlay `position:absolute` tirait à gauche (contraintes parent layout). Fix : `<Modal transparent animationType="none" statusBarTranslucent>` → centrage garanti indépendant du layout parent.
+- **Dev data reset** : long-press 1s sur numéro de version dans Réglages → `Alert` → supprime `session_logs` + `personal_records` (poids programmes inchangés). `expo-constants` pour afficher `v1.24.5`. Commits session précédente.
+- **Android nav bar theming** : `expo-navigation-bar` dans `_layout.tsx` — couleur + style boutons selon `themeCtx.resolved`. Note : inactif dans Expo Go (shell contrôle sa propre nav bar), vérifié en APK uniquement.
+- **app.json adaptiveIcon simplifié** : suppression `backgroundImage` redondant (doublon avec `backgroundColor: "#0D0D0D"`). Seuls `foregroundImage` + `monochromeImage` + `backgroundColor` conservés.
+- **EAS build APK v1.24.5** : build preview réussi. APK `574c3754` disponible sur expo.dev. Artifact: `ksHBq94vC1aS3BZUWxbas7dhZvLr9y1_zTotok6D8R8.apk`.
+
+### Décisions
+
+- **Logo Concept A (polyline) retenu** : 3 concepts proposés (La Trace / Monogramme T / Waypoint). Concept A choisi — lisible à toutes tailles, cohérent avec le sens du nom, fonctionne en mark seul.
+- **@resvg/resvg-js pour génération icons** : WASM, zéro binaire natif — seule option qui compile sans douleur sur Windows (sharp et canvas nécessitent node-gyp).
+- **`appVersionSource: remote`** à faire pour Play Store (versionCode auto) — noté en backlog mais pas encore implémenté.
+- **npx eas vs eas global** : `npx eas` fonctionne sans installation globale. À documenter pour éviter la confusion `npx expo` (tire expo@56 au lieu de la version locale).
+
+### Problèmes rencontrés
+
+- **`npx expo run` disaster (session précédente)** : avait téléchargé expo@56, créé `android/`, bumped package.json vers versions incompatibles. Recovery : `git checkout package.json package-lock.json`, suppression `android/`, `npm install`. 593 tests verts après.
+- **eas CLI absent** : `eas: command not found`. Résolu avec `npx eas build ...`.
+
+### Backlog — ajouts session
+
+- Script `version-bump.sh` ne met pas à jour `app.json` (bug process)
+- God Component `session/[workoutId].tsx` + `useSession` (refactor prioritaire)
+- Error boundaries fins (RestPhase, RunningPhase)
+- Crash reporting (Sentry) avant beta externe
+- Beta fermée 5-10 testeurs (avant Play Store ouvert)
+- Allègement bundle (camera/QR/pako toujours bundlés)
+- iOS build jamais testé
+- Publication Play Store (toute fin — nouvelles conditions accès à vérifier)
+
+### Prochaine étape
+
+Test terrain APK v1.24.5. Collecter bugs réels. Prochain chantier technique : corriger `version-bump.sh` + intégrer Sentry + error boundaries avant d'élargir à des bêta-testeurs.
+
+---
+
 ## S51 — 2026-06-19 — Design polish + onboarding refonte + v1.24.0
 
 ### Livré
