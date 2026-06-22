@@ -3,13 +3,15 @@
 import { Spacing } from '@/constants/Spacing';
 import { useEffect, useCallback, useMemo, useState, useRef } from 'react';
 import { LetterSpacing, FontFamily} from '@/constants/Typography';
-import { View, Text, StyleSheet, AccessibilityInfo, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import { useWorkoutExercises } from '@/hooks/useWorkoutExercises';
 import { useSession } from '@/hooks/useSession';
 import { useTimer } from '@/hooks/useTimer';
+import { useSessionSummary } from '@/hooks/useSessionSummary';
+import { usePRBadge } from '@/hooks/usePRBadge';
 import { CheckInPhase } from '@/components/session/CheckInPhase';
 import { RunningPhase, type RunningPhaseHandle } from '@/components/session/RunningPhase';
 import { SummaryPhase } from '@/components/session/SummaryPhase';
@@ -22,24 +24,14 @@ import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { SemanticColors } from '@/constants/SemanticColors';
 import { resolveWeights } from '@/services/weightRatio';
-import type { SetActual, PausedSessionInfo } from '@/services/SessionService';
-import type { SessionTagSlug } from '@/services/sessionTagsUtils';
+import { makeSessionService } from '@/services/makeSessionService';
+import type { PausedSessionInfo } from '@/services/SessionService';
 import type { InitialSession, SessionPosition } from '@/hooks/useSession';
 import type { WorkoutExerciseDetail } from '@/services/WorkoutExerciseService';
-import { SessionService } from '@/services/SessionService';
-import { SQLiteSessionLogRepository } from '@/repositories/SQLiteSessionLogRepository';
-import { SQLiteSetLogRepository } from '@/repositories/SQLiteSetLogRepository';
-import { SQLitePersonalRecordRepository } from '@/repositories/SQLitePersonalRecordRepository';
-import { SQLiteWorkoutRepository } from '@/repositories/SQLiteWorkoutRepository';
-import { SQLiteWorkoutExerciseRepository } from '@/repositories/SQLiteWorkoutExerciseRepository';
-import { SQLiteBlockRepository } from '@/repositories/SQLiteBlockRepository';
-import { SQLiteSetRepository } from '@/repositories/SQLiteSetRepository';
-import { SQLiteExerciseRepository } from '@/repositories/SQLiteExerciseRepository';
-import { PlateauDetectionService } from '@/services/PlateauDetectionService';
-import type { PlateauResult } from '@/services/PlateauDetectionService';
 import { DeloadService, applyDeloadToExercises } from '@/services/DeloadService';
 import { getPlateStep } from '@/services/settingsUtils';
 import { SQLiteSettingsRepository } from '@/repositories/SQLiteSettingsRepository';
+import { SQLiteSessionLogRepository } from '@/repositories/SQLiteSessionLogRepository';
 import { getDb } from '@/db';
 import { shouldWarnAbandon } from '@/services/sessionUtils';
 import { Ionicons } from '@expo/vector-icons';
@@ -65,25 +57,11 @@ async function persistNotifSettings(s: NotifSettings): Promise<void> {
 const notifScheduler = createNotificationScheduler();
 const notifService = new NotificationService(notifScheduler, loadNotifSettings, persistNotifSettings);
 
-function makeServiceForCheck(): SessionService {
-  const db = getDb();
-  return new SessionService(
-    new SQLiteSessionLogRepository(db),
-    new SQLiteSetLogRepository(db),
-    new SQLitePersonalRecordRepository(db),
-    new SQLiteWorkoutRepository(db),
-    new SQLiteWorkoutExerciseRepository(db),
-    new SQLiteBlockRepository(db),
-    new SQLiteSetRepository(db),
-    new SQLiteExerciseRepository(db),
-  );
-}
-
 async function checkPausedOnMount(workoutId: number): Promise<{
   initialSession?: InitialSession;
   conflict?: PausedSessionInfo;
 }> {
-  const service = makeServiceForCheck();
+  const service = makeSessionService();
   const paused = await service.findAnyPausedSession();
   if (!paused) return {};
   if (!shouldWarnAbandon(paused.sessionLog.workout_id, workoutId)) {
@@ -193,6 +171,15 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
     repo.get('plate_step').then(v => setPlateStep(getPlateStep(v))).catch(console.error);
   }, []);
 
+  useEffect(() => {
+    const db = getDb();
+    const service = new DeloadService(
+      new SQLiteSettingsRepository(db),
+      new SQLiteSessionLogRepository(db),
+    );
+    service.shouldSuggestDeload(workoutId).then(setDeloadSuggested).catch(console.error);
+  }, [workoutId]);
+
   const resolvedExercises = useMemo(() => exercises.map(resolveWeights), [exercises]);
   const deloadedExercises = useMemo(
     () => isDeloadSession ? applyDeloadToExercises(resolvedExercises, plateStep) : resolvedExercises,
@@ -200,6 +187,20 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
   );
   const session = useSession(workoutId, deloadedExercises, initialSession, plateStep);
   const timer = useTimer(120);
+
+  const summary = useSessionSummary(
+    session.sessionLogId,
+    workoutId,
+    session.phase,
+    exercises,
+    isDeloadSession,
+    session.sessionStartedAt,
+  );
+
+  const { prBadge, handleValidate } = usePRBadge(
+    session.validateSet,
+    session.currentExercise?.exercise.name ?? '',
+  );
 
   const needsStartingWeight = useMemo(() => {
     if (session.startingWeightDone) return false;
@@ -235,149 +236,17 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
     session.markStartingWeightDone();
   }, [session, refresh]);
 
-  const [selectedTags, setSelectedTags] = useState<SessionTagSlug[]>([]);
-  const [sessionNotes, setSessionNotes] = useState('');
-
-  const handleTagToggle = useCallback((slug: SessionTagSlug) => {
-    setSelectedTags(prev =>
-      prev.includes(slug) ? prev.filter(s => s !== slug) : [...prev, slug]
-    );
-  }, []);
-
   const handleBack = useCallback(async () => {
     if (session.sessionLogId) {
-      await makeServiceForCheck()
-        .saveSessionMeta(session.sessionLogId, selectedTags, sessionNotes.trim() || null)
+      await makeSessionService()
+        .saveSessionMeta(session.sessionLogId, summary.selectedTags, summary.sessionNotes.trim() || null)
         .catch(console.error);
     }
     if (session.phase === 'summary') {
       await notifService.scheduleInactivityCheck(new Date()).catch(console.error);
     }
     router.back();
-  }, [session.sessionLogId, session.phase, selectedTags, sessionNotes, router]);
-
-  const [summaryDurationSeconds, setSummaryDurationSeconds] = useState(0);
-  useEffect(() => {
-    if (session.phase === 'summary' && session.sessionStartedAt) {
-      setSummaryDurationSeconds(Math.round((Date.now() - session.sessionStartedAt) / 1000));
-    }
-  }, [session.phase, session.sessionStartedAt]);
-
-  useEffect(() => {
-    const db = getDb();
-    const service = new DeloadService(
-      new SQLiteSettingsRepository(db),
-      new SQLiteSessionLogRepository(db),
-    );
-    service.shouldSuggestDeload(workoutId).then(setDeloadSuggested).catch(console.error);
-  }, [workoutId]);
-
-  const [plateaus, setPlateaus] = useState<PlateauResult[]>([]);
-  const [rpeLabel, setRpeLabel] = useState<'Facile' | 'Normal' | 'Difficile' | null>(null);
-  const [prevSummary, setPrevSummary] = useState<{ volume: number; sets: number } | null>(null);
-  const [selectedMood, setSelectedMood] = useState<1 | 2 | 3 | undefined>(undefined);
-
-  useEffect(() => {
-    if (session.phase !== 'summary' || !session.sessionLogId) return;
-    const db = getDb();
-    const service = new PlateauDetectionService(
-      new SQLiteSetLogRepository(db),
-      new SQLiteSessionLogRepository(db),
-      new SQLiteWorkoutExerciseRepository(db),
-      new SQLiteExerciseRepository(db),
-    );
-    service.detectPlateaus(session.sessionLogId).then(setPlateaus).catch(console.error);
-  }, [session.phase, session.sessionLogId]);
-
-  useEffect(() => {
-    if (session.phase !== 'summary' || !session.sessionLogId) return;
-    makeServiceForCheck().getSessionRPELabel(session.sessionLogId).then(setRpeLabel).catch(console.error);
-  }, [session.phase, session.sessionLogId]);
-
-  useEffect(() => {
-    if (session.phase !== 'summary' || !session.sessionLogId) return;
-    makeServiceForCheck()
-      .getPreviousSessionSummary(workoutId, session.sessionLogId)
-      .then(setPrevSummary)
-      .catch(console.error);
-  }, [session.phase, session.sessionLogId, workoutId]);
-
-  useEffect(() => {
-    if (session.phase !== 'summary' || !session.sessionLogId || !isDeloadSession) return;
-    const db = getDb();
-    const service = new DeloadService(
-      new SQLiteSettingsRepository(db),
-      new SQLiteSessionLogRepository(db),
-    );
-    service.recordDeload(new Date().toISOString()).catch(console.error);
-  }, [session.phase, session.sessionLogId, isDeloadSession]);
-
-  const [emptyCardioSetLogIds, setEmptyCardioSetLogIds] = useState<number[]>([]);
-
-  useEffect(() => {
-    if (session.phase !== 'summary' || !session.sessionLogId) return;
-    const cardioExerciseIds = new Set(
-      exercises
-        .filter(we => we.exercise.type === 'cardio')
-        .map(we => we.exercise.id) ?? []
-    );
-    if (cardioExerciseIds.size === 0) return;
-    const setLogRepo = new SQLiteSetLogRepository(getDb());
-    setLogRepo.findBySessionLogId(session.sessionLogId).then(logs => {
-      const empty = logs.filter(
-        l => cardioExerciseIds.has(l.exercise_id) &&
-             l.duration_seconds == null &&
-             l.distance_meters == null
-      );
-      setEmptyCardioSetLogIds(empty.map(l => l.id));
-    }).catch(console.error);
-  }, [session.phase, session.sessionLogId, exercises]);
-
-  const runningPhaseRef = useRef<RunningPhaseHandle | null>(null);
-  const resumeTimerForSetId = useRef<number | null>(
-    initialSession?.timerState != null ? session.currentSet?.id ?? null : null
-  );
-
-  const [prBadge, setPrBadge] = useState<string | null>(null);
-  const prBadgeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (prBadgeTimeout.current) clearTimeout(prBadgeTimeout.current);
-    };
-  }, []);
-
-  const handleValidate = useCallback(async (actual: SetActual) => {
-    const exerciseName = session.currentExercise?.exercise.name ?? '';
-    const isPR = await session.validateSet(actual);
-    if (isPR && exerciseName) {
-      if (prBadgeTimeout.current) clearTimeout(prBadgeTimeout.current);
-      setPrBadge(exerciseName);
-      AccessibilityInfo.announceForAccessibility('Nouvelle meilleure marque !');
-      prBadgeTimeout.current = setTimeout(() => setPrBadge(null), 3000);
-    }
-  }, [session]);
-
-  const handleMoodSelect = useCallback(async (mood: 1 | 2 | 3) => {
-    setSelectedMood(mood);
-    if (!session.sessionLogId) return;
-    await makeServiceForCheck().saveMoodAfter(session.sessionLogId, mood);
-  }, [session.sessionLogId]);
-
-  const handleSaveCardioData = useCallback(async (
-    durationSeconds: number | null,
-    distanceMeters: number | null,
-    rpe: number | null,
-  ) => {
-    if (emptyCardioSetLogIds.length === 0) return;
-    await makeServiceForCheck().saveCardioData(
-      emptyCardioSetLogIds[0],
-      durationSeconds,
-      distanceMeters,
-      rpe,
-    );
-    setEmptyCardioSetLogIds([]);
-  }, [emptyCardioSetLogIds]);
+  }, [session.sessionLogId, session.phase, summary.selectedTags, summary.sessionNotes, router]);
 
   const handlePause = useCallback(async () => {
     try {
@@ -388,6 +257,11 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
       // error already shown via session.error
     }
   }, [session, router]);
+
+  const runningPhaseRef = useRef<RunningPhaseHandle | null>(null);
+  const resumeTimerForSetId = useRef<number | null>(
+    initialSession?.timerState != null ? session.currentSet?.id ?? null : null
+  );
 
   const abandonSheetRef = useRef<BottomSheetModal>(null);
   const abandonSnapPoints = useMemo(() => ['30%'], []);
@@ -401,8 +275,7 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
 
   const handleAbandonConfirm = useCallback(async () => {
     if (!conflict) return;
-    const service = makeServiceForCheck();
-    await service.abandonSession(conflict.sessionLog.id);
+    await makeSessionService().abandonSession(conflict.sessionLog.id);
     abandoningRef.current = true;
     abandonSheetRef.current?.dismiss();
   }, [conflict]);
@@ -521,21 +394,21 @@ function SessionContent({ workoutId, initialSession, conflict }: SessionContentP
           <SummaryPhase
             progressions={session.progressions}
             totalSets={session.totalSetsLogged}
-            durationSeconds={summaryDurationSeconds}
+            durationSeconds={summary.summaryDurationSeconds}
             totalVolumeKg={session.totalVolume}
-            plateaus={plateaus}
-            rpeLabel={rpeLabel}
-            previousSession={prevSummary}
+            plateaus={summary.plateaus}
+            rpeLabel={summary.rpeLabel}
+            previousSession={summary.prevSummary}
             suggestNextDeload={deloadSuggested && !isDeloadSession}
-            onMoodSelect={handleMoodSelect}
-            selectedMood={selectedMood}
-            selectedTags={selectedTags}
-            onTagToggle={handleTagToggle}
-            notes={sessionNotes}
-            onNotesChange={setSessionNotes}
+            onMoodSelect={summary.handleMoodSelect}
+            selectedMood={summary.selectedMood}
+            selectedTags={summary.selectedTags}
+            onTagToggle={summary.handleTagToggle}
+            notes={summary.sessionNotes}
+            onNotesChange={summary.setSessionNotes}
             onClose={handleBack}
-            emptyCardioSetLogCount={emptyCardioSetLogIds.length}
-            onSaveCardioData={handleSaveCardioData}
+            emptyCardioSetLogCount={summary.emptyCardioSetLogCount}
+            onSaveCardioData={summary.handleSaveCardioData}
           />
         )}
         </SessionPhaseErrorBoundary>

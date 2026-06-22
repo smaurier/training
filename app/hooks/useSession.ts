@@ -1,16 +1,8 @@
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
-import { SessionService, CheckIn, SetActual, ProgressionResult, LastSetLog } from '../services/SessionService';
-import { SQLiteSessionLogRepository } from '../repositories/SQLiteSessionLogRepository';
-import { SQLiteSetLogRepository } from '../repositories/SQLiteSetLogRepository';
-import { SQLitePersonalRecordRepository } from '../repositories/SQLitePersonalRecordRepository';
-import { SQLiteWorkoutRepository } from '../repositories/SQLiteWorkoutRepository';
-import { SQLiteWorkoutExerciseRepository } from '../repositories/SQLiteWorkoutExerciseRepository';
-import { SQLiteBlockRepository } from '../repositories/SQLiteBlockRepository';
-import { SQLiteSetRepository } from '../repositories/SQLiteSetRepository';
-import { SQLiteExerciseRepository } from '../repositories/SQLiteExerciseRepository';
+import { CheckIn, SetActual, ProgressionResult, LastSetLog } from '../services/SessionService';
+import { makeSessionService } from '../services/makeSessionService';
 import type { WorkoutExerciseDetail, BlockWithSets } from '../services/WorkoutExerciseService';
 import type { Set as TrainingSet } from '../db/types';
-import { getDb } from '../db';
 import { shouldShowWarmup } from '../services/warmup';
 
 export type SessionPhase = 'checkin' | 'exercise_transition' | 'running' | 'rest' | 'summary' | 'warmup';
@@ -171,27 +163,13 @@ export function computeNextLabel(
   return `Série ${setNum}/${totalSets}${weightLabel}`;
 }
 
-function makeService(): SessionService {
-  const db = getDb();
-  return new SessionService(
-    new SQLiteSessionLogRepository(db),
-    new SQLiteSetLogRepository(db),
-    new SQLitePersonalRecordRepository(db),
-    new SQLiteWorkoutRepository(db),
-    new SQLiteWorkoutExerciseRepository(db),
-    new SQLiteBlockRepository(db),
-    new SQLiteSetRepository(db),
-    new SQLiteExerciseRepository(db),
-  );
-}
-
 export function useSession(
   workoutId: number,
   workoutDetails: WorkoutExerciseDetail[],
   initialSession?: InitialSession,
   plateStep: number = 2,
 ): UseSessionResult {
-  const service = useMemo(() => makeService(), []);
+  const service = useMemo(() => makeSessionService(), []);
 
   const [phase, setPhase] = useState<SessionPhase>(() => initialSession?.phase ?? 'checkin');
   const [sessionLogId, setSessionLogId] = useState<number | null>(() => initialSession?.sessionLogId ?? null);
