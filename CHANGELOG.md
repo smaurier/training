@@ -5,6 +5,12 @@ Format : [Semantic Versioning](https://semver.org/). Types : `feat`, `fix`, `ux`
 
 ---
 
+## [1.24.7] — 2026-06-22
+
+501a6fb feat(monitoring): intégrer Sentry crash reporting
+
+---
+
 ## [1.24.6] — 2026-06-20
 
 814937d fix(reliability): error boundary session + version-bump sync app.json
